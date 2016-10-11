@@ -1,4 +1,4 @@
-create table TueGutesDB(
+create table Benutzer(
 UserID int NOT NULL AUTO_INCREMENT,
 Benutzername varchar(50) NOT NULL,
 Passwort varchar(100) NOT NULL,
