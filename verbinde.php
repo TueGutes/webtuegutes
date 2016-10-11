@@ -11,7 +11,7 @@ if(!$db)
   exit("Verbindungsfehler: ".mysqli_connect_error());
 }
 else{
-	echo'Verbindung erfolgreich\r\n';
+	echo'Verbindung erfolgreich <p>';
 }
 
 $benutzername = $_POST['benutzername'];
@@ -19,8 +19,8 @@ $passwort = $_POST['passwort'];
 $passwortwdh = $_POST['passwortwdh'];
 $mail_php = $_POST['mail'];
 
-$datum = CURDATE();
-$stmt_text = "INSERT INTO Benutzer (Benutzername, Email, Passwort, RegDatum) values('$benutzername','" . sha1($passwort.$date) . ") ','" . "$mail_php" . "'," . $datum . ")";
+$datum = DATE("y-m-d/h:i:s");
+$stmt_text = "INSERT INTO Benutzer (Benutzername, Passwort, Email, RegDatum) values('$benutzername','" . md5($passwort.$datum) . ") ','" . "$mail_php" . "','" . $datum . "')";
 
 
 $stmt = mysqli_prepare($db,$stmt_text) or die(mysqli_error($db));
