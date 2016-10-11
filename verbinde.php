@@ -16,16 +16,17 @@ else{
 
 $benutzername = $_POST['benutzername'];
 $passwort = $_POST['passwort'];
+$passwortwdh = $_POST['passwortwdh'];
 $mail_php = $_POST['mail'];
-#$users_comment = $_POST['comment'];
+
 $datum = CURDATE();
 $stmt_text = "INSERT INTO Benutzer (Benutzername, Email, Passwort, RegDatum) values('$benutzername','" . sha1($passwort.$date) . ") ','" . "$mail_php" . "'," . $datum . ")";
-#echo $stmt_text;
+
 
 $stmt = mysqli_prepare($db,$stmt_text) or die(mysqli_error($db));
 mysqli_stmt_execute($stmt) or die(mysqli_error($db));
 
 
 
-#$response = mysqli_execute(stmt);
+
 ?>
