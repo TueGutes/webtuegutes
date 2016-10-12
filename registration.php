@@ -27,47 +27,74 @@ include 'db_connector.php';
 				$user = $_POST['benutzername'];
 				$pass = $_POST['passwort'];
 				$passwdh = $_POST['passwortwdh'];
-				$mail = $POST['mail'];
+				$mail = $_POST['mail'];
 
 				//Prüfung, ob alle Felder ausgefüllt sind
 				if ($user==="" OR $pass==="" OR $passwdh ==="" OR $mail ==="") {
 					echo '<font color=red>Fehler! Bitte alle Felder ausfüllen!</font>';
 					include 'Kontoerstellung.html';
 				} else {
-					if($pass != $passwdh) {
+					$db = db_connect();
+					$sql = "SELECT * FROM Benutzer WHERE Benutzername = ?";
+					$stmt = $db->prepare($sql);
+					$stmt->bind_param('s',$user);
+					$stmt->execute();
+					$result = $stmt->get_result();
+					//Auslesen des Ergebnisses
+					$dbentry = $result->fetch_assoc();
+					if (isset($dbentry['Benutzername'])) { //Schauen, ob Benutzername bereits existiert
+						echo'<font color=red>Fehler! Benutzername bereits vorhanden!</font>';
+						include 'Kontoerstellung.html';
+					}
+					elseif($pass != $passwdh) {	//Prüfen, ob Passwörter übereinstimmen
 						echo '<font color=red> Fehler! Passwörter stimmen nicht überein</font><p>';
 						include 'Kontoerstellung.html';
 					}
 					else {
-					
 						//Auslesen des Nutzers aus der Datenbank
 						$db = db_connect();
-						$sql = "SELECT * FROM Benutzer WHERE Benutzername = ?";
+						$sql = "SELECT * FROM Benutzer WHERE Email = ?";
 						$stmt = $db->prepare($sql);
-						$stmt->bind_param('s',$user);
+						$stmt->bind_param('s',$mail);
 						$stmt->execute();
 						$result = $stmt->get_result();
-						//db_close($db);
-
 						//Auslesen des Ergebnisses
 						$dbentry = $result->fetch_assoc();
-						if (isset($dbentry['Benutzername'])) {
-							//Nutzer ist in der Datenbank vorhanden
-
-							if (md5($pass . $dbentry['RegDatum'])==$dbentry['Passwort']) {
-								//Korrektes Passwort angegeben
-								$_SESSION['user'] = $user;
-								header("Refresh:0"); //Seite aktualisieren
-							} else {
-								//Falsches Passwort angegeben
-								echo '<font color=red>Fehler! Das eingegebene Passwort ist nicht korrekt!</font><p>';
-								include 'Kontoerstellung.html';
-							}
+						if (isset($dbentry['Email'])) {
+							//Email wurde bereits registriert
+							echo '<font color = red>Fehler! Diese Email-Adresse wurde bereits registriert</font><p>';
+							include 'Kontoerstellung.html';
 						}
 					 	else {
-							//Nutzer ist nicht in der Datenbank vorhanden
-							echo '<font color=red>Fehler! Nutzer ' . $user . ' existiert nicht!</font><p>';
-							include 'Kontoerstellung.html';
+							//SUCCESS! - Alle Parameter sind korrekt -> neuen Eintrag in Datenbank vornehmen
+													
+							//Benutzer in die Datenbank einfügen
+							$sql = "Insert into Benutzer (Benutzername, Passwort, Email, RegDatum) values(?,?,?,?)";
+							$stmt = $db->prepare($sql);
+							/*$stmt->bind_param('s',$user);
+							$stmt->bind_param('s',$pass);
+							$stmt->bind_param('s',$mail);
+							$stmt->bind_param('s'."");*/
+							$date = date("Y-m-d");
+							$pass_md5 = md5($pass,$date);
+							mysqli_stmt_bind_param($stmt, "ssss", $user, $pass_md5, $mail, $date);
+							$stmt->execute();
+							$affected_rows = mysqli_stmt_affected_rows($stmt);
+							if($affected_rows == 1) {
+								echo '<font color=green>Registration war erfolgreich!</font><p>';
+
+								//echo 'Success'.$affected_rows;
+							}
+							else {
+								echo '<font color=red>internal Database error</font><p>';
+								
+							}
+							
+							echo '(<a href=\"logout.php/?source=login.php\">Logout</a>)';
+							
+							//Funktioniert nicht, da lokaler Server :(
+							mail($mail, 'TueGutes Registration', 'Du wurdest registriert');
+							//include 'Kontoerstellung.html';
 						}
 					}
 				}
