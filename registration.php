@@ -17,8 +17,10 @@ include 'db_connector.php';
 		<title>Registration</title>
 	</head>
 
-	<body>
-		<h1>TueGutes Registration Panel</h1>
+	<body bgcolor="gray">
+		<center>
+		
+		<h1><p>Einmal anmelden und Gutes tun!</p></h1>
 
 		<?php
 			//Prüfung, ob das Formular bereits gesendet wurde
@@ -31,7 +33,7 @@ include 'db_connector.php';
 
 				//Prüfung, ob alle Felder ausgefüllt sind
 				if ($user==="" OR $pass==="" OR $passwdh ==="" OR $mail ==="") {
-					echo '<font color=red>Fehler! Bitte alle Felder ausfüllen!</font>';
+					echo '<font color=red>Fehler! Bitte alle Felder ausfüllen!</font><p>';
 					include 'Kontoerstellung.html';
 				} else {
 					$db = db_connect();
@@ -43,7 +45,7 @@ include 'db_connector.php';
 					//Auslesen des Ergebnisses
 					$dbentry = $result->fetch_assoc();
 					if (isset($dbentry['Benutzername'])) { //Schauen, ob Benutzername bereits existiert
-						echo'<font color=red>Fehler! Benutzername bereits vorhanden!</font>';
+						echo'<font color=red>Fehler! Benutzername bereits vorhanden!</font><p>';
 						include 'Kontoerstellung.html';
 					}
 					elseif($pass != $passwdh) {	//Prüfen, ob Passwörter übereinstimmen
@@ -76,7 +78,7 @@ include 'db_connector.php';
 							$stmt->bind_param('s',$mail);
 							$stmt->bind_param('s'."");*/
 							$date = date("Y-m-d");
-							$pass_md5 = md5($pass,$date);
+							$pass_md5 = md5($pass.$date);
 							mysqli_stmt_bind_param($stmt, "ssss", $user, $pass_md5, $mail, $date);
 							$stmt->execute();
 							$affected_rows = mysqli_stmt_affected_rows($stmt);
@@ -90,7 +92,7 @@ include 'db_connector.php';
 								
 							}
 							
-							echo '(<a href=\"logout.php/?source=login.php\">Logout</a>)';
+							echo '(<a href="logout.php/?source=login.php">Logout</a>)';
 							
 							//Funktioniert nicht, da lokaler Server :(
 							mail($mail, 'TueGutes Registration', 'Du wurdest registriert');
