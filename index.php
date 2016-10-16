@@ -45,12 +45,12 @@
 
 			}
 
-			echo '<p>';
+			echo '<div style="margin-left:25%;margin-right:25%;background-color:#757575">';
 				if (isset($_GET['page']) && $_GET['page']!=1)
-					echo '<div style="text-align:left;margin-left:25%"><a href="index.php?page='.($_GET['page']-1).'"><--</a></div>';	
+					echo '<div style="text-align:left"><a href="index.php?page='.($_GET['page']-1).'"><--</a></div>';	
 				if (@$_GET['page']<MAX_PAGES)
-					echo '<div style="text-align:right;margin-right:25%"><a href=index.php?page=' . ((isset($_GET['page'])?$_GET['page']:1)+1) . '>--></a>';
-			echo '</p>';
+					echo '<div style="text-align:right"><a href=index.php?page=' . ((isset($_GET['page'])?$_GET['page']:1)+1) . '>--></a>';
+			echo '</div>';
 
 		?>
 </html>
