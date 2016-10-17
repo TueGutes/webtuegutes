@@ -83,6 +83,7 @@ include 'db_connector.php';
 								$pass_md5 = md5($pass.$date);
 								mysqli_stmt_bind_param($stmt, "ssss", $user, $pass_md5, $mail, $date);
 								$stmt->execute();
+								$_SESSION['user'] = $user;
 								$affected_rows = mysqli_stmt_affected_rows($stmt);
 								if($affected_rows == 1) {
 									echo '<font color=green>Registration war erfolgreich!</font><p>';
