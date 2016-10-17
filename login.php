@@ -22,7 +22,7 @@ include 'db_connector.php';
 			$stmt->bind_param('s',$user);
 			$stmt->execute();
 			$result = $stmt->get_result();
-			//db_close($db);
+			db_close($db);
 
 			//Auslesen des Ergebnisses
 			$dbentry = $result->fetch_assoc();
