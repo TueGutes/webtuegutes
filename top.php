@@ -2,7 +2,7 @@
 	<table width="100%">
 		<tr>
 			<td style="width:25%" align="center">
-				<a href="/index.php"><img src="img/logo_provisorisch.png" alt="Zurück zur Startseite" title="Zurück zur Startseite" style="width:75%"/></a>
+				<a href="./index.php"><img src="img/logo_provisorisch.png" alt="Zurück zur Startseite" title="Zurück zur Startseite" style="width:75%"/></a>
 			</td>
 			<td style="width:75%" align=right>
 				<iframe src="login.php" frameBorder="0">
