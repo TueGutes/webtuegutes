@@ -116,7 +116,7 @@ include 'db_connector.php';
 						include 'Kontoerstellung.html';
 					} else {
 						//Wenn der Nutzer bereits eingeloggt ist.
-						echo 'Sie sind eingeloggt als '.$_SESSION['user']." (<a href=\"logout.php/?source=login.php\">Logout</a>)";
+						Header("Location: ./");
 					}
 				}
 			?>
