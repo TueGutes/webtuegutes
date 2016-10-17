@@ -49,10 +49,12 @@ include 'db_connector.php';
 						if (isset($dbentry['Benutzername'])) { //Schauen, ob Benutzername bereits existiert
 							echo'<font color=red>Fehler! Benutzername bereits vorhanden!</font><p>';
 							include 'Kontoerstellung.html';
+							db_close($db);
 						}
 						elseif($pass != $passwdh) {	//Prüfen, ob Passwörter übereinstimmen
 							echo '<font color=red> Fehler! Passwörter stimmen nicht überein</font><p>';
 							include 'Kontoerstellung.html';
+							db_close($db);
 						}
 						else {
 							//Auslesen des Nutzers aus der Datenbank
@@ -64,10 +66,12 @@ include 'db_connector.php';
 							$result = $stmt->get_result();
 							//Auslesen des Ergebnisses
 							$dbentry = $result->fetch_assoc();
+							
 							if (isset($dbentry['Email'])) {
 								//Email wurde bereits registriert
 								echo '<font color = red>Fehler! Diese Email-Adresse wurde bereits registriert</font><p>';
 								include 'Kontoerstellung.html';
+								db_close($db);
 							}
 						 	else {
 								//SUCCESS! - Alle Parameter sind korrekt -> neuen Eintrag in Datenbank vornehmen
@@ -94,6 +98,8 @@ include 'db_connector.php';
 									echo '<font color=red>internal Database error</font><p>';
 									
 								}
+								
+								db_close($db);
 								
 								echo '(<a href="./">Zur Startseite</a>)';
 								
