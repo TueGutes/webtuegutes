@@ -5,7 +5,7 @@
 				<a href="./index.php"><img src="img/logo_provisorisch.png" alt="Zurück zur Startseite" title="Zurück zur Startseite" style="width:75%"/></a>
 			</td>
 			<td style="width:75%" align=right>
-				<iframe src="login.php" frameBorder="0">
+				<iframe src="login.php" width="50%" frameBorder="0">
 					include "login.php";
 				</iframe>
 			</td>
