@@ -1,0 +1,10 @@
+# Author
+# Henrik Huckauf
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+ErrorDocument 403 /error
+ErrorDocument 404 /error
+ErrorDocument 500 /error
