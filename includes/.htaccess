@@ -1,0 +1,11 @@
+# Author
+# Henrik Huckauf
+#
+#<Directory "/usr/local/apache/htdocs">
+#  AllowOverride Limit
+#
+# oder All (in apache/conf/httpd.conf)
+<Files *.php>
+Order Deny,Allow
+Deny from all
+</Files>
