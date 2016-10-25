@@ -14,7 +14,7 @@ include 'db_connector.php';
 
 //Gibt das Attribut idBenutzer zu einem gegebenen Benutzernamen zurück oder false,
 //falls es keinen Account mit dem Benutzernamen gibt
-function idToBenutzername(string benutzername) {
+function db_idOfBenutzername(string benutzername) {
 	$db = db_connect();
 	$sql = "SELECT idBenutzer FROM Benutzer WHERE Benutzername = ?";
 	$stmt = $db->prepare($sql);
@@ -33,7 +33,7 @@ function idToBenutzername(string benutzername) {
 
 //Gibt das Attribut idBenutzer zu einer gegebenen email Adresse zurück oder false, falls
 //es keinen Account mit dieser Emailadresse gibt
-function idToEmailAdresse(string emailadresse) {
+function db_idOfEmailAdresse(string emailadresse) {
 	$db = db_connect();
 	$sql = "SELECT idBenutzer FROM Benutzer WHERE Email = ?";
 	$stmt = $db->prepare($sql);
@@ -50,6 +50,21 @@ function idToEmailAdresse(string emailadresse) {
 	}
 }
 
+function db_createAccount(string benutzername, string vorname, string nachname, string passwort, string emailadresse) {
+	
+	
+}
+
+//Setzt das Status Attribut des Accounts mit der BenutzerID benutzerid
+//auf aktiv
+function db_activateAccount(int benutzerid) {
+	$db = db_connect();
+	$sql = "UPDATE Benutzer Set Status = 1 WHERE Benutzername = ?";
+	//$stmt = $db->prepare($sql);
+	//$stmt->bind_param('i',$user);
+	//$stmt->execute();
+	db_close($db);		
+}
 
 ?>
 
@@ -67,38 +82,21 @@ function idToEmailAdresse(string emailadresse) {
 			<?php
 				if(isset($_GET['e'])) {
 					$user = base64_decode($_GET['e']);
-					$db = db_connect();
-					$sql = "SELECT * FROM Benutzer WHERE Benutzername = ?";
-					$stmt = $db->prepare($sql);
-					$stmt->bind_param('s',$user);
-					$stmt->execute();
-					$result = $stmt->get_result();
-					$dbentry = $result->fetch_assoc();
-					
-					if(isset($dbentry['Benutzername'])) {
+					$benutzerid = db_idOfBenutzername($user);
+										
+					if(benutzerid != false) {
 						//TODO der Status muss auf sowas wie "aktiviert gesetzt werden"
 						//Außerdem muss man beim Login auf den Status des Accounts achten...
-						$sql = "UPDATE Benutzer Set Status = 1 WHERE Benutzername = ?";
-						$stmt = $db->prepare($sql);
-						$stmt->bind_param('s',$user);
-						//$stmt->execute();
 						
+						db_activateAccount(benutzerid);
+												
 						echo '<h1>Deine Registrierung war erfolgreich '.$user.'!</h1>' ;
 						$_SESSION['user'] = $user;
 						echo '(<a href="./">Zur Startseite</a>)';
-						
-						//echo 'Benutzer bekannt';
 					}
 					else {
 						echo '<font color=red>Link broken :(    Try again...</font><p>';
-					}
-					
-					//echo '<h1>Deine Registrierung war erfolgreich '.$user.'!</h1>' ;
-					//$_SESSION['user'] = $user;
-					//echo '<font color=green>Registration war erfolgreich!</font><p>';
-					//echo '(<a href="./">Zur Startseite</a>)';
-					
-					//Header("Location: ./");
+					}					
 				}
 				//Prüfung, ob das Formular bereits gesendet wurde
 				elseif (isset($_POST['benutzername']) && isset($_POST['passwort']) && isset($_POST['passwortwdh']) && isset($_POST['mail']) &&isset($_POST['vorname']) && isset($_POST['nachname']) && $_SESSION['user']==="null") {
@@ -114,43 +112,24 @@ function idToEmailAdresse(string emailadresse) {
 						echo '<font color=red>Fehler! Bitte alle Felder ausfüllen!</font><p>';
 						include 'Kontoerstellung.html';
 					} else {
-						$db = db_connect();
-						$sql = "SELECT * FROM Benutzer WHERE Benutzername = ?";
-						$stmt = $db->prepare($sql);
-						$stmt->bind_param('s',$user);
-						$stmt->execute();
-						$result = $stmt->get_result();
-						//Auslesen des Ergebnisses
-						$dbentry = $result->fetch_assoc();
-						if (isset($dbentry['Benutzername'])) { //Schauen, ob Benutzername bereits existiert
+						$benutzerid = db_idOfBenutzername($user);
+						if ($benutzerid != false) { //Schauen, ob Benutzername bereits existiert
 							echo'<font color=red>Fehler! Benutzername bereits vorhanden!</font><p>';
 							echo '<a href="./PasswortUpdate.php">Passwort vergessen?</a>';
 							include 'Kontoerstellung.html';
-							db_close($db);
 						}
 						elseif($pass != $passwdh) {	//Prüfen, ob Passwörter übereinstimmen
 							echo '<font color=red> Fehler! Passwörter stimmen nicht überein</font><p>';
 							include 'Kontoerstellung.html';
-							db_close($db);
 						}
-						else {
-							//Auslesen des Nutzers aus der Datenbank
-							$db = db_connect();
-							$sql = "SELECT * FROM Benutzer WHERE Email = ?";
-							$stmt = $db->prepare($sql);
-							$stmt->bind_param('s',$mail);
-							$stmt->execute();
-							$result = $stmt->get_result();
-							//Auslesen des Ergebnisses
-							$dbentry = $result->fetch_assoc();
-							
-							if (isset($dbentry['Email'])) {
+						else {		
+							$benutzerid = db_idOfEmailAdresse($mail);			
+							if ($benutzerid != false) {
 								//Email wurde bereits registriert
 								echo '<font color = red>Fehler! Diese Email-Adresse wurde bereits registriert</font><p>';
 								echo '<a href="./PasswortUpdate.php">Passwort vergessen?</a>';
 								include 'Kontoerstellung.html';
-								db_close($db);
-							}
+							}							}
 						 	else {
 								//SUCCESS! - Alle Parameter sind korrekt -> neuen Eintrag in Datenbank vornehmen
 														
