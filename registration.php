@@ -14,7 +14,7 @@ include 'db_connector.php';
 
 //Gibt das Attribut idBenutzer zu einem gegebenen Benutzernamen zurück oder false,
 //falls es keinen Account mit dem Benutzernamen gibt
-function idToBenutzername(string benutzername) {
+function idToBenutzername($benutzername) {
 	$db = db_connect();
 	$sql = "SELECT idBenutzer FROM Benutzer WHERE Benutzername = ?";
 	$stmt = $db->prepare($sql);
@@ -33,7 +33,7 @@ function idToBenutzername(string benutzername) {
 
 //Gibt das Attribut idBenutzer zu einer gegebenen email Adresse zurück oder false, falls
 //es keinen Account mit dieser Emailadresse gibt
-function idToEmailAdresse(string emailadresse) {
+function idToEmailAdresse($emailadresse) {
 	$db = db_connect();
 	$sql = "SELECT idBenutzer FROM Benutzer WHERE Email = ?";
 	$stmt = $db->prepare($sql);
@@ -53,18 +53,10 @@ function idToEmailAdresse(string emailadresse) {
 
 ?>
 
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Registration</title>
-	</head>
+<?php
+require "./includes/_top.php";
 
-	<body>
-		<?php include "top.php";?>
-		<div style="margin-left:25%;margin-right:25%;min-height:100%">
-			<center>
 			
-			<?php
 				if(isset($_GET['e'])) {
 					$user = base64_decode($_GET['e']);
 					$db = db_connect();
@@ -219,8 +211,7 @@ function idToEmailAdresse(string emailadresse) {
 						//Wenn der Nutzer bereits eingeloggt ist.
 						Header("Location: ./");
 					}
-				}
-			?>
-		</div>
-	</body>
-</htlm>
+				} 
+	require "./includes/_bottom.php"; 
+?>
+	

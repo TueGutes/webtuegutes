@@ -11,17 +11,10 @@ if (!(isset($_SESSION['user']))) {
 include 'db_connector.php';
 ?>
 
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Passwort vergessen</title>
-	</head>
 
-	<body>
-		<?php include "top.php";?>
-		<div style="margin-left:25%;margin-right:25%;min-height:100%">
-			<center>
-			<?php
+<?php
+require "./includes/_top.php";
+
 				if(isset($_GET['c']) && isset($_GET['p'])) {
 					//Bestätigungslink wurde aufgerufen
 					//Extrahiere Account CryptKey und neues Passwort und setze das neue Passwort
@@ -92,7 +85,5 @@ include 'db_connector.php';
 					//Leite weiter auf Startseite, vielleicht lieber persönliches Profil
 					header('Location: ./');
 				}
-			?>
-		</div>
-	</body>
-</htlm>
+	require "./includes/_bottom.php"; 				
+?>
