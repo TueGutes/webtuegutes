@@ -3,12 +3,13 @@
 session_start();
 
 //Prüfung, ob der Nutzer sich bereits eingeloggt hat.
-if (!(isset($_SESSION['user']))) {
-	$_SESSION['user'] = "null";
+if(!(isset($_SESSION['loggedIn']))) {
+	$_SESSION['loggedIn'] = false;
 }
 
 //Inkludieren von script-Dateien
-include 'db_connector.php';
+include './includes/db_connector.php';
+include './includes/emailSender.php';
 
 //DB Funktionen, die später ausgelagert werden sollten
 
@@ -50,15 +51,133 @@ function idToEmailAdresse($emailadresse) {
 	}
 }
 
+function idCreateAccount($benutzername, $vorname, $nachname, $email, $passwort) {
+	
+	
+	
+}
+
 
 ?>
 
 <?php
 require "./includes/_top.php";
 
+				/*
+				Es gibt ... Fälle:
+				1. Nutzer ist nicht eingeloggt und gelangt auf die Registrierungsseite
+					Es werden ihm die Formularfelder angezeigt
+				2. Nutzer hat das Formular abgeschickt
+					Daten werden geprüft und u.U. wird eine Mail gesendet
+					2.1 Nutzer bekommt Nachricht: "Email erfolgreich gesendet" und ein Account mit dem 
+					Status "unverifiziert" wird angelegt
+					2.2 Nutzer wird informiert, dass etwas mit den Daten nicht stimmt und bekommt das gleiche Formular wieder vorgelegt
+				3. Nutzer hat auf den Bestätigungslink geklickt.
+					Der Account der zum Link gehört (Parameter) wird auf den Status "verified" gesetzt
+				4. Der Nutzer ist bereits eingeloggt <Placeholder>
+				*/
 			
-				if(isset($_GET['e'])) {
-					$user = base64_decode($_GET['e']);
+			
+				if($_SESSION['loggedIn'] === false) {
+					if(isset($_GET['c'])) {//3. Fall: Bestätigungslink
+						
+					
+					} elseif(isset($_POST['benutzername']) && isset($_POST['passwort']) && isset($_POST['passwortwdh']) && isset($_POST['mail']) &&isset($_POST['vorname']) && isset($_POST['nachname'])) {  //2. Fall: Nutzer hat das Formular abgeschickt
+						$user = $_POST['benutzername'];
+						$vorname = $_POST['vorname'];
+						$nachname = $_POST['nachname'];
+						$pass = $_POST['passwort'];
+						$passwdh = $_POST['passwortwdh'];
+						$mail = $_POST['mail'];
+						//Prüfung, ob alle Felder ausgefüllt sind
+						if ($user==="" OR $pass==="" OR $passwdh ==="" OR $mail ==="" OR $vorname ==="" OR $nachname==="") {
+							echo '<font color=red>Fehler! Bitte alle Felder ausfüllen!</font><p>';
+							include 'Kontoerstellung.html';
+						} elseif (idToBenutzername($user) != false){//Benutzername existiert bereits
+							echo '<font color=red>Fehler! Benutzername bereits vergeben</font><p>';
+							include 'Kontoerstellung.html';
+						} elseif ($pass != $passwdh) { //Schauen, ob Passwörter identisch sind
+							echo '<font color=red> Fehler! Passwörter stimmen nicht überein</font><p>';
+							include 'Kontoerstellung.html';
+						} elseif(idToEmailAdresse($mail) != false) { //Email-Adresse bereits registriert
+							echo '<font color=red> Fehler! Email-Adresse bereits registriert</font><p>';
+							include 'Kontoerstellung.html';
+						} else {//Alles okay, erstelle neuen Account und sende Bestätigungsmail
+							
+							
+							
+						}
+					
+						 	else {
+								//SUCCESS! - Alle Parameter sind korrekt -> neuen Eintrag in Datenbank vornehmen
+														
+								//Benutzer in die Datenbank einfügen
+								$sql = "Insert into Benutzer (Benutzername, Vorname, Nachname, Passwort, Email, RegDatum) values(?,?,?,?,?,?)";
+								$stmt = $db->prepare($sql);
+								$date = date("Y-m-d");
+								$pass_md5 = md5($pass.$date);
+								mysqli_stmt_bind_param($stmt, "ssssss", $user, $vorname, $nachname, $pass_md5, $mail, $date);
+								$stmt->execute();
+								//$_SESSION['user'] = $user; //noch nicht gleich einloggen, erst auf Bestätigungslink Aufruf in Email warten
+								$affected_rows = mysqli_stmt_affected_rows($stmt);
+								if($affected_rows == 1) {
+									require 'PHPMailer-master/PHPMailerAutoload.php';
+									$phpmail = new PHPMailer;
+									$phpmail->isSMTP();
+									$phpmail->SMTPSecure = 'ssl';
+									$phpmail->SMTPAuth = true;
+									$phpmail->Host = 'smtp.gmail.com';
+									$phpmail->Port = 465;
+									$phpmail->Username = 'tuegutesinhannover@gmail.com';
+									$phpmail->Password = 'TueGutes1234';
+									//$mail->setFrom('Tue Gutes in Hannover');
+									$phpmail->setFrom('tuegutesinhannover@gmail.com');
+									$phpmail->addAddress($mail);
+									//$mail->addAddress('Andreas.blech@t-online.de');
+									$phpmail->Subject = 'Ihre Registrierung bei TueGutes in Hannover"';
+
+									$phpmail->msgHTML("<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/logo_provisorisch.png\" alt=\"Zurück zur Startseite\" title=\"Zurück zur Startseite\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?e=".base64_encode($user)." </h3></div>");
+									//$mail->msgHTML(file_get_contents('email_registrierung.php'), dirname(__FILE__));
+									$phpmail->AltBody = 'This is a plain-text message body'; //Alt = Alternative
+									//$mail->Body = 'This is a test.';
+									//send the message, check for errors
+									if (!$phpmail->send()) {
+ 									   echo "ERROR: Sending Mail " . $phpmail->ErrorInfo;
+									}
+									else {
+										echo '<font color=green>Bestätigungslink wurde gesendet an: '.$mail.'</font><p>';
+									}
+									
+									
+									//echo 'Success'.$affected_rows;
+								}
+								else {
+									echo '<font color=red>internal Database error</font><p>';
+									
+								}
+								
+								db_close($db);
+								
+								echo '(<a href="./">Zur Startseite</a>)';
+								
+								//Funktioniert nicht, da lokaler Server :(
+								//mail($mail, 'TueGutes Registration', 'Du wurdest registriert');
+								//include 'Kontoerstellung.html';
+							}
+						}
+					
+					
+					} else {//1. Fall: Nutzer ist nicht eingeloggt und gelangt auf Registrierungsseite
+						include 'Kontoerstellung.html';
+					}
+				
+				} else {//4. Fall: Nutzer ist bereits eingeloggt
+					echo '<h2>Sie sind bereits eingeloggt</h2>';
+					//TODO: Auf Profilseite weiterleiten
+				}
+			
+				/*if(isset($_GET['e'])) {
+					$user = base64_decode($_GET['c']);
 					$db = db_connect();
 					$sql = "SELECT * FROM Benutzer WHERE Benutzername = ?";
 					$stmt = $db->prepare($sql);
@@ -211,7 +330,7 @@ require "./includes/_top.php";
 						//Wenn der Nutzer bereits eingeloggt ist.
 						Header("Location: ./");
 					}
-				} 
+				} */
 	require "./includes/_bottom.php"; 
 ?>
 	
