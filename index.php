@@ -1,56 +1,49 @@
 <?php
-	include "script/session.php";
+/*
+*@author Henrik Huckauf
+*/
 
-	DEFINE('MAX_PAGES',2);
-
-	function getPage() {
-		if (!(isset($_GET['page'])))
-			return 1;
-		else
-			return $_GET['page'];
-	}
+require './includes/_top.php';
 ?>
 
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<title>TueGutes Landing Page</title>
-		<meta charset="UTF-8">
-		<style type="text/css">
-			h1 {margin-left:25%;}
-			h1 {margin-right:25%;}
-			h2 {margin-left:25%;}
-			h2 {margin-right:25%;}
-			p {margin-left:25%;}
-			p {margin-right:25%;}
-		</style>
-	</head>
+<h2>Home</h2>
+<h3>(und Beispielkram)</h3>
+<br>
+<div class='center'>
+	<a href='/login'>(Link) zum Login</a>
+	<br><br>
+	<input type="submit" value="submit">
+	<br><br>
+	<input type="button" value="button">
+	<br><br>
+	<input type="text" value="" placeholder="NAME">
+	<br><br>
+	<input type="email" value="" placeholder="EMAIL">
+	<br><br>
+	<input type="password" value="" placeholder="PASSWORT">
+	<br><br>
+	<textarea cols="16"  rows="2" placeholder="TEXT"></textarea>
+	<br><br>
+	<select>
+		<option value="none">Bitte wählen</option>
+		<option value="1">Option 1</option>
+		<option value="2">Option 2</option>
+		<option value="3">Option 3</option>
+	</select> 
+	<br><br>
+	<input id="radio1" name="radio" type="radio" checked="checked"><label for="radio1">Option 1</label>
+	<br><br>
+	<input id="radio2" name="radio" type="radio"><label for="radio2">Option 2</label>
+	<br><br>
+	<input id="radio3" name="radio" type="radio"><label for="radio3">Option 3</label>
+	<br><br>
+	<input id="checkbox1" type="checkbox" checked="checked"><label for="checkbox1">Check 1</label>
+	&nbsp;
+	<input id="checkbox2" type="checkbox"><label for="checkbox2">Check 2</label>
+	&nbsp;
+	<input id="checkbox3" type="checkbox"><label for="checkbox3">Check 3</label>
+</div>
 
-	<body>
-		<?php 
-
-			include "top.php";
-
-			if ($_SESSION['user']==="null") {
-				echo '<p><p><strong>Inhalte nur für eingeloggte Mitglieder sichtbar!<p>Jetzt <a href="registration.php">Mitglied werden</a>';
-			} else {
-
-				if (@$_GET['page']=="2") {
-					include "content/index2.html";
-				} else {
-					if (isset($_GET['page']))
-						header('Location: ./');
-					include "content/index.html";
-				}
-
-			}
-
-			echo '<div style="margin-left:25%;margin-right:25%;background-color:#757575">';
-				if (isset($_GET['page']) && $_GET['page']!=1)
-					echo '<div style="text-align:left"><a href="index.php?page='.($_GET['page']-1).'"><--</a></div>';	
-				if (@$_GET['page']<MAX_PAGES)
-					echo '<div style="text-align:right"><a href=index.php?page=' . ((isset($_GET['page'])?$_GET['page']:1)+1) . '>--></a>';
-			echo '</div>';
-
-		?>
-</html>
+<?php
+require './includes/_bottom.php';
+?>
