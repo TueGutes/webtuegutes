@@ -3,23 +3,24 @@
 session_start();
 
 //Prüfung, ob der Nutzer sich bereits eingeloggt hat.
-if (!(isset($_SESSION['user']))) {
-	$_SESSION['user'] = "null";
+if(!(isset($_SESSION['loggedIn'])) {
+	$_SESSION['loggedIn'] = false;
 }
 
+/*if (!(isset($_SESSION['user']))) {
+	$_SESSION['user'] = "null";
+}*/
+
 //Inkludieren von script-Dateien
-include 'db_connector.php';
-?>
+include './includes/db_connector.php';
+include './includes/emailSender.php';
 
-
-<?php
+//Top Bereich inkludieren
 require "./includes/_top.php";
 
 				if(isset($_GET['c']) && isset($_GET['p'])) {
 					//Bestätigungslink wurde aufgerufen
 					//Extrahiere Account CryptKey und neues Passwort und setze das neue Passwort
-					
-					
 				}
 				elseif(isset($_POST['mail']) && isset($_POST['passwort']) && isset($_POST['passwortwdh'])) {
 					//Das Formular wurde abgeschickt. Es wird geprüft, ob es einen Account zu der Email-Adresse gibt und ob die Passwörter übereinstimmen
@@ -50,33 +51,12 @@ require "./includes/_top.php";
 						//Bestätigungslink besteht aus CryptKey und base64 codiertem neuen Passwort
 						echo $_POST['mail']." - ".$_POST['passwort']." - ".$_POST['passwortwdh'];
 						
-						require 'PHPMailer-master/PHPMailerAutoload.php';
-						$phpmail = new PHPMailer;
-						$phpmail->isSMTP();
-						$phpmail->SMTPSecure = 'ssl';
-						$phpmail->SMTPAuth = true;
-						$phpmail->Host = 'smtp.gmail.com';
-						$phpmail->Port = 465;
-						$phpmail->Username = 'tuegutesinhannover@gmail.com';
-						$phpmail->Password = 'TueGutes1234';
-						//$mail->setFrom('Tue Gutes in Hannover');
-						$phpmail->setFrom('tuegutesinhannover@gmail.com');
-						$phpmail->addAddress($mail);
-						//$mail->addAddress('Andreas.blech@t-online.de');
-						$phpmail->Subject = 'Ihre Registrierung bei TueGutes in Hannover"';
-						$phpmail->msgHTML("<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/logo_provisorisch.png\" alt=\"Zurück zur Startseite\" title=\"Zurück zur Startseite\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?e=".base64_encode($user)." </h3></div>");
-						$phpmail->AltBody = 'This is a plain-text message body'; //Alt = Alternative
-						
-						//send the message, check for errors
-						if (!$phpmail->send()) {
- 						   echo "ERROR: Sending Mail " . $phpmail->ErrorInfo;
-						}
-						else {
-							echo '<font color=green>Bestätigungslink wurde gesendet an: '.$mail.'</font><p>';
-						}			
+						$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/logo_provisorisch.png\" alt=\"Zurück zur Startseite\" title=\"Zurück zur Startseite\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?e=".base64_encode($user)." </h3></div>";
+						sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent);
+								
 					}
 				}
-				elseif($_SESSION['user']==="null") {
+				elseif($_SESSION['loggedIn'])===false) {
 					//Nutzer ist nicht eingeloggt und hat das Formular noch nicht abgeschickt
 					include 'passwortAnfordern.html';
 				}
