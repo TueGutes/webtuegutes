@@ -21,7 +21,7 @@ function sendEmail($to, $subject, $content) {
 	$phpmail->AltBody = 'This is a plain-text message body'; 						
 	//send the message, check for errors
 	if (!$phpmail->send()) {
- 		echo "ERROR: Sending Mail " . $phpmail->ErrorInfo;
+ 		//echo "ERROR: Sending Mail " . $phpmail->ErrorInfo;
  		return false;
 	}
 	else {

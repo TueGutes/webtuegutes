@@ -15,8 +15,8 @@ include './includes/emailSender.php';
 
 //Gibt das Attribut idBenutzer zu einem gegebenen Benutzernamen zurück oder false,
 //falls es keinen Account mit dem Benutzernamen gibt
-function idToBenutzername($benutzername) {
-	$db = db_connect();
+function idOfBenutzername($benutzername) {
+	/*$db = db_connect();
 	$sql = "SELECT idBenutzer FROM Benutzer WHERE Benutzername = ?";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('s',$benutzername);
@@ -29,13 +29,15 @@ function idToBenutzername($benutzername) {
 	}
 	else {
 		return false;
-	}
+	}*/
+	
+	return false; //Testzwecke
 }
 
 //Gibt das Attribut idBenutzer zu einer gegebenen email Adresse zurück oder false, falls
 //es keinen Account mit dieser Emailadresse gibt
-function idToEmailAdresse($emailadresse) {
-	$db = db_connect();
+function idOfEmailAdresse($emailadresse) {
+	/*$db = db_connect();
 	$sql = "SELECT idBenutzer FROM Benutzer WHERE Email = ?";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('s',$emailadresse);
@@ -48,13 +50,27 @@ function idToEmailAdresse($emailadresse) {
 	}
 	else {
 		return false;
-	}
+	}*/
+	
+	return false; //Testzwecke
 }
 
-function idCreateAccount($benutzername, $vorname, $nachname, $email, $passwort) {
+function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
+	//TODO: Datenbank Insert ausarbeiten
+	/*$sql = "Insert into Benutzer (Benutzername, Vorname, Nachname, Passwort, Email, RegDatum) values(?,?,?,?,?,?)";
+	$stmt = $db->prepare($sql);
+	$date = date("Y-m-d");
+	$pass_md5 = md5($pass.$date);
+	mysqli_stmt_bind_param($stmt, "ssssss", $user, $vorname, $nachname, $pass_md5, $mail, $date);
+	$stmt->execute();
 	
+	$affected_rows = mysqli_stmt_affected_rows($stmt);
+	if($affected_rows == 1) {
+		return true;	
+	}
+	return false;*/
 	
-	
+	return true; //Für Testzwecke
 }
 
 
@@ -91,246 +107,44 @@ require "./includes/_top.php";
 						$mail = $_POST['mail'];
 						//Prüfung, ob alle Felder ausgefüllt sind
 						if ($user==="" OR $pass==="" OR $passwdh ==="" OR $mail ==="" OR $vorname ==="" OR $nachname==="") {
+							//2.1 Fall: Nicht alle Felder ausgefüllt
 							echo '<font color=red>Fehler! Bitte alle Felder ausfüllen!</font><p>';
 							include 'Kontoerstellung.html';
-						} elseif (idToBenutzername($user) != false){//Benutzername existiert bereits
+						} elseif (idOfBenutzername($user) != false){
+							//2.2 Fall: Benutzername existiert bereits
 							echo '<font color=red>Fehler! Benutzername bereits vergeben</font><p>';
 							include 'Kontoerstellung.html';
-						} elseif ($pass != $passwdh) { //Schauen, ob Passwörter identisch sind
+						} elseif ($pass != $passwdh) { 
+							//2.3 Fall: Passwörter sind nicht identisch
 							echo '<font color=red> Fehler! Passwörter stimmen nicht überein</font><p>';
 							include 'Kontoerstellung.html';
-						} elseif(idToEmailAdresse($mail) != false) { //Email-Adresse bereits registriert
+						} elseif(idOfEmailAdresse($mail) != false) { //Email-Adresse bereits registriert
 							echo '<font color=red> Fehler! Email-Adresse bereits registriert</font><p>';
 							include 'Kontoerstellung.html';
 						} else {//Alles okay, erstelle neuen Account und sende Bestätigungsmail
-							
-							
-							
-						}
-					
-						 	else {
-								//SUCCESS! - Alle Parameter sind korrekt -> neuen Eintrag in Datenbank vornehmen
-														
-								//Benutzer in die Datenbank einfügen
-								$sql = "Insert into Benutzer (Benutzername, Vorname, Nachname, Passwort, Email, RegDatum) values(?,?,?,?,?,?)";
-								$stmt = $db->prepare($sql);
-								$date = date("Y-m-d");
-								$pass_md5 = md5($pass.$date);
-								mysqli_stmt_bind_param($stmt, "ssssss", $user, $vorname, $nachname, $pass_md5, $mail, $date);
-								$stmt->execute();
-								//$_SESSION['user'] = $user; //noch nicht gleich einloggen, erst auf Bestätigungslink Aufruf in Email warten
-								$affected_rows = mysqli_stmt_affected_rows($stmt);
-								if($affected_rows == 1) {
-									require 'PHPMailer-master/PHPMailerAutoload.php';
-									$phpmail = new PHPMailer;
-									$phpmail->isSMTP();
-									$phpmail->SMTPSecure = 'ssl';
-									$phpmail->SMTPAuth = true;
-									$phpmail->Host = 'smtp.gmail.com';
-									$phpmail->Port = 465;
-									$phpmail->Username = 'tuegutesinhannover@gmail.com';
-									$phpmail->Password = 'TueGutes1234';
-									//$mail->setFrom('Tue Gutes in Hannover');
-									$phpmail->setFrom('tuegutesinhannover@gmail.com');
-									$phpmail->addAddress($mail);
-									//$mail->addAddress('Andreas.blech@t-online.de');
-									$phpmail->Subject = 'Ihre Registrierung bei TueGutes in Hannover"';
-
-									$phpmail->msgHTML("<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/logo_provisorisch.png\" alt=\"Zurück zur Startseite\" title=\"Zurück zur Startseite\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?e=".base64_encode($user)." </h3></div>");
-									//$mail->msgHTML(file_get_contents('email_registrierung.php'), dirname(__FILE__));
-									$phpmail->AltBody = 'This is a plain-text message body'; //Alt = Alternative
-									//$mail->Body = 'This is a test.';
-									//send the message, check for errors
-									if (!$phpmail->send()) {
- 									   echo "ERROR: Sending Mail " . $phpmail->ErrorInfo;
-									}
-									else {
-										echo '<font color=green>Bestätigungslink wurde gesendet an: '.$mail.'</font><p>';
-									}
-									
-									
-									//echo 'Success'.$affected_rows;
+							if(createBenutzerAccount($user, $vorname, $nachname, $mail, $pass) === true) {
+								//Account erfolgreich in Datenbank erstellt
+								//Sende Bestätigungslink an Mailadresse
+								
+								$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/logo_provisorisch.png\" alt=\"Zurück zur Startseite\" title=\"Zurück zur Startseite\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?e=".base64_encode($user)." </h3></div>";
+								
+								if(sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent)===true) {
+									echo '<h3><font color=green>Bestätigungslink wurde gesendet an: '.$mail.'</font></h3><p>';
 								}
 								else {
-									echo '<font color=red>internal Database error</font><p>';
-									
+									echo '<h3><font color=red>Bestätigungslink an '.$mail.' konnte nicht gesendet werden</font></h3><p>';
 								}
-								
-								db_close($db);
-								
-								echo '(<a href="./">Zur Startseite</a>)';
-								
-								//Funktioniert nicht, da lokaler Server :(
-								//mail($mail, 'TueGutes Registration', 'Du wurdest registriert');
-								//include 'Kontoerstellung.html';
+							} else {
+								echo '<font color=red>internal Database error</font><p>';
 							}
 						}
-					
-					
 					} else {//1. Fall: Nutzer ist nicht eingeloggt und gelangt auf Registrierungsseite
 						include 'Kontoerstellung.html';
 					}
-				
 				} else {//4. Fall: Nutzer ist bereits eingeloggt
 					echo '<h2>Sie sind bereits eingeloggt</h2>';
 					//TODO: Auf Profilseite weiterleiten
 				}
-			
-				/*if(isset($_GET['e'])) {
-					$user = base64_decode($_GET['c']);
-					$db = db_connect();
-					$sql = "SELECT * FROM Benutzer WHERE Benutzername = ?";
-					$stmt = $db->prepare($sql);
-					$stmt->bind_param('s',$user);
-					$stmt->execute();
-					$result = $stmt->get_result();
-					$dbentry = $result->fetch_assoc();
-					
-					if(isset($dbentry['Benutzername'])) {
-						//TODO der Status muss auf sowas wie "aktiviert gesetzt werden"
-						//Außerdem muss man beim Login auf den Status des Accounts achten...
-						$sql = "UPDATE Benutzer Set Status = 1 WHERE Benutzername = ?";
-						$stmt = $db->prepare($sql);
-						$stmt->bind_param('s',$user);
-						//$stmt->execute();
-						
-						echo '<h1>Deine Registrierung war erfolgreich '.$user.'!</h1>' ;
-						$_SESSION['user'] = $user;
-						echo '(<a href="./">Zur Startseite</a>)';
-						
-						//echo 'Benutzer bekannt';
-					}
-					else {
-						echo '<font color=red>Link broken :(    Try again...</font><p>';
-					}
-					
-					//echo '<h1>Deine Registrierung war erfolgreich '.$user.'!</h1>' ;
-					//$_SESSION['user'] = $user;
-					//echo '<font color=green>Registration war erfolgreich!</font><p>';
-					//echo '(<a href="./">Zur Startseite</a>)';
-					
-					//Header("Location: ./");
-				}
-				//Prüfung, ob das Formular bereits gesendet wurde
-				elseif (isset($_POST['benutzername']) && isset($_POST['passwort']) && isset($_POST['passwortwdh']) && isset($_POST['mail']) &&isset($_POST['vorname']) && isset($_POST['nachname']) && $_SESSION['user']==="null") {
-
-					$user = $_POST['benutzername'];
-					$vorname = $_POST['vorname'];
-					$nachname = $_POST['nachname'];
-					$pass = $_POST['passwort'];
-					$passwdh = $_POST['passwortwdh'];
-					$mail = $_POST['mail'];
-					//Prüfung, ob alle Felder ausgefüllt sind
-					if ($user==="" OR $pass==="" OR $passwdh ==="" OR $mail ==="" OR $vorname ==="" OR $nachname==="") {
-						echo '<font color=red>Fehler! Bitte alle Felder ausfüllen!</font><p>';
-						include 'Kontoerstellung.html';
-					} else {
-						$db = db_connect();
-						$sql = "SELECT * FROM Benutzer WHERE Benutzername = ?";
-						$stmt = $db->prepare($sql);
-						$stmt->bind_param('s',$user);
-						$stmt->execute();
-						$result = $stmt->get_result();
-						//Auslesen des Ergebnisses
-						$dbentry = $result->fetch_assoc();
-						if (isset($dbentry['Benutzername'])) { //Schauen, ob Benutzername bereits existiert
-							echo'<font color=red>Fehler! Benutzername bereits vorhanden!</font><p>';
-							echo '<a href="./PasswortUpdate.php">Passwort vergessen?</a>';
-							include 'Kontoerstellung.html';
-							db_close($db);
-						}
-						elseif($pass != $passwdh) {	//Prüfen, ob Passwörter übereinstimmen
-							echo '<font color=red> Fehler! Passwörter stimmen nicht überein</font><p>';
-							include 'Kontoerstellung.html';
-							db_close($db);
-						}
-						else {
-							//Auslesen des Nutzers aus der Datenbank
-							$db = db_connect();
-							$sql = "SELECT * FROM Benutzer WHERE Email = ?";
-							$stmt = $db->prepare($sql);
-							$stmt->bind_param('s',$mail);
-							$stmt->execute();
-							$result = $stmt->get_result();
-							//Auslesen des Ergebnisses
-							$dbentry = $result->fetch_assoc();
-							
-							if (isset($dbentry['Email'])) {
-								//Email wurde bereits registriert
-								echo '<font color = red>Fehler! Diese Email-Adresse wurde bereits registriert</font><p>';
-								echo '<a href="./PasswortUpdate.php">Passwort vergessen?</a>';
-								include 'Kontoerstellung.html';
-								db_close($db);
-							}
-						 	else {
-								//SUCCESS! - Alle Parameter sind korrekt -> neuen Eintrag in Datenbank vornehmen
-														
-								//Benutzer in die Datenbank einfügen
-								$sql = "Insert into Benutzer (Benutzername, Vorname, Nachname, Passwort, Email, RegDatum) values(?,?,?,?,?,?)";
-								$stmt = $db->prepare($sql);
-								$date = date("Y-m-d");
-								$pass_md5 = md5($pass.$date);
-								mysqli_stmt_bind_param($stmt, "ssssss", $user, $vorname, $nachname, $pass_md5, $mail, $date);
-								$stmt->execute();
-								//$_SESSION['user'] = $user; //noch nicht gleich einloggen, erst auf Bestätigungslink Aufruf in Email warten
-								$affected_rows = mysqli_stmt_affected_rows($stmt);
-								if($affected_rows == 1) {
-									require 'PHPMailer-master/PHPMailerAutoload.php';
-									$phpmail = new PHPMailer;
-									$phpmail->isSMTP();
-									$phpmail->SMTPSecure = 'ssl';
-									$phpmail->SMTPAuth = true;
-									$phpmail->Host = 'smtp.gmail.com';
-									$phpmail->Port = 465;
-									$phpmail->Username = 'tuegutesinhannover@gmail.com';
-									$phpmail->Password = 'TueGutes1234';
-									//$mail->setFrom('Tue Gutes in Hannover');
-									$phpmail->setFrom('tuegutesinhannover@gmail.com');
-									$phpmail->addAddress($mail);
-									//$mail->addAddress('Andreas.blech@t-online.de');
-									$phpmail->Subject = 'Ihre Registrierung bei TueGutes in Hannover"';
-
-									$phpmail->msgHTML("<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/logo_provisorisch.png\" alt=\"Zurück zur Startseite\" title=\"Zurück zur Startseite\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?e=".base64_encode($user)." </h3></div>");
-									//$mail->msgHTML(file_get_contents('email_registrierung.php'), dirname(__FILE__));
-									$phpmail->AltBody = 'This is a plain-text message body'; //Alt = Alternative
-									//$mail->Body = 'This is a test.';
-									//send the message, check for errors
-									if (!$phpmail->send()) {
- 									   echo "ERROR: Sending Mail " . $phpmail->ErrorInfo;
-									}
-									else {
-										echo '<font color=green>Bestätigungslink wurde gesendet an: '.$mail.'</font><p>';
-									}
-									
-									
-									//echo 'Success'.$affected_rows;
-								}
-								else {
-									echo '<font color=red>internal Database error</font><p>';
-									
-								}
-								
-								db_close($db);
-								
-								echo '(<a href="./">Zur Startseite</a>)';
-								
-								//Funktioniert nicht, da lokaler Server :(
-								//mail($mail, 'TueGutes Registration', 'Du wurdest registriert');
-								//include 'Kontoerstellung.html';
-							}
-						}
-					}
-				} else {
-					if ($_SESSION['user']==="null") {
-						echo '<h1><p>Einmal anmelden und Gutes tun!</p></h1>';
-						//Wenn der Nutzer nicht eingeloggt ist und das Formular noch nicht abgeschickt wurde.
-						echo 'Geben Sie Ihre gewünschten Nutzerdaten ein, um sich im System zu registrieren.<p>';
-						include 'Kontoerstellung.html';
-					} else {
-						//Wenn der Nutzer bereits eingeloggt ist.
-						Header("Location: ./");
-					}
-				} */
 	require "./includes/_bottom.php"; 
 ?>
 	
