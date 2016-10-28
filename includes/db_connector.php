@@ -90,13 +90,13 @@ function db_getUserData($UserID){
   		PersData.firstname,
 		PersData.lastname,
 		PersData.birthday,
-		UserTexts.avatar,
 		PersData.street,
 		PersData.housenumber,
 		PersData.telefonnumber,
 		PersData.messengernumber,
+		UserTexts.avatar,
 		UserTexts.hobbys,
-		UserTexts.description,
+		UserTexts.description
 		FROM UserTexts
   			INNER JOIN User
     			ON UserTexts.idUserTexts = User.idUser
@@ -112,4 +112,45 @@ function db_getUserData($UserID){
 	return $dbentry;
 }
 
+
+//Soll die Benutzerdaten abspeichern, die von Alex verlangt wurden
+function db_saveUserData($savedata){
+	$db = db_connect();
+	$sql ="UPDATE User,PersData,UserTexts
+		SET 
+		User.username = ?,
+		User.email = ?,
+		User.regDate = ?,
+		PersData.firstname = ?,
+		PersData.lastname = ?,
+		PersData.birthday = ?,
+		PersData.street = ?,
+		PersData.housenumber = ?,
+		PersData.telefonnumber = ?,
+		PersData.messengernumber = ?,
+		UserTexts.avatar = ?,
+		UserTexts.hobbys = ?,
+		UserTexts.description = ?
+		WHERE User.idUser = ? 
+		AND PersData.idPersData = User.idUser
+		AND UserTexts.idUserTexts = User.idUser;"
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('sssssssssssssi',
+		$savedata['User.username'],
+		$savedata['User.email'],
+		$savedata['User.regDate'],
+		$savedata['PersData.firstname'],
+		$savedata['PersData.lastname'],
+		$savedata['PersData.birthday'],
+		$savedata['PersData.street'],
+		$savedata['PersData.housenumber'],
+		$savedata['PersData.telefonnumber'],
+		$savedata['PersData.messengernumber'],
+		$savedata['UserTexts.avatar'],
+		$savedata['UserTexts.hobbys'],
+		$savedata['UserTexts.description'],
+		$savedata['User.idUser']);
+	$stmt->execute();
+	db_close($db);
+}
 ?>
