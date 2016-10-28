@@ -52,4 +52,7 @@ $wlang['login_head'] = 'Login';
 $wlang['login_placeholder_username'] = 'Benutzername / E-Mail';
 $wlang['login_placeholder_password'] = 'Passwort';
 $wlang['login_button_submit'] = 'Login';
+
+//====deeds====
+$wlang['deeds_head'] = 'Gute Taten';
 ?>
