@@ -34,28 +34,27 @@ var nextPage = function(){
 		$mysqli = db_connect();
 		$result = $mysqli->query("SELECT * FROM deeds");
 		// Tabellenkopf mit den Feldnamen als Spaltenbezeichnungen:
-		echo " <tr>";
+		echo " <tr> <th> ";
 		while ( $field = $result->fetch_field() ) {
 			if(($field->name !== "idGuteTat")&&($field->name !== "contactPerson")&&($field->name !== "status")){
-				echo " <th>$field->name</th>";
+				echo " $field->name";
 			}
 		}
-		
+		echo " </th> </tr>";
 // 		Versuch einen Button mit in die Tabelle zu stellen misglückt.
 //		<input type="button" value="weiterlesen" onclick="nextPage();"> 
 //		<p id="out"> yo </p>
 		 
-		echo " </tr>";
-		// Tabelleneinträge aus der Datenbank
+		 
+		 // Tabelleneinträge aus der Datenbank
 		while ( $deed = $result->fetch_object() ) {
 
-			echo " <tr>";
+			echo " <tr> <td> ";
 			foreach ( $deed as $key => $value ) 
 			{
-				echo " <td>$value</td> ";	
+				echo "out $value";	
 			}
-
-			echo " </tr>";
+			echo " </td> </tr>";
 		}
 		?>
 	</table>
