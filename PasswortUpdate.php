@@ -1,5 +1,5 @@
 <?php
-
+//Author: Andreas Blech
 session_start();
 
 //Inkludieren von script-Dateien
@@ -13,6 +13,60 @@ require "./includes/_top.php";
 if(!(isset($_SESSION['loggedIn']))) {
 	$_SESSION['loggedIn'] = false;
 }
+
+//DB Funktionen, die später ausgelagert werden sollten
+
+/*Liefert den Cryptkey zum Account, der zu der übergeben Email-Adresse gehört oder false*/
+function getCryptkeyByMail($mail) {
+	$db = db_connect();
+	$sql = "SELECT cryptkey FROM Privacy WHERE idPrivacy = (SELECT idUser FROM User WHERE email = ?)";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('s',$mail);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);				
+	if(isset($dbentry['cryptkey'])){
+		return $dbentry['cryptkey'];
+	}
+	else {
+		return false;
+	}
+	//return "asdfjklö"; //Testzwecke
+}
+
+/*Ändert das Passwort des zum Cryptkey gehörenden Accounts*/
+/*Liefert true bei Erfolg und false beim Fehlerfall*/
+function changePasswortByCryptkey($cryptkey, $newPasswort) {
+	$db = db_connect();
+	$sql = "UPDATE User SET password = ? WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
+	$stmt = $db->prepare($sql);
+	mysqli_stmt_bind_param($stmt, "ss", $newPasswort, $cryptkey);
+	$stmt->execute();
+	db_close($db);				
+	
+	return true; //Testzwecke
+}
+
+/*Liefert den Benutzernamen des Accounts, der zum cryptkey gehört*/
+function getUserByCryptkey($cryptkey) {
+	$db = db_connect();
+	$sql = "SELECT username FROM User WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('s',$cryptkey);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);				
+	if(isset($dbentry['username'])){
+		return $dbentry['username'];
+	}
+	else {
+		return false;
+	}
+	//return "blecha"; //Testzwecke
+}
+
 				/*
 				Es gibt ... Fälle
 				1. Nutzer ist nicht eingeloggt und geht auf die PasswortUpdate Seite (über einen Link)
@@ -58,15 +112,45 @@ if(!(isset($_SESSION['loggedIn']))) {
 									<input type="submit" value="Email senden">
 									</center>
 								</form>';
-								//TODO: Man muss auch den Cryptkey mit übergeben...
-						
+							//Speichere den Cryptkey temporär in der Session, damit man ihn auslesen kann, wenn das Formular versendet wurde
+							$_SESSION['cryptkey'] = $_GET['c'];	
 					} elseif(isset($_POST['mail'])) { //2.Fall: Zeige Meldung und schicke Bestätigungslink
 						echo '<h2>Passwort Ändern</h2>';
-						echo '<h3>Email gesendet an: '.$_POST['mail'].'</h3>';
-						echo '<h4>Klicken sie auf die URL in der Email, um das Passwort zu ändern</h4>';
-						//TODO: Cryptkey aus Datenbank anhand der Mail laden
-						//TODO: Email mit Bestätigungslink und Cryptkey senden
-						
+						//echo '<h3>Email gesendet an: '.$_POST['mail'].'</h3>';
+						$cryptkey = getCryptkeyByMail($_POST['mail']);
+						if($cryptkey != false) {
+							//TODO: Email mit Bestätigungslink und Cryptkey senden
+							$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
+									<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
+							</div>
+							<div style=\"margin-left:10%;margin-right:10%\">
+								<h2>Klicke auf den Link, um ein neues Passwort zu setzen http://localhost/git/PasswortUpdate.php?c=$cryptkey </h2>
+							</div>";
+							//"http://localhost/git/PasswortUpdate.php?c=$cryptkey";
+							if(sendEmail($_POST['mail'], "TueGutes - Passwort Ändern", $mailcontent)===true) {
+									echo '<h3><font color=green>Es wurde ein Passwort-Änderungs-Link an '.$_POST['mail'].' gesendet</font></h3><p>';
+									echo '<h4>Klicken sie auf die URL in der Email, um das Passwort zu ändern</h4>';
+							}
+							else {
+								//Das Senden der Email ist fehlgeschlagen
+								echo '<h3><font color=red>Email an $mail konnte nicht gesendet werden</font></h3><p>';
+							}
+						}
+						else {
+							//Es wurde kein Account zu der angegebenen Email gefunden
+							echo '<h3><font color=red>Fehler! Kein Account zu '.$_POST['mail'].' gefunden</font></h3><p>';
+							echo'<form action="PasswortUpdate.php" method="post">
+									<center>
+										<table>
+											<tr>
+												<td><b>E-Mail Adresse:</b></td>
+												<td><input type="text" name="mail"></td>
+											</tr>
+										</table>
+									<input type="submit" value="Email senden">
+									</center>
+								</form>';	
+						}
 					} elseif(isset($_POST['passwort']) && isset($_POST['passwortwdh'])) {//4.Fall: Neues Passwort setzen, darüber benachrichtigen
 						//Einloggen
 						if($_POST['passwort'] != $_POST['passwortwdh']) {
@@ -91,15 +175,19 @@ if(!(isset($_SESSION['loggedIn']))) {
 						}
 						else {
 							//TODO: Passwort wirklich ändern :)
+							changePasswortByCryptkey($_SESSION['cryptkey'], $_POST['passwort']);
+							//TODO: Auf Profilseite weiterleiten
+							$_SESSION['loggedIn'] = true;
+							$_SESSION['user'] = getUserByCryptkey($_SESSION['cryptkey']); 
+							unset($_SESSION['cryptkey']);
 							echo'<h3>Passwort erfolgreich geändert</h3>';
 						}
 						//$_SESSION['loggedIn']=true;
 						//Header("Location: ./");
-					} else{ //1. Fall: Nutzer eingeloggt und auf PasswortUpdate.php gelangt 
+					} else{ //1. Fall: Nutzer ist nicht eingeloggt und auf PasswortUpdate.php gelangt 
+						echo '<h2>Passwort Ändern</h2>';
 						echo'<form action="PasswortUpdate.php" method="post">
 									<center>
-										<h2>Passwort Ändern</h2>
-	
 										<table>
 											<tr>
 												<td><b>E-Mail Adresse:</b></td>
@@ -111,57 +199,11 @@ if(!(isset($_SESSION['loggedIn']))) {
 								</form>';	
 					}
 				} else { //5. Fall: Nutzer ist bereits eingeloggt
-					//Automatisch zur Startseite weiterleiten
 					echo '<h3>Du bist bereits eingeloggt</h3>';
-					//Header("Location: ./");
+					//TODO: Verweis auf Profilseite
 				}
 
-				/*if(isset($_GET['c']) && isset($_GET['p'])) {
-					//Bestätigungslink wurde aufgerufen
-					//Extrahiere Account CryptKey und neues Passwort und setze das neue Passwort
-				}
-				elseif(isset($_POST['mail']) && isset($_POST['passwort']) && isset($_POST['passwortwdh'])) {
-					//Das Formular wurde abgeschickt. Es wird geprüft, ob es einen Account zu der Email-Adresse gibt und ob die Passwörter übereinstimmen
-					//Falls alles erfolgreich war wird eine Passwort-Reset Mail gesendet
-					$mail = $_POST['mail'];
-					$pass = $_POST['passwort'];
-					$passwdh = $_POST['passwortwdh'];
-					
-					$db = db_connect();
-					$sql = "SELECT * FROM Benutzer WHERE Email = ?";
-					$stmt = $db->prepare($sql);
-					$stmt->bind_param('s',$mail);
-					$stmt->execute();
-					$result = $stmt->get_result();
-					//Auslesen des Ergebnisses
-					$dbentry = $result->fetch_assoc();
-					db_close($db);
-					if (!isset($dbentry['Email'])) {
-						echo '<font color=red>Zu dieser Email Adresse ist uns kein Account bekannt</font><p>';
-						include 'passwortAnfordern.html';
-					}
-					elseif($_POST['passwort'] != $_POST['passwortwdh']) {
-						echo'<font color=red>Passwörter stimmen nicht überein!</font><p>';
-						include 'passwortAnfordern.html';
-					}
-					else {
-						//Alles in Ordnung -> Sende Mail
-						//Bestätigungslink besteht aus CryptKey und base64 codiertem neuen Passwort
-						echo $_POST['mail']." - ".$_POST['passwort']." - ".$_POST['passwortwdh'];
-						
-						$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/logo_provisorisch.png\" alt=\"Zurück zur Startseite\" title=\"Zurück zur Startseite\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?e=".base64_encode($user)." </h3></div>";
-						sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent);
-								
-					}
-				}
-				elseif($_SESSION['loggedIn']===false) {
-					//Nutzer ist nicht eingeloggt und hat das Formular noch nicht abgeschickt
-					include 'passwortAnfordern.html';
-				}
-				else {
-					//Der Nutzer ist bereits eingeloggt. Das "Passwort Vergessen" Menü ergibt keinen Sinn
-					//Leite weiter auf Startseite, vielleicht lieber persönliches Profil
-					header('Location: ./');
-				}*/
-	require "./includes/_bottom.php"; 				
+				echo '<footer>';
+					include "./includes/_bottom.php"; 	
+				echo '</footer>';			
 ?>

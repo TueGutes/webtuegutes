@@ -1,5 +1,5 @@
 <?php
-
+//Author: Andreas Blech
 session_start();
 
 //Prüfung, ob der Nutzer sich bereits eingeloggt hat.
@@ -16,48 +16,50 @@ include './includes/emailSender.php';
 //Gibt das Attribut idBenutzer zu einem gegebenen Benutzernamen zurück oder false,
 //falls es keinen Account mit dem Benutzernamen gibt
 function idOfBenutzername($benutzername) {
-	/*$db = db_connect();
-	$sql = "SELECT idBenutzer FROM Benutzer WHERE Benutzername = ?";
+	$db = db_connect();
+	$sql = "SELECT idUser FROM User WHERE username = ?";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('s',$benutzername);
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
 	db_close($db);
-	if(isset($dbentry['idBenutzer'])){
-		return $dbentry['idBenutzer'];
+	if(isset($dbentry['idUser'])){
+		return $dbentry['idUser'];
 	}
 	else {
 		return false;
-	}*/
+	}
 	
-	return false; //Testzwecke
+	//return false; //Testzwecke
 }
 
 //Gibt das Attribut idBenutzer zu einer gegebenen email Adresse zurück oder false, falls
 //es keinen Account mit dieser Emailadresse gibt
 function idOfEmailAdresse($emailadresse) {
-	/*$db = db_connect();
-	$sql = "SELECT idBenutzer FROM Benutzer WHERE Email = ?";
+	$db = db_connect();
+	$sql = "SELECT idUser FROM User WHERE email = ?";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('s',$emailadresse);
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
 	db_close($db);				
-	if(isset($dbentry['idBenutzer'])){
-		return $dbentry['idBenutzer'];
+	if(isset($dbentry['idUser'])){
+		return $dbentry['idUser'];
 	}
 	else {
 		return false;
-	}*/
+	}
 	
-	return false; //Testzwecke
+	//return false; //Testzwecke
 }
 
+/*Erstellt einen Benutzeraccount mit den angegeben Parametern, der Status ist erste einmal "unverifiziert*/
+/*Liefert einen cryptkey, falls das Erstellen erfolgreich war, false falls nicht*/
 function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 	//TODO: Datenbank Insert ausarbeiten
-	/*$sql = "Insert into Benutzer (Benutzername, Vorname, Nachname, Passwort, Email, RegDatum) values(?,?,?,?,?,?)";
+	$sql = "Insert into User (username, password, email, RegDatum) values(?,?,?,?,?,?)";
 	$stmt = $db->prepare($sql);
 	$date = date("Y-m-d");
 	$pass_md5 = md5($pass.$date);
@@ -68,11 +70,49 @@ function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $pass
 	if($affected_rows == 1) {
 		return true;	
 	}
-	return false;*/
+	return false;
 	
-	return true; //Für Testzwecke
+	//return "asdfjklö"; //Für Testzwecke
 }
 
+/*Setzt den Status des zum cryptkey gehörenden Accounts auf "verifiziert"*/
+function activateAcount($cryptkey) {
+	$db = db_connect();
+	$sql = "UPDATE User SET status = 'Verfiziert' WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('s',$cryptkey);
+	$stmt->execute();
+	//$result = $stmt->get_result();
+	//$dbentry = $result->fetch_assoc();
+	db_close($db);				
+	//if(isset($dbentry['idUser'])){
+	//	return $dbentry['idUser'];
+	//}
+	//else {
+	//	return false;
+	//}
+	//Verfiziert
+	return true;
+}
+
+/*Liefert den Benutzernamen des Accounts, der zum cryptkey gehört oder false*/
+function getUserByCryptkey($cryptkey) {
+	$db = db_connect();
+	$sql = "SELECT username FROM User WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('s',$cryptkey);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);				
+	if(isset($dbentry['username'])){
+		return $dbentry['username'];
+	}
+	else {
+		return false;
+	}
+	//return "blecha"; //Testzwecke
+}
 
 ?>
 
@@ -96,8 +136,17 @@ require "./includes/_top.php";
 			
 				if($_SESSION['loggedIn'] === false) {
 					if(isset($_GET['c'])) {//3. Fall: Bestätigungslink
-						
-					
+						if(activateAcount($_GET['c']) === true) {
+							$_SESSION['loggedIn'] = true;
+							$_SESSION['user'] = getUserByCryptkey($_GET['c']); 
+							header("Location: http://localhost/git/");
+							//TODO auf Profilseite weiterleiten
+						} else {
+							//Das Aktivieren des Accounts hat aus unbekanntem Grund nicht funktioniert
+							//Informiere den Benutzer darüber
+							echo '<h3><font color=red>Upps, da ist etwas schief gegangen :(</font></h3><p>';
+							
+						}
 					} elseif(isset($_POST['benutzername']) && isset($_POST['passwort']) && isset($_POST['passwortwdh']) && isset($_POST['mail']) &&isset($_POST['vorname']) && isset($_POST['nachname'])) {  //2. Fall: Nutzer hat das Formular abgeschickt
 						$user = $_POST['benutzername'];
 						$vorname = $_POST['vorname'];
@@ -108,37 +157,43 @@ require "./includes/_top.php";
 						//Prüfung, ob alle Felder ausgefüllt sind
 						if ($user==="" OR $pass==="" OR $passwdh ==="" OR $mail ==="" OR $vorname ==="" OR $nachname==="") {
 							//2.1 Fall: Nicht alle Felder ausgefüllt
-							echo '<font color=red>Fehler! Bitte alle Felder ausfüllen!</font><p>';
+							echo '<h3><font color=red>Fehler! Bitte alle Felder ausfüllen!</font></h3><p>';
 							include 'Kontoerstellung.html';
 						} elseif (idOfBenutzername($user) != false){
 							//2.2 Fall: Benutzername existiert bereits
-							echo '<font color=red>Fehler! Benutzername bereits vergeben</font><p>';
+							echo '<h3><font color=red>Fehler! Benutzername bereits vergeben</font></h3><p>';
 							include 'Kontoerstellung.html';
 						} elseif ($pass != $passwdh) { 
 							//2.3 Fall: Passwörter sind nicht identisch
-							echo '<font color=red> Fehler! Passwörter stimmen nicht überein</font><p>';
+							echo '<h3><font color=red> Fehler! Passwörter stimmen nicht überein</font></h3><p>';
 							include 'Kontoerstellung.html';
 						} elseif(idOfEmailAdresse($mail) != false) { //Email-Adresse bereits registriert
-							echo '<font color=red> Fehler! Email-Adresse bereits registriert</font><p>';
+							echo '<h3><font color=red> Fehler! Email-Adresse bereits registriert</font></h3><p>';
 							include 'Kontoerstellung.html';
+							echo'<a href="PasswortUpdate.php">Passwort vergessen?</a>';
 						} else {//Alles okay, erstelle neuen Account und sende Bestätigungsmail
-							if(createBenutzerAccount($user, $vorname, $nachname, $mail, $pass) === true) {
+							$cryptkey = createBenutzerAccount($user, $vorname, $nachname, $mail, $pass);
+							if($cryptkey != false) {
 								//Account erfolgreich in Datenbank erstellt
 								//Sende Bestätigungslink an Mailadresse
 								
-								$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/logo_provisorisch.png\" alt=\"Zurück zur Startseite\" title=\"Zurück zur Startseite\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?e=".base64_encode($user)." </h3></div>";
+								$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?c=".$cryptkey." </h3></div>";
 								
 								if(sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent)===true) {
 									echo '<h3><font color=green>Bestätigungslink wurde gesendet an: '.$mail.'</font></h3><p>';
 								}
 								else {
-									echo '<h3><font color=red>Bestätigungslink an '.$mail.' konnte nicht gesendet werden</font></h3><p>';
+									//Das Senden der Email ist fehlgeschlagen
+									echo '<h3><font color=red>Bestätigungslink an $mail konnte nicht gesendet werden</font></h3><p>';
 								}
 							} else {
-								echo '<font color=red>internal Database error</font><p>';
+								//Das Erstellen des Accounts in der Datenbank ist schief gelaufen
+								echo '<h3><font color=red>Interner Fehler: Es konnten kein Benutzeraccount angelegt werden</font></h3><p>';
 							}
 						}
 					} else {//1. Fall: Nutzer ist nicht eingeloggt und gelangt auf Registrierungsseite
+						echo'<h2>Registrierung</h2>';
+						echo'<h3>Trage deine Daten ein, um dich zu registrieren</h3>';
 						include 'Kontoerstellung.html';
 					}
 				} else {//4. Fall: Nutzer ist bereits eingeloggt
