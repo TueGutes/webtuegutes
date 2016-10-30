@@ -248,15 +248,15 @@ body
 
 header { width: 100%; position: fixed; top: 0px; left: 0px; height: 105px; background: rgba(0, 0, 0, 0.5); z-index: 10; }
 header .center { margin: auto; }
-header .siteLogo { padding: 15px 0px 0px 0px; width: 220px; float: left; text-align: center; -webkit-transition: all .3s; transition: all .3s; }
+header .siteLogo { padding: 10px/*(105-88)/2*/ 0px 0px 0px; width: 220px; float: left; text-align: center; -webkit-transition: all .3s; transition: all .3s; }
 header .siteLogo h1 { margin: 0px; }
 header .siteLogo h1 a { font-size: 36px; color: #fff; font-family: 'Open Sans', sans-serif; font-weight: 800; text-decoration: none; text-transform: uppercase; text-shadow: rgb(3, 3, 3) 0px 2px 5px; -webkit-transition: all .7s ease; transition: all .7s ease; }
-header .siteLogo h1 a img { height: 80px; -webkit-transition: all .3s; transition: all .3s; }
+header .siteLogo h1 a img { height: 88px; -webkit-transition: all .3s; transition: all .3s; }
 header.smaller { padding: 0px 0px 0px 0px; height: 60px; background: rgba(0, 0, 0, 0.75); -webkit-transition: all .3s; transition: all .3s; }
-header.smaller .siteLogo {padding: 12px 0px 0px 0px; }
+header.smaller .siteLogo {padding: 5px 0px 0px 0px; }
 header.smaller .siteLogo h1 { line-height: 30px; }
 header.smaller .siteLogo h1 a { font-size: 30px; }
-header.smaller .siteLogo h1 a img { height: 40px; }
+header.smaller .siteLogo h1 a img { height: 50px; }
 
 
 .navigation { width: 100%; /*position: absolute;*/ text-align: center; }
@@ -321,14 +321,26 @@ header.smaller .siteLogo h1 a img { height: 40px; }
 header.smaller .navigation li a { padding: 16px 41px; }
 header.smaller .navigation li { height: 60px; }
 
-#quickLogin
+#profileSection
 {
 	float: right;
 	width: 180px;
+	height: 100%;
 	text-align: center;
+	/*top right bottom left*/
+	padding: 38px 0px 0px 0px;
+	font-size: 12px;
+	color: #ffffff;
+	
+	-webkit-transition: all .3s ease;
+	transition: all .3s ease;
 }
-#quickLogin input[type=text],
-#quickLogin input[type=password]
+#profileSection a
+{
+	color: #ffffff;
+}
+/*#profileSection input[type=text],
+#profileSection input[type=password]
 {
 	width: 100%;
 
@@ -345,7 +357,7 @@ header.smaller .navigation li { height: 60px; }
 	
 	background: rgba(255, 255, 255, .8);
 }
-#quickLogin input[type=submit]
+#profileSection input[type=submit]
 {
 	width: 100%;
 
@@ -355,21 +367,27 @@ header.smaller .navigation li { height: 60px; }
 	-webkit-border-radius: 0px;
 	-moz-border-radius: 0px;
 	border-radius: 0px;
+}*/
+header.smaller #profileSection
+{
+	/*top/bottom left/right*/
+	padding: 18px 0px;
+	height: 60px;
 }
-header.smaller #quickLogin
+header.smaller #profileSection a
 {
 	
 }
-header.smaller #quickLogin input[type=text],
-header.smaller #quickLogin input[type=password]
+/*header.smaller #profileSection input[type=text],
+header.smaller #profileSection input[type=password]
 {
 	padding: 1px 14px 1px 14px;
 }
-header.smaller #quickLogin input[type=submit]
+header.smaller #profileSection input[type=submit]
 {
 	padding: 2px 42px 2px 42px;
 	font-size: 13px;
-}
+}*/
 
 
 .mobile { display: none; }
@@ -424,19 +442,25 @@ cursor: pointer; background: #ff6000; -webkit-transition: all .2s ease; transiti
 .content h2
 {
 	padding-bottom: 42px;
-	font-size: 46px;
+	font-size: 42px;
 	color: #ff6000;
 	font-family: 'Oswald', sans-serif;
 	font-weight: 400;
 	margin: 0px;
 	text-transform: uppercase;
-	line-height: 46px;
+	line-height: 42px;
 }
 
 
 .bottom { position: relative; width: 100%; overflow: hidden; /*background: url(../img/bottom-bg.jpg) top center no-repeat; background-size: cover;*/ }
 
 footer { overflow: hidden; width: 100%; text-align: center; background: rgba(0, 0, 0, 0.6); }
+footer a
+{
+	color: #ffffff;
+	font-weight: bold;
+}
+footer a:hover { color: #ff6000; }
 footer .copyright { padding:  28px 0px; max-width: 1100px; margin: auto;}
 footer .copyright p { padding: 0px; font-size: 14px; color: #a9abad; font-family: 'Arial'; margin: 0px; }
 footer .copyright a { color: #a9abad; text-decoration: none; }

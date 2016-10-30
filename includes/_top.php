@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="styles/theme.css" type="text/css" />
     <link rel="stylesheet" href="styles/responsive.css" type="text/css" />
 	<!--====for mobile icons====--><link rel="stylesheet" href="styles/font-awesome.min.css" type="text/css" /><!--====/for mobile icons====-->
+	<link rel="stylesheet" href="styles/temp_profile.css" type="text/css" />
+	<link rel="stylesheet" href="styles/temp_deeds.css" type="text/css" />
 	
 	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
 	<script type="text/javascript" src="js/global.js"></script>
