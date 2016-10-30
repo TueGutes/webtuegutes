@@ -243,7 +243,7 @@ body
 }
 
 .holder { position: relative; display: block; width: 100%; min-height: 100%; }
-.wrap { margin: 0 auto; width: 100%; display: block; }
+.wrap { margin: 0 auto; display: block; width: 100%; }
 
 
 header { width: 100%; position: fixed; top: 0px; left: 0px; height: 105px; background: rgba(0, 0, 0, 0.5); z-index: 10; }

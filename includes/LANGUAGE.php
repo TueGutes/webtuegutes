@@ -53,6 +53,10 @@ $wlang['login_placeholder_username'] = 'Benutzername / E-Mail';
 $wlang['login_placeholder_password'] = 'Passwort';
 $wlang['login_button_submit'] = 'Login';
 
-//====deeds====
-$wlang['deeds_head'] = 'Gute Taten';
+//====register====
+$wlang['register_head'] = 'Registrieren';
+
+$wlang['register_placeholder_username'] = 'Benutzername / E-Mail';
+$wlang['register_placeholder_password'] = 'Passwort';
+$wlang['register_button_submit'] = 'Registrieren';
 ?>
