@@ -32,14 +32,32 @@
 				<div class="siteLogo">
 					<h1><a href="./"><img src="./img/wLogo.png<?php /*https://www.google.de/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png*/ ?>" /><!--TueGutes--></a></h1>
 				</div>
-				<div id="quickLogin">
-					<form action="">
-						<input type="text" value="" placeholder="<?php echo $wlang['login_placeholder_username']; ?>" />
-						<input type="password" value="" placeholder="<?php echo $wlang['login_placeholder_password']; ?>" />
-						<br>
-						<input type="submit" value="<?php echo $wlang['login_button_submit']; ?>" />
-					</form>
-				</div>
+				<?php
+					if($_SESSION['loggedIn'] === true) {
+						
+						echo '<div id="quickLogin"> <form action="login.php" method="post"> <input type="submit" value="Log out"/></form></div>';
+						
+					}
+					else {
+						$placeholderUsername = $wlang['login_placeholder_username'];
+						$placeholderPassword = $wlang['login_placeholder_password'];
+						$placeholderButton = $wlang['login_button_submit'];						
+						
+						echo '<div id="quickLogin">
+							<form action="login.php" method="post">
+								<input type="text" value="" name="username" placeholder='.$placeholderUsername.' />
+								<input type="password" name="password" value="" 
+								placeholder='.$placeholderPassword.' />
+								<br>
+								<input type="submit" value='.$placeholderButton.' />
+							</form>
+						</div>';
+						
+					}
+				
+				
+				?>
+				
 				<div id="mobileSection">
 					<div class="mobile"><i class="fa fa-bars"></i><i class="fa fa-times"></i></div>
 					<div class="mobileMenu">
