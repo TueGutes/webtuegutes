@@ -2,6 +2,7 @@
 /*
 *@author Henrik Huckauf
 */
+session_start();
 
 require './includes/_top.php';
 ?>

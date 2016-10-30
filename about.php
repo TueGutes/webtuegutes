@@ -2,11 +2,12 @@
 /*
 *@author Henrik Huckauf
 */
+session_start();
 
 require './includes/_top.php';
 ?>
 
-<h2><?php echo $wlang['login_head']; ?></h2>
+<h2>Über uns...</h2>
 
 Über uns...
 
