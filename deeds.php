@@ -7,8 +7,6 @@
 
 include './db/db_connector.php';
 require './includes/_top.php';
-
-
 ?>
 
 <html>
