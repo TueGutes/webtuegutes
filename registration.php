@@ -60,11 +60,11 @@ function idOfEmailAdresse($emailadresse) {
 function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 	//TODO: Datenbank Insert ausarbeiten
 	$db = db_connect();
-	$sql = "Insert into User (username, password, email, regDate, points, status) values(?,?,?,NOW(),0,'nichtVerifiziert')";
+	$sql = "Insert into User (username, password, email, regDate, points, status) values(?,?,?,?,0,'nichtVerifiziert')";
 	$stmt = $db->prepare($sql);
 	$date = date("Y-m-d");
 	$pass_md5 = md5($passwort.$date);
-	mysqli_stmt_bind_param($stmt, "sss", $benutzername, $pass_md5, $email);
+	mysqli_stmt_bind_param($stmt, "ssss", $benutzername, $pass_md5, $email,$date);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {

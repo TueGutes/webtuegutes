@@ -109,7 +109,7 @@ function getUserByCryptkey($cryptkey) {
 												<td><input type="text" name="passwortwdh"></td>
 											</tr>
 										</table>
-									<input type="submit" value="Email senden">
+									<input type="submit" value="Passwort ändern">
 									</center>
 								</form>';
 							//Speichere den Cryptkey temporär in der Session, damit man ihn auslesen kann, wenn das Formular versendet wurde
@@ -168,7 +168,7 @@ function getUserByCryptkey($cryptkey) {
 												<td><input type="text" name="passwortwdh"></td>
 											</tr>
 										</table>
-									<input type="submit" value="Email senden">
+									<input type="submit" value="Passwort ändern">
 									</center>
 								</form>';
 								//TODO: Man muss auch den Cryptkey mit übergeben...
