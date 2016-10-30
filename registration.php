@@ -59,37 +59,54 @@ function idOfEmailAdresse($emailadresse) {
 /*Liefert einen cryptkey, falls das Erstellen erfolgreich war, false falls nicht*/
 function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 	//TODO: Datenbank Insert ausarbeiten
+	$db = db_connect();
 	$sql = "Insert into User (username, password, email, regDate, points, status) values(?,?,?,NOW(),0,'nichtVerifiziert')";
 	$stmt = $db->prepare($sql);
-	//$date = date("Y-m-d");
-	$pass_md5 = md5($pass.$date);
+	$date = date("Y-m-d");
+	$pass_md5 = md5($passwort.$date);
 	mysqli_stmt_bind_param($stmt, "sss", $benutzername, $pass_md5, $email);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
-		return true;	
+		//return true;	
 	}
 	else {
-		echo 'beim erstellen des nutzers ist was schief gegangen';
-		return false;
+		echo 'beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db);
+		//return false;
 	}
 	
-	$sql = "Insert into Privacy (idPrivacy, privacykey, cryptkey) values(SELECT MAX(idUser) FROM User,?,?)";
+	$sql = "Insert into Privacy (idPrivacy, privacykey, cryptkey) values ((SELECT MAX(idUser) FROM User),?,?)";
 	$stmt = $db->prepare($sql);
 	
-	$crpytkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
+	$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
 	$privacykey = "1111111111111"; //TODO: Privacykey richtig machen
-	mysqli_stmt_bind_param($stmt, "ss", "", $cryptkey);
+	mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
-		return true;	
+		//return true;	
 	}
 	else {
-		echo 'beim erstellen des privacys ist was schief gegangen';
+		echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
 		return false;
 	}
 	
+	$sql = "Insert into PersData (idPersData, firstname, lastname) values((SELECT MAX(idUser) FROM User),?,?)";
+	$stmt = $db->prepare($sql);
+	mysqli_stmt_bind_param($stmt, "ss", $vorname, $nachname);
+	$stmt->execute();
+	$affected_rows = mysqli_stmt_affected_rows($stmt);
+	if($affected_rows == 1) {
+		//return true;	
+	}
+	else {
+		echo 'beim erstellen von PersData Eintrag ist was schief gegangen '.mysqli_error($db);
+		return false;
+	}
+	
+	db_close($db);	
+	
+	return $cryptkey;
 	
 	//return "asdfjklö"; //Für Testzwecke
 }
@@ -97,7 +114,7 @@ function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $pass
 /*Setzt den Status des zum cryptkey gehörenden Accounts auf "verifiziert"*/
 function activateAcount($cryptkey) {
 	$db = db_connect();
-	$sql = "UPDATE User SET status = 'Verfiziert' WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
+	$sql = "UPDATE User SET status = 'Verifiziert' WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('s',$cryptkey);
 	$stmt->execute();
@@ -152,6 +169,7 @@ require "./includes/_top.php";
 				4. Der Nutzer ist bereits eingeloggt <Placeholder>
 				*/
 			
+				$_SESSION['loggedIn'] = false; //Testzwecke
 			
 				if($_SESSION['loggedIn'] === false) {
 					if(isset($_GET['c'])) {//3. Fall: Bestätigungslink
