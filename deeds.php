@@ -11,7 +11,7 @@ include './db/db_connector.php';
 require './includes/_top.php';
 ?>
 
-<html>
+/*<html>
 <head> <title> Gute Taten anzeigen </title> 
 <script>
 var nextPage = function(){
@@ -21,7 +21,7 @@ var nextPage = function(){
 </script> 
 </head>
 
-<body> 
+<body>*/ 
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
 
 <!-- Hier kann später mal gute Taten erstellen hervorkommen-->
@@ -62,9 +62,9 @@ var nextPage = function(){
 	</table>
 </div>
 
-</body>
+/*</body>
 </html>
-
+*/
 <?php
 require './includes/_bottom.php';
 ?>
