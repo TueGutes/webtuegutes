@@ -4,7 +4,7 @@
 	function get_user($user) {
 		$db = db_connect();
 		$sql = "
-			SELECT idUser, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, Postalcode.postalcode, place, telefonnumber, messengernumber, birthday 
+			SELECT idUser, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, postalcode, telefonnumber, messengernumber, birthday 
 			FROM User
 				JOIN Trust
 			    	ON User.idTrust = Trust.idTrust
@@ -16,15 +16,28 @@
 			    	ON User.idUser = UserTexts.idUserTexts
 				JOIN PersData
 			    	ON User.idUser = PersData.idPersData
-				JOIN Postalcode
-					ON PersData.postalcode = Postalcode.postalcode
 			WHERE username = ?";
 		$stmt = $db->prepare($sql); 
 		$stmt->bind_param('s',$user);
 		$stmt->execute();
 		$result = $stmt->get_result();
+		$thisuser = $result->fetch_assoc();
+		if (isset($thisuser['postalcode'])) {
+			//PLZ gesetzt -> Lade den Namen des Ortes aus der Datenbank
+			$sql = "
+				SELECT postalcode, place 
+				FROM postalcode
+				WHERE postalcode = ?
+			";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('s',$thisuser['postalcode']);
+			$stmt->execute();
+			$thisuser['place'] = $stmt->get_result()->fetch_assoc()['place'];
+		} else {
+			$thisuser['place'] = '';
+		}
 		db_close($db);
-		return $result->fetch_assoc();
+		return $thisuser;
 	}
 
 //Soll die Benutzerdaten abspeichern, die von Alex verlangt wurden
