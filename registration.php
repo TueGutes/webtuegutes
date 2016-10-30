@@ -59,18 +59,37 @@ function idOfEmailAdresse($emailadresse) {
 /*Liefert einen cryptkey, falls das Erstellen erfolgreich war, false falls nicht*/
 function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 	//TODO: Datenbank Insert ausarbeiten
-	$sql = "Insert into User (username, password, email, RegDatum) values(?,?,?,?,?,?)";
+	$sql = "Insert into User (username, password, email, regDate, points, status) values(?,?,?,NOW(),0,'nichtVerifiziert')";
 	$stmt = $db->prepare($sql);
-	$date = date("Y-m-d");
+	//$date = date("Y-m-d");
 	$pass_md5 = md5($pass.$date);
-	mysqli_stmt_bind_param($stmt, "ssssss", $user, $vorname, $nachname, $pass_md5, $mail, $date);
+	mysqli_stmt_bind_param($stmt, "sss", $benutzername, $pass_md5, $email);
 	$stmt->execute();
-	
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
 		return true;	
 	}
-	return false;
+	else {
+		echo 'beim erstellen des nutzers ist was schief gegangen';
+		return false;
+	}
+	
+	$sql = "Insert into Privacy (idPrivacy, privacykey, cryptkey) values(SELECT MAX(idUser) FROM User,?,?)";
+	$stmt = $db->prepare($sql);
+	
+	$crpytkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
+	$privacykey = "1111111111111"; //TODO: Privacykey richtig machen
+	mysqli_stmt_bind_param($stmt, "ss", "", $cryptkey);
+	$stmt->execute();
+	$affected_rows = mysqli_stmt_affected_rows($stmt);
+	if($affected_rows == 1) {
+		return true;	
+	}
+	else {
+		echo 'beim erstellen des privacys ist was schief gegangen';
+		return false;
+	}
+	
 	
 	//return "asdfjklö"; //Für Testzwecke
 }
