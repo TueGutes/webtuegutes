@@ -141,7 +141,7 @@
 */
 
 	//Includes
-	include "./db/db_connector.php";
+	include "./includes/db_connector.php";
 	include "./includes/session.php";	
 	require "./includes/_top.php";
 
