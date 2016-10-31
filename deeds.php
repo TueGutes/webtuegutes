@@ -30,11 +30,11 @@ require './includes/_top.php';
 		// Tabellenkopf mit den Feldnamen als Spaltenbezeichnungen:
 		echo ' <tr>';
 		while ( $field = $result->fetch_field() ) {
-			echo '<th style="border:1px solid;padding:10px">';
+			echo '<th style="border:1px solid;padding:10px"><b>';
 			//if(($field->name !== "idGuteTat")&&($field->name !== "contactPerson")&&($field->name !== "status")){
 				echo " $field->name";
 			//}
-			echo '</th>';
+			echo '</b></th>';
 		}
 		echo "</tr>";		 
 		 

@@ -3,7 +3,7 @@
 //Temporär (wird später aus der Datenbank geladen)
 	function db_fix_plz($plz) {
 		$db = db_connect();
-		$sql = "SELECT * from Postalcode where postalcode = ?";
+		$sql = "SELECT postalcode from Postalcode where postalcode = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$plz);
 		$stmt->execute();
@@ -92,6 +92,7 @@ $db = db_connect();
 	
 		//Einfügen der Guten Tat
 		$uid = db_idOfBenutzername($_SESSION['user']);
+		db_fix_plz($postalcode);
 		$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,postalcode,time,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('sisssissii', $name, $uid, $category, $street, $housenumber, $postalcode, $time_t, $organization, $countHelper, $idTrust);
