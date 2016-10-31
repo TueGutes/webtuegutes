@@ -122,10 +122,15 @@
 		db_close($db);
 	}
 
-	function upload_avatar($file, $uid) {
-		$tmpfile = fopen('./img/tmp/avatar_' . $uid . '.png', 'w') or die("Unable to open file!");
-		fwrite($tmpfile, file_get_contents($file));
-		fclose($tmpfile);
+	function get_place($plz) {
+		$db = db_connect();
+		$sql = "SELECT place FROM Postalcode WHERE postalcode = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i', $plz);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		db_close($db);
+		return $result->fetch_assoc()['place'];
 	}
 
 ?>
@@ -259,24 +264,26 @@
 		}
 
 		//Block 5: Kontakt
-		$blKontakt = "";
-			
-			$blKontakt .= '<h3>Kontakt</h3><table style="border:none">';
-			
-			//Email anzeigen:
-			$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Email:</td><td style="border:none"><a href="mailto:' . $thisuser['email'] . '">' . $thisuser['email'] . '</a></td></tr>';
-			
-			//Telefonnummer bearbeiten:
-			$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Telefon:</td><td style="border:none"> <input type="text" name="txtTelNr" placeholder="z.B. 051112345678" value="' . $thisuser['telefonnumber'] . '"></td></tr>';
-			
-			//Messengernummer bearbeiten:
-			$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Messenger:</td><td style="border:none"><input type="text" name="txtMsgNr" value="' . $thisuser['messengernumber'] . '"></td></tr>';
+		$blKontakt = '<h3>Kontakt</h3><table style="border:none">';
+		
+		//Email anzeigen:
+		$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Email:</td><td style="border:none"><a href="mailto:' . $thisuser['email'] . '">' . $thisuser['email'] . '</a></td></tr>';
+		
+		//Telefonnummer bearbeiten:
+		$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Telefon:</td><td style="border:none"> <input type="text" name="txtTelNr" placeholder="z.B. 051112345678" value="' . $thisuser['telefonnumber'] . '"></td></tr>';
+		
+		//Messengernummer bearbeiten:
+		$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Messenger:</td><td style="border:none"><input type="text" name="txtMsgNr" value="' . $thisuser['messengernumber'] . '"></td></tr>';
 
-			$blKontakt .= "</table>";
+		$blKontakt .= "</table>";
 
-			//Temporär, aber es ist spät und nichts funkioniert gerade
-			$blKontakt .= '<p /><p /><h3>Sichtbarkeitsstring</h3> (temporäre Lösung, setz ich mich nochmal dran): ';
-			$blKontakt .= '<br><input type="text" name="tmpPrivacy" value="' . $thisuser['privacykey'] . '">';
+		//Temporär, aber es ist spät und nichts funkioniert gerade
+		$blKontakt .= '<p /><p /><h3>Sichtbarkeitsstring</h3> (temporäre Lösung, setz ich mich nochmal dran): ';
+		$blKontakt .= '<br><input type="text" name="tmpPrivacy" value="' . $thisuser['privacykey'] . '">';
+
+		//Block 6: Sichtbarkeit
+		$blPrivacy = "<h3>Sichtbarkeitseinstellungen</h3>Welche Einstellungen sollen Besuchern deines Profils angezeigt werden?";
+
 
 
 		$form_bottom = '<p /><p /><input type=submit value="Änderungen speichern"><input type="hidden" name="action" value="save"></form>';
@@ -301,12 +308,14 @@
 			$thisuser['hobbys'] = $_POST['txtHobbys'];
 			$thisuser['description'] = $_POST['txtBeschreibung'];
 			$thisuser['postalcode'] = $_POST['txtPostleitzahl'];
+			//$thisuser['place'] = get_place($_POST['txtPostleitzahl']);
 
 			//Temporär:
 			$thisuser['privacykey'] = $_POST['tmpPrivacy'];
 			
 			//Änderungen speichern
 			update_user($thisuser);
+			header("Refresh:0");
 		}
 
 		//Anzeige des eigentlichen Nutzerprofils
