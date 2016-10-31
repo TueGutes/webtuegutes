@@ -7,23 +7,28 @@ session_start(); // für das captcha
 
 require './includes/_top.php';
 
-$vorname = $_POST['vorname'];
-$nachname = $_POST['nachname'];
-$alter = $_POST['alter'];
-$email = $_POST['email'];
-$message = $_POST['message'];
+$vorname = '';
+$nachname = '';
+$alter = '';
+$email = '';
+$message = '';
 
-if(!isset($vorname) && !isset($nachname) && !isset($alter) && !isset($email) && !isset($message))
-{}
-else
+$output = '';
+
+if(isset($_POST['set']) && $_POST['set'] == '1')
 {
+	$vorname = $_POST['vorname'];
+	$nachname = $_POST['nachname'];
+	$alter = $_POST['alter'];
+	$email = $_POST['email'];
+	$message = $_POST['message'];
+
 	$IP = $_SERVER['REMOTE_ADDR'];
 	$BROWSER = $_SERVER['HTTP_USER_AGENT'];
 	$USERLANGUAGE = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 	$date = date("d.m.Y");
 	$time = date("H:i");
 
-	$output = '';
 	$error = false;
 	if(empty($vorname))
 	{
@@ -121,6 +126,7 @@ Nachricht: " . $message . "
 			<span id='captcha_reload'>&#8635;</span><br>
 			<input type='text' name='captcha_code' size='10' placeholder='Code' required autocomplete='off' />&nbsp;*
 			<br><br>
+			<input type='hidden' name='set' value'1' />
 			<input type='submit' value='<?php echo $wlang['contact_form_submit']; ?>'>
 		</div>
 	</form>
