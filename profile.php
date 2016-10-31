@@ -140,6 +140,9 @@
 	include "./includes/session.php";	
 	require "./includes/_top.php";
 
+	//Profile sind nur für eingeloggte Nutzer sichtbar:
+	if (!$_SESSION['loggedIn']) die ('Profile sind nur für eingeloggte Nutzer sichtbar!<p/><a href="login.php">Zum Login</a>');	
+
 	//Festlegen des auszulesenden Nutzers:
 	$thisuser = get_user(@$_GET['user']);
 	if (!isset($thisuser['username'])) $thisuser = get_user($_SESSION['user']);
@@ -243,7 +246,7 @@
 
 		//PLZ/Ort bearbeiten:
 						//TODO: Postleitzahl überprüfen
-		$blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">PLZ:</td><td style="border:none"><input type="text" name="txtPostleitzahl" placeholder="PLZ" value="' . $thisuser['postalcode'] . '"></td></tr>';
+		$blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">PLZ:</td><td style="border:none"><input type="text" name="txtPostleitzahl" placeholder="PLZ" value="' . (($thisuser['postalcode']!=0)?$thisuser['postalcode']:'') . '"></td></tr>';
 		$blAdresse .= "</table>";
 
 		//Kartenansicht
@@ -286,9 +289,11 @@
 		{
 			// Nutzerdaten überschreiben:
 			$thisuser['birthday'] = $_POST['txtGeburtstag'];
-			move_uploaded_file($_FILES['neuerAvatar']['tmp_name'],'./img/tmp/avatar_' . $thisuser['idUser']);
-			$thisuser['avatar'] = (!isset($_FILES['neuerAvatar']['name']))?$thisuser['avatar']:'data: ' . mime_content_type('./img/tmp/avatar_' . $thisuser['idUser']) . ';base64,' . base64_encode(file_get_contents('./img/tmp/avatar_' . $thisuser['idUser']));
-			unlink('./img/tmp/avatar_' . $thisuser['idUser']); //Später kann diese Zeile ggf. gelöscht werden
+			if ($_FILES['neuerAvatar']['name'] != '') {
+				move_uploaded_file($_FILES['neuerAvatar']['tmp_name'],'./img/tmp/avatar_' . $thisuser['idUser']);
+				$thisuser['avatar'] = 'data: ' . mime_content_type('./img/tmp/avatar_' . $thisuser['idUser']) . ';base64,' . base64_encode(file_get_contents('./img/tmp/avatar_' . $thisuser['idUser']));
+				unlink('./img/tmp/avatar_' . $thisuser['idUser']); //Später kann diese Zeile ggf. gelöscht werden
+			}
 			$thisuser['street'] = $_POST['txtStrasse'];
 			$thisuser['housenumber'] = $_POST['txtHausnummer'];
 			$thisuser['messengernumber'] = $_POST['txtMsgNr'];
