@@ -8,7 +8,7 @@
 DEFINE('DB_USER','root');
 DEFINE('DB_PASSWORD','');
 DEFINE('DB_HOST','localhost');
-DEFINE('DB_NAME','tuegutesdb');
+DEFINE('DB_NAME','tueGutes');
 
 // öffnet eine DB Verbindung mit den definierten Parametern
 
