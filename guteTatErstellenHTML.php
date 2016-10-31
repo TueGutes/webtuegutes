@@ -11,7 +11,6 @@ require './includes/_top.php';
 
 <h2><?php echo "Eine Tat Erstellen"; ?></h2>
 
-<?
 <html>
 <title>Tat erstellen</title>
 <body>
