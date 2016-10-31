@@ -7,18 +7,13 @@
 
 session_start();
 
-include './db/db_connector.php';
+include './includes/db_connector.php';
 require './includes/_top.php';
 ?>
 
 /*<html>
 <head> <title> Gute Taten anzeigen </title> 
-<script>
-var nextPage = function(){
-	document.getElementById("out").innerHTML = "Button gedruckt";
-}
 
-</script> 
 </head>
 
 <body>*/ 
@@ -38,15 +33,11 @@ var nextPage = function(){
 		// Tabellenkopf mit den Feldnamen als Spaltenbezeichnungen:
 		echo " <tr> <th> ";
 		while ( $field = $result->fetch_field() ) {
-			if(($field->name !== "idGuteTat")&&($field->name !== "contactPerson")&&($field->name !== "status")){
+			//if(($field->name !== "idGuteTat")&&($field->name !== "contactPerson")&&($field->name !== "status")){
 				echo " $field->name";
-			}
+			//}
 		}
-		echo " </th> </tr>";
-// 		Versuch einen Button mit in die Tabelle zu stellen misglückt.
-//		<input type="button" value="weiterlesen" onclick="nextPage();"> 
-//		<p id="out"> yo </p>
-		 
+		echo " </th> </tr>";		 
 		 
 		 // Tabelleneinträge aus der Datenbank
 		while ( $deed = $result->fetch_object() ) {
@@ -54,7 +45,7 @@ var nextPage = function(){
 			echo " <tr> <td> ";
 			foreach ( $deed as $key => $value ) 
 			{
-				echo "out $value";	
+				echo "$value";	
 			}
 			echo " </td> </tr>";
 		}
@@ -62,9 +53,9 @@ var nextPage = function(){
 	</table>
 </div>
 
-/*</body>
+</body>
 </html>
-*/
+
 <?php
 require './includes/_bottom.php';
 ?>
