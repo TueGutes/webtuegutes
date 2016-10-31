@@ -60,7 +60,7 @@ function idOfEmailAdresse($emailadresse) {
 function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 	//TODO: Datenbank Insert ausarbeiten
 	$db = db_connect();
-	$sql = "Insert into User (username, password, email, regDate, points, status) values(?,?,?,?,0,'nichtVerifiziert')";
+	$sql = "Insert into User (username, password, email, regDate, points, status, idUserGroup, idTrust) values(?,?,?,?,0,'nichtVerifiziert',0,0)";
 	$stmt = $db->prepare($sql);
 	$date = date("Y-m-d");
 	$pass_md5 = md5($passwort.$date);
