@@ -32,7 +32,7 @@ require './includes/_top.php';
 	<table>
 		<?php
 		$mysqli = db_connect();
-		$result = $mysqli->query("SELECT * FROM deeds");
+		$result = $mysqli->query("SELECT * FROM Deeds");
 		// Tabellenkopf mit den Feldnamen als Spaltenbezeichnungen:
 		echo " <tr> <th> ";
 		while ( $field = $result->fetch_field() ) {
