@@ -79,8 +79,20 @@ function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $pass
 	$stmt = $db->prepare($sql);
 	
 	$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
-	$privacykey = "1111111111111"; //TODO: Privacykey richtig machen
+	$privacykey = "111111111111111";
 	mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
+	$stmt->execute();
+	$affected_rows = mysqli_stmt_affected_rows($stmt);
+	if($affected_rows == 1) {
+		//return true;	
+	}
+	else {
+		echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
+		return false;
+	}
+
+	$sql = "Insert into UserTexts (idUserTexts) values ((SELECT MAX(idUser) FROM User))";
+	$stmt = $db->prepare($sql);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {

@@ -7,9 +7,10 @@ session_start();
 require './includes/_top.php';
 ?>
 
-<h2>Home</h2>
-<h3>(und Beispielkram)</h3>
+<h2>Willkommen !</h2>
 <br>
+
+<!--
 <div class='center'>
 	<a href='/login'>(Link) zum Login</a>
 	<br><br>
@@ -44,7 +45,7 @@ require './includes/_top.php';
 	&nbsp;
 	<input id="checkbox3" type="checkbox"><label for="checkbox3">Check 3</label>
 </div>
-
+-->
 <?php
 require './includes/_bottom.php';
 ?>
