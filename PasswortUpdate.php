@@ -173,11 +173,11 @@ function getUserByCryptkey($cryptkey) {
 										<table>
 											<tr>
 												<td><b>Passwort:</b></td>
-												<td><input type="text" name="passwort"></td>
+												<td><input type="password" name="passwort"></td>
 											</tr>
 											<tr>
 												<td><b>Passwort wiederholen:</b></td>
-												<td><input type="text" name="passwortwdh"></td>
+												<td><input type="password" name="passwortwdh"></td>
 											</tr>
 										</table>
 									<input type="submit" value="Passwort ändern">
