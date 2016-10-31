@@ -143,7 +143,7 @@
 	//Includes
 	include "./includes/db_connector.php";
 	include "./includes/session.php";	
-	include "./includes/map.php";
+	include "./includes/Map.php";
 	require "./includes/_top.php";
 
 	//Profile sind nur für eingeloggte Nutzer sichtbar:
@@ -429,10 +429,7 @@
 	echo '<p />';
 	echo '<div align="center">' . $blTaten . '</div>';
 	echo '<p />';
-	echo '<div align="center">' . $blAdresse;
-	//Funktioniert noch nicht :
-	if ($shStrasse && $shHausnummer && $shPlzOrt) createMap($thisuser['place'] . ',' . $thisuser['street'] . ',' . $thisuser['housenumber']);
-	echo '</div>';
+	echo '<div align="center">' . $blAdresse . '</div>';
 	echo '<p />';
 	echo '<div align="center">' . $blKontakt . '</div>';
 ?>
