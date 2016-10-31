@@ -10,7 +10,7 @@ if($errorCode == 200) // sollte man die error Seite manuell besuchen... (Status 
 	exit;
 }
 	
-if($errorCode == 403) // fake 404 wenn der Zugriff verweigert wird (403) aus Sicherheitsgründen
+if($errorCode == 403) // fake 404 wenn der Zugriff verweigert wird (403) aus SicherheitsgrÃ¼nden
 	$errorCode = 404;
 
 require './includes/_top.php';

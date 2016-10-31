@@ -33,13 +33,18 @@
 					<h1><a href="./"><img src="./img/wLogo.png<?php /*https://www.google.de/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png*/ ?>" /><!--TueGutes--></a></h1>
 				</div>
 				<div id="profileSection">
-					<a href="./register"><?php echo $wlang['register_head']; ?></a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./login"><?php echo $wlang['login_head']; ?></a>
-					<!--<form action="">
+				<?php
+				if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'])
+					echo '<a href="./logout">' . 'Logout' . '</a>';
+				else
+					echo '<a href="./register">' . $wlang['register_head'] . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./login">' . $wlang['login_head'] . '</a>';
+					/*<form action="">
 						<input type="text" value="" placeholder="<?php echo $wlang['login_placeholder_username']; ?>" />
 						<input type="password" value="" placeholder="<?php echo $wlang['login_placeholder_password']; ?>" />
 						<br>
 						<input type="submit" value="<?php echo $wlang['login_button_submit']; ?>" />
-					</form>-->
+					</form>*/
+				?>
 				</div>
 				<div id="mobileSection">
 					<div class="mobile"><i class="fa fa-bars"></i><i class="fa fa-times"></i></div>

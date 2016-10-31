@@ -16,9 +16,18 @@ $wlang['nav_deeds'] = 'Gute Taten';
 $wlang['nav_contact'] = 'Kontakt';
 
 //====names====
-$wlang['privacy'] = 'Datenschutzerklärung';
 $wlang['imprint'] = 'Impressum';
+$wlang['privacy'] = 'Datenschutzerklärung';
 $wlang['terms'] = 'AGB';
+
+//====imprint====
+//$wlang['imprint'] = '';
+
+//====privacy====
+//$wlang['privacy'] = '';
+
+//====agb====
+$wlang['terms_head'] = 'Allgemeine Geschäftsbedingungen';
 
 //====contact====
 $wlang['contact_head'] = 'Kontakt';
@@ -59,4 +68,7 @@ $wlang['register_head'] = 'Registrieren';
 $wlang['register_placeholder_username'] = 'Benutzername / E-Mail';
 $wlang['register_placeholder_password'] = 'Passwort';
 $wlang['register_button_submit'] = 'Registrieren';
+
+//====deeds====
+$wlang['deeds_head'] = 'Gute Taten';
 ?>
