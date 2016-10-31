@@ -5,8 +5,8 @@
 */
 
 //Definition der Datenbankverbindung
-DEFINE('DB_USER','root');
-DEFINE('DB_PASSWORD','');
+DEFINE('DB_USER','tueGutes');
+DEFINE('DB_PASSWORD','Sadi23n2os');
 DEFINE('DB_HOST','localhost');
 DEFINE('DB_NAME','tueGutes');
 
