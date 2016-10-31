@@ -35,13 +35,39 @@ function getCryptkeyByMail($mail) {
 	//return "asdfjklö"; //Testzwecke
 }
 
+/*Liefert das Registrierungsdatum zu einer UserID oder false*/
+function regDateByCryptkey($cryptkey) {
+	$db = db_connect();
+	$sql = "SELECT regDate FROM User, Privacy WHERE idUser = idPrivacy AND cryptkey = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('s',$cryptkey);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	if(isset($dbentry['regDate'])){
+		//echo 'RegDate '.$dbentry['regDate'];
+		$dateTeile = explode(" ", $dbentry['regDate']); //Im Datestring ist auch die Zeit, wir wollen nur das Datum (siehe Erstellung des Benutzeraccounts)
+		db_close($db);
+		return $dateTeile[0];
+	}
+	else {
+		echo "Error: ".mysqli_error($db);
+		db_close($db);
+		return false;
+	}
+}
+
+
+
 /*Ändert das Passwort des zum Cryptkey gehörenden Accounts*/
 /*Liefert true bei Erfolg und false beim Fehlerfall*/
 function changePasswortByCryptkey($cryptkey, $newPasswort) {
+	$date = regDateByCryptkey($cryptkey);	
+	$pass_md5 = md5($newPasswort.$date);
 	$db = db_connect();
 	$sql = "UPDATE User SET password = ? WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
 	$stmt = $db->prepare($sql);
-	mysqli_stmt_bind_param($stmt, "ss", $newPasswort, $cryptkey);
+	mysqli_stmt_bind_param($stmt, "ss", $pass_md5, $cryptkey);
 	$stmt->execute();
 	db_close($db);				
 	
