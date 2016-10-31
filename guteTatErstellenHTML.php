@@ -4,14 +4,13 @@
 *@author Christian Hock
 */
 
-session_start();
-
-if (!@$_SESSION['loggedIn']) die (Header("Location: ./login.php")); 	
+//if($_SESSION){
 	
 require './includes/_top.php';
 ?>
 
 <h2><?php echo "Eine Tat Erstellen"; ?></h2>
+
 
 <html>
 <title>Tat erstellen</title>
@@ -23,21 +22,27 @@ require './includes/_top.php';
 	<br>
 	<table>
 		<tr>
-			<td><h3>*Name: !soll eig. automatisch passieren</td>
+			<td><h3>*Name der Tat: </td>
 			<td><input type="text" name="name" placeholder="Name"/></td>
 		</tr>
-			
 		<tr>
-			<td><h3>*Bild:</td>
-			<td><input name="Bild" type="file" size="50" accept="text/*"> </td>
+			<td><h3>*Beschreibung: </td>
+			<td></td>
 		</tr>
 		<tr>
-			<td><h3>*Kontaktperson: </td>
+			<td colspan="2"><textarea id="text" name="description" cols="80" rows="6" placeholder="Beschreiben Sie die auszuführende Tat. Werben Sie für Ihr Angebot. Nutzen sie ggf. eine Rechtschreibüberprüfung."></textarea></td>
+		</tr>
+		<tr>
+			<td><h3>*Bild:</td>
+			<td><input name="pictures" type="file" size="50" accept="text/*"> </td>
+		</tr>
+		<tr>
+			<td><h3>*Kontaktperson:!soll eig. automatisch passieren </td>
 			<td><input type="text" name="contactPerson" placeholder="Kontaktperson"/></td>
 		</tr>
 		<tr>
 			<td><h3>*Kategorie:</td>
-			<td><select name="tat_verantwortungslevel" size="1">
+			<td><select name="kategorie" size="1">
 			<option value="Altenheim">Altenheim</option>
 			<option value="Busbahnhof">Busbahnhof</option>
 			<option value="Mülleinsammeln">Mülleinsammeln</option>
@@ -64,7 +69,7 @@ require './includes/_top.php';
 			<td><input type="text" name="organization" placeholder="Organisation"/></td>
 		</tr>
 		<tr>
-			<td><h3>Zähler !soll eig. automatisch passieren</td>
+			<td><h3>Anzahl Helfer:</td>
 			<td><input type="text" name="countHelper" placeholder="Zähler"/></td>
 		</tr>
 			<tr>
@@ -74,10 +79,6 @@ require './includes/_top.php';
 			<option value="2">2</option>
 			<option value="3">3</option>
 			</select></label></td>
-		</tr>
-		<tr>
-			<td><h3>soll eig. von uns eingebbar sein</td>
-			<td><input type="text" name="status" placeholder="status"/></td>
 		</tr>
 		
 </table>

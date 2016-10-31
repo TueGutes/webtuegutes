@@ -1,104 +1,68 @@
 <?php
 /*
-*@author Klaus Sobotta
+*@author Christian Hock
+*Verlinkung zu Orten fehlt
+*Kategorie soll editierbar sein
 */
-
-// die session geht nicht brauche da hilfe
-//if($_SESSION){
-	
-//Inkludieren von script-Dateien
 require './includes/_top.php';
-
-include './includes/db_connector.php';
-include './includes/emailSender.php';
-
-
-//Variablen init
+require './db_connector.php';
 $name= ($_GET['name']);
+$description= ($_GET['description']);
+$pictures= ($_GET['pictures']);
 $contactPerson= $_GET['contactPerson'];
-$category= $_GET['category'];
+$category= $_GET['kategorie'];
 $street= $_GET['street'];
 $housenumber= $_GET['housenumber'];
 $postalcode= $_GET['postalcode'];
 $time_t= $_GET['time'];
 $organization= $_GET['organization'];
 $countHelper= $_GET['countHelper'];
-$idTrust= $_GET['idTrust'];
-$status= $_GET['status'];
+$idTrust= $_GET['tat_verantwortungslevel'];
+/*0-> gerade erst erstellt 
+  1-> bewilligt
+  2-> warte auf Antwort
+  3-> abgelehnt
+*/
+$status= 0; 
+/*wird auf 1 gesetzt bei falscheingabe*/
+$falscheEingabe=0;
 
-?>
+$db = db_connect();
 
-<?php
-function verbindenMitDB($name,$contactPerson,$category,$street,$housenumber,$postalcode,$time_t,$organization,$countHelper,$idTrust,$status){
-$servername="localhost";
-$serverusername="root";
-$serveruserpw="";
-$dbname="tuegutesdb";
-
-
-$con= new mysqli($servername,$serverusername,$serveruserpw,$dbname);
-	if($con->connect_error){
-		die("Es ist etwas schief gelaufen");
+//Testen ob Name schon vorhanden
+	$sql = "SELECT name FROM Deeds WHERE name = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('s',$name);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	if(isset($dbentry['name'])){
+		echo '<h3>Eine andere Tat ist bereits unter diesem Namen veröffentlicht.</h3>';
+		$falscheEingabe=1;
+		
 	}
-	
-	// import eine gute tat in die daten bank
-	$sql="INSERT INTO deeds (idGuteTat,name,contactPerson,category,street,housenumber,postalcode,time,organization,countHelper,idTrust,status) VALUES ((SELECT MAX(idGuteTat) FROM deeds),?,?,?,?,?,?,?,?,?,?,?)";
-	$stmt = $con->prepare($sql);
-	mysqli_stmt_bind_param($stmt, "isisssissiis",$idGutetat,$name,$contactPerson,$category,$street,$housenumber,$postalcode,$time_t,$organization,$countHelper,$idTrust,$status);
+//Ende Test ob Name vorhanden
+//Einfügen der Tat
+	if($falscheEingabe==0){
+	$sql='INSERT INTO Deeds (name,description, pictures, contactPerson,category,street,housenumber,postalcode,time,organization,countHelper,idTrust,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+	$stmt = $db->prepare($sql);
+	mysqli_stmt_bind_param($stmt, 'ssssssiiisiii' , $name, $description, $pictures, $contactPerson, $category,$street,$housenumber, $postalcode, $time_t,$organization,$countHelper,$idTrust,$status);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
-	
-	echo "Ein moment bitte";
-	if($con->query($sql)=== TRUE) {
-	?>
-		
-		<h2><?php echo "Die Tat wurde Erstellt"; ?></h2>
-		<html>
-		<body>
-		<?//die start seite muss noch definirt werden?>
-		<form action="./login.php">
-		<br><input type="submit"  value="zur Startseite"/><br>
-		</form>
-		</html>
-		</body>
-		<?php
-	}else{
-		?>
-		
-		<h2><?php echo "Es ist ein fehler aufgetreten"; ?></h2>
-		<html>
-		<body>
-		<form action="./guteTatErstellenHTML.php">
-		<br><input type="submit" value="Nochmal Versuchen"/><br>
-		</form>
-		<?//die start seite muss noch definirt werden?>
-		<form action="./login.php">
-		<br><input type="submit" value="zur Startseite"/><br>
-		</form>
-		</html>
-		</body>
-		<?php
-		echo $con->error;
+	echo '<h3>Ihre Tat wurde erfolgreich erstellt und wird nun von uns geprüft und freigegeben.</h3>';
+	include './buttonsTatErstellen.html';
+	if($affected_rows == 1) {	
 	}
-	$con->close();
-}
-?>
-
-
-<?php
-
-verbindenMitDB($name , $contactPerson,$category,$street,$housenumber,$postalcode,$time_t,$organization,$countHelper,$idTrust,$status);
-
-?>
+	else {
+		echo '<h3>Interner Fehler: bitte kontaktieren Sie uns, falls Ihnen die Umstände des Fehlers nicht bekannt sind.</h3>'.mysqli_error($db);
+	}
+	}else{include './buttonsTatErstellen.html';}
+//Ende einfügen der Tat	
+	db_close($db);	
 
 
 
-<?
+
+
 require './includes/_bottom.php';
-
-/*}else{
-	// r�ckf�rung zur einlock seite
-}*/
-
 ?>
-
