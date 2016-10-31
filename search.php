@@ -1,23 +1,24 @@
 <?php
-include 'function.php';
-    $db = new mysql();
-    $db->connect('localhost', 'root', '', 'test');
+include "objektorientiertes_beispiel/db.php";
+    $db=new DB();
+    db->connect("localhost","","root","");
 
-    if ($_GET[KEY]) {
-        $K = explode(' ', $_GET[key]);
-        echo $sql = "SELECT * FROM `bbs_threads` where subject like '%$k[0]%' or subject like '%$k[1]'";
+
+    if ($_GET[key] {
+        $key = explode(' ', $_GET[key]);
+        $sql = "SELECT * FROM ` ` where  like '%$k[0]%' or name like '%$k[1]'";
         echo '<br>';
         $q = $db->query($sql);
         while ($r = $db->fetch_array($q)) {
-            $r[subject] = preg_replace("/($k[0])/i", '<font color=red><b>\\1</b></font>', $r[subject]);
-            $r[subject] = preg_replace("/($k[1])/i", '<font color=red><b>\\1</b></font>', $r[subject]);
+            $r[xxx] = preg_replace("/($k[0])/i", '<font color=red><b>\\1</b></font>', $r[name]);
+            $r[xxx] = preg_replace("/($k[1])/i", '<font color=red><b>\\1</b></font>', $r[name]);
         }
     }
  ?>
 
 
- <form action="" method="get">
+ <form action="" method="GET">
     Stichwort:
-     <input type="text"> name="key" >
-     <input tupe="text" name="sub" value="search">
+     <input type="text" name="key" >
+     <input type="submit" name="sub" value="search">
  </form>
