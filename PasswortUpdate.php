@@ -105,19 +105,6 @@ function getUserByCryptkey($cryptkey) {
 				*/
 				
 				//$_SESSION['loggedIn'] = false;
-
-				/*if(isset($_SESSION['loggedIn'])===true) {
-						if($_SESSION['loggedIn'] === true) {
-							echo 'true'.$_SESSION['loggedIn'];
-						}
-						else {
-							echo 'false';
-							
-						}
-				}
-				else {
-					echo 'tschüss';
-				}*/
 				
 				if($_SESSION['loggedIn']===false) { //Schauen, ob Nutzer schon eingeloggt ist
 					if(isset($_GET['c'])) { //3. Fall: Der Link mit dem Cryptkey wurde aufgerufen 
@@ -145,7 +132,6 @@ function getUserByCryptkey($cryptkey) {
 						//echo '<h3>Email gesendet an: '.$_POST['mail'].'</h3>';
 						$cryptkey = getCryptkeyByMail($_POST['mail']);
 						if($cryptkey != false) {
-							//TODO: Email mit Bestätigungslink und Cryptkey senden
 							$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
 									<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
 							</div>
@@ -197,10 +183,8 @@ function getUserByCryptkey($cryptkey) {
 									<input type="submit" value="Passwort ändern">
 									</center>
 								</form>';
-								//TODO: Man muss auch den Cryptkey mit übergeben...
 						}
 						else {
-							//TODO: Passwort wirklich ändern :)
 							changePasswortByCryptkey($_SESSION['cryptkey'], $_POST['passwort']);
 							//TODO: Auf Profilseite weiterleiten
 							$_SESSION['loggedIn'] = true;
@@ -226,7 +210,7 @@ function getUserByCryptkey($cryptkey) {
 					}
 				} else { //5. Fall: Nutzer ist bereits eingeloggt
 					echo '<h3>Du bist bereits eingeloggt</h3>';
-					//TODO: Verweis auf Profilseite
+					echo'<a href="./profile.php">Profil anzeigen</a>';
 				}
 
 				echo '<footer>';

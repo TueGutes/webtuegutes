@@ -83,7 +83,7 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
 	Überprüfe, ob Username in Tabelle existiert
 	Überprüfe, ob Passwort richtig ist, falls ja melde Benutzer an und leite auf Profilseite weiter
 	*/
-	$continue = ""; //TODO Profilseite
+	$continue = "./profile.php"; //TODO Profilseite
 	if(isset($_SESSION['continue'])) {
 		$continue = $_SESSION['continue'];
 		unset($_SESSION['continue']);	

@@ -188,8 +188,7 @@ require "./includes/_top.php";
 						if(activateAcount($_GET['c']) === true) {
 							$_SESSION['loggedIn'] = true;
 							$_SESSION['user'] = getUserByCryptkey($_GET['c']); 
-							header("Location: http://localhost/git/");
-							//TODO auf Profilseite weiterleiten
+							header('Location: ./profile.php');
 						} else {
 							//Das Aktivieren des Accounts hat aus unbekanntem Grund nicht funktioniert
 							//Informiere den Benutzer darüber
@@ -247,7 +246,7 @@ require "./includes/_top.php";
 					}
 				} else {//4. Fall: Nutzer ist bereits eingeloggt
 					echo '<h2>Sie sind bereits eingeloggt</h2>';
-					//TODO: Auf Profilseite weiterleiten
+					header('Location: ./profile.php');
 				}
 	require "./includes/_bottom.php"; 
 ?>
