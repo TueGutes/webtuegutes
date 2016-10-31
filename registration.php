@@ -207,18 +207,18 @@ require "./includes/_top.php";
 						if ($user==="" OR $pass==="" OR $passwdh ==="" OR $mail ==="" OR $vorname ==="" OR $nachname==="") {
 							//2.1 Fall: Nicht alle Felder ausgefüllt
 							echo '<h3><font color=red>Fehler! Bitte alle Felder ausfüllen!</font></h3><p>';
-							include 'Kontoerstellung.html';
+							include './includes/Kontoerstellung.html';
 						} elseif (idOfBenutzername($user) != false){
 							//2.2 Fall: Benutzername existiert bereits
 							echo '<h3><font color=red>Fehler! Benutzername bereits vergeben</font></h3><p>';
-							include 'Kontoerstellung.html';
+							include './includes/Kontoerstellung.html';
 						} elseif ($pass != $passwdh) { 
 							//2.3 Fall: Passwörter sind nicht identisch
 							echo '<h3><font color=red> Fehler! Passwörter stimmen nicht überein</font></h3><p>';
-							include 'Kontoerstellung.html';
+							include './includes/Kontoerstellung.html';
 						} elseif(idOfEmailAdresse($mail) != false) { //Email-Adresse bereits registriert
 							echo '<h3><font color=red> Fehler! Email-Adresse bereits registriert</font></h3><p>';
-							include 'Kontoerstellung.html';
+							include './includes/Kontoerstellung.html';
 							echo'<a href="PasswortUpdate.php">Passwort vergessen?</a>';
 						} else {//Alles okay, erstelle neuen Account und sende Bestätigungsmail
 							$cryptkey = createBenutzerAccount($user, $vorname, $nachname, $mail, $pass);
@@ -243,7 +243,7 @@ require "./includes/_top.php";
 					} else {//1. Fall: Nutzer ist nicht eingeloggt und gelangt auf Registrierungsseite
 						echo'<h2>Registrierung</h2>';
 						echo'<h3>Trage deine Daten ein, um dich zu registrieren</h3>';
-						include 'Kontoerstellung.html';
+						include './includes/Kontoerstellung.html';
 					}
 				} else {//4. Fall: Nutzer ist bereits eingeloggt
 					echo '<h2>Sie sind bereits eingeloggt</h2>';

@@ -113,7 +113,7 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
 		$head = $wlang['login_head'];
 		echo '<h2>'.$head.'</h2>';
 		echo '<h3><font color=red>Der eingegebene Benutzername ist uns nicht bekannt</font></h3>';
-		require 'loginFormular.php';
+		require './includes/loginFormular.php';
 	}
 	
 } else {
@@ -126,7 +126,7 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
 	$head = $wlang['login_head'];
 	echo '<h2>'.$head.'</h2>';
 
-	require 'loginFormular.php';
+	require './includes/loginFormular.php';
 
 }
 
