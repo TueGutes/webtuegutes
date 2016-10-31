@@ -21,7 +21,7 @@ require './includes/_top.php';
 
 <!-- Hier kann später mal gute Taten erstellen hervorkommen-->
 <div class='ctop'>
-<input type="button" value="Gute Tat erstellen" onclick="window.open('./db/erstelleDeed.php','Deed')">
+<input type="button" value="Gute Tat erstellen" onclick="window.open('./guteTatErstellenHTML.php','Deed')">
 <br> <hr>
 </div>
 

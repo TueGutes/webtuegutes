@@ -60,7 +60,7 @@
 									<span class="menuItemBG"></span>
 								</li>
 								<li <?php echo $currentPath==$ABSOLUE_PATH.'deeds'.$extension?$activeTab:''; ?>>
-									<a href="./deeds.php"><?php echo $wlang['nav_deeds']; ?></a>
+									<a href="./deeds"><?php echo $wlang['nav_deeds']; ?></a>
 									<span class="menuItemBG"></span>
 								</li>
 								<li <?php echo $currentPath==$ABSOLUE_PATH.'contact'.$extension?$activeTab:''; ?>>
