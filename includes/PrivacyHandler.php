@@ -24,7 +24,7 @@ class PrivacyHandler
 	}
 	public function setPrivacyString($privacyString)
 	{
-		$this->$privacyFlags = str_split($privacyString); // explode benötigt zwingend delimiter (!= '')
+		$this->$privacyFlags = str_split($privacyString); // explode benÃ¶tigt zwingend delimiter (!= '')
 	} 
 	// $ph->get($ph::EMAIL);
 	public function get($key)
