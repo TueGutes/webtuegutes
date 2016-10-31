@@ -20,7 +20,7 @@
 	function get_user($user) {
 		$db = db_connect();
 		$sql = "
-			SELECT idUser, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, postalcode, telefonnumber, messengernumber, birthday 
+			SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, postalcode, telefonnumber, messengernumber, birthday 
 			FROM User
 				JOIN Trust
 			    	ON User.idTrust = Trust.idTrust
@@ -122,6 +122,38 @@
 		db_close($db);
 	}
 
+	function delete_user($user, $pass) {
+		$me = get_user($user);
+		$pass_md5 = md5($pass.substr($me['regDate'],0,10));
+		if ($pass_md5 === $me['password']) {
+			$db = db_connect();
+
+			$sql = "DELETE FROM PersData WHERE idPersData= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+
+			$sql = "DELETE FROM UserTexts WHERE idUserTexts= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+
+			$sql = "DELETE FROM Privacy WHERE idPrivacy= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+
+			$sql = "DELETE FROM User WHERE idUser = ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+
+			Header('Location:./logout.php');
+		} else {
+			die ('RegDate: ' . substr($me['regDate'],0,10) . 'DB: ' . $me['password'] . '<br>Eingegeben: ' . $pass_md5);
+		}
+	}
+
 	function get_place($plz) {
 		$db = db_connect();
 		$sql = "SELECT place FROM Postalcode WHERE postalcode = ?";
@@ -148,6 +180,10 @@
 
 	//Profile sind nur für eingeloggte Nutzer sichtbar:
 	if (!@$_SESSION['loggedIn']) die ('Profile sind nur für eingeloggte Nutzer sichtbar!<p/><a href="login.php">Zum Login</a>');	
+
+	//Sollte das Profil gelöscht werden?
+	if (isset($_POST['save_pw']))
+		delete_user($_SESSION['user'],$_POST['save_pw']);
 
 	//Festlegen des auszulesenden Nutzers:
 	$thisuser = get_user(@$_GET['user']);
@@ -278,7 +314,9 @@
 
 
 
-		$form_bottom = '<p /><p /><input type=submit value="Änderungen speichern"><input type="hidden" name="action" value="save"></form>';
+		$form_bottom = '<p /><p /><input type=submit value="Änderungen speichern"><input type="hidden" name="action" value="save"><br><br><br><br><br></form>';
+
+		$form_bottom .= '<form action="" method="post"><input type="password" name="save_pw" placeholder="Passwort zur Sicherheit erneut eingeben..."><br>?c=4be113379317826eb632064385a8f028<input type=submit value="Profil entgültig löschen"></form>';
 
 	} else {
 		//Zeige das Profil ohne Änderungsmöglichkeit an

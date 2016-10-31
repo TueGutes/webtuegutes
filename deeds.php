@@ -26,7 +26,7 @@ require './includes/_top.php';
 	<table style="display: inline-block;border:1px solid">
 		<?php
 		$mysqli = db_connect();
-		$result = $mysqli->query('SELECT name AS "Gute Tat", contactPerson AS "Kontakt", category AS "Kategorie", street AS "Straße", housenumber AS "Nr.", Postalcode.postalcode AS "PLZ", place AS "Ort", description AS "Beschreibung:" FROM Deeds JOIN Postalcode ON (Deeds.postalcode = Postalcode.postalcode) JOIN DeedTexts ON (Deeds.idGuteTat = DeedTexts.idDeedTexts)');
+		$result = $mysqli->query('SELECT name AS "Gute Tat", username AS "Kontakt", category AS "Kategorie", street AS "Straße", housenumber AS "Nr.", Postalcode.postalcode AS "PLZ", place AS "Ort", description AS "Beschreibung:" FROM Deeds JOIN Postalcode ON (Deeds.postalcode = Postalcode.postalcode) JOIN DeedTexts ON (Deeds.idGuteTat = DeedTexts.idDeedTexts) JOIN User ON (Deeds.contactPerson = User.idUser)');
 		// Tabellenkopf mit den Feldnamen als Spaltenbezeichnungen:
 		echo ' <tr>';
 		while ( $field = $result->fetch_field() ) {
