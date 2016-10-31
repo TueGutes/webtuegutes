@@ -154,7 +154,7 @@
 	if (!isset($thisuser['username'])) $thisuser = get_user($_SESSION['user']);
 
 	//Festlegen der Sichtbarkeitseinstellungen
-	if ($_SESSION['user']===$thisuser['username'] && !(@$_GET['view']==="public")) {
+	if (strtoupper($_SESSION['user'])===strtoupper($thisuser['username']) && !(@$_GET['view']==="public")) {
 		$headline = 'Dein Profil';
 		$link = '<a href="profile.php?view=public">Wie sehen andere Nutzer mein Profil?</a><br>';
 		$shEmail = ($thisuser['email']!="");
@@ -405,7 +405,7 @@
 			$blKontakt .= "</table>";
 		}
 
-		$form_bottom = ((($_SESSION['user']===$thisuser['username']) && (!isset($_GET['view']) || $_GET['view'] != "public") )?'<p /><p /><input type="submit" value="Profil bearbeiten"><input type="hidden" name="action" value="edit"></form>':'</form>');
+		$form_bottom = (((strtoupper($_SESSION['user'])===strtoupper($thisuser['username'])) && (!isset($_GET['view']) || $_GET['view'] != "public") )?'<p /><p /><input type="submit" value="Profil bearbeiten"><input type="hidden" name="action" value="edit"></form>':'</form>');
 	}
 
 ?>
