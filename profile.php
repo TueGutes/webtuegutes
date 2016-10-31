@@ -3,13 +3,13 @@
 
 	function fix_plz($plz) {
 		$db = db_connect();
-		$sql = "SELECT * from POSTALCODE where Postalcode = ?";
+		$sql = "SELECT * from Postalcode where postalcode = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$plz);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if (!isset($result->fetch_assoc['postalcode'])) {
-			$sql = 'INSERT INTO POSTALCODE (postalcode, place) VALUES (?, "Unbekannt")';
+			$sql = 'INSERT INTO Postalcode (postalcode, place) VALUES (?, "Unbekannt")';
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('i',$plz);
 			$stmt->execute();
@@ -42,7 +42,7 @@
 			//PLZ gesetzt -> Lade den Namen des Ortes aus der Datenbank
 			$sql = "
 				SELECT postalcode, place 
-				FROM postalcode
+				FROM Postalcode
 				WHERE postalcode = ?
 			";
 			$stmt = $db->prepare($sql);
