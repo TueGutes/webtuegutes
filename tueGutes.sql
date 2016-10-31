@@ -221,10 +221,18 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- INSERT INTO TRUST
 -- -----------------------------------------------------
 
-INSERT INTO Trust(idTrust,trustleveldescription) VALUES(0, "Neuling");
+INSERT INTO Trust(idTrust,trustleveldescription) VALUES(1, "Neuling");
+INSERT INTO Trust(idTrust,trustleveldescription) VALUES(2, "Mitglied");
+INSERT INTO Trust(idTrust,trustleveldescription) VALUES(3, "Stammmitglied");
+INSERT INTO Trust(idTrust,trustleveldescription) VALUES(4, "Veteran");
+INSERT INTO Trust(idTrust,trustleveldescription) VALUES(5, "GuteFreund");
+INSERT INTO Trust(idTrust,trustleveldescription) VALUES(6, "Familienmitglied");
+INSERT INTO Trust(idTrust,trustleveldescription) VALUES(7, "Seelenverwandte");
 
 -- -----------------------------------------------------
 -- INSERT INTO USERGROUP
 -- -----------------------------------------------------
 
-INSERT INTO UserGroup(idUserGroup,groupDescription) VALUES(0, "Mitglied");
+INSERT INTO UserGroup(idUserGroup,groupDescription) VALUES(1, "Mitglied");
+INSERT INTO UserGroup(idUserGroup,groupDescription) VALUES(2, "Moderator");
+INSERT INTO UserGroup(idUserGroup,groupDescription) VALUES(3, "Administrator");
