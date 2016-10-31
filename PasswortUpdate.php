@@ -19,7 +19,7 @@ if(!(isset($_SESSION['loggedIn']))) {
 /*Liefert den Cryptkey zum Account, der zu der übergeben Email-Adresse gehört oder false*/
 function getCryptkeyByMail($mail) {
 	$db = db_connect();
-	$sql = "SELECT cryptkey FROM Privacy WHERE idPrivacy = (SELECT idUser FROM User WHERE email = ?)";
+	$sql = "SELECT cryptkey FROM Privacy WHERE idPrivacy = (SELECT idUser FROM User WHERE email = LOWER(?))";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('s',$mail);
 	$stmt->execute();

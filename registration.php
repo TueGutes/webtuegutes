@@ -38,7 +38,7 @@ function idOfBenutzername($benutzername) {
 //es keinen Account mit dieser Emailadresse gibt
 function idOfEmailAdresse($emailadresse) {
 	$db = db_connect();
-	$sql = "SELECT idUser FROM User WHERE email = ?";
+	$sql = "SELECT idUser FROM User WHERE email = LOWER(?)";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('s',$emailadresse);
 	$stmt->execute();
@@ -60,7 +60,7 @@ function idOfEmailAdresse($emailadresse) {
 function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 	//TODO: Datenbank Insert ausarbeiten
 	$db = db_connect();
-	$sql = "Insert into User (username, password, email, regDate, points, status, idUserGroup, idTrust) values(?,?,?,?,0,'nichtVerifiziert',0,0)";
+	$sql = "Insert into User (username, password, email, regDate, points, status, idUserGroup, idTrust) values(?,?,LOWER(?),?,0,'nichtVerifiziert',0,0)";
 	$stmt = $db->prepare($sql);
 	$date = date("Y-m-d");
 	$pass_md5 = md5($passwort.$date);
