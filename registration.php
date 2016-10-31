@@ -69,8 +69,7 @@ function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $pass
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
 		//return true;	
-	}
-	else {
+	} else {
 		echo 'beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db);
 		//return false;
 	}

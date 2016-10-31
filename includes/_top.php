@@ -37,7 +37,7 @@
 				if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'])
 					echo '<a href="./logout">' . 'Logout' . '</a>';
 				else
-					echo '<a href="./register">' . $wlang['register_head'] . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./login">' . $wlang['login_head'] . '</a>';
+					echo '<a href="./registration">' . $wlang['register_head'] . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./login">' . $wlang['login_head'] . '</a>';
 					/*<form action="">
 						<input type="text" value="" placeholder="<?php echo $wlang['login_placeholder_username']; ?>" />
 						<input type="password" value="" placeholder="<?php echo $wlang['login_placeholder_password']; ?>" />
@@ -60,7 +60,7 @@
 									<span class="menuItemBG"></span>
 								</li>
 								<li <?php echo $currentPath==$ABSOLUE_PATH.'deeds'.$extension?$activeTab:''; ?>>
-									<a href="./deeds"><?php echo $wlang['nav_deeds']; ?></a>
+									<a href="./deeds.php"><?php echo $wlang['nav_deeds']; ?></a>
 									<span class="menuItemBG"></span>
 								</li>
 								<li <?php echo $currentPath==$ABSOLUE_PATH.'contact'.$extension?$activeTab:''; ?>>
