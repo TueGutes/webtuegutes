@@ -4,7 +4,9 @@
 *@author Christian Hock
 */
 
-//if($_SESSION){
+session_start();
+
+if (!@$_SESSION['loggedIn']) die (Header("Location: ./login.php")); 	
 	
 require './includes/_top.php';
 ?>

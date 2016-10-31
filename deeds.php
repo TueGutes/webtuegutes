@@ -7,6 +7,9 @@
 
 session_start();
 
+if (!@$_SESSION['loggedIn']) die (Header("Location: ./login.php")); 	
+
+
 include './includes/db_connector.php';
 require './includes/_top.php';
 ?>
