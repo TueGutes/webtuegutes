@@ -78,6 +78,27 @@ function passwordHashOfUserID($userID) {
 	}
 }
 
+/**/
+function statusByUserID($userID) {
+	$db = db_connect();
+	$sql = "SELECT status FROM User WHERE idUser = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$userID);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	if(isset($dbentry['status'])){
+		db_close($db);
+		return $dbentry['status'];
+	}
+	else {
+		echo "Error: ".mysqli_error($db);
+		db_close($db);
+		return false;
+	}
+}
+
+
 if(isset($_POST['username']) && isset($_POST['password'])) {
 	/*Login-Formular mit Username und Passwort wurde aufgerufen
 	Überprüfe, ob Username in Tabelle existiert
@@ -93,20 +114,29 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
 	if($userID != false) {
 		$regDate = regDateOfUserID($userID);
 		$passHash = passwordHashOfUserID($userID);
-		if(md5($_POST['password'].$regDate) === $passHash) {
-			//Eingegebenes Passwort ist richtig
-			$_SESSION['loggedIn'] = true;
-			$_SESSION['user'] = $_POST['username']; 
-			echo '<h3>Login erfolgreich</h3>';
-			header("Location: ".$continue); //Weiterleiten auf URL in $continue
+		$status = statusByUserID($userID);
+		if($status != "nichtVerifiziert") {
+			if(md5($_POST['password'].$regDate) === $passHash) {
+				//Eingegebenes Passwort ist richtig
+				$_SESSION['loggedIn'] = true;
+				$_SESSION['user'] = $_POST['username']; 
+				echo '<h3>Login erfolgreich</h3>';
+				header("Location: ".$continue); //Weiterleiten auf URL in $continue
+			}
+			else {
+				//Eingebenes Passwort ist falsch
+				$head = $wlang['login_head'];
+				echo '<h2>'.$head.'</h2>';
+				echo '<h3><font color=red>Das eingegebene Passwort ist falsch</font></h3>';
+				require './includes/loginFormular.php';
+				echo'<a href="PasswortUpdate.php">Passwort vergessen?</a>';
+			}
 		}
 		else {
-			//Eingebenes Passwort ist falsch
 			$head = $wlang['login_head'];
 			echo '<h2>'.$head.'</h2>';
-			echo '<h3><font color=red>Das eingegebene Passwort ist falsch</font></h3>';
+			echo '<h3><font color=red>Der Account ist noch nicht verifiziert, bitte auf den Bestätigungslink in der Mail klicken</font></h3>';
 			require './includes/loginFormular.php';
-			echo'<a href="PasswortUpdate.php">Passwort vergessen?</a>';
 		}
 	}
 	else {
