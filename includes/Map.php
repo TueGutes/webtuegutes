@@ -8,6 +8,7 @@
 	*	Diese Funktion muss in einem definierten Bereich aufgerufen werden, die Map wird im kompletten Bereich angezeigt.
 	*/
 	function createMap($address){
+		$address = str_replace(' ', '+', $address);
 		//Umwandel der Adresse in geographischen Koordinaten.
 		$contents = file('http://nominatim.openstreetmap.org/search?format=json&limit=2&q=' . $address);
 		$stringArray = explode ('"' ,substr($contents[0], strpos($contents[0], '"lat"')+7));
