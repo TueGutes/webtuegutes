@@ -4,6 +4,8 @@
 *@author Christian Hock
 */
 	
+session_start();	
+	
 require './includes/_top.php';
 
 ?>
