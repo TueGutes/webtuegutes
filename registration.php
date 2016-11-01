@@ -219,7 +219,6 @@ function getUserByCryptkey($cryptkey) {
 						} elseif(idOfEmailAdresse($mail) != false) { //Email-Adresse bereits registriert
 							echo '<h3><font color=red> Fehler! Email-Adresse bereits registriert</font></h3><p>';
 							include './includes/Kontoerstellung.html';
-							echo'<a href="PasswortUpdate.php">Passwort vergessen?</a>';
 						} else {//Alles okay, erstelle neuen Account und sende Bestätigungsmail
 							$cryptkey = createBenutzerAccount($user, $vorname, $nachname, $mail, $pass);
 							if($cryptkey != false) {
