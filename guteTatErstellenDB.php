@@ -1,6 +1,6 @@
 <?php
 
-//Temporär (wird später aus der Datenbank geladen)
+	//Temporär (wird später aus der Datenbank geladen)
 	function db_fix_plz($plz) {
 		$db = db_connect();
 		$sql = "SELECT postalcode from Postalcode where postalcode = ?";
