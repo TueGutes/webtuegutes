@@ -9,7 +9,7 @@
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if (!isset($result->fetch_assoc['postalcode'])) {
-			$sql = 'INSERT INTO Postalcode (postalcode, place) VALUES (?, "Hannover")';
+			$sql = 'INSERT INTO Postalcode (postalcode, place) VALUES (?, "Unbekannt")';
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('i',$plz);
 			$stmt->execute();

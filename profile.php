@@ -9,7 +9,7 @@
 		$stmt->execute();
 		$result = $stmt->get_result();
 		if (!isset($result->fetch_assoc['postalcode'])) {
-			$sql = 'INSERT INTO Postalcode (postalcode, place) VALUES (?, "Hannover")';
+			$sql = 'INSERT INTO Postalcode (postalcode, place) VALUES (?, "Unbekannt")';
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('i',$plz);
 			$stmt->execute();
@@ -489,13 +489,13 @@
 	echo '<div align="center">' . $blAdresse . '</div>';
 	echo '<p />';
 	echo '<div align="center">' . $blKontakt . '</div>';
-	/*
+	
 	if ($showMap) {
 		echo '<center><div id="mapid"></div>';
-		createMap($thisuser['place'],$thisuser['street'],$thisuser['housenumber']);
+		createMap($thisuser['postalcode'] . ',' . $thisuser['street'] . ',' . $thisuser['housenumber']);
 		echo '</center>';
 	}
-	*/
+	
 	echo '<p />';
 	echo '<div align="center">' . $blPrivacy . '</div>';
 	//echo '<p />';
