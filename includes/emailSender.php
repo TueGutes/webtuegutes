@@ -1,11 +1,11 @@
 <?php 
 
-require './includes/DEF.php';
+//include './includes/DEF.php';
 
 /*Sends an email from tuegutesinhannover@gmail.com to $to with subject $subject and
 HTML Content $content*/
 function sendEmail($to, $subject, $content) {
-	if($USE_GMAIL === true) {
+	if($GLOBALS["USE_GMAIL"] === true) {
 		/*Nutze den Gmail-Account, um die Mails zu senden*/
 		require 'PHPMailer-master/PHPMailerAutoload.php';
 		$phpmail = new PHPMailer;

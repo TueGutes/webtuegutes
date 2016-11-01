@@ -7,6 +7,8 @@ if(!(isset($_SESSION['loggedIn']))) {
 	$_SESSION['loggedIn'] = false;
 }
 
+require "./includes/_top.php";
+
 //Inkludieren von script-Dateien
 include './includes/db_connector.php';
 include './includes/emailSender.php';
@@ -164,7 +166,7 @@ function getUserByCryptkey($cryptkey) {
 ?>
 
 <?php
-require "./includes/_top.php";
+
 
 				/*
 				Es gibt ... Fälle:
