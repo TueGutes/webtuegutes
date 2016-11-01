@@ -308,7 +308,9 @@ function db_getUserByCryptkey($cryptkey) {
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('s',$thisuser['postalcode']);
 			$stmt->execute();
-			$thisuser['place'] = $stmt->get_result()->fetch_assoc()['place'];
+			$result = $stmt->get_result();
+			$dbentry = $result->fetch_assoc();
+			$thisuser['place'] = $dbentry['place'];
 		} else {
 			$thisuser['postalcode'] = '';
 			$thisuser['place'] = '';
