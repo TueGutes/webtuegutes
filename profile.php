@@ -468,7 +468,7 @@
 </style>
 
 <!--Überschrift-->
-<h1 id="profileheader"><?php echo $headline; ?></h1>
+<h2 id="profileheader"><?php echo $headline; ?></h2>
 
 <!--Ggf. ausgeben des Links zur öffentlichen Ansicht-->
 <?php echo $link?>

@@ -71,7 +71,7 @@ require './includes/_top.php';
 			</tr>
 			
 		</table>
-				<a href="./index.php"><input type="button" name="button" value="Zurück" /></a>
+				<a href="./deeds.php"><input type="button" name="button" value="Zurück" /></a>
 				<input type="submit" name="button" value="Tat erstellen"/>
 		</center>
 	</form>
