@@ -48,7 +48,9 @@
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('s',$thisuser['postalcode']);
 			$stmt->execute();
-			$thisuser['place'] = $stmt->get_result()->fetch_assoc()['place'];
+			$result = $stmt->get_result();
+			$entry = $result->fetch_assoc();
+			$thisuser['place'] = $entry['place'];
 		} else {
 			$thisuser['postalcode'] = '';
 			$thisuser['place'] = '';
@@ -168,6 +170,7 @@
 ?>
 
 <?php
+
 /*
 * @author: Nick Nolting, Alexander Gauggel
 */
