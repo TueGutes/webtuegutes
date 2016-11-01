@@ -12,7 +12,8 @@ require './includes/_top.php';
 
 <!-- Hier kann später mal gute Taten erstellen hervorkommen-->
 <div class='ctop'>
-<input type="button" value="Gute Tat erstellen" onclick="window.open('./guteTatErstellenHTML.php','Deed')">
+<form action="guteTatErstellenHTML.php">
+<input type="submit" value="Gute Tat erstellen" target="_self">
 <br> <hr>
 </div>
 
@@ -20,14 +21,13 @@ require './includes/_top.php';
 	<table style="display: inline-block;border:1px solid">
 		<?php
 		$mysqli = db_connect();
-		$result = $mysqli->query('SELECT name AS "Gute Tat", username AS "Kontakt", category AS "Kategorie", street AS "Straße", housenumber AS "Nr.", Postalcode.postalcode AS "PLZ", place AS "Ort", description AS "Beschreibung:" FROM Deeds JOIN Postalcode ON (Deeds.postalcode = Postalcode.postalcode) JOIN DeedTexts ON (Deeds.idGuteTat = DeedTexts.idDeedTexts) JOIN User ON (Deeds.contactPerson = User.idUser)');
+		$result = $mysqli->query('SELECT name AS "Gute Tat", username AS "Kontakt", street AS "Straße", housenumber AS "Nr.", Postalcode.postalcode AS "PLZ", place AS "Ort", description AS "Beschreibung:" FROM Deeds JOIN Postalcode ON (Deeds.postalcode = Postalcode.postalcode) JOIN DeedTexts ON (Deeds.idGuteTat = DeedTexts.idDeedTexts) JOIN User ON (Deeds.contactPerson = User.idUser)');
 		// Tabellenkopf mit den Feldnamen als Spaltenbezeichnungen:
 		echo ' <tr>';
 		while ( $field = $result->fetch_field() ) {
 			echo '<th style="border:1px solid;padding:10px"><b>';
-			//if(($field->name !== "idGuteTat")&&($field->name !== "contactPerson")&&($field->name !== "status")){
-				echo " $field->name";
-			//}
+			//if(($field->name !== "Beschreibung")){
+			echo " $field->name";
 			echo '</b></th>';
 		}
 		echo "</tr>";		 
@@ -38,11 +38,15 @@ require './includes/_top.php';
 			echo ' <tr> ';
 			foreach ( $deed as $key => $value ) 
 			{
-				echo '<td style="border:1px solid;padding:10px">';
+				echo '<td style="border:0px solid;padding:10px">';
 				echo "$value";	
-				echo '</td>';
+				echo '</td>';			
 			}
-			echo " </td> </tr>";
+
+			echo '<td style="border:0px solid;padding:10px">';
+			echo '<a href="./guteTat.php"><input type="button" value="mehr"/></a>';
+			echo '</td>';
+			echo " </tr>";
 		}
 		?>
 	</table>
