@@ -37,7 +37,7 @@
 				<div id="profileSection">
 				<?php
 				if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] && isset($_SESSION['user']))
-					echo '<a href="./search"><input type="button" value="Tat suchen" style="font-size: 10px; margin-top: -20px;" /></a><br><br><a href="./logout">' . 'Logout' . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./profile">' . $_SESSION['user'] . '</a>';
+					echo /*'<a href="./search"><input type="button" value="Tat suchen" style="font-size: 10px; margin-top: -20px;" /></a><br><br>*/'<a href="./logout">' . 'Logout' . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./profile">' . $_SESSION['user'] . '</a>';
 				else
 					echo '<a href="./registration">' . $wlang['register_head'] . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./login">' . $wlang['login_head'] . '</a>';
 					/*<form action="">
