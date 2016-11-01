@@ -236,3 +236,12 @@ INSERT INTO Trust(idTrust,trustleveldescription) VALUES(7, "Seelenverwandte");
 INSERT INTO UserGroup(idUserGroup,groupDescription) VALUES(1, "Mitglied");
 INSERT INTO UserGroup(idUserGroup,groupDescription) VALUES(2, "Moderator");
 INSERT INTO UserGroup(idUserGroup,groupDescription) VALUES(3, "Administrator");
+
+-- -----------------------------------------------------
+-- Fügt ein TestUser ein
+-- -----------------------------------------------------
+
+INSERT INTO User (idUser,username, password, email, regDate, points, status, idUserGroup, idTrust) values(1,testuser,9d53fbca481ed20edc0c10d6e45fcedf,Mail@funkt.nicht,2016-11-01,0,'Verifiziert',3,3);
+INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) values ((SELECT MAX(idUser) FROM User),"111111111111111",345485c1dfc5ebc4dd3fb90e3d591518);
+INSERT INTO UserTexts (idUserTexts) values ((SELECT MAX(idUser) FROM User));
+Insert into PersData (idPersData, firstname, lastname) values((SELECT MAX(idUser) FROM User),"testmax","testmuster");

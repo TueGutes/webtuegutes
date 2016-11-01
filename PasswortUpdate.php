@@ -133,7 +133,7 @@ function getUserByCryptkey($cryptkey) {
 						$cryptkey = getCryptkeyByMail($_POST['mail']);
 						if($cryptkey != false) {
 							$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
-							
+							//$actual_link = explode('.', $actual_link)[0];
 							$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
 									<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
 							</div>

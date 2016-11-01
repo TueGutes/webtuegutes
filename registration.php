@@ -239,7 +239,7 @@ require "./includes/_top.php";
 								}
 								else {
 									//Das Senden der Email ist fehlgeschlagen
-									echo '<h3><font color=red>Bestätigungslink an $mail konnte nicht gesendet werden</font></h3><p>';
+									echo '<h3><font color=red>Bestätigungslink an '.$mail.' konnte nicht gesendet werden</font></h3><p>';
 								}
 							} else {
 								//Das Erstellen des Accounts in der Datenbank ist schief gelaufen
