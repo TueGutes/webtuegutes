@@ -4,7 +4,6 @@
 */
 
 include './includes/ACCESS.php';
-
 include './includes/db_connector.php';
 require './includes/_top.php';
 ?>
@@ -21,6 +20,8 @@ require './includes/_top.php';
 <div class='center'>
 	<table style="display: inline-block;border:1px solid">
 		<?php
+
+		$mysqli = db_connect();
 		$result = $mysqli->query('SELECT name AS "Gute Tat", username AS "Kontakt", category AS "Kategorie", street AS "Straße", housenumber AS "Nr.", postalcode AS "PLZ" /* , place AS "Ort" */, description AS "Beschreibung:" FROM Deeds /* JOIN Postalcode ON (Deeds.postalcode = Postalcode.postalcode) */ JOIN DeedTexts ON (Deeds.idGuteTat = DeedTexts.idDeedTexts) JOIN User ON (Deeds.contactPerson = User.idUser)');
 		
 		
