@@ -2,8 +2,7 @@
 	require_once './includes/DEF.php';
 	require_once './includes/LANGUAGE.php';
 	
-	//TIMM auf Bitte von Max 
-	error_reporting(E_ALL);
+	
 
 	$currentPath = $_SERVER['PHP_SELF'];
 	$extension = '.php';
