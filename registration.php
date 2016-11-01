@@ -224,7 +224,15 @@ require "./includes/_top.php";
 								//Account erfolgreich in Datenbank erstellt
 								//Sende Bestätigungslink an Mailadresse
 								
-								$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?c=".$cryptkey." </h3></div>";
+								$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
+								
+								$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: ".$actual_link."?c=".$cryptkey." </h3></div>";
+								
+								
+
+//echo $actual_link;
+								
+//echo __DIR__;
 								
 								if(sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent)===true) {
 									echo '<h3><font color=green>Bestätigungslink wurde gesendet an: '.$mail.'</font></h3><p>';
