@@ -132,11 +132,13 @@ function getUserByCryptkey($cryptkey) {
 						//echo '<h3>Email gesendet an: '.$_POST['mail'].'</h3>';
 						$cryptkey = getCryptkeyByMail($_POST['mail']);
 						if($cryptkey != false) {
+							$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
+							
 							$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
 									<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
 							</div>
 							<div style=\"margin-left:10%;margin-right:10%\">
-								<h2>Klicke auf den Link, um ein neues Passwort zu setzen http://localhost/git/PasswortUpdate.php?c=$cryptkey </h2>
+								<h2>Klicke auf den Link, um ein neues Passwort zu setzen ".$actual_link."?c=$cryptkey </h2>
 							</div>";
 							//"http://localhost/git/PasswortUpdate.php?c=$cryptkey";
 							if(sendEmail($_POST['mail'], "TueGutes - Passwort Ändern", $mailcontent)===true) {
