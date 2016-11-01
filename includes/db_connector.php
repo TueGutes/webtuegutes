@@ -62,7 +62,6 @@ function db_idOfEmailAdresse($emailadresse) {
 		return false;
 	}
 	
-	//return false; //Testzwecke
 }
 
 //Gibt die Anzahl der Benutzer zurück, egal welcher Status sie innehaben
@@ -89,82 +88,21 @@ function db_getGuteTaten(){
 	return $arr;
 }
 
-/*
-function db_getUserData($UserID){
+
+//Gibt alle Daten einer Guten tat zu einer bestimmten Id der guten Tat aus.
+function db_getGuteTatbyid($idvonGuteTat){
 	$db = db_connect();
-	$sql = "SELECT
-		User.idUser
-  		User.username,
-  		User.email,
-  		User.regDate,
-  		PersData.firstname,
-		PersData.lastname,
-		PersData.birthday,
-		PersData.street,
-		PersData.housenumber,
-		PersData.telefonnumber,
-		PersData.messengernumber,
-		UserTexts.avatar,
-		UserTexts.hobbys,
-		UserTexts.description
-		FROM UserTexts
-  			INNER JOIN User
-    			ON UserTexts.idUserTexts = User.idUser
-  			INNER JOIN PersData
-    			ON PersData.idPersData = User.idUser
-		WHERE User.idUser = ?";
+	$sql = "SELECT * FROM Deeds WHERE idguteTat = ?";
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('i',$UserID);
+	$stmt->bind_param('i',$idvonGuteTat);
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
 	db_close($db);
 	return $dbentry;
-}
-*/
 
-
-/*
-function db_saveUserData($savedata){
-	$db = db_connect();
-	$sql ="UPDATE User,PersData,UserTexts
-		SET 
-		User.username = ?,
-		User.email = ?,
-		User.regDate = ?,
-		PersData.firstname = ?,
-		PersData.lastname = ?,
-		PersData.birthday = ?,
-		PersData.street = ?,
-		PersData.housenumber = ?,
-		PersData.telefonnumber = ?,
-		PersData.messengernumber = ?,
-		UserTexts.avatar = ?,
-		UserTexts.hobbys = ?,
-		UserTexts.description = ?
-		WHERE User.idUser = ? 
-		AND PersData.idPersData = User.idUser
-		AND UserTexts.idUserTexts = User.idUser;"
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('sssssssssssssi',
-		$savedata['User.username'],
-		$savedata['User.email'],
-		$savedata['User.regDate'],
-		$savedata['PersData.firstname'],
-		$savedata['PersData.lastname'],
-		$savedata['PersData.birthday'],
-		$savedata['PersData.street'],
-		$savedata['PersData.housenumber'],
-		$savedata['PersData.telefonnumber'],
-		$savedata['PersData.messengernumber'],
-		$savedata['UserTexts.avatar'],
-		$savedata['UserTexts.hobbys'],
-		$savedata['UserTexts.description'],
-		$savedata['User.idUser']);
-	$stmt->execute();
-	db_close($db);
 }
-*/
+
 
 /*Erstellt einen Benutzeraccount mit den angegeben Parametern, der Status ist erste einmal "unverifiziert*/
 /*Liefert einen cryptkey, falls das Erstellen erfolgreich war, false falls nicht*/
@@ -314,8 +252,7 @@ function db_getUserByCryptkey($cryptkey) {
 		} else {
 			$thisuser['postalcode'] = '';
 			$thisuser['place'] = '';
-		}
-
+		
 		//Schließen der Datenbankverbindung
 		db_close($db);
 
