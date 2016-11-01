@@ -41,7 +41,7 @@ require './includes/_top.php';
 			echo ' <tr> ';
 			foreach ( $deed as $key => $value ) 
 			{
-				echo '<td style="border:0px solid;padding:10px">';
+				echo '<td style="border:1px solid;padding:10px">';
 				echo "$value";	
 				echo '</td>';			
 			}
