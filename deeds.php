@@ -46,9 +46,9 @@ require './includes/_top.php';
 				echo '</td>';			
 			}
 
-			echo '<td style="border:0px solid;padding:10px">';
-			echo '<a href="./guteTat.php"><input type="button" value="mehr"/></a>';
-			echo '</td>';
+			//echo '<td style="border:0px solid;padding:10px">';
+			//echo '<a href="./guteTat.php"><input type="button" value="mehr"/></a>';
+			//echo '</td>';
 			echo " </tr>";
 		}
 		?>
