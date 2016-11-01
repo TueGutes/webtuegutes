@@ -37,8 +37,14 @@ function sendEmail($to, $subject, $content) {
 		//$to      = 'daniel.kadenbach@hs-hannover.de';
 		//$subject = 'the subject';
 		//$message = 'hello';
-		$headers = 'From: proanvil@hs-hannover.de' . "\r\n" .'X-Mailer: PHP/' . phpversion();
+		$headers = 'From: proanvil@hs-hannover.de' . "\r\n" .'X-Mailer: PHP/' . phpversion(). "\r\n";
+		
+		// für HTML-E-Mails muss der 'Content-type'-Header gesetzt werden
+		$header  = 'MIME-Version: 1.0' . "\r\n";
+		$header .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+		
 		mail($to, $subject, $content, $headers);
+		return true;
 	}
 	/*"<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/logo_provisorisch.png\" alt=\"Zurück zur Startseite\" title=\"Zurück zur Startseite\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: http://localhost/git/registration.php?e=".base64_encode($user)." </h3></div>"*/
 	
