@@ -37,8 +37,8 @@
 				</div>
 				<div id="profileSection">
 				<?php
-				if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'])
-					echo '<a href="./logout">' . 'Logout' . '</a>';
+				if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] && isset($_SESSION['user']))
+					echo '<a href="./logout">' . 'Logout' . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./profile">' . $_SESSION['user'] . '</a>';
 				else
 					echo '<a href="./registration">' . $wlang['register_head'] . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./login">' . $wlang['login_head'] . '</a>';
 					/*<form action="">
