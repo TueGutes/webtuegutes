@@ -8,7 +8,3 @@ RewriteRule ^([^\.]+)$ $1.php [NC,L]
 ErrorDocument 403 /error
 ErrorDocument 404 /error
 ErrorDocument 500 /error
-
-#Autor Timm
-php_flag display_errors on 
-php_value error_reporting 6143
