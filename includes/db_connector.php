@@ -89,33 +89,6 @@ function db_getGuteTaten(){
 	return $arr;
 }
 
-// Zeigt die Daten eines Benutzer an, die in dem Backlog gefordert worden sind
-function db_get_user($user) {
-	$db = db_connect();
-	$sql = "
-		SELECT idUser, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, Postalcode.postalcode, place, telefonnumber, messengernumber, birthday 
-		FROM User
-			JOIN Trust
-		    	ON User.idTrust = Trust.idTrust
-			JOIN UserGroup
-		    	ON User.idUserGroup = UserGroup.idUserGroup
-			JOIN Privacy
-		    	ON User.idUser = Privacy.idPrivacy
-			JOIN UserTexts
-		    	ON User.idUser = UserTexts.idUserTexts
-			JOIN PersData
-		    	ON User.idUser = PersData.idPersData
-			JOIN Postalcode
-				ON PersData.postalcode = Postalcode.postalcode
-		WHERE username = ?";
-	$stmt = $db->prepare($sql); 
-	$stmt->bind_param('s',$user);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	db_close($db);
-	return $result->fetch_assoc();
-}
-
 /*
 function db_getUserData($UserID){
 	$db = db_connect();
@@ -150,52 +123,7 @@ function db_getUserData($UserID){
 }
 */
 
-//Soll die Benutzerdaten abspeichern, die von Alex verlangt wurden
-function db_update_user($savedata){
-	$db = db_connect();
-	$sql ="UPDATE User,PersData,UserTexts,Privacy,UserGroup
-		SET 
-		User.username = ?,
-		User.email = ?,
-		User.regDate = ?,
-		PersData.firstname = ?,
-		PersData.lastname = ?,
-		PersData.birthday = ?,
-		PersData.street = ?,
-		PersData.housenumber = ?,
-		PersData.telefonnumber = ?,
-		PersData.messengernumber = ?,
-		PersData.postalcode = ?,
-		UserTexts.avatar = ?,
-		UserTexts.hobbys = ?,
-		UserTexts.description = ?,
-		Privacy.privacykey = ?
-		WHERE User.idUser = ? 
-		AND PersData.idPersData = User.idUser
-		AND UserTexts.idUserTexts = User.idUser
-		AND User.idUser = Privacy.idPrivacy
-		AND User.idUserGroup = UserGroup.idUserGroup";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('sssssssssssssssi',
-		$savedata['username'],
-		$savedata['email'],
-		$savedata['regDate'],
-		$savedata['firstname'],
-		$savedata['lastname'],
-		$savedata['birthday'],
-		$savedata['street'],
-		$savedata['housenumber'],
-		$savedata['telefonnumber'],
-		$savedata['messengernumber'],
-		$savedata['postalcode'],
-		$savedata['avatar'],
-		$savedata['hobbys'],
-		$savedata['description'],
-		$savedata['privacykey'],
-		$savedata['idUser']);
-	$stmt->execute();
-	db_close($db);
-}
+
 /*
 function db_saveUserData($savedata){
 	$db = db_connect();
@@ -332,5 +260,158 @@ function db_getUserByCryptkey($cryptkey) {
 	}
 	//return "blecha"; //Testzwecke
 }
+
+	function db_fix_plz($plz) {
+		$db = db_connect();
+		$sql = "SELECT * from Postalcode where postalcode = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$plz);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if (!isset($result->fetch_assoc['postalcode'])) {
+			$sql = 'INSERT INTO Postalcode (postalcode, place) VALUES (?, "Unbekannt")';
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$plz);
+			$stmt->execute();
+		}
+		db_close($db);
+	}
+
+	function db_get_user($user) {
+		$db = db_connect();
+		$sql = "
+			SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, postalcode, telefonnumber, messengernumber, birthday 
+			FROM User
+				JOIN Trust
+			    	ON User.idTrust = Trust.idTrust
+				JOIN UserGroup
+			    	ON User.idUserGroup = UserGroup.idUserGroup
+				JOIN Privacy
+			    	ON User.idUser = Privacy.idPrivacy
+				JOIN UserTexts
+			    	ON User.idUser = UserTexts.idUserTexts
+				JOIN PersData
+			    	ON User.idUser = PersData.idPersData
+			WHERE username = ?";
+		$stmt = $db->prepare($sql); 
+		$stmt->bind_param('s',$user);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$thisuser = $result->fetch_assoc();
+		if (isset($thisuser['postalcode'])) {
+			//PLZ gesetzt -> Lade den Namen des Ortes aus der Datenbank
+			$sql = "
+				SELECT postalcode, place 
+				FROM Postalcode
+				WHERE postalcode = ?
+			";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('s',$thisuser['postalcode']);
+			$stmt->execute();
+			$thisuser['place'] = $stmt->get_result()->fetch_assoc()['place'];
+		} else {
+			$thisuser['postalcode'] = '';
+			$thisuser['place'] = '';
+		}
+
+		//Schließen der Datenbankverbindung
+		db_close($db);
+
+		//Setzen von Eigenschaften, die nicht aus der Datenbank geladen werden konnten
+		if (!isset($thisuser['avatar'])) $thisuser['avatar'] = "";
+		if (!isset($thisuser['hobbys'])) $thisuser['hobbys'] = "";
+		if (!isset($thisuser['description'])) $thisuser['description'] = "";
+		if (!isset($thisuser['gender'])) $thisuser['gender'] = "";
+		if (!isset($thisuser['street'])) $thisuser['street'] = "";
+		if (!isset($thisuser['housenumber'])) $thisuser['housenumber'] = "";
+		if (!isset($thisuser['telefonnumber'])) $thisuser['telefonnumber'] = "";
+		if (!isset($thisuser['messengernumber'])) $thisuser['messengernumber'] = "";
+		if (!isset($thisuser['birthday'])) $thisuser['birthday'] = "";
+		
+		return $thisuser;
+	}
+
+	//Soll die Benutzerdaten abspeichern, die von Alex verlangt wurden
+	function db_update_user($savedata)
+	{
+		db_fix_plz($savedata['postalcode']);
+		$db = db_connect();
+		$sql ="UPDATE User,PersData,UserTexts,Privacy,UserGroup
+			SET 
+			User.username = ?,
+			User.email = ?,
+			User.regDate = ?,
+			PersData.firstname = ?,
+			PersData.lastname = ?,
+			PersData.birthday = ?,
+			PersData.street = ?,
+			PersData.housenumber = ?,
+			PersData.telefonnumber = ?,
+			PersData.messengernumber = ?,
+			PersData.postalcode = ?,
+			UserTexts.avatar = ?,
+			UserTexts.hobbys = ?,
+			UserTexts.description = ?,
+			Privacy.privacykey = ?
+			WHERE User.idUser = ? 
+			AND PersData.idPersData = User.idUser
+			AND UserTexts.idUserTexts = User.idUser
+			AND User.idUser = Privacy.idPrivacy
+			AND User.idUserGroup = UserGroup.idUserGroup";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('sssssssssssssssi',
+			$savedata['username'],
+			$savedata['email'],
+			$savedata['regDate'],
+			$savedata['firstname'],
+			$savedata['lastname'],
+			$savedata['birthday'],
+			$savedata['street'],
+			$savedata['housenumber'],
+			$savedata['telefonnumber'],
+			$savedata['messengernumber'],
+			$savedata['postalcode'],
+			$savedata['avatar'],
+			$savedata['hobbys'],
+			$savedata['description'],
+			$savedata['privacykey'],
+			$savedata['idUser']);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+		}
+		db_close($db);
+	}
+
+	function db_delete_user($user, $pass) {
+		$me = db_get_user($user);
+		$pass_md5 = md5($pass.substr($me['regDate'],0,10));
+		if ($pass_md5 === $me['password']) {
+			$db = db_connect();
+
+			$sql = "DELETE FROM PersData WHERE idPersData= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+
+			$sql = "DELETE FROM UserTexts WHERE idUserTexts= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+
+			$sql = "DELETE FROM Privacy WHERE idPrivacy= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+
+			$sql = "DELETE FROM User WHERE idUser = ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+
+			Header('Location:./logout.php');
+		} else {
+			die ('RegDate: ' . substr($me['regDate'],0,10) . 'DB: ' . $me['password'] . '<br>Eingegeben: ' . $pass_md5);
+		}
+	}
 
 ?>
