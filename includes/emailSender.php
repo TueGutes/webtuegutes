@@ -1,6 +1,6 @@
 <?php 
 
-include './includes/DEF.php';
+require './includes/DEF.php';
 
 /*Sends an email from tuegutesinhannover@gmail.com to $to with subject $subject and
 HTML Content $content*/
