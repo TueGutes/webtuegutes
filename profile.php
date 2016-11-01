@@ -1,7 +1,7 @@
 <?php
 	//TEMPORÄRER CODEBLOCK! Bitte in db_connector auslagern und diesen Block dann löschen!
 
-	function fix_plz($plz) {
+	function db_fix_plz($plz) {
 		$db = db_connect();
 		$sql = "SELECT * from Postalcode where postalcode = ?";
 		$stmt = $db->prepare($sql);
@@ -17,7 +17,7 @@
 		db_close($db);
 	}
 
-	function get_user($user) {
+	function db_get_user($user) {
 		$db = db_connect();
 		$sql = "
 			SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, postalcode, telefonnumber, messengernumber, birthday 
@@ -48,9 +48,7 @@
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('s',$thisuser['postalcode']);
 			$stmt->execute();
-			$result = $stmt->get_result();
-			$entry = $result->fetch_assoc();
-			$thisuser['place'] = $entry['place'];
+			$thisuser['place'] = $stmt->get_result()->fetch_assoc()['place'];
 		} else {
 			$thisuser['postalcode'] = '';
 			$thisuser['place'] = '';
@@ -74,9 +72,9 @@
 	}
 
 	//Soll die Benutzerdaten abspeichern, die von Alex verlangt wurden
-	function update_user($savedata)
+	function db_update_user($savedata)
 	{
-		fix_plz($savedata['postalcode']);
+		db_fix_plz($savedata['postalcode']);
 		$db = db_connect();
 		$sql ="UPDATE User,PersData,UserTexts,Privacy,UserGroup
 			SET 
@@ -124,8 +122,8 @@
 		db_close($db);
 	}
 
-	function delete_user($user, $pass) {
-		$me = get_user($user);
+	function db_delete_user($user, $pass) {
+		$me = db_get_user($user);
 		$pass_md5 = md5($pass.substr($me['regDate'],0,10));
 		if ($pass_md5 === $me['password']) {
 			$db = db_connect();
@@ -156,21 +154,9 @@
 		}
 	}
 
-	function get_place($plz) {
-		$db = db_connect();
-		$sql = "SELECT place FROM Postalcode WHERE postalcode = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('i', $plz);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		db_close($db);
-		return $result->fetch_assoc()['place'];
-	}
-
 ?>
 
 <?php
-
 /*
 * @author: Nick Nolting, Alexander Gauggel
 */
@@ -186,11 +172,11 @@
 
 	//Sollte das Profil gelöscht werden?
 	if (isset($_POST['save_pw']))
-		delete_user($_SESSION['user'],$_POST['save_pw']);
+		db_delete_user($_SESSION['user'],$_POST['save_pw']);
 
 	//Festlegen des auszulesenden Nutzers:
-	$thisuser = get_user(@$_GET['user']);
-	if (!isset($thisuser['username'])) $thisuser = get_user($_SESSION['user']);
+	$thisuser = db_get_user(@$_GET['user']);
+	if (!isset($thisuser['username'])) $thisuser = db_get_user($_SESSION['user']);
 
 	//Festlegen der Sichtbarkeitseinstellungen
 	if (strtoupper($_SESSION['user'])===strtoupper($thisuser['username']) && !(@$_GET['view']==="public")) {
@@ -353,7 +339,7 @@
 			$thisuser['privacykey'] = $_POST['vsMail'] . $_POST['vsRegDate'] . $_POST['vsAvatar'] . $_POST['vsHobbys'] . $_POST['vsDescription'] . $_POST['vsFirstname'] . $_POST['vsLastname'] . $_POST['vsGender'] . $_POST['vsStreet'] . $_POST['vsHousenumber'] . $_POST['vsPlzOrt'] . $_POST['vsTelNr'] . $_POST['vsMsgNr'] . $_POST['vsBirthday'] . $_POST['vsBirthyear'];
 
 			//Änderungen speichern
-			update_user($thisuser);
+			db_update_user($thisuser);
 			header("Refresh:0");
 		}
 
