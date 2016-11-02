@@ -252,7 +252,7 @@ function db_getUserByCryptkey($cryptkey) {
 		} else {
 			$thisuser['postalcode'] = '';
 			$thisuser['place'] = '';
-		
+		}
 		//Schließen der Datenbankverbindung
 		db_close($db);
 
@@ -268,6 +268,7 @@ function db_getUserByCryptkey($cryptkey) {
 		if (!isset($thisuser['birthday'])) $thisuser['birthday'] = "";
 		
 		return $thisuser;
+
 	}
 
 	//Soll die Benutzerdaten abspeichern, die von Alex verlangt wurden
