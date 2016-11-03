@@ -382,7 +382,7 @@ function db_getGuteTat($idGuteTat){
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('i',$idGuteTat);
 	$stmt->execute();
-	$result = $db->query($sql);
+	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
 	db_close($db);
 	return $dbentry;
