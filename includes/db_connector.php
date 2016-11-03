@@ -358,14 +358,14 @@ function db_getUserByCryptkey($cryptkey) {
 // Holt sich eine Gute Tat und zusätzliche Parameter, die von Lukas gefordert waren.
 function db_getGuteTat($idGuteTat){
 	$db = db_connect();
-	$sql = 'SELECT 
+	$sql = "SELECT 
 		Deeds.name, 
 		User.username, 
-		Usertexts.avatar 
+		UserTexts.avatar,
 		Deeds.category, 
 		Deeds.street, 
 		Deeds.housenumber, 
-		Deeds.postalcode 
+		Deeds.postalcode,
 		Deeds.time, 
 		Deeds.organization, 
 		Deeds.countHelper, 
@@ -373,19 +373,58 @@ function db_getGuteTat($idGuteTat){
 		Trust.trustleveldescription
 	FROM Deeds 
 		Join User
-			On (deeds.contactPerson = user.idUser)
-		Join Usertexts
-			On (user.idUser = usertexts.idUserTexts)
+			On (Deeds.contactPerson = User.idUser)
+		Join UserTexts
+			On (User.idUser = UserTexts.idUserTexts)
 		Join Trust
-			On (deeds.idTrust =	trust.idTrust)
-	WHERE idGuteTat = ?';
+			On (Deeds.idTrust =	Trust.idTrust)
+	WHERE idGuteTat = ?";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('i',$idGuteTat);
 	$stmt->execute();
-	$result = $db->query($sql);
+	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
 	db_close($db);
 	return $dbentry;
+}
+
+//gibt die nötigen Parameter die für die liste gefordert wurden aus
+// man kann bestimmen ab welcher id die Taten angezeigt werden und wie viele
+//Taten werden als Objekt in dem Array gespeichert
+function db_getGuteTatForList($startrow,$numberofrows){
+	$db = db_connect();
+	$sql = "SELECT 
+		Deeds.name, 
+		Deeds.category, 
+		Deeds.street, 
+		Deeds.housenumber, 
+		Deeds.postalcode,
+		Deeds.organization, 
+		Deeds.countHelper,
+		Deeds.status, 
+		Trust.idTrust, 
+		Trust.trustleveldescription,
+		DeedTexts.description,
+		Postalcode.place
+	FROM Deeds 
+		Join DeedTexts
+			On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
+		Join Postalcode
+			On (Deeds.postalcode = Postalcode.postalcode)
+		Join Trust
+			On (Deeds.idTrust =	Trust.idTrust)
+	LIMIT ? , ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('ii',$startrow,$numberofrows);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	db_close($db);
+	$arr = array();
+	while($dbentry =$result->fetch_object()){
+		$arr[]= $dbentry();
+	}
+	return $arr;
+
 }
 
 ?>
