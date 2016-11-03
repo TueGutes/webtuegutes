@@ -109,7 +109,7 @@ function db_getGuteTatbyid($idvonGuteTat){
 function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 	//TODO: Datenbank Insert ausarbeiten
 	$db = db_connect();
-	$sql = "Insert into User (username, password, email, regDate, points, status) values(?,?,?,?,0,'nichtVerifiziert')";
+	$sql = "INSERT INTO User (username, password, email, regDate, points, status) VALUES(?,?,?,?,0,'nichtVerifiziert')";
 	$stmt = $db->prepare($sql);
 	$date = date("Y-m-d");
 	$pass_md5 = md5($passwort.$date);
@@ -124,7 +124,7 @@ function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $p
 		//return false;
 	}
 	
-	$sql = "Insert into Privacy (idPrivacy, privacykey, cryptkey) values ((SELECT MAX(idUser) FROM User),?,?)";
+	$sql = "INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) VALUES ((SELECT MAX(idUser) FROM User),?,?)";
 	$stmt = $db->prepare($sql);
 	
 	$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
@@ -140,7 +140,7 @@ function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $p
 		return false;
 	}
 	
-	$sql = "Insert into PersData (idPersData, firstname, lastname) values((SELECT MAX(idUser) FROM User),?,?)";
+	$sql = "INSERT INTO PersData (idPersData, firstname, lastname) VALUES((SELECT MAX(idUser) FROM User),?,?)";
 	$stmt = $db->prepare($sql);
 	mysqli_stmt_bind_param($stmt, "ss", $vorname, $nachname);
 	$stmt->execute();
@@ -252,7 +252,7 @@ function db_getUserByCryptkey($cryptkey) {
 		} else {
 			$thisuser['postalcode'] = '';
 			$thisuser['place'] = '';
-		
+		}
 		//Schließen der Datenbankverbindung
 		db_close($db);
 
@@ -268,6 +268,7 @@ function db_getUserByCryptkey($cryptkey) {
 		if (!isset($thisuser['birthday'])) $thisuser['birthday'] = "";
 		
 		return $thisuser;
+
 	}
 
 	//Soll die Benutzerdaten abspeichern, die von Alex verlangt wurden
@@ -352,5 +353,39 @@ function db_getUserByCryptkey($cryptkey) {
 			die ('RegDate: ' . substr($me['regDate'],0,10) . 'DB: ' . $me['password'] . '<br>Eingegeben: ' . $pass_md5);
 		}
 	}
+
+
+// Holt sich eine Gute Tat und zusätzliche Parameter, die von Lukas gefordert waren.
+function db_getGuteTat($idGuteTat){
+	$db = db_connect();
+	$sql = 'SELECT 
+		Deeds.name, 
+		User.username, 
+		Usertexts.avatar 
+		Deeds.category, 
+		Deeds.street, 
+		Deeds.housenumber, 
+		Deeds.postalcode 
+		Deeds.time, 
+		Deeds.organization, 
+		Deeds.countHelper, 
+		Trust.idTrust, 
+		Trust.trustleveldescription
+	FROM Deeds 
+		Join User
+			On (deeds.contactPerson = user.idUser)
+		Join Usertexts
+			On (user.idUser = usertexts.idUserTexts)
+		Join Trust
+			On (deeds.idTrust =	trust.idTrust)
+	WHERE idGuteTat = ?';
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	$result = $db->query($sql);
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	return $dbentry;
+}
 
 ?>
