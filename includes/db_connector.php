@@ -371,8 +371,11 @@ function db_getGuteTat($idGuteTat){
 		Deeds.time, 
 		Deeds.organization, 
 		Deeds.countHelper, 
+		Deeds.status,
 		Trust.idTrust, 
-		Trust.trustleveldescription
+		Trust.trustleveldescription,
+		DeedTexts.description,
+		DeedTexts.pictures
 	FROM Deeds 
 		Join User
 			On (Deeds.contactPerson = User.idUser)
@@ -380,6 +383,8 @@ function db_getGuteTat($idGuteTat){
 			On (User.idUser = UserTexts.idUserTexts)
 		Join Trust
 			On (Deeds.idTrust =	Trust.idTrust)
+		Join DeedTexts
+			On (Deeds.idGuteTat = DeedTexts.idDeedTexts)			
 	WHERE idGuteTat = ?";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('i',$idGuteTat);
