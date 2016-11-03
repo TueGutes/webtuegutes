@@ -391,7 +391,7 @@ function db_getGuteTat($idGuteTat){
 //gibt die nötigen Parameter die für die liste gefordert wurden aus
 //man kann bestimmen ab welcher id die Taten angezeigt werden und wie viele
 //Taten werden als Objekt in dem Array gespeichert
-function db_getGuteTatForList($startrow,$numberofrows){
+function db_getGuteTatenForList($startrow,$numberofrows){
 	$db = db_connect();
 	$sql = "SELECT 
 		Deeds.name, 
