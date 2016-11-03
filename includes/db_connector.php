@@ -199,6 +199,7 @@ function db_getUserByCryptkey($cryptkey) {
 	//return "blecha"; //Testzwecke
 }
 
+//füllt der Ort als Unbekannt, wenn eine Neue Postleitzahl eingefügt wird
 function db_fix_plz($plz) {
 	$db = db_connect();
 	$sql = "SELECT * from Postalcode where postalcode = ?";
@@ -322,6 +323,7 @@ function db_update_user($savedata)
 	db_close($db);
 }
 
+//Löscht alle informationen zu einem User
 function db_delete_user($user, $pass) {
 	$me = db_get_user($user);
 	$pass_md5 = md5($pass.substr($me['regDate'],0,10));
