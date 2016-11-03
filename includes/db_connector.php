@@ -361,11 +361,11 @@ function db_getGuteTat($idGuteTat){
 	$sql = "SELECT 
 		Deeds.name, 
 		User.username, 
-		Usertexts.avatar,
+		UserTexts.avatar,
 		Deeds.category, 
 		Deeds.street, 
 		Deeds.housenumber, 
-		Deeds.postalcode 
+		Deeds.postalcode,
 		Deeds.time, 
 		Deeds.organization, 
 		Deeds.countHelper, 
@@ -374,8 +374,8 @@ function db_getGuteTat($idGuteTat){
 	FROM Deeds 
 		Join User
 			On (Deeds.contactPerson = User.idUser)
-		Join Usertexts
-			On (User.idUser = Usertexts.idUserTexts)
+		Join UserTexts
+			On (User.idUser = UserTexts.idUserTexts)
 		Join Trust
 			On (Deeds.idTrust =	Trust.idTrust)
 	WHERE idGuteTat = ?";
