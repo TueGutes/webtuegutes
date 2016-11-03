@@ -419,7 +419,7 @@ function db_getGuteTatForList($startrow,$numberofrows){
 	$stmt->execute();
 	$result = $stmt->get_result();
 	db_close($db);
-	$arr = array();n
+	$arr = array();
 	while($dbentry =$result->fetch_object()){
 		$arr[]= $dbentry();
 	}
