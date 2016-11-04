@@ -199,7 +199,7 @@ function db_getUserByCryptkey($cryptkey) {
 	//return "blecha"; //Testzwecke
 }
 
-//füllt der Ort als Unbekannt, wenn eine Neue Postleitzahl eingefügt wird
+//füllt den Ort als Unbekannt, wenn eine Neue Postleitzahl eingefügt wird
 function db_fix_plz($plz) {
 	$db = db_connect();
 	$sql = "SELECT * from Postalcode where postalcode = ?";
@@ -432,6 +432,55 @@ function db_getGuteTatenForList($startrow,$numberofrows){
 	}
 	return $arr;
 
+}
+
+// Liefert True wenn der Name schon existiert, sonst false
+function db_doesGuteTatNameExists($name){
+	$db = db_connect();
+	$sql = "SELECT name FROM Deeds WHERE name = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('s',$name);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['name'])){
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+//erstellt eine gute Tat
+function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $postalcode, $time_t, $organization, $countHelper, $idTrust,
+	$description, $pictures){
+	$db = db_connect();
+	//Datensatz in Deeds einfügen
+	$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,postalcode,time,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?)';
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('sisssissii', $name, $user_id, $category, $street, 
+		$housenumber, $postalcode, $time_t, $organization, $countHelper, 
+		$idTrust);
+	$stmt->execute();
+
+	//Herausfinden der größten ID von Guten taten
+	$sql = 'SELECT MAX(idGuteTat) AS "index" FROM Deeds';
+	$stmt = $db->prepare($sql);
+	$stmt->execute();
+	$result = $stmt->get_result()->fetch_assoc();
+	if (isset($result['index'])) {
+		$index = $result['index'];
+	} else {
+		$index = 0;
+	}
+
+	//Einfügen der DeedsTexts mit der passenden ID zu der neuen Guten Tat
+	$sql='INSERT INTO DeedTexts (idDeedTexts, description, pictures) VALUES (?,?,?)';
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('iss' , $index, $description, $pictures);
+	$stmt->execute();
+	db_close($db);
 }
 
 ?>
