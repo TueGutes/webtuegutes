@@ -458,7 +458,7 @@ elseif(isset($_GET['Bewerbungstext']) {
 	//Bestätigung anzeigen
 	echo '<h2><green>Deine Bewerbung wurde erfolgreich abgeschickt</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
-	echo '<a href="profile.php?tatID=$tatID">Zur \'Guten Tat\'</a>';
+	echo '<a href="deeds_details.php?id=$tatID">Zur \'Guten Tat\'</a>';
 
 }
 elseif(isset($_POST['AnnehmenButton'])) {
@@ -485,7 +485,7 @@ elseif(isset($_POST['AnnehmenButton'])) {
 	//Bestätigung anzeigen
 	echo '<h2><green>Der Bewerber wurde über die Annahme seiner Bewerbung informiert</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
-	echo '<a href="profile.php?tatID=$tatID">Zur \'Guten Tat\'</a>';
+	echo '<a href="deeds_details.php?id=$tatID">Zur \'Guten Tat\'</a>';
 }
 elseif(isset($_POST['AblehnenButton'])) {
 	//Fall 5: Bewerbung-Absage Formular wurde abgeschickt
@@ -510,7 +510,7 @@ elseif(isset($_POST['AblehnenButton'])) {
 	//Bestätigung anzeigen
 	echo '<h2><green>Der Bewerber wurde über die Ablehnung seiner Bewerbung informiert</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
-	echo '<a href="profile.php?tatID=$tatID">Zur \'Guten Tat\'</a>';
+	echo '<a href="deeds_details.php?id=$tatID">Zur \'Guten Tat\'</a>';
 }
 else {
 	//Die URL wurde ohne Argumente aufgerufen
