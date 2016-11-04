@@ -68,6 +68,9 @@ if ($showMap) {
 		createMap($tat['postalcode'] . ',' . $tat['street'] . ',' . $tat['housenumber']);
 		echo '</div>';
 	}
+else{
+	echo '<div align="center" style="font-size:200%;">'.'Adresse wurde gar nicht oder <br> nur unvollständig angegeben! ';
+}
 
 echo '</div>';
 echo '<p />';
