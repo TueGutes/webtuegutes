@@ -9,7 +9,7 @@ include './includes/db_connector.php';
 require './includes/_top.php';
 
 //------------Einlesen der Daten---------------
-$idTat = 4;//$_GET["id"]; 
+$idTat = $_GET["id"]; 
 $tat = db_getGuteTat($idTat);
 ?>
 
