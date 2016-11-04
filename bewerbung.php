@@ -68,6 +68,32 @@ function getNameOfGuteTatByID($tatID) {
 }
 
 
+function getUsernameOfContactPersonByGuteTatID($tatID) {
+
+
+}
+
+function getEmailOfContactPersonByGuteTatID($tatID) {
+
+}
+
+function getUsernameOfBenutzerByID($userID) {
+
+}
+
+function acceptBewerbung($candidateID, $tatID, $Begruendungstext) {
+
+}
+
+function declineBewerbung($candidateID, $tatID, $explanation) {
+
+
+}
+
+function addBewerbung($userID, $tatID, $Bewerbungstext) {
+
+
+}
 /*
 DB Funktionen:
 	doesGuteTatExists()
@@ -207,8 +233,8 @@ elseif(isset($_GET['Bewerbungstext']) {
 	$UsernameOfBewerber = $_SESSION['user'];
 
 	$NameOfGuteTat = getNameOfGuteTatByID($tatID);
-	$UsernameOfErsteller = getUsernameByGuteTatID($tatID);
-	$MailOfErsteller = getContactMailByGuteTatID($tatID);
+	$UsernameOfErsteller = getUsernameOfContactPersonByGuteTatID($tatID);
+	$MailOfErsteller = getEmailOfContactPersonByGuteTatID($tatID);
 
 	//URL der Bewerbungsseite generieren
 	$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']."?idGuteTat=$tatID&candidateID=$userID";
