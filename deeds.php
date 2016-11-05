@@ -1,11 +1,12 @@
 <?php
 /*
-*@author Lukas Buttke
+*@author KLaus Sobotta, Lukas Buttke
 */
 
 include './includes/ACCESS.php';
 include './includes/db_connector.php';
 require './includes/_top.php';
+//require_once './guteTatAusgeben.php';
 ?>
 
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
@@ -16,47 +17,36 @@ require './includes/_top.php';
 <input type="submit" value="Gute Tat erstellen" target="_self">
 <br> <hr>
 </div>
+<br> 
 
-<div class='center'>
-	<table style="display: inline-block;border:1px solid">
 		<?php
-
-		$mysqli = db_connect();
-		$result = $mysqli->query('SELECT name AS "Gute Tat", username AS "Kontakt", category AS "Kategorie", street AS "Straße", housenumber AS "Nr.", postalcode AS "PLZ" /* , place AS "Ort" */, description AS "Beschreibung:" FROM Deeds /* JOIN Postalcode ON (Deeds.postalcode = Postalcode.postalcode) */ JOIN DeedTexts ON (Deeds.idGuteTat = DeedTexts.idDeedTexts) JOIN User ON (Deeds.contactPerson = User.idUser)');
 		
-		
-		// Tabellenkopf mit den Feldnamen als Spaltenbezeichnungen:
-		echo ' <tr>';
-		while ( $field = $result->fetch_field() ) {
-			echo '<th style="border:1px solid;padding:10px"><b>';
-			//if(($field->name !== "Beschreibung")){
-			echo " $field->name";
-			echo '</b></th>';
-		}
-		echo "</tr>";		 
-		 
-		 // Tabelleneinträge aus der Datenbank
-		while ( $deed = $result->fetch_object() ) {
-
-			echo ' <tr> ';
-			foreach ( $deed as $key => $value ) 
+			/*$intZahl=0;
+			$tatAusgeben=new tatAusgeben($intZahl);
+			$tatAusgeben->toStringTat();
+			*/
+			//$allDeedsCount = db_connector blabla
+			//$neededPages = $allDeedsCount/10;
+			
+			$arr = db_getGuteTatenForList(0, 10);
+						
+			for($i = 0; $i < sizeof($arr); $i++)
 			{
-				echo '<td style="border:1px solid;padding:10px">';
-				echo "$value";	
-				echo '</td>';			
+				echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' style='display: inline-block; width: 80%;'><div class='deed' style='width: 100%; background: #aaaaaa; overflow: hidden;'>";
+					echo "<div style='position: realtive; float: left;'><h4>" . $arr[$i]->name . "</h4></div><div style='position: realtive; float: right;'>" . $arr[$i]->category . "</div>";
+					echo "<br><br><br><br><div style='position: realtive; text-align: left;'>" . (strlen($arr[$i]->description) > 8 ? substr($arr[$i]->description, 0, 8) . " mehr..." : $arr[$i]->description) . "</div>";
+				echo "</div></a>";
+				
+				echo "<br><br><hr><br><br>";
 			}
-
-			//echo '<td style="border:0px solid;padding:10px">';
-			//echo '<a href="./guteTat.php"><input type="button" value="mehr"/></a>';
-			//echo '</td>';
-			echo " </tr>";
-		}
+			
 		?>
-	</table>
-</div>
 
-</body>
-</html>
+<br> <hr>	
+<form action="" method="post">
+<input type="submit" value="Nächste Seite">
+<br> 
+
 
 <?php
 require './includes/_bottom.php';
