@@ -1,10 +1,10 @@
 <?php
-session_start();
 include './includes/db_connector.php';
 require './includes/_top.php';
 error_reporting(0);
 
 // demo, es gibt noch Problem
+// Man muss die URL in href weiter einfuegen.
 ?>
 <form action="" method="get">
     Stichwort:
@@ -31,7 +31,7 @@ if ($_GET['st']) {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <tr>
-                <td><?php echo $row->name; ?></td>
+                <td><a href=""><?php echo $row->name; ?></a></td>
                 <td><?php echo $row->category; ?></td>
                 <td><?php echo $row->status; ?></td>
             </tr>
