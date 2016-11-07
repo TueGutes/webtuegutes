@@ -33,7 +33,7 @@ $blSelf .= '<a href="profile.php?user='.$tat["username"].'">'.$tat["username"].'
 
 $blComb = '<table> <tr> <td> '.$blSelf.'</td> <td> 
 &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp 
-</td> <td>'.$blAbout.' </td> </tr> </table> <hr>';
+</td> <td style="width:280px" >'.$blAbout.' </td> </tr> </table> <hr>';
 
 // -----------Gute Taten Details - genauer 
 $blTaten = '<table> <tr> <td> Categorie </td> <td>'.$tat["category"].'</td> </tr>';
@@ -79,15 +79,15 @@ echo '<p />';
 
 echo '<br> <hr> <br> ';
 if((isset($_SESSION['loggedIn']) && $_SESSION['loggedIn']) && (isset($_SESSION['user']) && ($_SESSION['user'] == $tat["username"]))) {
-	echo '<a href="tatBearbeiten.php" target="_self" > <input type="Button" value="Bearbeiten"> </a>';
+	echo '<a href="tatBearbeiten.php?id="'.$idTat. '" target="_self" > <input type="Button" value="Bearbeiten"> </a>';
 }
 else{
-	echo '<a href="fürTatBewerben.php" target="_self" > <input type="Button" value="Bewerben"> </a>';
+	echo '<a href="fürTatBewerben.php?id="'.$idTat. '" target="_self" > <input type="Button" value="Bewerben"> </a>';
 }
 	
 ?>
 
-
+<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . 
 
 <?php
 require './includes/_bottom.php';
