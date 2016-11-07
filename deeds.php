@@ -7,13 +7,15 @@ include './includes/ACCESS.php';
 include './includes/db_connector.php';
 require './includes/_top.php';
 //require_once './guteTatAusgeben.php';
+if (!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 1;
+
 ?>
 
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
 
 <!-- Hier kann später mal gute Taten erstellen hervorkommen-->
 <div class='ctop'>
-<form action="guteTatErstellenHTML.php">
+<form action="guteTatErstellenHTML.php" method="post">
 <input type="submit" value="Gute Tat erstellen" target="_self">
 <br> <hr>
 </div>
@@ -28,7 +30,7 @@ require './includes/_top.php';
 			//$allDeedsCount = db_connector blabla
 			//$neededPages = $allDeedsCount/10;
 			
-			$arr = db_getGuteTatenForList(0, 10);
+			$arr = db_getGuteTatenForList(10*($_GET['page']-1), 10);
 						
 			for($i = 0; $i < sizeof($arr); $i++)
 			{
@@ -43,8 +45,17 @@ require './includes/_top.php';
 		?>
 
 <br> <hr>	
-<form action="" method="post">
-<input type="submit" value="Nächste Seite">
+</form>
+
+<!--Zurück / Weiter Buttons-->
+<?php
+	$vor = $_GET['page'] > 1;
+	$nach = db_getGuteTatenForList(10*($_GET['page']), 10); //Sobald Deeds nicht mehr doppelt ausgegeben werden -> Mit Anzahl prüfen!
+	if ($vor) echo '<a href="./deeds?page=' . ($_GET['page']-1) . '"><input type="button" value="Zurück"></a>';
+	if ($vor && $nach) echo '&nbsp';
+	if ($nach) echo '<a href="./deeds?page=' . ($_GET['page']+1) . '"><input type="button" value="Weiter"></a>';
+?>
+
 <br> 
 
 
