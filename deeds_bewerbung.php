@@ -17,10 +17,9 @@ require "./includes/_top.php";
 include './includes/db_connector.php';
 include './includes/emailSender.php';
 
+//TODO: DB Funktionen, die später ausgelagert werden sollten
 
-//DB Funktionen, die später ausgelagert werden sollten
-
-/*Liefert true, wenn eine Gute Tat mit der idGuteTat = idGuteTat existiert, sonst false*/
+/*Liefert true, wenn eine Gute Tat mit der idGuteTat = $idGuteTat existiert, sonst false*/
 function doesGuteTatExists($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT name FROM Deeds WHERE idGuteTat = ? ";
@@ -39,10 +38,10 @@ function doesGuteTatExists($idGuteTat) {
 
 }
 
-/*Liefert true, wenn sich der Bewerber mit der UserID = $userID
+/*Liefert true, wenn sich der Bewerber mit der idUser = $idUser
 bereits für die Gute Tat mit der idGuteTat = $idGuteTat beworben hat.
 false, falls nicht*/
-function isUserCandidateOfGuteTat($idGuteTat, $userID) {
+function isUserCandidateOfGuteTat($idGuteTat, $idUser) {
 	$db = db_connect();
 	$sql = "SELECT idUser FROM Application WHERE idUser = ? AND idGuteTat = ?";
 	$stmt = $db->prepare($sql);
@@ -78,7 +77,7 @@ function getUserIdOfContactPersonByGuteTatID($idGuteTat) {
 }
 
 /*Liefert den Status der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
-function statusOfGuteTatById($idGuteTat) {
+function getStatusOfGuteTatById($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT status FROM Deeds WHERE idGuteTat = ?";
 	$stmt = $db->prepare($sql);
@@ -129,9 +128,9 @@ function isNumberOfAcceptedCandidatsEqualToRequestedHelpers($idGuteTat) {
 	}
 }
 
-/*Gibt den Status der Bewerbung des Bewerbers mit der userID = $userID
-zu der Guten Tat mit der idGuteTat = $tatID zurück, oder false*/
-function statusOfBewerbung($userID, $tatID) {
+/*Gibt den Status der Bewerbung des Bewerbers mit der idUser = $idUser
+zu der Guten Tat mit der idGuteTat = $idGuteTat zurück, oder false*/
+function getStatusOfBewerbung($idUser, $idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT status FROM Application WHERE idUser = ? AND idGuteTat = ?";
 	$stmt = $db->prepare($sql);
@@ -148,7 +147,7 @@ function statusOfBewerbung($userID, $tatID) {
 	}
 }
 
-/*Gibt die Email Adresse des Benutzers mit der userId = $candidateID
+/*Gibt die Email Adresse des Benutzers mit der idUser = $candidateID
  zurück oder false*/
 function getMailOfBenutzerByID($candidateID) {
 	$db = db_connect();
@@ -167,12 +166,12 @@ function getMailOfBenutzerByID($candidateID) {
 	}
 }
 
-/*Gibt den Namen der Guten Tat mit der idGuteTat = $tatID zurück oder false, falls keine gute Tat existiert*/
-function getNameOfGuteTatByID($tatID) {
+/*Gibt den Namen der Guten Tat mit der idGuteTat = $idGuteTat zurück oder false, falls keine gute Tat existiert*/
+function getNameOfGuteTatByID($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT name FROM Deeds WHERE idGuteTat = ?";
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('i',$tatID);
+	$stmt->bind_param('i',$idGuteTat);
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
@@ -185,8 +184,8 @@ function getNameOfGuteTatByID($tatID) {
 	}
 }
 
-/*Liefert den Usernamen der ContactPerson der Guten Tat mit der idGuteTat = $tat oder false*/
-function getUsernameOfContactPersonByGuteTatID($tatID) {
+/*Liefert den Usernamen der ContactPerson der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
+function getUsernameOfContactPersonByGuteTatID($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT username FROM User U JOIN Deeds D on (U.idUser = D.contactPerson) WHERE idGuteTat = ?";
 	$stmt = $db->prepare($sql);
@@ -204,8 +203,8 @@ function getUsernameOfContactPersonByGuteTatID($tatID) {
 
 }
 
-/*Liefert die Email-Adresse der ContactPerson der Guten Tat mit der idGuteTat = $tatID oder false*/
-function getEmailOfContactPersonByGuteTatID($tatID) {
+/*Liefert die Email-Adresse der ContactPerson der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
+function getEmailOfContactPersonByGuteTatID($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT email FROM User U JOIN Deeds D on (U.idUser = D.contactPerson) WHERE idGuteTat = ?";
 	$stmt = $db->prepare($sql);
@@ -222,12 +221,12 @@ function getEmailOfContactPersonByGuteTatID($tatID) {
 	}
 }
 
-/*Liefert den Usernamen zu einem Benutzeraccount mit der idUser = $userID oder false*/
-function getUsernameOfBenutzerByID($userID) {
+/*Liefert den Usernamen zu einem Benutzeraccount mit der idUser = $idUser oder false*/
+function getUsernameOfBenutzerByID($idUser) {
 	$db = db_connect();
 	$sql = "SELECT username FROM User WHERE idUser = ?";
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('i',$userID);
+	$stmt->bind_param('i',$idUser);
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
@@ -241,18 +240,18 @@ function getUsernameOfBenutzerByID($userID) {
 }
 
 /*Fügt einen neuen Eintrag in der Relation Application hinzu
-	idUser = $userID
-	idGuteTat = $tatID
+	idUser = $idUser
+	idGuteTat = $idGuteTat
 	$applicationText = $Bewerbungstext
 	$status = 'offen'
 	$replyText = NULL
 	liefert true im Erfolgsfall, ansonsten false
 */
-function addBewerbung($userID, $tatID, $Bewerbungstext) {
+function addBewerbung($idUser, $idGuteTat, $Bewerbungstext) {
 	$db = db_connect();
 	$sql = "Insert into Application (idUser, idGuteTat, applicationText, status) values (?,?,?,'offen')";
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('iis',$userID, $tatID, $Bewerbungstext);
+	$stmt->bind_param('iis',$idUser, $idGuteTat, $Bewerbungstext);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	db_close($db);
@@ -264,15 +263,15 @@ function addBewerbung($userID, $tatID, $Bewerbungstext) {
 	}
 }
 
-/*Setzt den status der Bewerbung die zu idUser=$candidateID und idGuteTat=$tatID gehört auf 'angenommen'
+/*Setzt den status der Bewerbung die zu idUser=$candidateID und idGuteTat=$idGuteTat gehört auf 'angenommen'
 	und setzt die replyMsg auf $Begruendungstext
 	Erzeugt zusätzlich einen neuen Eintrag in der Relation HelpferForDeed mit den gleichen Daten und dem rating 0
 */
-function acceptBewerbung($candidateID, $tatID, $explanation) {
+function acceptBewerbung($candidateID, $idGuteTat, $explanation) {
 	$db = db_connect();
 	$sql = "UPDATE Application SET status = 'angenommen', replyMsg = ? WHERE idUser = ? AND idGuteTat = ?";
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('sii',$explanation, $candidateID, $tatID);
+	$stmt->bind_param('sii',$explanation, $candidateID, $idGuteTat);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 
@@ -280,7 +279,7 @@ function acceptBewerbung($candidateID, $tatID, $explanation) {
 		//Eintrag in HelpferForDeed einfügen
 		$sql = "Insert into HelperForDeed (idUser, idGuteTat, rating) values (?,?,0)";
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('ii',$userID, $tatID);
+		$stmt->bind_param('ii',$candidateID, $idGuteTat);
 		$stmt->execute();
 		$affected_rows = mysqli_stmt_affected_rows($stmt);
 		db_close($db);
@@ -298,15 +297,15 @@ function acceptBewerbung($candidateID, $tatID, $explanation) {
 	}
 }
 
-/*Setzt den status der Bewerbung die zu idUser=$candidateID und idGuteTat=$tatID gehört auf 'abgelehnt'
+/*Setzt den status der Bewerbung die zu idUser=$candidateID und idGuteTat=$idGuteTat gehört auf 'abgelehnt'
 	und die replyMsg auf $explanation
 	Liefert true im Erfolgsfall, sonst false
 */
-function declineBewerbung($candidateID, $tatID, $explanation) {
+function declineBewerbung($candidateID, $idGuteTat, $explanation) {
 	$db = db_connect();
 	$sql = "UPDATE Application SET status = 'abgelehnt', replyMsg = ? WHERE idUser = ? AND idGuteTat = ?";
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('sii',$explanation, $candidateID, $tatID);
+	$stmt->bind_param('sii',$explanation, $candidateID, $idGuteTat);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	db_close($db);
@@ -327,14 +326,14 @@ Es gibt ... Fälle:
 		1.1 Es existiert keine gute Tat zu dieser ID (doesGuteTatExists())
 		1.2 Der Nutzer hatte sich bereits für diese Tat beworben (isUserCandidateOfGuteTat()
 		1.3 Der Nutzer selbst hat die Tat erstellt (contactPersonOfGuteTatById())
-		1.4 Die gute Tat wurde bereits abgeschlossen (statusOfGuteTatById())
+		1.4 Die gute Tat wurde bereits abgeschlossen (getStatusOfGuteTatById())
 		1.5 Die Anzahl der angenommenen Bewerbungen ist gleich der Anzahl der benötigten Helfer (isNumberOfAcceptedCandidatsEqualToRequestedHelpers()) : Hinweis: Man ist nur Reserve, aber bewerben kann man sich trotzdem
 		1.6 alles in Ordnung, der Nutzer kann sich mit einem Bewerbungstext bewerben
 			  und seine Bewerbung abschicken.
 	2. Ein Nutzer schaut sich die Bewerbung eines anderen Benutzers an isset $_GET['tatID'] && $_GET['userID']
 		1.1 Der Benutzer hat die Tat nicht erstellt und darf keine Bewerbungen annehmen (contactPersonOfGuteTatById())
-		1.2 Die Bewerbung wurde bereits akzeptiert (statusOfBewerbung())
-		1.3 Die Bewerbung wurde bereits abgelehnt (status Of Bewerbung())
+		1.2 Die Bewerbung wurde bereits akzeptiert (getStatusOfBewerbung())
+		1.3 Die Bewerbung wurde bereits abgelehnt (getStatusOfBewerbung())
 		1.4 Es gibt keine Bewerbung von diesem Nutzer zu dieser Tat
 		1.5 Anzahl der Helfer zu groß, um sie anzunehmen
 		1.6 alles in Ordnung, der Nutzer kann die Bewerbung mit einem Text annehmen oder ablehnen
@@ -352,21 +351,21 @@ echo '<h2>Bewerbung</h2>';
 //Fall 1: Bewerbung abschicken
 if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 	$idGuteTat = $_GET['idGuteTat'];
-	$userID = $_SESSION['user'];
+	$idUser = $_SESSION['user'];
 
 	if(!doesGuteTatExists($idGuteTat)) {
 		//Fall 1.1: Es existiert keine gute Tat mit der übergebenen ID
 		echo '<h3><red>Die gute Tat konnte nicht gefunden werden :(</red></h3>';
 	}
-	elseif(isUserCandidateOfGuteTat($idGuteTat, $userID)) {
+	elseif(isUserCandidateOfGuteTat($idGuteTat, $idUser)) {
 		//Fall 1.2: Der Nutzer hatte sich bereits für diese Tat beworben
 		echo '<h3><red>Du hast dich bereits für diese Gute Tat beworben</red></h3>';
 	}
-	elseif(getUserIdOfContactPersonByGuteTatID($idGuteTat) === $userID) {
+	elseif(getUserIdOfContactPersonByGuteTatID($idGuteTat) === $idUser) {
 		//Fall 1.3: Der Bewerber selbst hat die gute Tat erstellt
 		echo '<h3><red>Du kannst dich nicht für eine gute Tat bewerben, die du selbst ausgeschieben hast</red></h3>';
 	}
-	elseif(statusOfGuteTatById($idGuteTat) === 'geschlossen') {
+	elseif(getStatusOfGuteTatById($idGuteTat) === 'geschlossen') {
 		//Fall 1.4: Die Gute Tat ist bereits geschlossen
 		echo '<h3><red>Diese gute Tat wurde bereits abgeschlossen</red></h3>';
 	}
@@ -395,9 +394,9 @@ if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 elseif(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 	$idGuteTat = $_GET['idGuteTat'];
 	$candidateID = $_GET['candidateID'];
-	$userID = $_SESSION['user'];
-	$status = statusOfBewerbung($userID, $tatID);
-	if(getUserIdOfContactPersonByGuteTatID($idGuteTat) != $userID) {
+	$idUser = $_SESSION['user'];
+	$status = getStatusOfBewerbung($idUser, $idGuteTat);
+	if(getUserIdOfContactPersonByGuteTatID($idGuteTat) != $idUser) {
 		//Fall 1.1: Der Nutzer hat die gute Tat nicht erstellt und darf dementsprechend ihre Bewerbungen nicht annehmen
 		echo '<h3><red>Du darfst nur Bewerbungen zu guten Taten einsehen, die du selbst erstellt hat</red></h3>';
 	}
@@ -419,6 +418,11 @@ elseif(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 	}
 	else {
 		//Fall 1.6: Bewerbung ist okay und kann angenommen oder abgelehnt werden inkl. einer Begründung.
+
+		//Link zum Profil des Bewerbers
+		//TODO: Link zum Profil mit richtigem Parameter
+		echo '<a href="profile.php?user=??????">Zum Benutzer-Profil des Bewerbers</a>';
+
 		echo '<form action="bewerbung.php" method="post">
 				<table>
 					<tr>
@@ -438,34 +442,34 @@ elseif(isset($_GET['Bewerbungstext']) {
 	//Fall 3: Bewerbungsformular wurde abgeschickt
 	//TODO: Variablen setzen
 	$Bewerbungstext = $_GET['Bewerbungstext'];
-	$userID = $_SESSION['user'];
-	$tatID = $_SESSION['idGuteTat'];
+	$idUser = $_SESSION['user'];
+	$idGuteTat = $_SESSION['idGuteTat'];
 	unset($_SESSION['idGuteTat']); //Zwischengespeicherte Variable lesen und anschließend löschen
 	$UsernameOfBewerber = $_SESSION['user'];
 
-	$NameOfGuteTat = getNameOfGuteTatByID($tatID);
-	$UsernameOfErsteller = getUsernameOfContactPersonByGuteTatID($tatID);
-	$MailOfErsteller = getEmailOfContactPersonByGuteTatID($tatID);
+	$NameOfGuteTat = getNameOfGuteTatByID($idGuteTat);
+	$UsernameOfErsteller = getUsernameOfContactPersonByGuteTatID($idGuteTat);
+	$MailOfErsteller = getEmailOfContactPersonByGuteTatID($idGuteTat);
 
 	//URL der Bewerbungsseite generieren
-	$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']."?idGuteTat=$tatID&candidateID=$userID";
+	$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']."?idGuteTat=$idGuteTat&candidateID=$idUser";
 	$MailSubject = "Neue Bewerbung für '$NameOfGuteTat'";
 	$MailContent = "$UsernameOfBewerber hat sich für deine gute Tat '$NameOfGuteTat' beworben. Er schreibt dazu: $Bewerbungstext Besuche die URL, um Details zur Bewerbung einzusehen $actual_link";
 	//Sende mail an Ersteller der guten Tat
 	sendMail($MailOfErsteller, $MailSubject, $MailContent);
 	//Datenbank Eintrag
-	addBewerbung($userID, $tatID, $Bewerbungstext);
+	addBewerbung($idUser, $idGuteTat, $Bewerbungstext);
 	//Bestätigung anzeigen
 	echo '<h2><green>Deine Bewerbung wurde erfolgreich abgeschickt</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
-	echo '<a href="deeds_details.php?id=$tatID">Zur \'Guten Tat\'</a>';
+	echo '<a href="deeds_details.php?id=$idGuteTat">Zur \'Guten Tat\'</a>';
 
 }
 elseif(isset($_POST['AnnehmenButton'])) {
 	//Fall 4: Bewerbungs-Annahme Formular wurde abgeschickt
 	//TODO: Variablen setzen
 	$Begruendungstext = $_GET['Begruendungstext'];
-	$tatID = $_SESSION['idGuteTat']; //Zwischengespeicherte Variablen laden und anschließend löschen
+	$idGuteTat = $_SESSION['idGuteTat']; //Zwischengespeicherte Variablen laden und anschließend löschen
 	unset($_SESSION['idGuteTat']);
 	$candidateID = $_SESSION['$candidateID'];
 	unset($_SESSION['candidateID']);
@@ -473,7 +477,7 @@ elseif(isset($_POST['AnnehmenButton'])) {
 
 	$MailOfBewerber = getMailOfBenutzerByID($candidateID);
 	$UsernameOfBewerber = getUsernameOfBenutzerByID($candidateID);
-	$NameOfGuteTat = getNameOfGuteTatByID($tatID);
+	$NameOfGuteTat = getNameOfGuteTatByID($idGuteTat);
 
 	$MailSubject = "Bewerbung angenommen!";
 	$MailContent = "Hallo $UsernameOfBewerber! Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller angenommen! Er schreibt dazu: $Begruendungstext";
@@ -481,17 +485,17 @@ elseif(isset($_POST['AnnehmenButton'])) {
 	sendMail($MailOfBewerber, $MailSubject, $MailContent);
 	//Datenbankeintrag anpassen
 	//neuer Datenbankeintrag in der Helper Relation
-	acceptBewerbung($candidateID, $tatID, $Begruendungstext);
+	acceptBewerbung($candidateID, $idGuteTat, $Begruendungstext);
 	//Bestätigung anzeigen
 	echo '<h2><green>Der Bewerber wurde über die Annahme seiner Bewerbung informiert</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
-	echo '<a href="deeds_details.php?id=$tatID">Zur \'Guten Tat\'</a>';
+	echo '<a href="deeds_details.php?id=$idGuteTat">Zur \'Guten Tat\'</a>';
 }
 elseif(isset($_POST['AblehnenButton'])) {
 	//Fall 5: Bewerbung-Absage Formular wurde abgeschickt
 	//TODO: Variablen setzen
 	$Begruendungstext = $_GET['Begruendungstext'];
-	$tatID = $_SESSION['idGuteTat']; //Zwischengespeicherte Variablen laden und anschließend löschen
+	$idGuteTat = $_SESSION['idGuteTat']; //Zwischengespeicherte Variablen laden und anschließend löschen
 	unset($_SESSION['idGuteTat']);
 	$candidateID = $_SESSION['$candidateID'];
 	unset($_SESSION['candidateID']);
@@ -499,18 +503,18 @@ elseif(isset($_POST['AblehnenButton'])) {
 
 	$MailOfBewerber = getMailOfBenutzerByID($candidateID);
 	$UsernameOfBewerber = getUsernameOfBenutzerByID($candidateID);
-	$NameOfGuteTat = getNameOfGuteTatByID($tatID);
+	$NameOfGuteTat = getNameOfGuteTatByID($idGuteTat);
 
 	$MailSubject = "Bewerbung abgelehnt!";
 	$MailContent = "Hallo $UsernameOfBewerber! Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller mit folgender Begründung abgelehnt: $Begruendungstext";
 	//Sende Absage-Mail an Bewerber
 	sendMail($MailOfBewerber, $MailSubject, $MailContent);
 	//Datenbankeintrag anpassen
-	declineBewerbung($candidateID, $tatID, $Begruendungstext);
+	declineBewerbung($candidateID, $idGuteTat, $Begruendungstext);
 	//Bestätigung anzeigen
 	echo '<h2><green>Der Bewerber wurde über die Ablehnung seiner Bewerbung informiert</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
-	echo '<a href="deeds_details.php?id=$tatID">Zur \'Guten Tat\'</a>';
+	echo '<a href="deeds_details.php?id=$idGuteTat">Zur \'Guten Tat\'</a>';
 }
 else {
 	//Die URL wurde ohne Argumente aufgerufen
