@@ -438,7 +438,7 @@ elseif(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 		$_SESSION['$candidateID'] = $candidateID;
 	}
 }
-elseif(isset($_GET['Bewerbungstext']) {
+elseif(isset($_GET['Bewerbungstext'])) {
 	//Fall 3: Bewerbungsformular wurde abgeschickt
 	//TODO: Variablen setzen
 	$Bewerbungstext = $_GET['Bewerbungstext'];
