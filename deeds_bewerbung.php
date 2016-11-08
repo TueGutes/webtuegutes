@@ -147,13 +147,13 @@ function getStatusOfBewerbung($idUser, $idGuteTat) {
 	}
 }
 
-/*Gibt die Email Adresse des Benutzers mit der idUser = $candidateID
+/*Gibt die Email Adresse des Benutzers mit der idUser = $idUser
  zurück oder false*/
-function getMailOfBenutzerByID($candidateID) {
+function getMailOfBenutzerByID($idUser) {
 	$db = db_connect();
 	$sql = "SELECT email FROM User WHERE idUser = ?";
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('i',$candidateID);
+	$stmt->bind_param('i',$idUser);
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
