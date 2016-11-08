@@ -83,7 +83,7 @@ function db_getGuteTaten(){
 	db_close($db);
 	$arr = array();
 	while($dbentry =$result->fetch_object()){
-		$arr[]= $dbentry();
+		$arr[]= $dbentry;
 	}
 	return $arr;
 }
@@ -428,7 +428,7 @@ function db_getGuteTatenForList($startrow,$numberofrows){
 	db_close($db);
 	$arr = array();
 	while($dbentry =$result->fetch_object()){
-		$arr[]= $dbentry();
+		$arr[]= $dbentry;
 	}
 	return $arr;
 
