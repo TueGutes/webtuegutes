@@ -26,16 +26,16 @@ $tat = db_getGuteTat($idTat);
 $blAbout = '<h2>'.$tat["name"] .'<br>';
 $blAbout .= ' Gute Tat #'.$idTat.' </h>';
 
-// ----------User, welcher das erstellt hat. 
+// ----------User, welcher das erstellt hat.
 // Ich würde gerne einen Link von hier auf das jeweilige Benutzerprofil machen
 $blSelf = '<br> <img src="' . $tat["avatar"] . '" width="25" height="25" >';
 $blSelf .= '<a href="profile.php?user='.$tat["username"].'">'.$tat["username"].'</a>';
 
-$blComb = '<table> <tr> <td> '.$blSelf.'</td> <td> 
-&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp 
+$blComb = '<table> <tr> <td> '.$blSelf.'</td> <td>
+&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
 </td> <td style="width:280px" >'.$blAbout.' </td> </tr> </table> <hr>';
 
-// -----------Gute Taten Details - genauer 
+// -----------Gute Taten Details - genauer
 $blTaten = '<table> <tr> <td> Categorie </td> <td>'.$tat["category"].'</td> </tr>';
 $blTaten .= '<tr> <td> <br>Beschreibung: <br> '.$tat["description"].'</td> </tr>';
 $blTaten .= '<tr> <td> <br>Zeitpunkt: </td> <td> <br>'.$tat["time"].'</td> </tr>';
@@ -61,7 +61,7 @@ echo '<div align="center">' . $blComb . '</div>';
 echo '<p />';
 echo '<div align="center" style="font-size:130%;">' . $blTaten . '</div>';
 echo '<p />';
-echo '<div align="center">' .$blMap; 
+echo '<div align="center">' .$blMap;
 
 if ($showMap) {
 		echo '<div id="mapid">';
@@ -82,12 +82,12 @@ if((isset($_SESSION['loggedIn']) && $_SESSION['loggedIn']) && (isset($_SESSION['
 	echo '<a href="tatBearbeiten.php?id="'.$idTat. '" target="_self" > <input type="Button" value="Bearbeiten"> </a>';
 }
 else{
-	echo '<a href="fürTatBewerben.php?id="'.$idTat. '" target="_self" > <input type="Button" value="Bewerben"> </a>';
+	echo '<a href="deeds_bewerbung.php?idGuteTat="'.$idTat. '" target="_self" > <input type="Button" value="Bewerben"> </a>';
 }
-	
+
 ?>
 
-<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . 
+<a href='./deeds_details?id=" . $arr[$i]->idGuteTat .
 
 <?php
 require './includes/_bottom.php';
