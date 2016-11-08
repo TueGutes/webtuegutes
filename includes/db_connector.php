@@ -387,7 +387,7 @@ function db_delete_user($user, $pass) {
 // Holt sich eine Gute Tat und zusätzliche Parameter, die von Lukas gefordert waren.
 function db_getGuteTat($idGuteTat){
 	$db = db_connect();
-	$sql = "SELECT 
+	$sql = 'SELECT 
 		Deeds.name, 
 		User.username, 
 		UserTexts.avatar,
@@ -395,7 +395,8 @@ function db_getGuteTat($idGuteTat){
 		Deeds.street, 
 		Deeds.housenumber, 
 		Deeds.idPostal,
-		Deeds.time, 
+		Deeds.starttime, 
+        Deeds.endtime, 
 		Deeds.organization, 
 		Deeds.countHelper, 
 		Deeds.status,
@@ -416,7 +417,7 @@ function db_getGuteTat($idGuteTat){
 			On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
 		Join Postalcode
 			On (Deeds.idPostal = Postalcode.idPostal)			
-	WHERE idGuteTat = ?";
+	WHERE idGuteTat = ?';
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('i',$idGuteTat);
 	$stmt->execute();
