@@ -39,7 +39,7 @@ if (!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 
 					echo "<div style='position: realtive; float: left;'><h4>" . $arr[$i]->name . "</h4></div><div style='position: realtive; float: right;'>" . $arr[$i]->category . "</div>";
 					echo "<br><br><br><br><div style='position: realtive; text-align: left;'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
 					echo "<div style='position: realtive; float: left;'>" . $arr[$i]->street ." ,  ". $arr[$i]->housenumber ." ,  ". $arr[$i]->postalcode . "</div>";
-					echo "<div>" ."Anzahl der helfer (". $arr[$i]->countHelper.") " ."</div><div style='position: realtive; float: right;'>"."Das Mindest Vertraunslevel betraegt ". $arr[$i]->idTrust . "</div>";
+					echo "<div>" . (is_numeric($arr[$i]->countHelper)?"Anzahl der Helfer: ". $arr[$i]->countHelper:'') ."</div><div style='position: realtive; float: right;'>"."Das Mindest Vertraunslevel betraegt ". $arr[$i]->idTrust . "</div>";
 					echo "<div>" . $arr[$i]->organization . "</div>";
 				echo "</div></a>";
 				echo "<br><br><hr><br><br>";
