@@ -83,7 +83,7 @@ function db_getGuteTaten(){
 	db_close($db);
 	$arr = array();
 	while($dbentry =$result->fetch_object()){
-		$arr[]= $dbentry();
+		$arr[]= $dbentry;
 	}
 	return $arr;
 }
@@ -200,7 +200,7 @@ function db_getUserByCryptkey($cryptkey) {
 }
 
 //füllt den Ort als Unbekannt, wenn eine Neue Postleitzahl eingefügt wird
-function db_fix_plz($plz) {
+function db_fix_plz($idPostal,$plz,$place) {
 	$db = db_connect();
 	$sql = "SELECT * from Postalcode where postalcode = ?";
 	$stmt = $db->prepare($sql);
@@ -216,10 +216,43 @@ function db_fix_plz($plz) {
 	db_close($db);
 }
 
+//gibt die Postal id zurück
+function db_getIdPostalbyPostalcodePlace($plz,$place){
+	$db = db_connect();
+	$sql = "
+		SELECT idPostal 
+		FROM Postalcode 
+		WHERE postalcode = ?
+		AND place = ?";
+	$stmt = $db->prepare($sql); 
+	$stmt->bind_param('is',$plz,$place);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	return $dbentry['idPostal'];
+}
+
+function db_getPostalcodePlacebyIdPostal($idPostal){
+	$db = db_connect();
+	$sql = "
+			SELECT postalcode, place 
+			FROM Postalcode
+			WHERE idPostal = ?
+		";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$thisuser['idPostal']);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	return $dbentry;
+}
+
 function db_get_user($user) {
 	$db = db_connect();
 	$sql = "
-		SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, postalcode, telefonnumber, messengernumber, birthday 
+		SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, idPostal, telefonnumber, messengernumber, birthday 
 		FROM User
 			JOIN Trust
 		    	ON User.idTrust = Trust.idTrust
@@ -237,22 +270,16 @@ function db_get_user($user) {
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$thisuser = $result->fetch_assoc();
-	if (isset($thisuser['postalcode'])) {
+	if (isset($thisuser['idPostal'])) {
 		//PLZ gesetzt -> Lade den Namen des Ortes aus der Datenbank
-		$sql = "
-			SELECT postalcode, place 
-			FROM Postalcode
-			WHERE postalcode = ?
-		";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('s',$thisuser['postalcode']);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		$dbentry = $result->fetch_assoc();
+		
+		$dbentry = db_getPostalcodePlacebyIdPostal($thisuser['idPostal']);
 		$thisuser['place'] = $dbentry['place'];
+		$thisuser['postalcode'] = $dbentry['postalcode'];
 	} else {
 		$thisuser['postalcode'] = '';
 		$thisuser['place'] = '';
+		$thisuser['idPostal'] = '';
 	}
 	//Schließen der Datenbankverbindung
 	db_close($db);
@@ -275,7 +302,7 @@ function db_get_user($user) {
 //Soll die Benutzerdaten abspeichern, die von Alex verlangt wurden
 function db_update_user($savedata)
 {
-	db_fix_plz($savedata['postalcode']);
+	$savedata['idPostal'] = db_getIdPostalbyPostalcodePlace($savedata['postalcode'],$savedata['place']);
 	$db = db_connect();
 	$sql ="UPDATE User,PersData,UserTexts,Privacy,UserGroup
 		SET 
@@ -289,7 +316,7 @@ function db_update_user($savedata)
 		PersData.housenumber = ?,
 		PersData.telefonnumber = ?,
 		PersData.messengernumber = ?,
-		PersData.postalcode = ?,
+		PersData.idPostal = ?,
 		UserTexts.avatar = ?,
 		UserTexts.hobbys = ?,
 		UserTexts.description = ?,
@@ -300,7 +327,7 @@ function db_update_user($savedata)
 		AND User.idUser = Privacy.idPrivacy
 		AND User.idUserGroup = UserGroup.idUserGroup";
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('sssssssssssssssi',
+	$stmt->bind_param('ssssssssssissssi',
 		$savedata['username'],
 		$savedata['email'],
 		$savedata['regDate'],
@@ -311,7 +338,7 @@ function db_update_user($savedata)
 		$savedata['housenumber'],
 		$savedata['telefonnumber'],
 		$savedata['messengernumber'],
-		$savedata['postalcode'],
+		$savedata['idPostal'],
 		$savedata['avatar'],
 		$savedata['hobbys'],
 		$savedata['description'],
@@ -367,7 +394,7 @@ function db_getGuteTat($idGuteTat){
 		Deeds.category, 
 		Deeds.street, 
 		Deeds.housenumber, 
-		Deeds.postalcode,
+		Deeds.idPostal,
 		Deeds.time, 
 		Deeds.organization, 
 		Deeds.countHelper, 
@@ -375,7 +402,9 @@ function db_getGuteTat($idGuteTat){
 		Trust.idTrust, 
 		Trust.trustleveldescription,
 		DeedTexts.description,
-		DeedTexts.pictures
+		DeedTexts.pictures,
+		Postalcode.postalcode,
+		Postalcode.place
 	FROM Deeds 
 		Join User
 			On (Deeds.contactPerson = User.idUser)
@@ -384,7 +413,9 @@ function db_getGuteTat($idGuteTat){
 		Join Trust
 			On (Deeds.idTrust =	Trust.idTrust)
 		Join DeedTexts
-			On (Deeds.idGuteTat = DeedTexts.idDeedTexts)			
+			On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
+		Join Postalcode
+			On (Deeds.idPostal = Postalcode.idPostal)			
 	WHERE idGuteTat = ?";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('i',$idGuteTat);
@@ -393,45 +424,6 @@ function db_getGuteTat($idGuteTat){
 	$dbentry = $result->fetch_assoc();
 	db_close($db);
 	return $dbentry;
-}
-
-//gibt die nötigen Parameter die für die liste gefordert wurden aus
-//man kann bestimmen ab welcher id die Taten angezeigt werden und wie viele
-//Taten werden als Objekt in dem Array gespeichert
-function db_getGuteTatenForList($startrow,$numberofrows){
-	$db = db_connect();
-	$sql = "SELECT 
-		Deeds.name, 
-		Deeds.category, 
-		Deeds.street, 
-		Deeds.housenumber, 
-		Deeds.postalcode,
-		Deeds.organization, 
-		Deeds.countHelper,
-		Deeds.status, 
-		Trust.idTrust, 
-		Trust.trustleveldescription,
-		DeedTexts.description,
-		Postalcode.place
-	FROM Deeds 
-		Join DeedTexts
-			On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
-		Join Postalcode
-			On (Deeds.postalcode = Postalcode.postalcode)
-		Join Trust
-			On (Deeds.idTrust =	Trust.idTrust)
-	LIMIT ? , ?";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('ii',$startrow,$numberofrows);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	db_close($db);
-	$arr = array();
-	while($dbentry =$result->fetch_object()){
-		$arr[]= $dbentry();
-	}
-	return $arr;
-
 }
 
 // Liefert True wenn der Name schon existiert, sonst false
@@ -454,13 +446,14 @@ function db_doesGuteTatNameExists($name){
 
 //erstellt eine gute Tat
 function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $postalcode, $time_t, $organization, $countHelper, $idTrust,
-	$description, $pictures){
+	$description, $pictures,$place){
 	$db = db_connect();
 	//Datensatz in Deeds einfügen
+	$plz = db_getIdPostalbyPostalcodePlace($postalcode,$place);
 	$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,postalcode,time,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?)';
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('sisssissii', $name, $user_id, $category, $street, 
-		$housenumber, $postalcode, $time_t, $organization, $countHelper, 
+		$housenumber, $plz, $time_t, $organization, $countHelper, 
 		$idTrust);
 	$stmt->execute();
 
@@ -481,6 +474,54 @@ function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $po
 	$stmt->bind_param('iss' , $index, $description, $pictures);
 	$stmt->execute();
 	db_close($db);
+}
+
+function db_getGuteTatenForList($startrow,$numberofrows){
+    $db = db_connect();
+    $sql = "SELECT 
+		deeds.idGuteTat,
+        deeds.name, 
+        deeds.category, 
+        deeds.street, 
+        deeds.housenumber, 
+        deeds.postalcode,
+        deeds.organization, 
+        deeds.countHelper,
+        deeds.status, 
+        Trust.idTrust, 
+        Trust.trustleveldescription,
+        DeedTexts.description,
+        Postalcode.place
+    FROM deeds 
+        Join DeedTexts
+            On (deeds.idGuteTat = DeedTexts.idDeedTexts)
+        Join Postalcode
+            On (deeds.postalcode = Postalcode.postalcode)
+        Join Trust
+            On (deeds.idTrust =    Trust.idTrust)
+    LIMIT ? , ?";
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param('ii',$startrow,$numberofrows);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    db_close($db);
+    $arr = array();
+	$c = 0;
+    while($dbentry =$result->fetch_object()){
+        $arr[$c]= $dbentry;
+		$c++;
+    }
+    return $arr;
+}
+
+//Gibt die Anzahl der Guten Taten zurück, egal welcher Status sie innehaben
+function db_getGuteTatenAnzahl(){
+	$db = db_connect();
+	$sql = "SELECT COUNT(*) FROM Deeds";
+	$result = $db->query($sql);
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	return $dbentry['COUNT(*)'];
 }
 
 ?>

@@ -15,4 +15,6 @@ echo '<form action="login.php" method="post" >
 	<input type="submit" value='.$placeholderButton.' >
 	</form>';
 		
+echo'<a href="PasswortUpdate.php">Passwort vergessen?</a>';
+		
 ?>
