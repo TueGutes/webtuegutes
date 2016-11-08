@@ -483,4 +483,43 @@ function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $po
 	db_close($db);
 }
 
+function db_getGuteTatenForList($startrow,$numberofrows){
+    $db = db_connect();
+    $sql = "SELECT 
+		deeds.idGuteTat,
+        deeds.name, 
+        deeds.category, 
+        deeds.street, 
+        deeds.housenumber, 
+        deeds.postalcode,
+        deeds.organization, 
+        deeds.countHelper,
+        deeds.status, 
+        Trust.idTrust, 
+        Trust.trustleveldescription,
+        DeedTexts.description,
+        Postalcode.place
+    FROM deeds 
+        Join DeedTexts
+            On (deeds.idGuteTat = DeedTexts.idDeedTexts)
+        Join Postalcode
+            On (deeds.postalcode = Postalcode.postalcode)
+        Join Trust
+            On (deeds.idTrust =    Trust.idTrust)
+    LIMIT ? , ?";
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param('ii',$startrow,$numberofrows);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    db_close($db);
+    $arr = array();
+	$c = 0;
+    while($dbentry =$result->fetch_object()){
+        $arr[$c]= $dbentry;
+		$c++;
+    }
+    return $arr;
+
+}
+
 ?>
