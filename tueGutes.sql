@@ -11,7 +11,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- Schema tueGutes
 -- -----------------------------------------------------
 
-DROP DATABASE `tueGutes`;
+DROP SCHEMA IF EXISTS `tueGutes`;
 
 -- -----------------------------------------------------
 -- Schema tueGutes
