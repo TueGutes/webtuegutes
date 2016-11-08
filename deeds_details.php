@@ -90,7 +90,7 @@ echo $form;
 }
 else{
 	
-$link = 'deeds_bewerben.php?idGuteTat='.$idTat; 
+$link = 'deeds_bewerbung.php?idGuteTat='.$idTat; 
 
 $form = '<form method="post" action="'.$link.'">';
 $form .= '<input type="submit" value="Bewerben">';

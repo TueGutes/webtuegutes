@@ -93,6 +93,83 @@ else if(isset($_POST['idTrust'])) {
 //Tat-Objekt holen -> jetzt damit es akutell ist
 	$tat = db_getGuteTat($idGuteTat);	
 //link zusammenbauen
+
+
+//Autor dieser Methode : Christian Hock
+//Einzelne Tat bearbeiten -> Diese Methode finded Anwendung bei der tat_bearbeiten.php-Seite
+//$data -> neuer Inhalt, $idGuteTat -> logo, $Spalte-> Spalte innerhalb der Deedstabelle, $Variablentyp-> gibt an welchen Typ die Variable hat
+//&Spalte 0 entsrpricht der Beschreibung der Tat
+function db_update_deeds($data,$idGuteTat,$Spalte)
+	{
+		$Variablentyp='s';
+		$db = db_connect();
+	if($Spalte==0){
+		$sql ="UPDATE deedtexts
+			SET 
+			deedtexts.description = ?
+			WHERE deedtexts.idDeedTexts = ?";
+		
+		
+	}else if($Spalte==2){
+		$sql ="UPDATE deeds
+			SET 
+			deeds.name = ?
+			WHERE deeds.idGuteTat = ?";
+	}else if($Spalte==4){
+		$sql ="UPDATE deeds
+			SET 
+			deeds.category = ?
+			WHERE deeds.idGuteTat = ?";
+	}
+	else if($Spalte==5){
+		$sql ="UPDATE deeds
+			SET 
+			deeds.street = ?
+			WHERE deeds.idGuteTat = ?";
+	}
+	else if($Spalte==6){
+		$sql ="UPDATE deeds
+			SET 
+			deeds.housenumber = ?
+			WHERE deeds.idGuteTat = ?";
+	}
+	else if($Spalte==7){
+		$sql ="UPDATE deeds
+			SET 
+			deeds.postalcode = ?
+			WHERE deeds.idGuteTat = ?";
+			$Variablentyp='i';
+	}
+	else if($Spalte==9){
+		$sql ="UPDATE deeds
+			SET 
+			deeds.organization = ?
+			WHERE deeds.idGuteTat = ?";
+	}
+	else if($Spalte==10){
+		$sql ="UPDATE deeds
+			SET 
+			deeds.countHelper = ?
+			WHERE deeds.idGuteTat = ?";
+			$Variablentyp='i';
+	}
+	else if($Spalte==11){
+		$sql ="UPDATE deeds
+			SET 
+			deeds.idTrust = ?
+			WHERE deeds.idGuteTat = ?";
+			$Variablentyp='i';
+	}
+		$stmt = $db->prepare($sql);
+		if($Variablentyp=='s')$stmt->bind_param('si',$data,$idGuteTat);
+		if($Variablentyp=='i')$stmt->bind_param('ii',$data,$idGuteTat);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+		}
+		db_close($db);
+	}
+
+
 $link ='./deeds_bearbeiten.php?idGuteTat=';
 $link=$link.$idGuteTat;
 	?>
