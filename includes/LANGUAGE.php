@@ -29,6 +29,9 @@ $wlang['terms'] = 'AGB';
 //====agb====
 $wlang['terms_head'] = 'Allgemeine Geschäftsbedingungen';
 
+//====about===
+//$wlang['about'] = '';
+
 //====contact====
 $wlang['contact_head'] = 'Kontakt';
 
@@ -71,4 +74,7 @@ $wlang['register_button_submit'] = 'Registrieren';
 
 //====deeds====
 $wlang['deeds_head'] = 'Gute Taten';
+
+//====home====
+$wlang['welcome'] = 'Willkommen' . ($user->loggedIn() ? ', ' . $user->getUsername() : '') . '!';
 ?>

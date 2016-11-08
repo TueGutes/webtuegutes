@@ -2,16 +2,10 @@
 /*
 *@author Henrik Huckauf, Andreas Blech
 */
-session_start();
 
-//Prüfung, ob der Nutzer sich bereits eingeloggt hat.
-if(!(isset($_SESSION['loggedIn']))) {
-	$_SESSION['loggedIn'] = false;
-}
+require './includes/DEF.php';
+
 include './includes/db_connector.php';
-
-require './includes/_top.php';
-require_once './includes/LANGUAGE.php';
 
 //DB Funktionen, die später ausgelagert werden sollten
 
@@ -99,66 +93,57 @@ function statusByUserID($userID) {
 }
 
 
-if(isset($_POST['username']) && isset($_POST['password'])) {
-	/*Login-Formular mit Username und Passwort wurde aufgerufen
-	Überprüfe, ob Username in Tabelle existiert
-	Überprüfe, ob Passwort richtig ist, falls ja melde Benutzer an und leite auf Profilseite weiter
-	*/
-	$continue = "./profile.php"; //TODO Profilseite
-	if(isset($_SESSION['continue'])) {
-		$continue = $_SESSION['continue'];
-		unset($_SESSION['continue']);	
-	}
+$output = '';
+if(isset($_POST['username']) && isset($_POST['password']))
+{
+	$continue = $HOST;
+	if(isset($_POST['continue']))
+		$continue = urldecode($_POST['continue']);
 	
 	$userID = idOfBenutzername($_POST['username']);
-	if($userID != false) {
+	if($userID != false)
+	{
 		$regDate = regDateOfUserID($userID);
 		$passHash = passwordHashOfUserID($userID);
 		$status = statusByUserID($userID);
-		if($status != "nichtVerifiziert") {
-			if(md5($_POST['password'].$regDate) === $passHash) {
-				//Eingegebenes Passwort ist richtig
-				$_SESSION['loggedIn'] = true;
-				$_SESSION['user'] = $_POST['username']; 
-				echo '<h3>Login erfolgreich</h3>';
-				header("Location: ".$continue); //Weiterleiten auf URL in $continue
+		if($status != "nichtVerifiziert")
+		{
+			if(md5($_POST['password'].$regDate) === $passHash) //Eingegebenes Passwort ist richtig
+			{
+				$username = $_POST['username'];
+				$user->login($userID, $username, db_get_user($username)->email);
+				header("Location: " . $continue); //Weiterleiten auf URL in $continue
+				exit;
 			}
-			else {
-				//Eingebenes Passwort ist falsch
-				$head = $wlang['login_head'];
-				echo '<h2>'.$head.'</h2>';
-				echo '<h3><font color=red>Das eingegebene Passwort ist falsch</font></h3>';
-				require './includes/loginFormular.php';
-				
-			}
+			else
+				$output = '<red>Das eingegebene Passwort ist falsch</red>';
 		}
-		else {
-			$head = $wlang['login_head'];
-			echo '<h2>'.$head.'</h2>';
-			echo '<h3><font color=red>Der Account ist noch nicht verifiziert, bitte auf den Bestätigungslink in der Mail klicken</font></h3>';
-			require './includes/loginFormular.php';
-		}
+		else
+			$output = '<red>Der Account ist noch nicht verifiziert, bitte auf den Bestätigungslink in der Mail klicken</red>';
 	}
-	else {
-		$head = $wlang['login_head'];
-		echo '<h2>'.$head.'</h2>';
-		echo '<h3><font color=red>Der eingegebene Benutzername ist uns nicht bekannt</font></h3>';
-		require './includes/loginFormular.php';
-	}
-	
-} else {
-	$_SESSION['loggedIn'] = false; //Standardmäßig wird man ausgeloggt, wenn man auf die Loginseite kommt (klickt man auf Logout wird login.php aufgerufen, sollte man vielleicht schöner machen...)
-	//Der Continue Parameter muss mit übergeben werden
-	if(isset($_GET['continue'])) {
-		$_SESSION['continue'] = $_GET['continue'];
-	}
-	
-	$head = $wlang['login_head'];
-	echo '<h2>'.$head.'</h2>';
-
-	require './includes/loginFormular.php';
-
+	else
+		$output = '<red>Der eingegebene Benutzername ist uns nicht bekannt</red>';	
 }
 
+
+require './includes/_top.php';
+?>
+
+<h2><?php echo $wlang['login_head']; ?></h2>
+
+<div id='output'></div>
+<form action="" method="post">
+	<input type="text" value="" name="username" placeholder="<?php echo $wlang['login_placeholder_username']; ?>" required />
+	<br><br>
+	<input type="password" name="password" value="" placeholder="<?php echo $wlang['login_placeholder_password']; ?>" required />
+	<br><br>
+	<input type="submit" value="<?php echo $wlang['login_button_submit']; ?>" />
+	<input type="hidden" name="continue" value="<?php echo isset($_GET['continue'])?$_GET['continue']:''; ?>" />
+</form>
+<br>
+<br>
+<a href="./recover">Passwort vergessen?</a>
+
+<?php
 require './includes/_bottom.php';
 ?>

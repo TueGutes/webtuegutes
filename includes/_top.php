@@ -1,12 +1,11 @@
 <?php
-	require_once './includes/DEF.php';
-	require_once './includes/LANGUAGE.php';
-	
-	
+/*
+*@author Henrik Huckauf
+*/
 
-	$currentPath = $_SERVER['PHP_SELF'];
-	$extension = '.php';
-	$activeTab = 'class="active"';
+$currentPath = $_SERVER['PHP_SELF'];
+$extension = '.php';
+$activeTab = 'class="active"';
 ?>
 <!DOCTYPE html>
 <html>
@@ -14,7 +13,8 @@
 <head>
 	<meta charset="utf-8" />
     <title>TueGutes</title>
-	<meta name="author" content="Henrik Huckauf" />
+	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico" />
+	<?php /*<meta name="author" content="Henrik Huckauf" />*/ ?>
     <!--====responsive viewport====-->
     <meta name="viewport" content="width = device-width, initial-scale = 1, maximum-scale = 1">
 	<!--====/responsive viewport====-->
@@ -36,20 +36,14 @@
 				</div>
 				<div id="profileSection">
 				<?php
-				if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] && isset($_SESSION['user']))
-					echo '<a href="./search"><input type="button" value="Tat suchen" style="font-size: 10px; margin-top: -20px;" /></a><br><br><a href="./logout">' . 'Logout' . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./profile">' . $_SESSION['user'] . '</a>';
+				if($user->loggedIn())
+					echo /*'<a href="./search"><input type="button" value="Tat suchen" style="font-size: 10px; margin-top: -20px;" /></a><br><br>*/'<a href="./profile">' . $user->getUsername() . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./logout">' . 'Logout' . '</a>';
 				else
 					echo '<a href="./registration">' . $wlang['register_head'] . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./login">' . $wlang['login_head'] . '</a>';
-					/*<form action="">
-						<input type="text" value="" placeholder="<?php echo $wlang['login_placeholder_username']; ?>" />
-						<input type="password" value="" placeholder="<?php echo $wlang['login_placeholder_password']; ?>" />
-						<br>
-						<input type="submit" value="<?php echo $wlang['login_button_submit']; ?>" />
-					</form>*/
 				?>
 				</div>
 				<div id="mobileSection">
-					<div class="mobile"><i class="fa fa-bars"></i><i class="fa fa-times"></i></div>
+					<div class="mobile"><?php echo !$user->loggedIn() ? '<a href="./login"><i class="fa fa-sign-in"></i></a>' : '<a href="./logout"><i class="fa fa-sign-out"></i></a>'; ?><i class="fa fa-bars mobileMenuButton"></i><i class="fa fa-times mobileMenuButton"></i></div>
 					<div class="mobileMenu">
 						<nav class="navigation">
 							<ul>
@@ -79,6 +73,4 @@
 		</header>
 
 		<div id="container">
-		
-		
 			<div class="content">

@@ -1,7 +1,4 @@
-			
 			</div>
-		
-		
 			<div class="bottom">
 				<footer>
 					<div>

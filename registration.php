@@ -1,15 +1,10 @@
 <?php
-//Author: Andreas Blech
-session_start();
+//@author: Andreas Blech
 
-//Prüfung, ob der Nutzer sich bereits eingeloggt hat.
-if(!(isset($_SESSION['loggedIn']))) {
-	$_SESSION['loggedIn'] = false;
-}
+require "./includes/DEF.php";
 
 //Inkludieren von script-Dateien
 include './includes/db_connector.php';
-include './includes/emailSender.php';
 
 //DB Funktionen, die später ausgelagert werden sollten
 
@@ -187,7 +182,7 @@ require "./includes/_top.php";
 						if(activateAcount($_GET['c']) === true) {
 							$_SESSION['loggedIn'] = true;
 							$_SESSION['user'] = getUserByCryptkey($_GET['c']); 
-							header('Location: ./profile.php');
+							header('Location: ./profile');
 						} else {
 							//Das Aktivieren des Accounts hat aus unbekanntem Grund nicht funktioniert
 							//Informiere den Benutzer darüber
@@ -234,15 +229,15 @@ require "./includes/_top.php";
 //echo __DIR__;
 								
 								if(sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent)===true) {
-									echo '<h3><font color=green>Bestätigungslink wurde gesendet an: '.$mail.'</font></h3><p>';
+									echo '<h3><green>Bestätigungslink wurde gesendet an: '.$mail.'</green></h3><p>';
 								}
 								else {
 									//Das Senden der Email ist fehlgeschlagen
-									echo '<h3><font color=red>Bestätigungslink an '.$mail.' konnte nicht gesendet werden</font></h3><p>';
+									echo '<h3><red>Bestätigungslink an '.$mail.' konnte nicht gesendet werden</red></h3><p>';
 								}
 							} else {
 								//Das Erstellen des Accounts in der Datenbank ist schief gelaufen
-								echo '<h3><font color=red>Interner Fehler: Es konnten kein Benutzeraccount angelegt werden</font></h3><p>';
+								echo '<h3><red>Interner Fehler: Es konnten kein Benutzeraccount angelegt werden</red></h3><p>';
 							}
 						}
 					} else {//1. Fall: Nutzer ist nicht eingeloggt und gelangt auf Registrierungsseite
@@ -252,7 +247,7 @@ require "./includes/_top.php";
 					}
 				} else {//4. Fall: Nutzer ist bereits eingeloggt
 					echo '<h2>Sie sind bereits eingeloggt</h2>';
-					header('Location: ./profile.php');
+					header('Location: ./profile');
 				}
 	require "./includes/_bottom.php"; 
 ?>

@@ -1,18 +1,12 @@
 <?php
-//Author: Andreas Blech
-session_start();
+//@author: Andreas Blech
+require "./includes/DEF.php";
 
 //Inkludieren von script-Dateien
 include './includes/db_connector.php';
-include './includes/emailSender.php';
 
 //Top Bereich inkludieren
 require "./includes/_top.php";
-
-//Prüfung, ob der Nutzer sich bereits eingeloggt hat.
-if(!(isset($_SESSION['loggedIn']))) {
-	$_SESSION['loggedIn'] = false;
-}
 
 //DB Funktionen, die später ausgelagert werden sollten
 
@@ -106,10 +100,10 @@ function getUserByCryptkey($cryptkey) {
 				
 				//$_SESSION['loggedIn'] = false;
 				
-				if($_SESSION['loggedIn']===false) { //Schauen, ob Nutzer schon eingeloggt ist
+				if(!$user->loggedIn()) { //Schauen, ob Nutzer schon eingeloggt ist
 					if(isset($_GET['c'])) { //3. Fall: Der Link mit dem Cryptkey wurde aufgerufen 
 						//Zeige Formular mit 2 Passwort Feldern ("Passwort" und "Passwort wiederholen")
-						echo'<form action="PasswortUpdate.php" method="post">
+						echo'<form action="./PasswortUpdate" method="post">
 									<center>
 										<h2>Neues Passwort eingeben</h2>
 										<table>
@@ -132,7 +126,7 @@ function getUserByCryptkey($cryptkey) {
 						//echo '<h3>Email gesendet an: '.$_POST['mail'].'</h3>';
 						$cryptkey = getCryptkeyByMail($_POST['mail']);
 						if($cryptkey != false) {
-							$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
+							$actual_link = $HOST . '/PasswortUpdate';
 							//$actual_link = explode('.', $actual_link)[0];
 							$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
 									<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
@@ -169,7 +163,7 @@ function getUserByCryptkey($cryptkey) {
 						//Einloggen
 						if($_POST['passwort'] != $_POST['passwortwdh']) {
 							echo'<h3> Die Passwörter stimmen nicht überein</h3>';
-							echo'<form action="PasswortUpdate.php" method="post">
+							echo'<form action="./PasswortUpdate" method="post">
 									<center>
 										<h2>Neues Passwort eingeben</h2>
 										<table>
@@ -189,8 +183,9 @@ function getUserByCryptkey($cryptkey) {
 						else {
 							changePasswortByCryptkey($_SESSION['cryptkey'], $_POST['passwort']);
 							//TODO: Auf Profilseite weiterleiten
-							$_SESSION['loggedIn'] = true;
-							$_SESSION['user'] = getUserByCryptkey($_SESSION['cryptkey']); 
+							//TODO besser auf die loginseite weiterleiten
+							//$_SESSION['loggedIn'] = true;
+							//$_SESSION['user'] = getUserByCryptkey($_SESSION['cryptkey']); 
 							unset($_SESSION['cryptkey']);
 							echo'<h3>Passwort erfolgreich geändert</h3>';
 						}
@@ -198,7 +193,7 @@ function getUserByCryptkey($cryptkey) {
 						//Header("Location: ./");
 					} else{ //1. Fall: Nutzer ist nicht eingeloggt und auf PasswortUpdate.php gelangt 
 						echo '<h2>Passwort Ändern</h2>';
-						echo'<form action="PasswortUpdate.php" method="post">
+						echo'<form action="./PasswortUpdate" method="post">
 									<center>
 										<table>
 											<tr>
@@ -212,10 +207,8 @@ function getUserByCryptkey($cryptkey) {
 					}
 				} else { //5. Fall: Nutzer ist bereits eingeloggt
 					echo '<h3>Du bist bereits eingeloggt</h3>';
-					echo'<a href="./profile.php">Profil anzeigen</a>';
+					echo'<a href="./profile">Profil anzeigen</a>';
 				}
 
-				echo '<footer>';
-					include "./includes/_bottom.php"; 	
-				echo '</footer>';			
+include "./includes/_bottom.php"; 			
 ?>

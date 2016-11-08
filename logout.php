@@ -2,9 +2,7 @@
 /*
 *@author Henrik Huckauf
 */
+include "./includes/DEF.php";
 
-session_start();
-//if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'])
-	session_destroy();
-header('Location: ./');
+$user->logout();
 ?>

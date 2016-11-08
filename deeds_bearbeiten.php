@@ -1,20 +1,23 @@
 <?php
-
 /*
-*@Autor Christian Hock
+*@author Christian Hock
 * das Bild und den Zeitrahmen zu ändern wurde ausgelassen, da man diese momentan nicht erstellen kann.
 * Es wird die Funktion db_fix_plz($plz) genutzt...
 */
 
+require './includes/DEF.php';
+
 include './includes/ACCESS.php';
-require './includes/_top.php';
+
 require './includes/db_connector.php';
 
+require './includes/_top.php';
+
 //Fehlerüberprüfung auf den Getparameter und prüfung ob die Seite ein zweites mal aufgerufen wurde
-if (!isset($_GET['idGuteTat'])){
+if (!isset($_GET['id'])){
 echo '<h3>Es ist ein Aufruffehler aufgetreten.<br>Vermutlich haben Sie den Link für diese Seite manuell eingegeben, bzw. herauskopiert und dabei einen Fehler gemacht.<br>Oder die Tat gibt es nicht mehr.<br>Sollte weder noch zutreffen kontaktieren Sie uns bitte.</h3><br>';	
 	}else{
-$idGuteTat = $_GET['idGuteTat'];
+$idGuteTat = $_GET['id'];
 	}
 //Tat-Objekt holen	für Nutzerüberprüfung
 	$tat = db_getGuteTat($idGuteTat);
@@ -170,36 +173,33 @@ function db_update_deeds($data,$idGuteTat,$Spalte)
 	}
 
 
-$link ='./deeds_bearbeiten.php?idGuteTat=';
-$link=$link.$idGuteTat;
-	?>
-	<html>
-	
+$link = './deeds_bearbeiten?id=' . $idGuteTat;
+?>
 	
 		<center>
 		<br>
 		<br>
 		<table>
 			<tr>
-				<form method="post" action="<?php echo $link?>">
+				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Name der Tat: </td>
-				<td><h3><?php echo$tat['name']?></td>	
+				<td><h3><?php echo $tat['name']; ?></td>	
 				<td><input type="text" name="name" placeholder="neuer Name"/></td>	
 				<td><input type="submit" name="button" value="ändern"/></td>
 				</form>
 				</tr>
 				<tr>
-				<form method="post" action="<?php echo $link?>">
+				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Beschreibung: </td>
-				<td><h3><?php echo$tat['description']?></td>	
+				<td><h3><?php echo $tat['description']; ?></td>	
 				<td><input type="text" name="description" placeholder="neue Beschreibung"/></td>
 				<td><input type="submit" name="button" value="ändern"/></td>
 				</form>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link?>">
+				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Kategorie: </td>
-				<td><h3><?php echo$tat['category']?></td>	
+				<td><h3><?php echo $tat['category']; ?></td>	
 				<td>
 				<select name="category" size="1">
 				<option value="Altenheim">Altenheim</option>
@@ -210,58 +210,58 @@ $link=$link.$idGuteTat;
 				</form>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link?>">
+				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Straße: </td>
-				<td><h3><?php echo$tat['street']?></td>	
+				<td><h3><?php echo $tat['street']; ?></td>	
 				<td><input type="text" name="street" placeholder="neue Straße"/></td>
 				<td><input type="submit" name="button" value="ändern"/></td>
 				</form>
 			</tr>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link?>">
+				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Hausnummer: </td>
-				<td><h3><?php echo$tat['housenumber']?></td>	
+				<td><h3><?php echo $tat['housenumber']; ?></td>	
 				<td><input type="text" name="housenumber" placeholder="neue Straße"/></td>
 				<td><input type="submit" name="button" value="ändern"/></td>
 				</form>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link?>">
+				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Postleitzahl: </td>
-				<td><h3><?php echo$tat['postalcode']?></td>	
+				<td><h3><?php echo $tat['postalcode']; ?></td>	
 				<td><input type="text" name="postalcode" placeholder="neue PLZ"/></td>
 				<td><input type="submit" name="button" value="ändern"/></td>
 				</form>
 			</tr>	
 			<tr>
-				<form method="post" action="<?php echo $link?>">
+				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Zeitrahmen:WarteBisZeitformatklar </td>
-				<td><h3><?php echo$tat['time']?></td>	
+				<td><h3><?php echo $tat['time']; ?></td>	
 				<td><input type="text" name="name" placeholder="neuer Zeitrahmen"/></td>
 				<td><input type="submit" name="button" value="ändern"/></td>
 				</form>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link?>">
+				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Organisation: </td>
-				<td><h3><?php echo$tat['organization']?></td>	
+				<td><h3><?php echo $tat['organization']; ?></td>	
 				<td><input type="text" name="organization" placeholder="Neue Organisation"/></td>
 				<td><input type="submit" name="button" value="ändern"/></td>
 				</form>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link?>">
+				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Anzahl Helfer: </td>
-				<td><h3><?php echo$tat['countHelper']?></td>	
+				<td><h3><?php echo $tat['countHelper']; ?></td>	
 				<td><input type="text" name="countHelper" placeholder="Neue Anzahl Helfer"/></td>
 				<td><input type="submit" name="button" value="ändern"/></td>
 				</form>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link?>">
+				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Erforderlicher Verantwortungslevel: </td>
-				<td><h3><?php echo$tat['idTrust']?></td>	
+				<td><h3><?php echo $tat['idTrust']; ?></td>	
 				<td>
 				<select name="idTrust" size="1">
 					<option value="1">1</option>
@@ -272,15 +272,15 @@ $link=$link.$idGuteTat;
 				</form>
 			</tr>
 		</table>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<a href="./deeds.php"><input type="button" name="button" value="Fertig" /></a>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<a href="./deeds.php"><input type="button" name="button" value="Fertig" /></a>
 		</center>
 		</form>
-		</html>
+		
 <?php require "./includes/_bottom.php"; 
 /*Bitte in den Db-Connector einfügen
 

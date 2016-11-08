@@ -2,7 +2,8 @@
 /*
 *@author Henrik Huckauf
 */
-session_start();
+
+require './includes/DEF.php';
 
 require './includes/_top.php';
 ?>

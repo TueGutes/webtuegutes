@@ -4,7 +4,7 @@
 *@author Christian Hock
 */
 	
-session_start();	
+require './includes/DEF.php';	
 	
 require './includes/_top.php';
 
@@ -12,7 +12,7 @@ require './includes/_top.php';
 
 <h2><?php echo "Eine Tat Erstellen"; ?></h2>
 
-	<form method="post" action="./guteTatErstellenDB.php" enctype="multipart/form-data">
+	<form method="post" action="./guteTatErstellenDB" enctype="multipart/form-data">
 		<center>
 		<h3>Bitte alle Felder ausfüllen =)</h3>
 		<br>
@@ -71,7 +71,7 @@ require './includes/_top.php';
 			</tr>
 			
 		</table>
-				<a href="./deeds.php"><input type="button" name="button" value="Zurück" /></a>
+				<a href="./deeds"><input type="button" name="button" value="Zurück" /></a>
 				<input type="submit" name="button" value="Tat erstellen"/>
 		</center>
 	</form>

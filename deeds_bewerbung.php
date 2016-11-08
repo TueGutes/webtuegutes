@@ -1,21 +1,16 @@
 <?php
-//Author: Andreas Blech
+//@author: Andreas Blech
 /*Description: Auf dieser Seite werden zwei Szenarien behandelt.
 * 1. Ein Nutzer bewirbt sich für eine gute Tat eines anderen Nutzers
   2. Ein Nutzer schaut sich die Bewerbung eines anderen Nutzers für seine gute Tat an und kann diese annehmen oder ablehnen
 */
-session_start();
 
-//Prüfung, ob der Nutzer sich bereits eingeloggt hat.
-if(!(isset($_SESSION['loggedIn']))) {
-	$_SESSION['loggedIn'] = false;
-}
+require "./includes/DEF.php";
 
 require "./includes/_top.php";
 
 //Inkludieren von script-Dateien
 include './includes/db_connector.php';
-include './includes/emailSender.php';
 
 //TODO: DB Funktionen, die später ausgelagert werden sollten
 
@@ -343,7 +338,7 @@ Es gibt ... Fälle:
 	(declineBewerbung()) der Datenbankeintrag wird angepasst und eine Bestätigung + LInk zur Detailseite der Guten Tat wird angezeigt
 */
 //Fall 0: Profile sind nur für eingeloggte Nutzer sichtbar:
-if (!@$_SESSION['loggedIn']) die ('<h3>Bewerbungen sind nur für eingeloggte Nutzer sichtbar!</h3><p/><a href="login.php">Zum Login</a>');
+if (!$user->loggedIn()) die ('<h3>Bewerbungen sind nur für eingeloggte Nutzer sichtbar!</h3><p/><a href="./login">Zum Login</a>');
 
 echo '<h2>Bewerbung</h2>';
 
@@ -351,21 +346,21 @@ echo '<h2>Bewerbung</h2>';
 //Fall 1: Bewerbung abschicken
 if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 	$idGuteTat = $_GET['idGuteTat'];
-	$idUser = $_SESSION['user'];
+	$idUser = $user->getID();
 
 	if(!doesGuteTatExists($idGuteTat)) {
 		//Fall 1.1: Es existiert keine gute Tat mit der übergebenen ID
 		echo '<h3><red>Die gute Tat konnte nicht gefunden werden :(</red></h3>';
 	}
-	elseif(isUserCandidateOfGuteTat($idGuteTat, $idUser)) {
+	else if(isUserCandidateOfGuteTat($idGuteTat, $idUser)) {
 		//Fall 1.2: Der Nutzer hatte sich bereits für diese Tat beworben
 		echo '<h3><red>Du hast dich bereits für diese Gute Tat beworben</red></h3>';
 	}
-	elseif(getUserIdOfContactPersonByGuteTatID($idGuteTat) === $idUser) {
+	else if(getUserIdOfContactPersonByGuteTatID($idGuteTat) === $idUser) {
 		//Fall 1.3: Der Bewerber selbst hat die gute Tat erstellt
 		echo '<h3><red>Du kannst dich nicht für eine gute Tat bewerben, die du selbst ausgeschieben hast</red></h3>';
 	}
-	elseif(getStatusOfGuteTatById($idGuteTat) === 'geschlossen') {
+	else if(getStatusOfGuteTatById($idGuteTat) === 'geschlossen') {
 		//Fall 1.4: Die Gute Tat ist bereits geschlossen
 		echo '<h3><red>Diese gute Tat wurde bereits abgeschlossen</red></h3>';
 	}
@@ -391,28 +386,28 @@ if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 
 }
 //Fall 2: Bewerbung annehmen oder ablehnen
-elseif(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
+else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 	$idGuteTat = $_GET['idGuteTat'];
 	$candidateID = $_GET['candidateID'];
-	$idUser = $_SESSION['user'];
+	$idUser = $user->getID();
 	$status = getStatusOfBewerbung($idUser, $idGuteTat);
 	if(getUserIdOfContactPersonByGuteTatID($idGuteTat) != $idUser) {
 		//Fall 1.1: Der Nutzer hat die gute Tat nicht erstellt und darf dementsprechend ihre Bewerbungen nicht annehmen
 		echo '<h3><red>Du darfst nur Bewerbungen zu guten Taten einsehen, die du selbst erstellt hat</red></h3>';
 	}
-	elseif($status === "angenommen") {
+	else if($status === "angenommen") {
 		//Fall 1.2: Die Bewerbung wurde bereits angenommen
 		echo '<h3><red>Die Bewerbung wurde bereits angenommen - der Bewerber wurde informiert</red></h3>';
 	}
-	elseif($status === "abgelehnt") {
+	else if($status === "abgelehnt") {
 		//Fall 1.3: Die Bewerbung wurde bereits abgelehnt
 		echo '<h3><red>Die Bewerbung wurde bereits abgelehnt - der Bewerber wurde informiert</red></h3>';
 	}
-	elseif($status === false) {
+	else if($status === false) {
 		//Fall 1.4: Es existiert keine Bewerbung dieses Nutzers für die gute Tat (sollte Websitetechnisch niemals passieren)
 		echo '<h3><red>Es existiert keine Bewerbung des Bewerbers für die Tat</red></h3>';
 	}
-	elseif(isNumberOfAcceptedCandidatsEqualToRequestedHelpers() === true) {
+	else if(isNumberOfAcceptedCandidatsEqualToRequestedHelpers() === true) {
 		//Fall 1.5: Anzahl der angeforderten Helfer bereits erreicht, Bewerbung kann nicht angenommen werden, bleibt ausstehend
 		echo '<h3><red>Die Anzahl der angeforderten Helfer für diese Tat wurde bereits erreicht. </p> Die Bewerbung muss u.U. später akzeptiert werden, falls ein Helfer absagt.</red></h3>';
 	}
@@ -421,9 +416,9 @@ elseif(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 
 		//Link zum Profil des Bewerbers
 		//TODO: Link zum Profil mit richtigem Parameter
-		echo '<a href="profile.php?user=??????">Zum Benutzer-Profil des Bewerbers</a>';
+		echo '<a href="./profile?user=??????">Zum Benutzer-Profil des Bewerbers</a>';
 
-		echo '<form action="bewerbung.php" method="post">
+		echo '<form action="deeds_bewerbung" method="post">
 				<table>
 					<tr>
 						<td><b>Begründung:</b></td>
@@ -438,14 +433,14 @@ elseif(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 		$_SESSION['$candidateID'] = $candidateID;
 	}
 }
-elseif(isset($_GET['Bewerbungstext'])) {
+else if(isset($_GET['Bewerbungstext'])) {
 	//Fall 3: Bewerbungsformular wurde abgeschickt
 	//TODO: Variablen setzen
 	$Bewerbungstext = $_GET['Bewerbungstext'];
-	$idUser = $_SESSION['user'];
+	$idUser = $user->getID();
 	$idGuteTat = $_SESSION['idGuteTat'];
 	unset($_SESSION['idGuteTat']); //Zwischengespeicherte Variable lesen und anschließend löschen
-	$UsernameOfBewerber = $_SESSION['user'];
+	$UsernameOfBewerber = $user->getUsername();
 
 	$NameOfGuteTat = getNameOfGuteTatByID($idGuteTat);
 	$UsernameOfErsteller = getUsernameOfContactPersonByGuteTatID($idGuteTat);
@@ -462,10 +457,10 @@ elseif(isset($_GET['Bewerbungstext'])) {
 	//Bestätigung anzeigen
 	echo '<h2><green>Deine Bewerbung wurde erfolgreich abgeschickt</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
-	echo '<a href="deeds_details.php?id=$idGuteTat">Zur \'Guten Tat\'</a>';
+	echo '<a href="./deeds_details?id=$idGuteTat">Zur \'Guten Tat\'</a>';
 
 }
-elseif(isset($_POST['AnnehmenButton'])) {
+else if(isset($_POST['AnnehmenButton'])) {
 	//Fall 4: Bewerbungs-Annahme Formular wurde abgeschickt
 	//TODO: Variablen setzen
 	$Begruendungstext = $_GET['Begruendungstext'];
@@ -473,7 +468,7 @@ elseif(isset($_POST['AnnehmenButton'])) {
 	unset($_SESSION['idGuteTat']);
 	$candidateID = $_SESSION['$candidateID'];
 	unset($_SESSION['candidateID']);
-	$UsernameOfErsteller = $_SESSION['user'];
+	$UsernameOfErsteller = $user->getUsername();
 
 	$MailOfBewerber = getMailOfBenutzerByID($candidateID);
 	$UsernameOfBewerber = getUsernameOfBenutzerByID($candidateID);
@@ -489,9 +484,9 @@ elseif(isset($_POST['AnnehmenButton'])) {
 	//Bestätigung anzeigen
 	echo '<h2><green>Der Bewerber wurde über die Annahme seiner Bewerbung informiert</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
-	echo '<a href="deeds_details.php?id=$idGuteTat">Zur \'Guten Tat\'</a>';
+	echo '<a href="./deeds_details?id=$idGuteTat">Zur \'Guten Tat\'</a>';
 }
-elseif(isset($_POST['AblehnenButton'])) {
+else if(isset($_POST['AblehnenButton'])) {
 	//Fall 5: Bewerbung-Absage Formular wurde abgeschickt
 	//TODO: Variablen setzen
 	$Begruendungstext = $_GET['Begruendungstext'];
@@ -499,7 +494,7 @@ elseif(isset($_POST['AblehnenButton'])) {
 	unset($_SESSION['idGuteTat']);
 	$candidateID = $_SESSION['$candidateID'];
 	unset($_SESSION['candidateID']);
-	$UsernameOfErsteller = $_SESSION['user'];
+	$UsernameOfErsteller = $user->getUsername();
 
 	$MailOfBewerber = getMailOfBenutzerByID($candidateID);
 	$UsernameOfBewerber = getUsernameOfBenutzerByID($candidateID);
@@ -514,7 +509,7 @@ elseif(isset($_POST['AblehnenButton'])) {
 	//Bestätigung anzeigen
 	echo '<h2><green>Der Bewerber wurde über die Ablehnung seiner Bewerbung informiert</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
-	echo '<a href="deeds_details.php?id=$idGuteTat">Zur \'Guten Tat\'</a>';
+	echo '<a href="./deeds_details?id=$idGuteTat">Zur \'Guten Tat\'</a>';
 }
 else {
 	//Die URL wurde ohne Argumente aufgerufen

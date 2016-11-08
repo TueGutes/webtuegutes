@@ -23,9 +23,12 @@
 *Verlinkung zu Orten fehlt
 *Kategorie soll editierbar sein
 */
-include './includes/session.php';
-require './includes/_top.php';
+
+require './includes/DEF.php';
+
 require './includes/db_connector.php';
+
+require './includes/_top.php';
 
 if (isset($_POST['name'])) {
 	$name= ($_POST['name']);
@@ -95,7 +98,7 @@ $db = db_connect();
 					die ('Da ist etwas schief gegangen... bitte überprüfe die folgenden Fehler:<br>' . $error . '<input type="button" onclick="history.go(-1)" value="Eingaben korrigieren">');
 	
 		//Einfügen der Guten Tat
-		$uid = db_idOfBenutzername($_SESSION['user']);
+		$uid = db_idOfBenutzername($user->getUsername());
 		db_fix_plz($postalcode);
 
 		db_createGuteTat($name, $uid, $category, $street, $housenumber, 
@@ -126,16 +129,18 @@ $db = db_connect();
 		$stmt->execute();
 		*/
 		echo '<h3>Ihre Tat wurde erfolgreich erstellt und wird nun von uns geprüft und freigegeben.</h3>';
-		include './buttonsTatErstellen.html';
-	} else {
-		include './buttonsTatErstellen.html';
 	}
-	//Ende einfügen der Tat	
-	//db_close($db);	
+?>	
+
+<br><br>
+<div class="center">
+	<a href="./guteTatErstellenHTML"><input type="button" value="Noch eine gute Tat erstellen"/></a><br>
+	<a href="./deeds"><input type="button" value="zur Übersicht"/></a>
+</div>
 
 
 
 
-
+<?php
 require './includes/_bottom.php';
 ?>

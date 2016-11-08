@@ -3,25 +3,25 @@
 *@author Klaus Sobotta, Lukas Buttke
 */
 
+require './includes/DEF.php';
+
 include './includes/ACCESS.php';
+
 include './includes/db_connector.php';
+
 require './includes/_top.php';
-//require_once './guteTatAusgeben.php';
 
-if (!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 1;
-
+if(!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 1;
 ?>
 
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
 
-<!-- Hier kann später mal gute Taten erstellen hervorkommen-->
-<div class='ctop'>
+<div>
 <form action="guteTatErstellenHTML.php" method="post">
 <input type="submit" value="Gute Tat erstellen" target="_self">
-<br> <hr>
+<br><hr>
 </div>
 <br> 
-
 		<?php
 		
 			/*$intZahl=0;
@@ -46,8 +46,7 @@ if (!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 
 			}
 			
 		?>
-
-<br> <hr>	
+<br><hr>	
 
 </form>
 

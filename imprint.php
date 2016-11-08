@@ -3,6 +3,7 @@
 *@author Henrik Huckauf
 */
 
+require './includes/DEF.php';
 require './includes/_top.php';
 ?>
 

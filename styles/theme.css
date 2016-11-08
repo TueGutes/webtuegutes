@@ -422,6 +422,11 @@ cursor: pointer; background: #ff6000; -webkit-transition: all .2s ease; transiti
 .mobile.closed .fa-bars { display: none; }
 .mobile .fa-times { padding: 11px 15px; width: 55px; height: 55px; display: none; font-size: 31px; }
 .mobile.closed .fa-times { display: block; }
+.mobile .fa-sign-in,
+.mobile.closed .fa-sign-in,
+.mobile .fa-sign-out,
+.mobile.closed .fa-sign-out
+{ float: left; }
 
 #container
 {
@@ -471,11 +476,13 @@ footer .copyright a:hover { color: #ffffff; }
 green
 {
 	color: #08b808;
+	font-weight: bold;
 }
 
 red
 {
 	color: #ff0000;
+	font-weight: bold;
 }
 
 .center

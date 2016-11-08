@@ -3,9 +3,13 @@
 *@author Lukas Buttke
 */
 
-include "./includes/Map.php";
+require './includes/DEF.php';
+
 include './includes/ACCESS.php';
+
+include "./includes/Map.php";
 include './includes/db_connector.php';
+
 require './includes/_top.php';
 
 //------------Einlesen der Daten---------------
@@ -29,7 +33,7 @@ $blAbout .= ' Gute Tat #'.$idTat.' </h>';
 // ----------User, welcher das erstellt hat.
 // Ich würde gerne einen Link von hier auf das jeweilige Benutzerprofil machen
 $blSelf = '<br> <img src="' . $tat["avatar"] . '" width="25" height="25" >';
-$blSelf .= '<a href="profile.php?user='.$tat["username"].'">'.$tat["username"].'</a>';
+$blSelf .= '<a href="./profile?user='.$tat["username"].'">'.$tat["username"].'</a>';
 
 $blComb = '<table> <tr> <td> '.$blSelf.'</td> <td>
 &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
@@ -78,9 +82,9 @@ echo '<div align="center" style="font-size:140%;"> <hr>' . $blTrust . '</div>';
 echo '<p />';
 
 echo '<br> <hr> <br> ';
-if((isset($_SESSION['loggedIn']) && $_SESSION['loggedIn']) && (isset($_SESSION['user']) && ($_SESSION['user'] == $tat["username"]))) {
+if($user->loggedIn() && $user->getUsername() == $tat["username"]) {
 
-$link = 'deeds_bearbeiten.php?idGuteTat='.$idTat; 
+$link = './deeds_bearbeiten?id='.$idTat; 
 
 $form = '<form method="post" action="'.$link.'">';
 $form .= '<input type="submit" value="Bearbeiten">';
@@ -90,7 +94,7 @@ echo $form;
 }
 else{
 	
-$link = 'deeds_bewerbung.php?idGuteTat='.$idTat; 
+$link = 'deeds_bewerbung?id='.$idTat; 
 
 $form = '<form method="post" action="'.$link.'">';
 $form .= '<input type="submit" value="Bewerben">';
@@ -101,7 +105,6 @@ echo $form;
 
 ?>
 
-<a href='./deeds_details?id=" . $arr[$i]->idGuteTat .
 <?php
 require './includes/_bottom.php';
 ?>

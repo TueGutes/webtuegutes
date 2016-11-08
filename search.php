@@ -1,4 +1,10 @@
 <?php
+/*
+*@author Shanghui Dai
+*/
+
+require './includes/DEF.php';
+
 include './includes/db_connector.php';
 require './includes/_top.php';
 error_reporting(0);

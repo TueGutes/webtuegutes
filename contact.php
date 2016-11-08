@@ -3,9 +3,7 @@
 *@author Henrik Huckauf
 */
 
-session_start(); // für das captcha
-
-require './includes/_top.php';
+require './includes/DEF.php';
 
 $vorname = '';
 $nachname = '';
@@ -84,14 +82,15 @@ Nachricht: " . $message . "
 
 ";
 	
-		$mailBetreff = "Nachicht an Team von " . $vorname . " " . $nachname;
+		$subject = "Nachicht an Team von " . $vorname . " " . $nachname;
 		$mailMessage = $infos;
 		$mailFrom = "From: TueGutes";
 		
 		/*$array = array(); // admin mails
 		$count = count($array);
 		for($i = 0; $i < $count; $i++)
-			mail($array[$i], $mailBetreff, $mailMessage, $mailFrom);*/
+			mail($array[$i], $subject, $mailMessage, $mailFrom);*/
+		sendEmail("irgendeine-admin@mail.de", $subject, $mailMessage);
 
 		$output .= "<green>" . $wlang['contact_suc_sent'] . "</green><br>";
 		
@@ -103,6 +102,8 @@ Nachricht: " . $message . "
 		$message = '';
 	}
 }
+
+require './includes/_top.php';
 ?>
 
 <h2><?php echo $wlang['contact_head']; ?></h2>
@@ -126,7 +127,7 @@ Nachricht: " . $message . "
 			<span id='captcha_reload'>&#8635;</span><br>
 			<input type='text' name='captcha_code' size='10' placeholder='Code' required autocomplete='off' />&nbsp;*
 			<br><br>
-			<input type='hidden' name='set' value'1' />
+			<input type='hidden' name='set' value='1' />
 			<input type='submit' value='<?php echo $wlang['contact_form_submit']; ?>'>
 		</div>
 	</form>
