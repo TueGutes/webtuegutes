@@ -426,46 +426,6 @@ function db_getGuteTat($idGuteTat){
 	return $dbentry;
 }
 
-//gibt die nötigen Parameter die für die liste gefordert wurden aus
-//man kann bestimmen ab welcher id die Taten angezeigt werden und wie viele
-//Taten werden als Objekt in dem Array gespeichert
-function db_getGuteTatenForList($startrow,$numberofrows){
-	$db = db_connect();
-	$sql = "SELECT 
-		Deeds.name, 
-		Deeds.category, 
-		Deeds.street, 
-		Deeds.housenumber, 
-		Deeds.idPostal,
-		Deeds.organization, 
-		Deeds.countHelper,
-		Deeds.status, 
-		Trust.idTrust, 
-		Trust.trustleveldescription,
-		DeedTexts.description,
-		Postalcode.postalcode,
-		Postalcode.place
-	FROM Deeds 
-		Join DeedTexts
-			On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
-		Join Postalcode
-			On (Deeds.idPostal = Postalcode.idPostal)
-		Join Trust
-			On (Deeds.idTrust =	Trust.idTrust)
-	LIMIT ? , ?";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('ii',$startrow,$numberofrows);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	db_close($db);
-	$arr = array();
-	while($dbentry =$result->fetch_object()){
-		$arr[]= $dbentry;
-	}
-	return $arr;
-
-}
-
 // Liefert True wenn der Name schon existiert, sonst false
 function db_doesGuteTatNameExists($name){
 	$db = db_connect();
