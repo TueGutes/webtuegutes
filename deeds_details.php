@@ -79,16 +79,29 @@ echo '<p />';
 
 echo '<br> <hr> <br> ';
 if((isset($_SESSION['loggedIn']) && $_SESSION['loggedIn']) && (isset($_SESSION['user']) && ($_SESSION['user'] == $tat["username"]))) {
-	echo '<a href="tatBearbeiten.php?id="'.$idTat. '" target="_self" > <input type="Button" value="Bearbeiten"> </a>';
+
+$link = 'deeds_bearbeiten.php?idGuteTat='.$idTat; 
+
+$form = '<form method="post" action="'.$link.'">';
+$form .= '<input type="submit" value="Bearbeiten">';
+$form .= '</form>';
+
+echo $form;
 }
 else{
-	echo '<a href="deeds_bewerbung.php?idGuteTat="'.$idTat. '" target="_self" > <input type="Button" value="Bewerben"> </a>';
+	
+$link = 'deeds_bewerben.php?idGuteTat='.$idTat; 
+
+$form = '<form method="post" action="'.$link.'">';
+$form .= '<input type="submit" value="Bewerben">';
+$form .= '</form>';
+
+echo $form;
 }
 
 ?>
 
 <a href='./deeds_details?id=" . $arr[$i]->idGuteTat .
-
 <?php
 require './includes/_bottom.php';
 ?>
