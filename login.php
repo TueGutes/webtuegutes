@@ -129,7 +129,7 @@ if(isset($_POST['username']) && isset($_POST['password'])) {
 				echo '<h2>'.$head.'</h2>';
 				echo '<h3><font color=red>Das eingegebene Passwort ist falsch</font></h3>';
 				require './includes/loginFormular.php';
-				echo'<a href="PasswortUpdate.php">Passwort vergessen?</a>';
+				
 			}
 		}
 		else {

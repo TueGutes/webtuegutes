@@ -1,12 +1,13 @@
 <?php
 /*
-*@author KLaus Sobotta, Lukas Buttke
+*@author Klaus Sobotta, Lukas Buttke
 */
 
 include './includes/ACCESS.php';
 include './includes/db_connector.php';
 require './includes/_top.php';
 //require_once './guteTatAusgeben.php';
+
 if (!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 1;
 
 ?>
@@ -31,7 +32,6 @@ if (!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 
 			//$neededPages = $allDeedsCount/10;
 			
 			$arr = db_getGuteTatenForList(10*($_GET['page']-1), 10);
-						
 			for($i = 0; $i < sizeof($arr); $i++)
 			{
 				echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' style='display: inline-block; width: 80%;'><div class='deed' style='width: 100%; background: #aaaaaa; overflow: hidden;'>";
@@ -45,6 +45,7 @@ if (!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 
 		?>
 
 <br> <hr>	
+
 </form>
 
 <!--Zurück / Weiter Buttons-->
