@@ -80,8 +80,7 @@
 				?>
 				<script type="text/javascript">
 					// Erstellen der Marker.
-					markers.addLayer(L.marker([<?php echo $stringArray[0] ?>, <?php echo $stringArray[4] ?>]).bindPopup('<a href="index.php"><?php echo $i->name ?></a>'));
-					// TODO: deeds_details?id=
+					markers.addLayer(L.marker([<?php echo $stringArray[0] ?>, <?php echo $stringArray[4] ?>]).bindPopup('<a href="<?php echo 'deeds_details?id='.$i->idGuteTat ?>"><?php echo $i->name ?></a>'));
 				</script>
 				<?php
 			}
@@ -120,8 +119,7 @@
 				?>
 				<script type="text/javascript">
 					// Erstellen der Marker.
-					markers.addLayer(L.marker([<?php echo $stringArray[0] ?>, <?php echo $stringArray[4] ?>]).bindPopup('<a href="index.php"><?php echo $i->name ?></a>'));
-					// TODO: deeds_details?id=
+					markers.addLayer(L.marker([<?php echo $stringArray[0] ?>, <?php echo $stringArray[4] ?>]).bindPopup('<a href="<?php echo 'deeds_details?id='.$i->idGuteTat ?>"><?php echo $i->name ?></a>'));
 				</script>
 				<?php
 			}
