@@ -479,6 +479,7 @@ function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $po
 function db_getGuteTatenForList($startrow,$numberofrows){
 	$db = db_connect();
 	$sql = "SELECT 
+		Deeds.idGuteTat,
 		Deeds.name, 
 		Deeds.category, 
 		Deeds.street, 

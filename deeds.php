@@ -32,13 +32,14 @@ if (!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 
 			//$neededPages = $allDeedsCount/10;
 			
 			$arr = db_getGuteTatenForList(10*($_GET['page']-1), 10);
-			
+			$maxZeichenFürDieKurzbeschreibung = 150;
+
 			for($i = 0; $i < sizeof($arr); $i++){
 				echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' style='display: inline-block; width: 80%;'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "' style='width: 100%; background: #aaaaaa; overflow: hidden;'>";
 					echo "<div style='position: realtive; float: left;'><h4>" . $arr[$i]->name . "</h4></div><div style='position: realtive; float: right;'>" . $arr[$i]->category . "</div>";
-					echo "<br><br><br><br><div style='position: realtive; text-align: left;'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . " mehr..." : $arr[$i]->description) . "</div>";
+					echo "<br><br><br><br><div style='position: realtive; text-align: left;'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
 					echo "<div style='position: realtive; float: left;'>" . $arr[$i]->street ." ,  ". $arr[$i]->housenumber ." ,  ". $arr[$i]->postalcode . "</div>";
-					echo "<div>" ."Anzahl der helfer (". $arr[$i]->countHelper.") " ."</div><div style='position: realtive; float: right;'>"."Das Mindest Vertraunslevl betraegt ". $arr[$i]->idTrust . "</div>";
+					echo "<div>" ."Anzahl der helfer (". $arr[$i]->countHelper.") " ."</div><div style='position: realtive; float: right;'>"."Das Mindest Vertraunslevel betraegt ". $arr[$i]->idTrust . "</div>";
 					echo "<div>" . $arr[$i]->organization . "</div>";
 				echo "</div></a>";
 				echo "<br><br><hr><br><br>";
