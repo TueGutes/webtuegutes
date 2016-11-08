@@ -1,5 +1,5 @@
 <?php
-
+/*
 	//Temporär (wird später aus der Datenbank geladen)
 	function db_fix_plz($plz) {
 		$db = db_connect();
@@ -16,7 +16,7 @@
 		}
 		db_close($db);
 	}
-
+*/
 
 /*
 *@author Christian Hock
@@ -38,6 +38,10 @@ if (isset($_POST['name'])) {
 	$organization= $_POST['organization'];
 	$countHelper= $_POST['countHelper'];
 	$idTrust= $_POST['tat_verantwortungslevel'];
+
+
+	//TIMM: Übergangsweise wegen DB funktion
+	$pictures= '';
 }
 /*0-> gerade erst erstellt 
   1-> bewilligt
@@ -47,7 +51,7 @@ if (isset($_POST['name'])) {
 $status= 0; 
 /*wird auf 1 gesetzt bei falscheingabe*/
 $falscheEingabe=0;
-
+/*
 $db = db_connect();
 
 	//Testen ob Name schon vorhanden
@@ -56,8 +60,8 @@ $db = db_connect();
 	$stmt->bind_param('s',$name);
 	$stmt->execute();
 	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	if(isset($dbentry['name'])){
+	$dbentry = $result->fetch_assoc();*/
+	if(db_doesGuteTatNameExists($name)){
 		echo '<h3>Eine andere Tat ist bereits unter diesem Namen veröffentlicht.</h3>';
 		$falscheEingabe=1;
 		
@@ -93,6 +97,11 @@ $db = db_connect();
 		//Einfügen der Guten Tat
 		$uid = db_idOfBenutzername($_SESSION['user']);
 		db_fix_plz($postalcode);
+
+		db_createGuteTat($name, $uid, $category, $street, $housenumber, 
+			$postalcode, $time_t, $organization, $countHelper, $idTrust,
+			$description, $pictures);
+		/*
 		$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,postalcode,time,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('sisssissii', $name, $uid, $category, $street, $housenumber, $postalcode, $time_t, $organization, $countHelper, $idTrust);
@@ -115,13 +124,14 @@ $db = db_connect();
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('iss' , $index, $description, $pictures);
 		$stmt->execute();
+		*/
 		echo '<h3>Ihre Tat wurde erfolgreich erstellt und wird nun von uns geprüft und freigegeben.</h3>';
 		include './buttonsTatErstellen.html';
 	} else {
 		include './buttonsTatErstellen.html';
 	}
 	//Ende einfügen der Tat	
-	db_close($db);	
+	//db_close($db);	
 
 
 
