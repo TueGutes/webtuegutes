@@ -55,11 +55,11 @@ require './includes/_top.php';
 			</tr>
 			<tr>
 				<td><h3>Startzeitpunkt*:</td>
-				<td><input type="text" name="starttime" placeholder="Startzeitpunkt"/></td>
+				<td><input type="text" name="starttime" placeholder="YYYY-MM-DD HH:MM:SS"/></td>
 			</tr>
 			<tr>
 				<td><h3>Endzeitpunkt*:</td>
-				<td><input type="text" name="endtime" placeholder="Endzeitpunkt"/></td>
+				<td><input type="text" name="endtime" placeholder="YYYY-MM-DD HH:MM:SS"/></td>
 			</tr>			
 			<tr>
 				<td><h3>Organisation:</td>

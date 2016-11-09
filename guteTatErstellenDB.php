@@ -30,6 +30,17 @@ require './includes/db_connector.php';
 
 require './includes/_top.php';
 
+
+
+function validateDate($date, $format = 'Y-m-d H:i:s')
+{
+	$date = "'" . $date . "'";
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}
+
+
+
 if (isset($_POST['name'])) {
 	$name= ($_POST['name']);
 	$description= ($_POST['description']);
@@ -88,9 +99,13 @@ $db = db_connect();
 				if (!is_numeric($postalcode))
 					$error .= 'Bitte Postleitzahl überprüfen! Als Postleitzahl sind nur fünfstellige Zahlen erlaubt.<br>';
 
-				//Zeitrahmen
-				if ($starttime === '')
-					$error .= 'Es wurde kein Zeitrahmen für die gute Tat festgelegt.<br>';
+				//Startzeitpunkt
+				if (validateDate($starttime))
+					$error .= 'Es wurde kein korrektes Startzeitpunkt für die gute Tat festgelegt.<br>';
+
+				//Endzeitpunkt
+				if (validateDate($endtime))
+					$error .= 'Es wurde kein korrektes Endzeitpunkt für die gute Tat festgelegt.<br>';
 
 				//Anzahl Helfer keine Zahl
 				if (!is_numeric($countHelper))
