@@ -80,5 +80,5 @@ $wlang['register_button_submit'] = 'Registrieren';
 $wlang['deeds_head'] = 'Gute Taten';
 
 //====home====
-$wlang['welcome'] = 'Willkommen' . ($user->loggedIn() ? ', ' . $user->getUsername() : '') . '!';
+$wlang['welcome'] = 'Willkommen' . ($_USER->loggedIn() ? ', ' . $_USER->getUsername() : '') . '!';
 ?>

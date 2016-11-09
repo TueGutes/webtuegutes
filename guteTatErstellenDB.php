@@ -100,7 +100,7 @@ $db = db_connect();
 					die ('Da ist etwas schief gegangen... bitte überprüfe die folgenden Fehler:<br>' . $error . '<input type="button" onclick="history.go(-1)" value="Eingaben korrigieren">');
 	
 		//Einfügen der Guten Tat
-		$uid = db_idOfBenutzername($user->getUsername());
+		$uid = db_idOfBenutzername($_USER->getUsername());
 		//db_fix_plz($postalcode);
 
 		db_createGuteTat($name, $uid, $category, $street, $housenumber, 

@@ -100,7 +100,7 @@ function getUserByCryptkey($cryptkey) {
 				
 				//$_SESSION['loggedIn'] = false;
 				
-				if(!$user->loggedIn()) { //Schauen, ob Nutzer schon eingeloggt ist
+				if(!$_USER->loggedIn()) { //Schauen, ob Nutzer schon eingeloggt ist
 					if(isset($_GET['c'])) { //3. Fall: Der Link mit dem Cryptkey wurde aufgerufen 
 						//Zeige Formular mit 2 Passwort Feldern ("Passwort" und "Passwort wiederholen")
 						echo'<form action="./PasswortUpdate" method="post">

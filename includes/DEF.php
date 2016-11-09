@@ -21,7 +21,7 @@ session_start();
 include './includes/mail.php';
 
 require './includes/user.php';
-$user = new User();
+$_USER = new User();
 
 require './includes/LANGUAGE.php';
 ?>

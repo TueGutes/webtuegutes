@@ -46,5 +46,10 @@ class User
 		if($this->loggedIn())
 			sendEmail($this->getEmail(), $subject, $message);
 	}
+	
+	function redirect($to)
+	{
+		header('Location: ' . $to);
+	}
 }	
 ?>

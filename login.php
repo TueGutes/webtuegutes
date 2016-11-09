@@ -5,8 +5,8 @@
 
 require './includes/DEF.php';
 
-if($user->loggedIn())
-	header("Location: " . $HOST);
+if($_USER->loggedIn())
+	$_USER->redirect($HOST);
 
 include './includes/db_connector.php';
 
@@ -114,8 +114,8 @@ if(isset($_POST['username']) && isset($_POST['password']))
 			if(md5($_POST['password'].$regDate) === $passHash) //Eingegebenes Passwort ist richtig
 			{
 				$username = $_POST['username'];
-				$user->login($userID, $username, db_get_user($username)->email);
-				header("Location: " . $continue); //Weiterleiten auf URL in $continue
+				$_USER->login($userID, $username, db_get_user($username)['email']);
+				$_USER->redirect($continue); //Weiterleiten auf URL in $continue
 				exit;
 			}
 			else

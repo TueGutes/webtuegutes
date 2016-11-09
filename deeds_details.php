@@ -82,7 +82,7 @@ echo '<div align="center" style="font-size:140%;"> <hr>' . $blTrust . '</div>';
 echo '<p />';
 
 echo '<br> <hr> <br> ';
-if($user->loggedIn() && $user->getUsername() == $tat["username"]) {
+if($_USER->loggedIn() && $_USER->getUsername() == $tat["username"]) {
 
 $link = './deeds_bearbeiten?id='.$idTat; 
 

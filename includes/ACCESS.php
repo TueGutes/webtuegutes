@@ -5,11 +5,11 @@
 
 $path = dirname($_SERVER['PHP_SELF']);
 
-if(!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true)
+if(!$_USER->loggedIn())
 {
 	$continue = $HOST . '' . $_SERVER['REQUEST_URI'];
 	$to = 'login?code=423&continue=' . urlencode($continue);
-	header('Location: ' . $HOST . ($path == '/' ? '' : $path) . $to);
+	$_USER->redirect($HOST . ($path == '/' ? '' : $path) . $to);
 	exit;
 }
 ?>
