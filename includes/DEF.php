@@ -6,7 +6,8 @@
 //====Server====
 $ABSOLUE_PATH = "/";
 $HOSTNAME = $_SERVER['HTTP_HOST'];
-$HOST = "http" . (isset($_SERVER['HTTPS']) ? "s" : "") . "://" . $HOSTNAME . dirname(__FILE__);
+$HOST = "http" . (isset($_SERVER['HTTPS']) ? "s" : "") . "://" . $HOSTNAME . $_SERVER['REQUEST_URI'];
+$HOST = substr($HOST, 0, strrpos($HOST, "/"));
 $USE_GMAIL = false; // Bei true wird der gmail Account tuegutesinhannover@gmail.com von der PHPMailer Klasse verwendet um Mails zu senden. Bei false wird die PHP Funktion mail verwendet
 
 //====Datenbank====
