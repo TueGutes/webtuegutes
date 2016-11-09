@@ -37,7 +37,9 @@ if (isset($_POST['name'])) {
 	$street= $_POST['street'];
 	$housenumber= $_POST['housenumber'];
 	$postalcode= $_POST['postalcode'];
-	$time_t= $_POST['time'];
+	$place= $_POST['place'];
+	$starttime= $_POST['starttime'];
+	$endtime= $_POST['endtime'];
 	$organization= $_POST['organization'];
 	$countHelper= $_POST['countHelper'];
 	$idTrust= $_POST['tat_verantwortungslevel'];
@@ -87,7 +89,7 @@ $db = db_connect();
 					$error .= 'Bitte Postleitzahl überprüfen! Als Postleitzahl sind nur fünfstellige Zahlen erlaubt.<br>';
 
 				//Zeitrahmen
-				if ($time_t === '')
+				if ($starttime === '')
 					$error .= 'Es wurde kein Zeitrahmen für die gute Tat festgelegt.<br>';
 
 				//Anzahl Helfer keine Zahl
@@ -99,15 +101,15 @@ $db = db_connect();
 	
 		//Einfügen der Guten Tat
 		$uid = db_idOfBenutzername($user->getUsername());
-		db_fix_plz($postalcode);
+		//db_fix_plz($postalcode);
 
 		db_createGuteTat($name, $uid, $category, $street, $housenumber, 
-			$postalcode, $time_t, $organization, $countHelper, $idTrust,
-			$description, $pictures);
+			$postalcode, $starttime,$endtime, $organization, $countHelper, $idTrust,
+			$description, $pictures,$place);
 		/*
 		$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,postalcode,time,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('sisssissii', $name, $uid, $category, $street, $housenumber, $postalcode, $time_t, $organization, $countHelper, $idTrust);
+		$stmt->bind_param('sisssissii', $name, $uid, $category, $street, $housenumber, $postalcode, $starttime, $organization, $countHelper, $idTrust);
 		if (!$stmt->execute())
 			die ('mysql-error: ' . mysqli_error($db));
 

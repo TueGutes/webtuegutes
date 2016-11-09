@@ -446,15 +446,14 @@ function db_doesGuteTatNameExists($name){
 }
 
 //erstellt eine gute Tat
-function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $postalcode, $time_t, $organization, $countHelper, $idTrust,
-	$description, $pictures,$place){
+function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $postalcode, $starttime,$endtime, $organization, $countHelper,         $idTrust,$description, $pictures,$place){
 	$db = db_connect();
 	//Datensatz in Deeds einfügen
 	$plz = db_getIdPostalbyPostalcodePlace($postalcode,$place);
-	$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,postalcode,time,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?)';
+	$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,idPostal,starttime,endtime,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('sisssissii', $name, $user_id, $category, $street, 
-		$housenumber, $plz, $time_t, $organization, $countHelper, 
+	$stmt->bind_param('sisssisssii', $name, $user_id, $category, $street, 
+		$housenumber, $plz, $starttime,$endtime, $organization, $countHelper,
 		$idTrust);
 	$stmt->execute();
 

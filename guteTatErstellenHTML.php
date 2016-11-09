@@ -50,9 +50,17 @@ require './includes/_top.php';
 				<td><input type="text" name="postalcode" placeholder="Postleitzahl" /></td>
 			</tr>
 			<tr>
-				<td><h3>Zeitrahmen*:</td>
-				<td><input type="text" name="time" placeholder="Zeitrahmen"/></td>
+				<td><h3>Stadtteil*:</td>
+				<td><input type="text" name="place" placeholder="Stadtteil" /></td>
 			</tr>
+			<tr>
+				<td><h3>Startzeitpunkt*:</td>
+				<td><input type="text" name="starttime" placeholder="Startzeitpunkt"/></td>
+			</tr>
+			<tr>
+				<td><h3>Endzeitpunkt*:</td>
+				<td><input type="text" name="endtime" placeholder="Endzeitpunkt"/></td>
+			</tr>			
 			<tr>
 				<td><h3>Organisation:</td>
 				<td><input type="text" name="organization" placeholder="Organisation"/></td>
