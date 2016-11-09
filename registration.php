@@ -1,5 +1,7 @@
 <?php
-//@author: Andreas Blech
+/*
+*@author: Andreas Blech (refactored Henrik Huckauf)
+*/
 
 require "./includes/DEF.php";
 
@@ -156,100 +158,127 @@ function getUserByCryptkey($cryptkey) {
 	//return "blecha"; //Testzwecke
 }
 
-?>
 
-<?php
-require "./includes/_top.php";
+$username = isset($_POST['benutzername']) ? $_POST['benutzername'] : '';
+$vorname = isset($_POST['vorname']) ? $_POST['vorname']: '';
+$nachname = isset($_POST['nachname']) ? $_POST['nachname'] : '';
+$pass = isset($_POST['passwort']) ? $_POST['passwort'] : '';
+$passwdh = isset($_POST['passwortwdh']) ? $_POST['passwortwdh'] : '';
+$mail = isset($_POST['mail']) ? $_POST['mail'] : '';
 
-				/*
-				Es gibt ... Fälle:
-				1. Nutzer ist nicht eingeloggt und gelangt auf die Registrierungsseite
-					Es werden ihm die Formularfelder angezeigt
-				2. Nutzer hat das Formular abgeschickt
-					Daten werden geprüft und u.U. wird eine Mail gesendet
-					2.1 Nutzer bekommt Nachricht: "Email erfolgreich gesendet" und ein Account mit dem 
-					Status "unverifiziert" wird angelegt
-					2.2 Nutzer wird informiert, dass etwas mit den Daten nicht stimmt und bekommt das gleiche Formular wieder vorgelegt
-				3. Nutzer hat auf den Bestätigungslink geklickt.
-					Der Account der zum Link gehört (Parameter) wird auf den Status "verified" gesetzt
-				4. Der Nutzer ist bereits eingeloggt <Placeholder>
-				*/
-			
-				$_SESSION['loggedIn'] = false; //Testzwecke
-			
-				if($_SESSION['loggedIn'] === false) {
-					if(isset($_GET['c'])) {//3. Fall: Bestätigungslink
-						if(activateAcount($_GET['c']) === true) {
-							//$_SESSION['loggedIn'] = true;
-							//$_SESSION['user'] = getUserByCryptkey($_GET['c']); 
-							//header('Location: ./profile');
-							header("Location: " . $HOST . "/login?code=101");
-						} else {
-							//Das Aktivieren des Accounts hat aus unbekanntem Grund nicht funktioniert
-							//Informiere den Benutzer darüber
-							echo '<h3><red>Upps, da ist etwas schief gegangen :(</red></h3><p>';
-							
-						}
-					} elseif(isset($_POST['benutzername']) && isset($_POST['passwort']) && isset($_POST['passwortwdh']) && isset($_POST['mail']) &&isset($_POST['vorname']) && isset($_POST['nachname'])) {  //2. Fall: Nutzer hat das Formular abgeschickt
-						$user = $_POST['benutzername'];
-						$vorname = $_POST['vorname'];
-						$nachname = $_POST['nachname'];
-						$pass = $_POST['passwort'];
-						$passwdh = $_POST['passwortwdh'];
-						$mail = $_POST['mail'];
-						//Prüfung, ob alle Felder ausgefüllt sind
-						if ($user==="" OR $pass==="" OR $passwdh ==="" OR $mail ==="" OR $vorname ==="" OR $nachname==="") {
-							//2.1 Fall: Nicht alle Felder ausgefüllt
-							echo '<h3><font color=red>Fehler! Bitte alle Felder ausfüllen!</font></h3><p>';
-							include './includes/Kontoerstellung.html';
-						} elseif (idOfBenutzername($user) != false){
-							//2.2 Fall: Benutzername existiert bereits
-							echo '<h3><font color=red>Fehler! Benutzername bereits vergeben</font></h3><p>';
-							include './includes/Kontoerstellung.html';
-						} elseif ($pass != $passwdh) { 
-							//2.3 Fall: Passwörter sind nicht identisch
-							echo '<h3><font color=red> Fehler! Passwörter stimmen nicht überein</font></h3><p>';
-							include './includes/Kontoerstellung.html';
-						} elseif(idOfEmailAdresse($mail) != false) { //Email-Adresse bereits registriert
-							echo '<h3><font color=red> Fehler! Email-Adresse bereits registriert</font></h3><p>';
-							include './includes/Kontoerstellung.html';
-						} else {//Alles okay, erstelle neuen Account und sende Bestätigungsmail
-							$cryptkey = createBenutzerAccount($user, $vorname, $nachname, $mail, $pass);
-							if($cryptkey != false) {
-								//Account erfolgreich in Datenbank erstellt
-								//Sende Bestätigungslink an Mailadresse
-								
-								$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
-								
-								$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: ".$actual_link."?c=".$cryptkey." </h3></div>";
-								
-								
-
-//echo $actual_link;
-								
-//echo __DIR__;
-								
-								if(sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent)===true) {
-									echo '<h3><green>Bestätigungslink wurde gesendet an: '.$mail.'</green></h3><p>';
-								}
-								else {
-									//Das Senden der Email ist fehlgeschlagen
-									echo '<h3><red>Bestätigungslink an '.$mail.' konnte nicht gesendet werden</red></h3><p>';
-								}
-							} else {
-								//Das Erstellen des Accounts in der Datenbank ist schief gelaufen
-								echo '<h3><red>Interner Fehler: Es konnten kein Benutzeraccount angelegt werden</red></h3><p>';
-							}
-						}
-					} else {//1. Fall: Nutzer ist nicht eingeloggt und gelangt auf Registrierungsseite
-						echo'<h2>Registrierung</h2>';
-						echo'<h3>Trage deine Daten ein, um dich zu registrieren</h3>';
-						include './includes/Kontoerstellung.html';
-					}
-				} else {//4. Fall: Nutzer ist bereits eingeloggt
-					echo '<h2>Sie sind bereits eingeloggt</h2>';
-					header('Location: ./profile');
+$output = '';
+if(isset($_GET['c'])) // man kann auch wenn man mit einem Account angemeldet ist, einen anderen Account verifizieren
+{
+	if(activateAcount($_GET['c']) === true)
+	{
+		$goto = $HOST . ($user->loggedIn() ? "" : "/login?code=101");
+		header("Location: " . $goto);
+	}
+	else
+	{
+		//Das Aktivieren des Accounts hat aus unbekanntem Grund nicht funktioniert
+		//Informiere den Benutzer darüber
+		$output = '<red>Upps, da ist etwas schief gegangen :(</red>';	
+	}
+}
+else
+{
+	if(!$user->loggedIn())
+	{
+		if(isset($_POST['set']) && $_POST['set'] == '1')
+		{
+			$error = false;
+			if(empty($username))
+			{
+				$output .= "<red>Geben Sie einen Benutzernamen an!</red><br>";
+				$error = true;
+			}
+			else
+			{
+				//TODO validate username (keine sonderzeichen)
+				if(false)
+				{
+					$output .= "<red>Der Benutzername darf nur aus folgenden Zeichen bestehen:<br>a-z A-Z 0-9 _ - . LEERZEICHEN...</red><br>";
+					$error = true;
 				}
-	require "./includes/_bottom.php"; 
+			}
+			if(idOfBenutzername($username) != false)
+			{
+				$output .= "<red>Der gewählte Benutzername ist bereits registriert!</red><br>";
+				$error = true;
+			}			
+			if(empty($vorname))
+			{
+				$output .= "<red>Geben Sie ihren Vornamen an!</red><br>";
+				$error = true;
+			}
+			if(empty($nachname))
+			{
+				$output .= "<red>Geben Sie ihren Nachnamen an!</red><br>";
+				$error = true;
+			}
+			if(empty($pass))
+			{
+				$output .= "<red>Geben Sie ein Passwort an!</red><br>";
+				$error = true;
+			}
+			else if($pass !== $passwdh)
+			{
+				$output .= "<red>Die Passwörter stimmen nicht überein!</red><br>";
+				$error = true;
+			}
+			
+			if(!$error)
+			{
+				$cryptkey = createBenutzerAccount($username, $vorname, $nachname, $mail, $pass);
+				if($cryptkey)
+				{
+					//Account erfolgreich in Datenbank erstellt
+					//Sende Bestätigungslink an Mailadresse
+					$actual_link = $HOST . "/registration";
+					
+					$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: ".$actual_link."?c=".$cryptkey." </h3></div>";
+
+					if(sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent) === true)
+						header("Location: " . $HOST. "/login?code=102");
+					else
+						$output = '<red>Bestätigungslink an ' . $mail . ' konnte nicht gesendet werden!</red>';
+				}
+				else
+					$output = '<red>Interner Fehler:<br>Es konnte kein Benutzeraccount angelegt werden!</red>';
+			}
+		}
+	}
+	else
+		header("Location: " . $HOST);
+}
+				
+require "./includes/_top.php";
+?>				
+	
+<h2><?php echo $wlang['register_head']; ?></h2>
+
+<div id='output'><?php echo $output; ?></div>
+<br><br>
+<div class="center">	
+	<form action="" method="post">
+		<input type="text" name="benutzername" value="<?php echo $username; ?>" placeholder="<?php echo "Benutzername"; ?>" required /><br>
+		<input type="text" name="vorname" value="<?php echo $vorname; ?>" placeholder="<?php echo "Vorname"; ?>" required /><br>
+		<input type="text" name="nachname" value="<?php echo $nachname; ?>" placeholder="<?php echo "Nachname"; ?>" required /><br>
+		<input type="password" name="passwort" value="" placeholder="<?php echo "Passwort"; ?>" required /><br>
+		<input type="password" name="passwortwdh" value="" placeholder="<?php echo "Passwort wiederholen"; ?>" required /><br>
+		<input type="text" name="mail" value="<?php echo $mail; ?>" placeholder="<?php echo "E-Mail Adresse"; ?>" required /><br>
+		<br>
+		<input type='hidden' name='set' value='1' />
+		<input type="submit" value="Registrieren" />
+	</form>
+	<br><br>
+	<a href="./PasswortUpdate">Passwort vergessen?</a>
+	<br><br>
+	<a href="./login">Bereits registriert?</a>
+</div>
+
+<?php	
+require "./includes/_bottom.php"; 
 ?>
 	

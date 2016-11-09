@@ -144,9 +144,10 @@ require './includes/_top.php';
 	<input type="submit" value="<?php echo $wlang['login_button_submit']; ?>" />
 	<input type="hidden" name="continue" value="<?php echo isset($_GET['continue'])?$_GET['continue']:''; ?>" />
 </form>
-<br>
-<br>
-<a href="./recover">Passwort vergessen?</a>
+<br><br>
+<a href="./PasswortUpdate">Passwort vergessen?</a>
+<br><br>
+<a href="./registration">Noch keinen Account?</a>
 
 <?php
 require './includes/_bottom.php';

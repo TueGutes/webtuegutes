@@ -67,7 +67,7 @@ $wlang['login_button_submit'] = 'Login';
 
 $wlang['login_code_423'] = '<red>Um diese Seite zu besuchen, müssen Sie eingeloggt sein!</red>';
 $wlang['login_code_101'] = '<green>Ihr Account wurde erfolgreich verifiziert.<br>Sie können sich nun mit ihrem Account einloggen!</green>';
-//$wlang['login_code_10'] = 'Login';
+$wlang['login_code_102'] = '<green>Bestätigungsemail wurde gesendet!<br>Bitte verifizieren Sie ihren Account erst, indem Sie auf den Link in der Bestätigungsemail klicken.</green>';
 
 //====register====
 $wlang['register_head'] = 'Registrieren';
