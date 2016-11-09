@@ -195,10 +195,10 @@ else
 			}
 			else
 			{
-				//TODO validate username (keine sonderzeichen)
-				if(false)
+				// http://regexr.com/
+				if(strlen($username) < 3 || strlen($username) > 20 || !preg_match("/^[a-zA-Z0-9 äöü ÄÖÜ ß]+([_.\-]?[a-zA-Z0-9 äöü ÄÖÜ ß])*$/", $username)) ///^[a-zA-Z0-9 äöü ÄÖÜ ß]+([_.\s\-]?[a-zA-Z0-9 äöü ÄÖÜ ß])*$/
 				{
-					$output .= "<red>Der Benutzername darf nur aus folgenden Zeichen bestehen:<br>a-z A-Z 0-9 _ - . LEERZEICHEN...</red><br>";
+					$output .= "<red>Für den Benutzernamen gilt:<br>- der Benutzername muss zwischen 3 und 20 Zeichen lang sein<br>- der Benutzername darf nicht mit Sonderzeichen beginnen oder enden<br>- es dürfen nicht mehrere Sonderzeichen aufeinander folgen<br>- der Benutzername darf nur aus a-z A-Z 0-9 äöü ÄÖÜ ß _ . und LEERZEICHEN bestehen</red><br>";
 					$error = true;
 				}
 			}
