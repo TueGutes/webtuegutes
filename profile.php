@@ -11,18 +11,18 @@
 	require "./includes/_top.php";
 
 	//Profile sind nur für eingeloggte Nutzer sichtbar:
-	if (!$user->loggedIn()) die ('Profile sind nur für eingeloggte Nutzer sichtbar!<p/><a href="./login">Zum Login</a>');	
+	if (!$_USER->loggedIn()) die ('Profile sind nur für eingeloggte Nutzer sichtbar!<p/><a href="./login">Zum Login</a>');	
 
 	//Sollte das Profil gelöscht werden?
 	if (isset($_POST['save_pw']))
-		db_delete_user($user->getUsername(),$_POST['save_pw']);
+		db_delete_user($_USER->getUsername(), $_POST['save_pw']);
 
 	//Festlegen des auszulesenden Nutzers:
 	$thisuser = db_get_user(@$_GET['user']);
-	if (!isset($thisuser['username'])) $thisuser = db_get_user($user->getUsername());
+	if (!isset($thisuser['username'])) $thisuser = db_get_user($_USER->getUsername());
 
 	//Festlegen der Sichtbarkeitseinstellungen
-	if (strtoupper($user->getUsername())===strtoupper($thisuser['username']) && !(@$_GET['view']==="public")) {
+	if (strtoupper($_USER->getUsername())===strtoupper($thisuser['username']) && !(@$_GET['view']==="public")) {
 		$headline = 'Dein Profil';
 		$link = '<a href="./profile?view=public">Wie sehen andere Nutzer mein Profil?</a><br>';
 		$shEmail = ($thisuser['email']!="");
@@ -287,7 +287,7 @@
 
 		$blPrivacy = '';
 
-		$form_bottom = (((strtoupper($user->getUsername())===strtoupper($thisuser['username'])) && (!isset($_GET['view']) || $_GET['view'] != "public") )?'<p /><p /><input type="submit" value="Profil bearbeiten"><input type="hidden" name="action" value="edit"></form>':'</form>');
+		$form_bottom = (((strtoupper($_USER->getUsername())===strtoupper($thisuser['username'])) && (!isset($_GET['view']) || $_GET['view'] != "public") )?'<p /><p /><input type="submit" value="Profil bearbeiten"><input type="hidden" name="action" value="edit"></form>':'</form>');
 	}
 
 ?>

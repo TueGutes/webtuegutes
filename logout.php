@@ -4,5 +4,5 @@
 */
 include "./includes/DEF.php";
 
-$user->logout();
+$_USER->logout();
 ?>

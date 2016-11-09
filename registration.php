@@ -171,8 +171,8 @@ if(isset($_GET['c'])) // man kann auch wenn man mit einem Account angemeldet ist
 {
 	if(activateAcount($_GET['c']) === true)
 	{
-		$goto = $HOST . ($user->loggedIn() ? "" : "/login?code=101");
-		header("Location: " . $goto);
+		$goto = $HOST . ($_USER->loggedIn() ? "" : "/login?code=101");
+		$_USER->redirect($goto);
 	}
 	else
 	{
@@ -183,7 +183,7 @@ if(isset($_GET['c'])) // man kann auch wenn man mit einem Account angemeldet ist
 }
 else
 {
-	if(!$user->loggedIn())
+	if(!$_USER->loggedIn())
 	{
 		if(isset($_POST['set']) && $_POST['set'] == '1')
 		{
@@ -240,7 +240,7 @@ else
 					$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: ".$actual_link."?c=".$cryptkey." </h3></div>";
 
 					if(sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent) === true)
-						header("Location: " . $HOST. "/login?code=102");
+						$_USER->redirect($HOST. "/login?code=102");
 					else
 						$output = '<red>Bestätigungslink an ' . $mail . ' konnte nicht gesendet werden!</red>';
 				}
@@ -250,7 +250,7 @@ else
 		}
 	}
 	else
-		header("Location: " . $HOST);
+		$_USER->redirect($HOST);
 }
 				
 require "./includes/_top.php";

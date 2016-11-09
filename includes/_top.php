@@ -36,14 +36,14 @@ $activeTab = 'class="active"';
 				</div>
 				<div id="profileSection">
 				<?php
-				if($user->loggedIn())
-					echo /*'<a href="./search"><input type="button" value="Tat suchen" style="font-size: 10px; margin-top: -20px;" /></a><br><br>*/'<a href="./profile">' . $user->getUsername() . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./logout">' . 'Logout' . '</a>';
+				if($_USER->loggedIn())
+					echo /*'<a href="./search"><input type="button" value="Tat suchen" style="font-size: 10px; margin-top: -20px;" /></a><br><br>*/'<a href="./profile">' . $_USER->getUsername() . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./logout">' . 'Logout' . '</a>';
 				else
 					echo '<a href="./registration">' . $wlang['register_head'] . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./login">' . $wlang['login_head'] . '</a>';
 				?>
 				</div>
 				<div id="mobileSection">
-					<div class="mobile"><?php echo !$user->loggedIn() ? '<a href="./login"><i class="fa fa-sign-in"></i></a>' : '<a href="./logout"><i class="fa fa-sign-out"></i></a>'; ?><i class="fa fa-bars mobileMenuButton"></i><i class="fa fa-times mobileMenuButton"></i></div>
+					<div class="mobile"><?php echo !$_USER->loggedIn() ? '<a href="./login"><i class="fa fa-sign-in"></i></a>' : '<a href="./logout"><i class="fa fa-sign-out"></i></a>'; ?><i class="fa fa-bars mobileMenuButton"></i><i class="fa fa-times mobileMenuButton"></i></div>
 					<div class="mobileMenu">
 						<nav class="navigation">
 							<ul>

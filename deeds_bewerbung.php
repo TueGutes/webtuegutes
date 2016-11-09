@@ -338,7 +338,7 @@ Es gibt ... Fälle:
 	(declineBewerbung()) der Datenbankeintrag wird angepasst und eine Bestätigung + LInk zur Detailseite der Guten Tat wird angezeigt
 */
 //Fall 0: Profile sind nur für eingeloggte Nutzer sichtbar:
-if (!$user->loggedIn()) die ('<h3>Bewerbungen sind nur für eingeloggte Nutzer sichtbar!</h3><p/><a href="./login">Zum Login</a>');
+if (!$_USER->loggedIn()) die ('<h3>Bewerbungen sind nur für eingeloggte Nutzer sichtbar!</h3><p/><a href="./login">Zum Login</a>');
 
 echo '<h2>Bewerbung</h2>';
 
@@ -346,7 +346,7 @@ echo '<h2>Bewerbung</h2>';
 //Fall 1: Bewerbung abschicken
 if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 	$idGuteTat = $_GET['idGuteTat'];
-	$idUser = $user->getID();
+	$idUser = $_USER->getID();
 
 	if(!doesGuteTatExists($idGuteTat)) {
 		//Fall 1.1: Es existiert keine gute Tat mit der übergebenen ID
@@ -389,7 +389,7 @@ if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 	$idGuteTat = $_GET['idGuteTat'];
 	$candidateID = $_GET['candidateID'];
-	$idUser = $user->getID();
+	$idUser = $_USER->getID();
 	$status = getStatusOfBewerbung($idUser, $idGuteTat);
 	if(getUserIdOfContactPersonByGuteTatID($idGuteTat) != $idUser) {
 		//Fall 1.1: Der Nutzer hat die gute Tat nicht erstellt und darf dementsprechend ihre Bewerbungen nicht annehmen
@@ -437,10 +437,10 @@ else if(isset($_GET['Bewerbungstext'])) {
 	//Fall 3: Bewerbungsformular wurde abgeschickt
 	//TODO: Variablen setzen
 	$Bewerbungstext = $_GET['Bewerbungstext'];
-	$idUser = $user->getID();
+	$idUser = $_USER->getID();
 	$idGuteTat = $_SESSION['idGuteTat'];
 	unset($_SESSION['idGuteTat']); //Zwischengespeicherte Variable lesen und anschließend löschen
-	$UsernameOfBewerber = $user->getUsername();
+	$UsernameOfBewerber = $_USER->getUsername();
 
 	$NameOfGuteTat = getNameOfGuteTatByID($idGuteTat);
 	$UsernameOfErsteller = getUsernameOfContactPersonByGuteTatID($idGuteTat);
@@ -468,7 +468,7 @@ else if(isset($_POST['AnnehmenButton'])) {
 	unset($_SESSION['idGuteTat']);
 	$candidateID = $_SESSION['$candidateID'];
 	unset($_SESSION['candidateID']);
-	$UsernameOfErsteller = $user->getUsername();
+	$UsernameOfErsteller = $_USER->getUsername();
 
 	$MailOfBewerber = getMailOfBenutzerByID($candidateID);
 	$UsernameOfBewerber = getUsernameOfBenutzerByID($candidateID);
@@ -494,7 +494,7 @@ else if(isset($_POST['AblehnenButton'])) {
 	unset($_SESSION['idGuteTat']);
 	$candidateID = $_SESSION['$candidateID'];
 	unset($_SESSION['candidateID']);
-	$UsernameOfErsteller = $user->getUsername();
+	$UsernameOfErsteller = $_USER->getUsername();
 
 	$MailOfBewerber = getMailOfBenutzerByID($candidateID);
 	$UsernameOfBewerber = getUsernameOfBenutzerByID($candidateID);
