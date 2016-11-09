@@ -99,8 +99,8 @@ function statusByUserID($userID) {
 $output = isset($_GET['code']) ? (isset($wlang['login_code_' . $_GET['code']]) ? $wlang['login_code_' . $_GET['code']] : "") : "";
 if(isset($_POST['username']) && isset($_POST['password']))
 {
-	$continue = $HOST;
-	if(isset($_POST['continue']))
+	$continue = $HOST . "/profile";
+	if(isset($_POST['continue']) && $_POST['continue'] != '')
 		$continue = urldecode($_POST['continue']);
 	
 	$userID = idOfBenutzername($_POST['username']);
