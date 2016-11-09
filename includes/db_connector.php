@@ -1,7 +1,7 @@
 <?php 
 
-/*
-* @author: Timm Romanik
+/**
+* @author Timm Romanik <timm.romanik@stud.hs-hannover.de
 */
 
 //Definition der Datenbankverbindung
@@ -10,21 +10,38 @@ DEFINE('DB_PASSWORD','Sadi23n2os');
 DEFINE('DB_HOST','localhost');
 DEFINE('DB_NAME','tueGutes');
 
-// öffnet eine DB Verbindung mit den definierten Parametern
 
+/**
+*Öffnen einer Datenbank Verbindung.
+*
+*Öffnet eine Datenbank Verbindung mit Parametern die vorher fest definiert sind. Die Parameter sind Host, Benutzer, password und Datenbankname
+*
+*@return mysqli <Datenbankverbindungsobjekt auf dem gearbeitet werden kann>
+*/
 function db_connect() {
 	return mysqli_connect(DB_HOST,DB_USER, DB_PASSWORD, DB_NAME);
 }
 
-// schließt eine offene Datenbankverbindung
-
+/**
+*Schließt eine Datenbankverbindung.
+*
+*Schließt eine Datenbankverbindung unter verwendung eines Parameters, was ein mysqli Objekt ist
+*
+*@param mysqli <Datenbankverbindungsobjekt>
+*/
 function db_close(mysqli $db) {
 	mysqli_close($db);
 }
 
-
-//Gibt das Attribut idBenutzer zu einem gegebenen Benutzernamen zurück oder false,
-//falls es keinen Account mit dem Benutzernamen gibt
+/**
+*Gibt Id von User zu einem Benutzernamen zurück.
+*
+*Gibt die Id von dem Benutzer zurück, dessen Name als Parameter in die Funktion übergeben wurde.
+*
+*@param String 
+*
+*@return Int <Oder false wenn es den Benutzer nicht gibt>
+*/
 function db_idOfBenutzername($benutzername) {
 	$db = db_connect();
 	$sql = "SELECT idUser FROM User WHERE username = ?";
@@ -44,8 +61,15 @@ function db_idOfBenutzername($benutzername) {
 	//return false; //Testzwecke
 }
 
-//Gibt das Attribut idBenutzer zu einer gegebenen email Adresse zurück oder false,
-//falls es keinen Acoount mit dieser Emailadresse gibt
+/**
+*Gibt Id von User zu einer Emailadresse zurück.
+*
+*Gibt die Id von dem Benutzer zurück, dessen Email als Parameter in die Funktion übergeben wurde.
+*
+*@param String 
+*
+*@return Int <Oder false wenn es den Benutzer nicht gibt>
+*/
 function db_idOfEmailAdresse($emailadresse) {
 	$db = db_connect();
 	$sql = "SELECT idUser FROM User WHERE email = ?";
@@ -64,7 +88,13 @@ function db_idOfEmailAdresse($emailadresse) {
 	
 }
 
-//Gibt die Anzahl der Benutzer zurück, egal welcher Status sie innehaben
+/**
+*Gibt die Anzahl der Benutzer zurück.
+*
+*Gibt die Anzahl der Benutzer zurück, egal welchen Status sie haben, ob verifiziert doer nicht.
+*
+*@return Int <Anzahl>
+*/
 function db_getBenutzerAnzahl(){
 	$db = db_connect();
 	$sql = "SELECT COUNT(*) FROM User";
