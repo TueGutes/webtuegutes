@@ -180,13 +180,14 @@ require "./includes/_top.php";
 				if($_SESSION['loggedIn'] === false) {
 					if(isset($_GET['c'])) {//3. Fall: Bestätigungslink
 						if(activateAcount($_GET['c']) === true) {
-							$_SESSION['loggedIn'] = true;
-							$_SESSION['user'] = getUserByCryptkey($_GET['c']); 
-							header('Location: ./profile');
+							//$_SESSION['loggedIn'] = true;
+							//$_SESSION['user'] = getUserByCryptkey($_GET['c']); 
+							//header('Location: ./profile');
+							header("Location: " . $HOST . "/login?code=101");
 						} else {
 							//Das Aktivieren des Accounts hat aus unbekanntem Grund nicht funktioniert
 							//Informiere den Benutzer darüber
-							echo '<h3><font color=red>Upps, da ist etwas schief gegangen :(</font></h3><p>';
+							echo '<h3><red>Upps, da ist etwas schief gegangen :(</red></h3><p>';
 							
 						}
 					} elseif(isset($_POST['benutzername']) && isset($_POST['passwort']) && isset($_POST['passwortwdh']) && isset($_POST['mail']) &&isset($_POST['vorname']) && isset($_POST['nachname'])) {  //2. Fall: Nutzer hat das Formular abgeschickt

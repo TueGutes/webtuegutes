@@ -5,6 +5,9 @@
 
 require './includes/DEF.php';
 
+if($user->loggedIn())
+	header("Location: " . $HOST);
+
 include './includes/db_connector.php';
 
 //DB Funktionen, die später ausgelagert werden sollten
@@ -93,7 +96,7 @@ function statusByUserID($userID) {
 }
 
 
-$output = '';
+$output = isset($_GET['code']) ? (isset($wlang['login_code_' . $_GET['code']]) ? $wlang['login_code_' . $_GET['code']] : "") : "";
 if(isset($_POST['username']) && isset($_POST['password']))
 {
 	$continue = $HOST;
@@ -116,13 +119,13 @@ if(isset($_POST['username']) && isset($_POST['password']))
 				exit;
 			}
 			else
-				$output = '<red>Das eingegebene Passwort ist falsch</red>';
+				$output = '<red>Das eingegebene Passwort ist falsch!</red>';
 		}
 		else
-			$output = '<red>Der Account ist noch nicht verifiziert, bitte auf den Bestätigungslink in der Mail klicken</red>';
+			$output = '<red>Der Account ist noch nicht verifiziert, bitte auf den Bestätigungslink in der Email klicken!</red>';
 	}
 	else
-		$output = '<red>Der eingegebene Benutzername ist uns nicht bekannt</red>';	
+		$output = '<red>Der eingegebene Benutzername ist uns nicht bekannt!</red>';	
 }
 
 
@@ -131,7 +134,8 @@ require './includes/_top.php';
 
 <h2><?php echo $wlang['login_head']; ?></h2>
 
-<div id='output'></div>
+<div id='output'><?php echo $output; ?></div>
+<br><br>
 <form action="" method="post">
 	<input type="text" value="" name="username" placeholder="<?php echo $wlang['login_placeholder_username']; ?>" required />
 	<br><br>
