@@ -264,7 +264,9 @@ function addBewerbung($idUser, $idGuteTat, $Bewerbungstext) {
 */
 function acceptBewerbung($candidateID, $idGuteTat, $explanation) {
 	$db = db_connect();
-	$sql = "UPDATE Application SET status = 'angenommen', replyMsg = ? WHERE idUser = ? AND idGuteTat = ?";
+	$sql = 'UPDATE Application SET `status` = "angenommen", `replyMsg` = ? WHERE idUser = ? AND idGuteTat = ?';
+	//echo $sql;
+	//echo $explanation."  ".$idGuteTat."  ".$candidateID;
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('sii',$explanation, $candidateID, $idGuteTat);
 	$stmt->execute();
@@ -371,7 +373,9 @@ if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 		}
 		//Fall 1.6 (und 1.5): Nutzer darf die Bewerbung inkl. eines Bewerbungstextes abschicken
 
-		echo '<form action="bewerbung.php" method="post">
+		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
+
+		echo '<form action="deeds_bewerbung" method="post">
 				<table>
 					<tr>
 						<td><b>Bewerbungstext:</b></td>
@@ -380,7 +384,6 @@ if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 				</table>
 				<input type="submit" value="Bewerbungabschicken">
 		</form>';
-		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
 
 	}
 
@@ -390,7 +393,7 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 	$idGuteTat = $_GET['idGuteTat'];
 	$candidateID = $_GET['candidateID'];
 	$idUser = $_USER->getID();
-	$status = getStatusOfBewerbung($idUser, $idGuteTat);
+	$status = getStatusOfBewerbung($candidateID, $idGuteTat);
 	if(getUserIdOfContactPersonByGuteTatID($idGuteTat) != $idUser) {
 		//Fall 1.1: Der Nutzer hat die gute Tat nicht erstellt und darf dementsprechend ihre Bewerbungen nicht annehmen
 		echo '<h3><red>Du darfst nur Bewerbungen zu guten Taten einsehen, die du selbst erstellt hat</red></h3>';
@@ -407,7 +410,7 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 		//Fall 1.4: Es existiert keine Bewerbung dieses Nutzers für die gute Tat (sollte Websitetechnisch niemals passieren)
 		echo '<h3><red>Es existiert keine Bewerbung des Bewerbers für die Tat</red></h3>';
 	}
-	else if(isNumberOfAcceptedCandidatsEqualToRequestedHelpers() === true) {
+	else if(isNumberOfAcceptedCandidatsEqualToRequestedHelpers($idGuteTat) === true) {
 		//Fall 1.5: Anzahl der angeforderten Helfer bereits erreicht, Bewerbung kann nicht angenommen werden, bleibt ausstehend
 		echo '<h3><red>Die Anzahl der angeforderten Helfer für diese Tat wurde bereits erreicht. </p> Die Bewerbung muss u.U. später akzeptiert werden, falls ein Helfer absagt.</red></h3>';
 	}
@@ -416,7 +419,10 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 
 		//Link zum Profil des Bewerbers
 		//TODO: Link zum Profil mit richtigem Parameter
-		echo '<a href="./profile?user=??????">Zum Benutzer-Profil des Bewerbers</a>';
+		echo '<a href="./profile?user='.$candidateID.'">Zum Benutzer-Profil des Bewerbers</a>';
+
+		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
+		$_SESSION['$candidateID'] = $candidateID;
 
 		echo '<form action="deeds_bewerbung" method="post">
 				<table>
@@ -429,14 +435,13 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 				<input type="submit" value="Ablehnen" name="AblehnenButton">
 		</form>';
 
-		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
-		$_SESSION['$candidateID'] = $candidateID;
+
 	}
 }
-else if(isset($_GET['Bewerbungstext'])) {
+else if(isset($_POST['Bewerbungstext'])) {
 	//Fall 3: Bewerbungsformular wurde abgeschickt
 	//TODO: Variablen setzen
-	$Bewerbungstext = $_GET['Bewerbungstext'];
+	$Bewerbungstext = $_POST['Bewerbungstext'];
 	$idUser = $_USER->getID();
 	$idGuteTat = $_SESSION['idGuteTat'];
 	unset($_SESSION['idGuteTat']); //Zwischengespeicherte Variable lesen und anschließend löschen
@@ -451,7 +456,7 @@ else if(isset($_GET['Bewerbungstext'])) {
 	$MailSubject = "Neue Bewerbung für '$NameOfGuteTat'";
 	$MailContent = "$UsernameOfBewerber hat sich für deine gute Tat '$NameOfGuteTat' beworben. Er schreibt dazu: $Bewerbungstext Besuche die URL, um Details zur Bewerbung einzusehen $actual_link";
 	//Sende mail an Ersteller der guten Tat
-	sendMail($MailOfErsteller, $MailSubject, $MailContent);
+	sendEmail($MailOfErsteller, $MailSubject, $MailContent);
 	//Datenbank Eintrag
 	addBewerbung($idUser, $idGuteTat, $Bewerbungstext);
 	//Bestätigung anzeigen
@@ -463,7 +468,7 @@ else if(isset($_GET['Bewerbungstext'])) {
 else if(isset($_POST['AnnehmenButton'])) {
 	//Fall 4: Bewerbungs-Annahme Formular wurde abgeschickt
 	//TODO: Variablen setzen
-	$Begruendungstext = $_GET['Begruendungstext'];
+	$Begruendungstext = $_POST['Begruendungstext'];
 	$idGuteTat = $_SESSION['idGuteTat']; //Zwischengespeicherte Variablen laden und anschließend löschen
 	unset($_SESSION['idGuteTat']);
 	$candidateID = $_SESSION['$candidateID'];
@@ -477,7 +482,7 @@ else if(isset($_POST['AnnehmenButton'])) {
 	$MailSubject = "Bewerbung angenommen!";
 	$MailContent = "Hallo $UsernameOfBewerber! Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller angenommen! Er schreibt dazu: $Begruendungstext";
 	//Sende Mail an Bewerber
-	sendMail($MailOfBewerber, $MailSubject, $MailContent);
+	sendEmail($MailOfBewerber, $MailSubject, $MailContent);
 	//Datenbankeintrag anpassen
 	//neuer Datenbankeintrag in der Helper Relation
 	acceptBewerbung($candidateID, $idGuteTat, $Begruendungstext);
@@ -489,7 +494,7 @@ else if(isset($_POST['AnnehmenButton'])) {
 else if(isset($_POST['AblehnenButton'])) {
 	//Fall 5: Bewerbung-Absage Formular wurde abgeschickt
 	//TODO: Variablen setzen
-	$Begruendungstext = $_GET['Begruendungstext'];
+	$Begruendungstext = $_POST['Begruendungstext'];
 	$idGuteTat = $_SESSION['idGuteTat']; //Zwischengespeicherte Variablen laden und anschließend löschen
 	unset($_SESSION['idGuteTat']);
 	$candidateID = $_SESSION['$candidateID'];
@@ -503,7 +508,7 @@ else if(isset($_POST['AblehnenButton'])) {
 	$MailSubject = "Bewerbung abgelehnt!";
 	$MailContent = "Hallo $UsernameOfBewerber! Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller mit folgender Begründung abgelehnt: $Begruendungstext";
 	//Sende Absage-Mail an Bewerber
-	sendMail($MailOfBewerber, $MailSubject, $MailContent);
+	sendEmail($MailOfBewerber, $MailSubject, $MailContent);
 	//Datenbankeintrag anpassen
 	declineBewerbung($candidateID, $idGuteTat, $Begruendungstext);
 	//Bestätigung anzeigen
