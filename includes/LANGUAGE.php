@@ -61,7 +61,7 @@ $wlang['contact_captcha_title'] = 'Captcha - Diesen Code in das darunter liegend
 //====login====
 $wlang['login_head'] = 'Login';
 
-$wlang['login_placeholder_username'] = 'Benutzername / E-Mail';
+$wlang['login_placeholder_username'] = 'Benutzername';// / E-Mail';
 $wlang['login_placeholder_password'] = 'Passwort';
 $wlang['login_button_submit'] = 'Login';
 
