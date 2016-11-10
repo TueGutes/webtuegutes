@@ -84,7 +84,7 @@ echo '<p />';
 echo '<br> <hr> <br> ';
 if($_USER->loggedIn() && $_USER->getUsername() == $tat["username"]) {
 
-$link = './deeds_bearbeiten?id='.$idTat; 
+$link = './deeds_bearbeiten?id='.$idTat;
 
 $form = '<form method="post" action="'.$link.'">';
 $form .= '<input type="submit" value="Bearbeiten">';
@@ -93,8 +93,8 @@ $form .= '</form>';
 echo $form;
 }
 else{
-	
-$link = 'deeds_bewerbung?id='.$idTat; 
+
+$link = 'deeds_bewerbung?idGuteTat='.$idTat; 
 
 $form = '<form method="post" action="'.$link.'">';
 $form .= '<input type="submit" value="Bewerben">';
