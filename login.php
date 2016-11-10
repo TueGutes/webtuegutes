@@ -114,7 +114,8 @@ if(isset($_POST['username']) && isset($_POST['password']))
 			if(md5($_POST['password'].$regDate) === $passHash) //Eingegebenes Passwort ist richtig
 			{
 				$username = $_POST['username'];
-				$_USER->login($userID, $username, db_get_user($username)['email']);
+				$dbentry = db_get_user($username);
+				$_USER->login($userID, $username, $dbentry['email']);
 				$_USER->redirect($continue); //Weiterleiten auf URL in $continue
 				exit;
 			}
