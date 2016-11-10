@@ -31,7 +31,7 @@ $blAbout = '<h2>'.$tat["name"] .'</h2>';
 //$blAbout .= ' Gute Tat #'.$idTat.' </h>';
 
 // -----------Gute Taten Details - genauer
-$blTaten = '<table width="60%"> <tr> <td> Kategorie: </td> <td style="padding:10px">'.$tat["category"].'</td> </tr>';
+$blTaten = '<table width="65%"> <tr> <td width="25%"> Kategorie: </td> <td style="padding:10px">'.$tat["category"].'</td> </tr>';
 $blTaten .= '<tr> <td> Kontaktperson: </td> <td style="padding:10px"> <a href="./profile?user='.$tat["username"].'">'.'<img src="' . $tat["avatar"] . '" style="height:3%;float:left" >&nbsp'.$tat["username"].'</a> </td>';
 $blTaten .= '<tr> <td> Gewünschter Vertrauenslevel: </td> <td style="padding:10px">'.$tat["idTrust"]. ' ('.$tat['trustleveldescription'].')' .'</td> </tr>';
 $blTaten .= '<tr> <td> Beschreibung: </td> <td style="padding:10px">'.(($tat['description']!='')?$tat["description"]:'keine Beschreibung angegeben').'</td> </tr>';
