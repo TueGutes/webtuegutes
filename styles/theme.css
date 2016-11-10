@@ -547,3 +547,53 @@ red
 	filter: sepia(0) blur(0);
 }
 /*====/contact====*/
+
+/*====deeds====*/
+.deedAnchor
+{
+	display: inline-block;
+	width: 80%;
+	text-shadow: none;
+}
+.deedAnchor:hover
+{
+	text-shadow: none;
+}
+.deedAnchor:hover .deed
+{
+	border: 1px solid #ff6000;
+	text-shadow: none;
+}
+.deed
+{
+	width: 100%;
+	background: #dddddd;
+	border: 1px solid #424242;
+	color: #212121;
+	padding: 14px 20px;
+	overflow: hidden;
+}
+.deed.closed
+{
+	background: #bbbbbb;
+	color: #696969;
+}
+.deed div
+{
+	position: realtive;
+}
+.deed .name,
+.deed .address
+{
+	float: left;
+}
+.deed .category,
+.deed .trustLevel
+{
+	float: right;
+}
+.deed .description
+{
+	text-align: left;
+}
+/*====/deeds====*/

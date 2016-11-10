@@ -37,7 +37,7 @@ $activeTab = 'class="active"';
 				<div id="profileSection">
 				<?php
 				if($_USER->loggedIn())
-					echo /*'<a href="./search"><input type="button" value="Tat suchen" style="font-size: 10px; margin-top: -20px;" /></a><br><br>*/'<a href="./profile">' . $_USER->getUsername() . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./logout">' . 'Logout' . '</a>';
+					echo '<a href="./search"><input type="button" value="Tat suchen" style="font-size: 10px; margin-top: -20px;" /></a><br><br><a href="./profile">' . $_USER->getUsername() . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./logout">' . 'Logout' . '</a>';
 				else
 					echo '<a href="./registration">' . $wlang['register_head'] . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./login">' . $wlang['login_head'] . '</a>';
 				?>
