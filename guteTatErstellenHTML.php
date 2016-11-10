@@ -67,7 +67,7 @@ require './includes/_top.php';
 			</tr>
 			<tr>
 				<td><h3>Anzahl Helfer*:</td>
-				<td><input type="text" name="countHelper" placeholder="Zähler"/></td>
+				<td><input type="text" name="countHelper" placeholder="Anzahl"/></td>
 			</tr>
 				<tr>
 				<td><h3>Erforderlicher Verantwortungslevel:</td>
