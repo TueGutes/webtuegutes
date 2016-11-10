@@ -1,6 +1,6 @@
 <?php
 /*
-*@author Lukas Buttke
+*@author Lukas Buttke, Nick Nolting
 */
 
 require './includes/DEF.php';
@@ -27,43 +27,32 @@ $tat = db_getGuteTat($idTat);
 <?php
 
 // --------Erstellen von Blöcken zur Formatierten ausgabe
-$blAbout = '<h2>'.$tat["name"] .'<br>';
-$blAbout .= ' Gute Tat #'.$idTat.' </h>';
-
-// ----------User, welcher das erstellt hat.
-// Ich würde gerne einen Link von hier auf das jeweilige Benutzerprofil machen
-$blSelf = '<br> <img src="' . $tat["avatar"] . '" width="25" height="25" >';
-$blSelf .= '<a href="./profile?user='.$tat["username"].'">'.$tat["username"].'</a>';
-
-$blComb = '<table> <tr> <td> '.$blSelf.'</td> <td>
-&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
-</td> <td style="width:280px" >'.$blAbout.' </td> </tr> </table> <hr>';
+$blAbout = '<h2>'.$tat["name"] .'</h2>';
+//$blAbout .= ' Gute Tat #'.$idTat.' </h>';
 
 // -----------Gute Taten Details - genauer
-$blTaten = '<table> <tr> <td> Categorie </td> <td>'.$tat["category"].'</td> </tr>';
-$blTaten .= '<tr> <td> <br>Beschreibung: <br> '.$tat["description"].'</td> </tr>';
-$blTaten .= '<tr> <td> <br>Zeitpunkt: </td> <td> <br>'.$tat["time"].'</td> </tr>';
-$blTaten .= '<tr> <td> <br>Organisation: </td> <td> <br>'.$tat["organization"].'</td> </tr>';
-$blTaten .= '<tr> <td> <br>Anzahl Helfer: </td> <td> <br>'.$tat["countHelper"].'</td> </tr> </table>';
+$blTaten = '<table width="60%"> <tr> <td> Kategorie: </td> <td style="padding:10px">'.$tat["category"].'</td> </tr>';
+$blTaten .= '<tr> <td> Kontaktperson: </td> <td style="padding:10px"> <a href="./profile?user='.$tat["username"].'">'.'<img src="' . $tat["avatar"] . '" style="height:3%;float:left" >&nbsp'.$tat["username"].'</a> </td>';
+$blTaten .= '<tr> <td> Gewünschter Vertrauenslevel: </td> <td style="padding:10px">'.$tat["idTrust"]. ' ('.$tat['trustleveldescription'].')' .'</td> </tr>';
+$blTaten .= '<tr> <td> Beschreibung: </td> <td style="padding:10px">'.(($tat['description']!='')?$tat["description"]:'keine Beschreibung angegeben').'</td> </tr>';
+if ($tat['starttime']!='0000-00-00 00:00:00') $blTaten .= '<tr> <td> Beginn: </td> <td style="padding:10px">'.$tat['starttime'].'</td> </tr>';
+if ($tat['endtime']!='0000-00-00 00:00:00') $blTaten .= '<tr> <td> Ende: </td> <td style="padding:10px">'.$tat['endtime'].'</td> </tr>';
+if ($tat['organization']!='') $blTaten .= '<tr> <td> Organisation: </td> <td style="padding:10px">'.$tat["organization"].'</td> </tr>';
+$blTaten .= '<tr> <td> Anzahl Helfer: </td> <td style="padding:10px">'.$tat["countHelper"].'</td> </tr> </table>';
 
 // -------------- Einbindung der Map -------------------------
-$blMap = 'Adresse der Guten Tat '.'<hr>';
+$blMap = '<h3>Adresse der Guten Tat:</h3>';
 
-$shPlzOrt = isset($tat["postalcode"]);
-$shStrasse = isset($tat["street"]);
-$shHausnummer = isset($tat["housenumber"]);
+$shPlzOrt = isset($tat["postalcode"]) && $tat['postalcode'] != '';
+$shStrasse = isset($tat["street"]) && $tat['street'] != '';
+$shHausnummer = isset($tat["housenumber"]) && $tat['housenumber'] != '';
 $showMap = ($shPlzOrt && $shStrasse && $shHausnummer);
-
-// --------- Vertrauenslevel
-$blTrust = '<table> <tr> <td> benötigtes Vertrauenslevel <br> ----------> </td> <td> ';
-$blTrust .= '&nbsp &nbsp &nbsp'.$tat["idTrust"]. '<br> <b> ';
-$blTrust .= $tat["trustleveldescription"].'</b> </td> </tr> </table>';
 
 
 // --------------- Ausgabe der Blöcke, eingepackt in div boxen ----------
-echo '<div align="center">' . $blComb . '</div>';
+echo '<div align="center">' . $blAbout . '</div>';
 echo '<p />';
-echo '<div align="center" style="font-size:130%;">' . $blTaten . '</div>';
+echo '<div align="center">' . $blTaten . '</div>';
 echo '<p />';
 echo '<div align="center">' .$blMap;
 
@@ -77,8 +66,6 @@ else{
 }
 
 echo '</div>';
-echo '<p />';
-echo '<div align="center" style="font-size:140%;"> <hr>' . $blTrust . '</div>';
 echo '<p />';
 
 echo '<br> <hr> <br> ';
