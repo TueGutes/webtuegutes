@@ -27,7 +27,7 @@ function idOfBenutzername($benutzername) {
 	else {
 		return false;
 	}
-	
+
 	//return false; //Testzwecke
 }
 
@@ -41,14 +41,14 @@ function idOfEmailAdresse($emailadresse) {
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
-	db_close($db);				
+	db_close($db);
 	if(isset($dbentry['idUser'])){
 		return $dbentry['idUser'];
 	}
 	else {
 		return false;
 	}
-	
+
 	//return false; //Testzwecke
 }
 
@@ -61,26 +61,27 @@ function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $pass
 	$stmt = $db->prepare($sql);
 	$date = date("Y-m-d");
 	$pass_md5 = md5($passwort.$date);
-	mysqli_stmt_bind_param($stmt, "ssss", $benutzername, $pass_md5, $email,$date);
+	$fulldate = new DateTime();
+	mysqli_stmt_bind_param($stmt, "ssss", $benutzername, $pass_md5, $email,$fulldate->format('Y-m-d H:i:s'));
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
-		//return true;	
+		//return true;
 	} else {
 		echo 'beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db);
 		//return false;
 	}
-	
+
 	$sql = "Insert into Privacy (idPrivacy, privacykey, cryptkey) values ((SELECT MAX(idUser) FROM User),?,?)";
 	$stmt = $db->prepare($sql);
-	
+
 	$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
 	$privacykey = "111111111111111";
 	mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
-		//return true;	
+		//return true;
 	}
 	else {
 		echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
@@ -92,30 +93,30 @@ function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $pass
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
-		//return true;	
+		//return true;
 	}
 	else {
 		echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
 		return false;
 	}
-	
+
 	$sql = "Insert into PersData (idPersData, firstname, lastname) values((SELECT MAX(idUser) FROM User),?,?)";
 	$stmt = $db->prepare($sql);
 	mysqli_stmt_bind_param($stmt, "ss", $vorname, $nachname);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
-		//return true;	
+		//return true;
 	}
 	else {
 		echo 'beim erstellen von PersData Eintrag ist was schief gegangen '.mysqli_error($db);
 		return false;
 	}
-	
-	db_close($db);	
-	
+
+	db_close($db);
+
 	return $cryptkey;
-	
+
 	//return "asdfjklö"; //Für Testzwecke
 }
 
@@ -128,7 +129,7 @@ function activateAcount($cryptkey) {
 	$stmt->execute();
 	//$result = $stmt->get_result();
 	//$dbentry = $result->fetch_assoc();
-	db_close($db);				
+	db_close($db);
 	//if(isset($dbentry['idUser'])){
 	//	return $dbentry['idUser'];
 	//}
@@ -148,7 +149,7 @@ function getUserByCryptkey($cryptkey) {
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
-	db_close($db);				
+	db_close($db);
 	if(isset($dbentry['username'])){
 		return $dbentry['username'];
 	}
@@ -178,7 +179,7 @@ if(isset($_GET['c'])) // man kann auch wenn man mit einem Account angemeldet ist
 	{
 		//Das Aktivieren des Accounts hat aus unbekanntem Grund nicht funktioniert
 		//Informiere den Benutzer darüber
-		$output = '<red>Upps, da ist etwas schief gegangen :(</red>';	
+		$output = '<red>Upps, da ist etwas schief gegangen :(</red>';
 	}
 }
 else
@@ -206,7 +207,7 @@ else
 			{
 				$output .= "<red>Der gewählte Benutzername ist bereits registriert!</red><br>";
 				$error = true;
-			}			
+			}
 			if(empty($vorname))
 			{
 				$output .= "<red>Geben Sie ihren Vornamen an!</red><br>";
@@ -227,7 +228,7 @@ else
 				$output .= "<red>Die Passwörter stimmen nicht überein!</red><br>";
 				$error = true;
 			}
-			
+
 			if(!$error)
 			{
 				$cryptkey = createBenutzerAccount($username, $vorname, $nachname, $mail, $pass);
@@ -236,7 +237,7 @@ else
 					//Account erfolgreich in Datenbank erstellt
 					//Sende Bestätigungslink an Mailadresse
 					$actual_link = $HOST . "/registration";
-					
+
 					$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: ".$actual_link."?c=".$cryptkey." </h3></div>";
 
 					if(sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent) === true)
@@ -252,15 +253,15 @@ else
 	else
 		$_USER->redirect($HOST);
 }
-				
+
 require "./includes/_top.php";
-?>				
-	
+?>
+
 <h2><?php echo $wlang['register_head']; ?></h2>
 
 <div id='output'><?php echo $output; ?></div>
 <br><br>
-<div class="center">	
+<div class="center">
 	<form action="" method="post">
 		<input type="text" name="benutzername" value="<?php echo $username; ?>" placeholder="<?php echo "Benutzername"; ?>" required /><br>
 		<input type="text" name="vorname" value="<?php echo $vorname; ?>" placeholder="<?php echo "Vorname"; ?>" required /><br>
@@ -278,7 +279,6 @@ require "./includes/_top.php";
 	<a href="./login">Bereits registriert?</a>
 </div>
 
-<?php	
-require "./includes/_bottom.php"; 
+<?php
+require "./includes/_bottom.php";
 ?>
-	
