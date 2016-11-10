@@ -100,12 +100,15 @@ $db = db_connect();
 					$error .= 'Bitte Postleitzahl überprüfen! Als Postleitzahl sind nur fünfstellige Zahlen erlaubt.<br>';
 
 				//Startzeitpunkt
-				if (validateDate($starttime))
+				if (!validateDate($starttime))
 					$error .= 'Es wurde kein korrektes Startzeitpunkt für die gute Tat festgelegt.<br>';
 
 				//Endzeitpunkt
-				if (validateDate($endtime))
+				if (!validateDate($endtime))
 					$error .= 'Es wurde kein korrektes Endzeitpunkt für die gute Tat festgelegt.<br>';
+
+				if (!db_getIdPostalbyPostalcodePlace($postalcode,$place))
+					$error .= 'Es wurde keine korrekter Ort und Postleitzahl angegeben.<br>';
 
 				//Anzahl Helfer keine Zahl
 				if (!is_numeric($countHelper))
@@ -117,10 +120,10 @@ $db = db_connect();
 		//Einfügen der Guten Tat
 		$uid = db_idOfBenutzername($_USER->getUsername());
 		//db_fix_plz($postalcode);
-
+		$plz = db_getIdPostalbyPostalcodePlace($postalcode,$place);
 		db_createGuteTat($name, $uid, $category, $street, $housenumber, 
-			$postalcode, $starttime,$endtime, $organization, $countHelper, $idTrust,
-			$description, $pictures,$place);
+			$plz, $starttime,$endtime, $organization, $countHelper, $idTrust,
+			$description, $pictures);
 		/*
 		$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,postalcode,time,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		$stmt = $db->prepare($sql);

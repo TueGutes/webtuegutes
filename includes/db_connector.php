@@ -260,7 +260,12 @@ function db_getIdPostalbyPostalcodePlace($plz,$place){
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
 	db_close($db);
-	return $dbentry['idPostal'];
+	if(isset($dbentry['idPostal'])){
+		return $dbentry['idPostal'];
+	}
+	else {
+		return false;
+	}
 }
 
 function db_getPostalcodePlacebyIdPostal($idPostal){
@@ -476,14 +481,14 @@ function db_doesGuteTatNameExists($name){
 }
 
 //erstellt eine gute Tat
-function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $postalcode, $starttime,$endtime, $organization, $countHelper,         $idTrust,$description, $pictures,$place){
+function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $pid, $starttime,$endtime, $organization, $countHelper,         $idTrust,$description, $pictures){
 	$db = db_connect();
 	//Datensatz in Deeds einfügen
-	$plz = db_getIdPostalbyPostalcodePlace($postalcode,$place);
+	//$plz = db_getIdPostalbyPostalcodePlace($postalcode,$place);
 	$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,idPostal,starttime,endtime,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('sisssisssii', $name, $user_id, $category, $street, 
-		$housenumber, $plz, $starttime,$endtime, $organization, $countHelper,
+		$housenumber, $pid, $starttime,$endtime, $organization, $countHelper,
 		$idTrust);
 	$stmt->execute();
 
