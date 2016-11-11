@@ -6,9 +6,8 @@
 */
 
 require "./includes/DEF.php";
-
+include './includes/ACCESS.php';
 require "./includes/_top.php";
-
 //Inkludieren von script-Dateien
 include './includes/db_connector.php';
 
@@ -340,7 +339,7 @@ Es gibt ... Fälle:
 	(declineBewerbung()) der Datenbankeintrag wird angepasst und eine Bestätigung + LInk zur Detailseite der Guten Tat wird angezeigt
 */
 //Fall 0: Profile sind nur für eingeloggte Nutzer sichtbar:
-if (!$_USER->loggedIn()) die ('<h3>Bewerbungen sind nur für eingeloggte Nutzer sichtbar!</h3><p/><a href="./login">Zum Login</a>');
+//if (!$_USER->loggedIn()) die ('<h3>Bewerbungen sind nur für eingeloggte Nutzer sichtbar!</h3><p/><a href="./login">Zum Login</a>');
 
 echo '<h2>Bewerbung</h2>';
 
@@ -375,15 +374,15 @@ if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 
 		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
 
-		echo '<form action="deeds_bewerbung" method="post">
-				<table>
-					<tr>
-						<td><b>Bewerbungstext:</b></td>
-						<td><input type="textbox" name="Bewerbungstext"></td>
-					</tr>
-				</table>
-				<input type="submit" value="Bewerbungabschicken">
-		</form>';
+//<table> <tr> <td>
+//<input type="textbox" name="Bewerbungstext"><br><br><br>
+//<b>Bewerbungstext:</b><br>
+		echo '<div class="center">
+		<form action="deeds_bewerbung" method="post">
+				<textarea id="bewerbungstext" name="Bewerbungstext" cols="80" rows="6" placeholder="Bewerbungstext - Schreibe etwas zu deiner Bewerbung um die gute Tat"></textarea><br><br>
+				<input type="submit" value="Bewerbung abschicken">
+		</form>
+		</div>';
 
 	}
 
@@ -419,21 +418,18 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 
 		//Link zum Profil des Bewerbers
 		//TODO: Link zum Profil mit richtigem Parameter
-		echo '<a href="./profile?user='.$candidateID.'">Zum Benutzer-Profil des Bewerbers</a>';
+		echo '<a href="./profile?user='.$candidateID.'">Zum Benutzer-Profil des Bewerbers</a><br><br>';
 
 		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
 		$_SESSION['$candidateID'] = $candidateID;
 
-		echo '<form action="deeds_bewerbung" method="post">
-				<table>
-					<tr>
-						<td><b>Begründung:</b></td>
-						<td><input type="textbox" name="Begruendungstext"></td>
-					</tr>
-				</table>
+		echo '<div class="center">
+		<form action="deeds_bewerbung" method="post">
+				<textarea id="begruendungstext" name="Begruendungstext" cols="80" rows="3" placeholder="Begründung - schreibe dem Bewerber eine Begründung deiner Absage bzw. Annahme seiner Bewerbung"></textarea><br><br>
 				<input type="submit" value="Annehmen" name="AnnehmenButton">
 				<input type="submit" value="Ablehnen" name="AblehnenButton">
-		</form>';
+		</form>
+		</div>';
 
 
 	}
