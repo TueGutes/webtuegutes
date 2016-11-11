@@ -7,7 +7,7 @@
 
 if(!$_USER->loggedIn())
 {
-	$continue = $HOST;
+	$continue = $HOST_FULL;
 	$to = '/login?code=423&continue=' . urlencode($continue);
 	$_USER->redirect($HOST /*. ($path == '/' ? '' : $path)*/ . $to);
 	exit;
