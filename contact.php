@@ -10,6 +10,12 @@ $nachname = '';
 $alter = '';
 $email = '';
 $message = '';
+if($_USER->loggedIn())
+{
+	$vorname = /*$_USER->*/'';
+	$nachname = /*$_USER->*/'';
+	$email = $_USER->getEmail();
+}
 
 $output = '';
 
