@@ -448,9 +448,22 @@ else if(isset($_POST['Bewerbungstext'])) {
 	$MailOfErsteller = getEmailOfContactPersonByGuteTatID($idGuteTat);
 
 	//URL der Bewerbungsseite generieren
-	$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']."?idGuteTat=$idGuteTat&candidateID=$idUser";
+	$actual_link = $HOST."/deeds_bewerbung"."?idGuteTat=$idGuteTat&candidateID=$idUser";
+	//$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']."?idGuteTat=$idGuteTat&candidateID=$idUser";
 	$MailSubject = "Neue Bewerbung für '$NameOfGuteTat'";
-	$MailContent = "$UsernameOfBewerber hat sich für deine gute Tat '$NameOfGuteTat' beworben. Er schreibt dazu: $Bewerbungstext Besuche die URL, um Details zur Bewerbung einzusehen $actual_link";
+	//$MailContent = "$UsernameOfBewerber hat sich für deine gute Tat '$NameOfGuteTat' beworben. Er schreibt dazu: $Bewerbungstext Besuche die URL, um Details zur Bewerbung einzusehen $actual_link";
+
+	$MailContent =
+		"<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
+			<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
+		</div>
+		<h2>Hallo $UsernameOfBewerber!</h2><br>
+		<h3>$UsernameOfBewerber hat sich für deine gute Tat '$NameOfGuteTat' beworben. <br>
+		<h3>Er schreibt dazu: \"$Bewerbungstext\"</h3><br>
+		<h3>Besuche die URL, um Details zur Bewerbung einzusehen $actual_link</h3>";
+
+
+
 	//Sende mail an Ersteller der guten Tat
 	sendEmail($MailOfErsteller, $MailSubject, $MailContent);
 	//Datenbank Eintrag
@@ -476,7 +489,16 @@ else if(isset($_POST['AnnehmenButton'])) {
 	$NameOfGuteTat = getNameOfGuteTatByID($idGuteTat);
 
 	$MailSubject = "Bewerbung angenommen!";
-	$MailContent = "Hallo $UsernameOfBewerber! Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller angenommen! Er schreibt dazu: $Begruendungstext";
+	//$MailContent = "Hallo $UsernameOfBewerber! Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller angenommen! Er schreibt dazu: $Begruendungstext";
+
+	$MailContent =
+		"<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
+			<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
+		</div>
+		<h2>Hallo $UsernameOfBewerber!</h2><br>
+		<h3>Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller mit folgender Begründung angenommen!:</h3> <br> \"$Begruendungstext\"";
+
+
 	//Sende Mail an Bewerber
 	sendEmail($MailOfBewerber, $MailSubject, $MailContent);
 	//Datenbankeintrag anpassen
@@ -502,7 +524,24 @@ else if(isset($_POST['AblehnenButton'])) {
 	$NameOfGuteTat = getNameOfGuteTatByID($idGuteTat);
 
 	$MailSubject = "Bewerbung abgelehnt!";
-	$MailContent = "Hallo $UsernameOfBewerber! Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller mit folgender Begründung abgelehnt: $Begruendungstext";
+	$MailContent =
+		"<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
+			<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
+		</div>
+		<h2>Hallo $UsernameOfBewerber!</h2><br>
+		<h3>Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller mit folgender Begründung abgelehnt:</h3> <br> \"$Begruendungstext\"";
+
+
+	/*$mailcontent =
+		"<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
+			<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
+		</div>
+		<div style=\"margin-left:10%;margin-right:10%\">
+			<h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1>
+			<h3>Klicke auf den Link, um deine Registrierung abzuschließen: ".$actual_link."?c=".$cryptkey." </h3>
+		</div>";
+*/
+
 	//Sende Absage-Mail an Bewerber
 	sendEmail($MailOfBewerber, $MailSubject, $MailContent);
 	//Datenbankeintrag anpassen
