@@ -120,7 +120,7 @@
 		</script>
 		<?php
 			require './includes/db_connector.php';
-			$arr = db_getGuteTatenForList(10*(§_GET['page']-1),10);
+			$arr = db_getGuteTatenForList(10*($_GET['page']-1),10);
 			
 			// Gehe alle Taten durch und erstelle für jeden Eintrag ein Marker.
 			foreach($arr as $i){
