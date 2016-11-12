@@ -115,16 +115,6 @@
 	if (!isset($_GET['user'])) $_GET['user'] = $_USER->getUsername();
 	$thisuser = db_get_user($_GET['user']);
 
-	//Hotfix
-	if (isset($thisuser['idPostal'])) {
-		$thisuser['postalcode'] = db_getPostalcodePlacebyIdPostal($thisuser['idPostal'])['postalcode'];
-		$thisuser['place'] = db_getPostalcodePlacebyIdPostal($thisuser['idPostal'])['postalcode'];
-		echo 'ID: ' . $thisuser['idPostal'] . '<br>';
-		echo $thisuser['postalcode'] . ' / ' . $thisuser['place'];
-	} else {
-		echo $thisuser['idPostal'];
-	}
-
 	//Festlegen der Sichtbarkeitseinstellungen
 	if (strtoupper($_USER->getUsername())===strtoupper($thisuser['username']) && !(@$_GET['view']==="public")) {
 		$headline = 'Dein Profil';
