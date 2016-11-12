@@ -3,12 +3,106 @@
 * @author: Nick Nolting, Alexander Gauggel
 */
 
+	// Funktionen
+	// ALEX 
+	// Returns the day of birth of a given date in format "YYYY-MM-DD".
+	function getDayOfBirth($pBirthValues)
+	{
+		return substr($pBirthValues, 8, 2);
+	}
+	// Returns the month of birth of a given date in format "YYYY-MM-DD".
+	function getMonthOfBirth($pBirthValues)
+	{
+		return substr($pBirthValues, 5, 2);
+	}
+	// Returns the year of birth of a given date in format "YYYY-MM-DD".
+	function getYearOfBirth($pBirthValues)
+	{
+		return substr($pBirthValues, 0, 4);
+	}
+
+	// ALEX: Inserts a new postal code.
+	function insertPostalCode($pPostalCode, $pPlace)
+	{
+		$db = db_connect();
+		$sql = 'INSERT INTO Postalcode (postalcode, place) VALUES (?, ?)';
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('is',$pPostalCode, $pPlace);
+		$stmt->execute();
+		db_close($db);
+	}
+	
+
+	// Returns a map of postal code and place to a given address.
+	function getPostalPlaceToAddress($pStreet, $pHouseNumber)
+	{
+		// Defining map to return.
+		$lRetVals = [
+			"retPostal" => "",
+			"retPlace" => "",
+		];
+		if(!is_numeric($pHouseNumber))
+		{
+			$pHouseNumber = 1;
+		}
+		
+		// Create address in format "<street>[+<street appendices],<house number>,Hannover".
+		$lAddressString = $pStreet . ',' . $pHouseNumber . ',Hannover';
+		// Replace empty spaces.
+		$lAddressString = str_replace(' ', '+', $lAddressString);
+		// Get JSON result.
+		$lContents = file('http://nominatim.openstreetmap.org/search?format=json&limit=2&q=' . $lAddressString);
+		// Put string in new variable for safety.
+		$lResult = $lContents[0];
+		$lContents = explode('"', $lResult);
+		// Get the proper string containing postal code and place.
+		$lFoundIndex = -1;
+		for($i = 0; $i < sizeof($lContents); $i++)
+		{
+			if(stripos($lContents[$i], 'Hannover') !== false) 
+			{
+				$lFoundIndex = $i;
+				break;
+			}
+		}
+		if($lFoundIndex === -1)
+		{
+			return $lRetVals;			
+		}		
+		// Put string in variable for safety.
+		$lResult = $lContents[$lFoundIndex];
+		$lContents = explode(',', $lResult);
+				
+				
+		// Important for correctness.
+		// OSM indices for place and postal code.
+		if(sizeof($lContents) < 9)
+		{		
+			$lIndexPlace = 2;
+		}
+		else
+		{
+			$lIndexPlace = 3;
+		}
+		$lIndexPostal = sizeof($lContents) - 2;
+		
+		$size = sizeof($lContents);
+		// Set return values.
+		$lRetVals['retPostal'] = $lContents[$lIndexPostal];
+		$lRetVals['retPlace'] = $lContents[$lIndexPlace];
+		
+		return $lRetVals;
+	}
+
 	//Includes
 	require "./includes/DEF.php";
 	
 	include "./includes/db_connector.php";
 	include "./includes/Map.php";
 	require "./includes/_top.php";
+
+	// ALEX
+	include "./includes/streets.php";
 
 	//Profile sind nur für eingeloggte Nutzer sichtbar:
 	if (!$_USER->loggedIn()) die ('Profile sind nur für eingeloggte Nutzer sichtbar!<p/><a href="./login">Zum Login</a>');	
@@ -18,8 +112,18 @@
 		db_delete_user($_USER->getUsername(), $_POST['save_pw']);
 
 	//Festlegen des auszulesenden Nutzers:
-	$thisuser = db_get_user(@$_GET['user']);
-	if (!isset($thisuser['username'])) $thisuser = db_get_user($_USER->getUsername());
+	if (!isset($_GET['user'])) $_GET['user'] = $_USER->getUsername();
+	$thisuser = db_get_user($_GET['user']);
+
+	//Hotfix
+	if (isset($thisuser['idPostal'])) {
+		$thisuser['postalcode'] = db_getPostalcodePlacebyIdPostal($thisuser['idPostal'])['postalcode'];
+		$thisuser['place'] = db_getPostalcodePlacebyIdPostal($thisuser['idPostal'])['postalcode'];
+		echo 'ID: ' . $thisuser['idPostal'] . '<br>';
+		echo $thisuser['postalcode'] . ' / ' . $thisuser['place'];
+	} else {
+		echo $thisuser['idPostal'];
+	}
 
 	//Festlegen der Sichtbarkeitseinstellungen
 	if (strtoupper($_USER->getUsername())===strtoupper($thisuser['username']) && !(@$_GET['view']==="public")) {
@@ -60,8 +164,37 @@
 		$shJahrgang = (substr($thisuser['privacykey'],14,1) === "1" && $thisuser['birthday']!="");
 	}
 
-	//Prüfen, ob das Eingabefeld angefordert wurde
-	if(isset($_POST['action']) && ($_POST['action'] == 'edit')) {
+	// ALEX
+	// Variable, die angibt, ob ungültige Daten eingegeben wurden.
+	$error = false;	
+	// Fehlerüberprüfung, wenn das Formular zum speichern gesendet wurde.
+	if(isset($_POST['action']) && ($_POST['action'] == 'save'))
+	{			
+		// Geburtsdaten überprüfen. (Nur einfache Prüfung auf 01 <= Tag <= 31 und 01 <= Monat <= 12 nd 1900 <= Jahr <= 2016
+		if((!is_numeric($_POST['txtDayOfBirth'])) && ($_POST['txtDayOfBirth'] < 1) || ($_POST['txtDayOfBirth'] > 31))
+		{
+			echo 'Tag im Geburtsdatum ist ungueltig.';
+			$error = true;
+		}
+		if((!is_numeric($_POST['txtMonthOfBirth'])) && ($_POST['txtMonthOfBirth'] < 1) || ($_POST['txtMonthOfBirth'] > 12))
+		{
+			echo 'Monat im Geburtsdatum ist ungueltig.';
+			$error = true;
+		}
+		if((!is_numeric($_POST['txtYearOfBirth'])) && ($_POST['txtYearOfBirth'] < 1900) || ($_POST['txtYearOfBirth'] > 2016))
+		{
+			echo 'Jahr im Geburtsdatum ist ungueltig.';
+			$error = true;
+		}
+		if(($_POST['txtHausnummer'] != "") && (!is_numeric($_POST['txtHausnummer'])))
+		{
+			echo 'Hausnummer ist ungültig.';
+			$error = true;
+		}
+	}
+			
+	//Prüfen, ob das Eingabefeld angefordert wurde oder ob ein ungueltiger Eintrag gesetzt wurde.
+	if((isset($_POST['action']) && ($_POST['action'] == 'edit')) || ($error === true)) {
 		//Zeige die Seite mit Eingabefeldern zum Bearbeiten der Daten an
 
 		$form_head = '<form action="" method="post" enctype="multipart/form-data">';
@@ -81,8 +214,19 @@
 		//Geschlecht anzeigen:
 		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none">' . (($thisuser['gender']==='w')?'weiblich':'männlich') . '</td></tr>';
 
-		//Geburtstag bearbeiten:
-		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geboren:</td><td style="border:none"><input type="text" name="txtGeburtstag" placeholder="JJJJ-MM-TT" value="' . $thisuser['birthday'] . '"></td></tr>';
+		// Textbox für Tag.
+		$blPersoenlich .= '<tr><td>Geboren:</td><td><input type="text" size="2px"
+		name="txtDayOfBirth" placeholder="TT" value="' . getDayOfBirth($thisuser['birthday']) . '">';	
+
+		// Textbox für Monat.
+		$blPersoenlich .= '.<input type="text" size="2px" name="txtMonthOfBirth" placeholder="MM" value="' . getMonthOfBirth($thisuser['birthday']) . '">';		
+
+		// Textbox für Jahr.
+		$blPersoenlich .= '.<input type="text" size="4px" name="txtYearOfBirth" placeholder="JJJJ" value="' . getYearOfBirth($thisuser['birthday']) . '"></td></tr>';		
+
+		//RegDate anzeigen
+		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Tut Gutes seit:</td><td style="border:none">' . substr($thisuser['regDate'],8,2) . '. ' . substr($thisuser['regDate'],5,2) . '. ' . substr($thisuser['regDate'],0,4) . '</td></tr>';
+		$blPersoenlich .= "</table>";
 
 		//RegDate anzeigen
 		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Tut Gutes seit:</td><td style="border:none">' . substr($thisuser['regDate'],8,2) . '. ' . substr($thisuser['regDate'],5,2) . '. ' . substr($thisuser['regDate'],0,4) . '</td></tr>';
@@ -93,7 +237,7 @@
 		$blUeber .= '<h3>Über ' . $thisuser['username'] . '</h3><table style="border:none;width:45%">';
 		
 		//Hobbys anzeigen:
-		$blUeber .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Hobbys:</td><td style="border:none"><input type="text" name="txtHobbys" placeholder="z.B. Kochen, Fahrrad fahren, ..." value="' . $thisuser['hobbys'] . '"></td></tr>';
+		$blUeber .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Hobbys:</td><td style="border:none"><input type="text" name="txtHobbys" placeholder="z.B. Kochen, Fahrrad fahren, ..." value="' . $thisuser['hobbys'] . '" style="width:100%"></td></tr>';
 
 		//Freitext anzeigen:
 		$blUeber .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Über mich:</td><td style="border:none"><textarea rows=20 cols=100 placeholder="beschreibe dich selbst mit wenigen Worten..." name="txtBeschreibung">' . $thisuser['description'] . '</textarea></td></tr>';
@@ -114,13 +258,27 @@
 		
 		//Adresse eingeben:
 		$blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Adresse:</td><td style="border:none">';
-		$blAdresse .= '<input type="text" name="txtStrasse" placeholder="Strasse" value="' . $thisuser['street'] . '">';
-		$blAdresse .= '<input type="text" size="5%" name="txtHausnummer" placeholder="Nr." value="' . $thisuser['housenumber'] . '">';
+
+		// ALEX: Strassenliste einfügen.
+		$blAdresse .= '<input type="search" list="lstStreets" name="txtStrasse" onchange="updatePLZPlace();" placeholder="Strasse" value="' . $thisuser['street'] . '"><br>';
+		$blAdresse .= $streetList;
+		$blAdresse .= '</td>';
+		/*$blAdresse .= '<input type="text" name="txtStrasse" placeholder="Strasse" value="' . $thisuser['street'] . '">';*/
+		
+		// ALEX: Hausnummer einfügen.
+		$blAdresse .= '<td style="border:none"><input type="text" size="5%" name="txtHausnummer" placeholder="Nr." value="' 
+			. $thisuser['housenumber'] . '">';
 		$blAdresse .= "</td></tr>";
 
+		// ALEX: Auskommentiert.
 		//PLZ/Ort bearbeiten:
-						//TODO: Postleitzahl überprüfen
-		$blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">PLZ:</td><td style="border:none"><input type="text" name="txtPostleitzahl" placeholder="PLZ" value="' . (($thisuser['postalcode']!=0)?$thisuser['postalcode']:'') . '"></td></tr>';
+		//TODO: Postleitzahl überprüfen
+		/*$blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">PLZ:</td><td style="border:none"><input type="text" name="txtPostleitzahl" placeholder="PLZ" value="' . (($thisuser['postalcode']!=0)?$thisuser['postalcode']:'') . '"></td></tr>';
+		$blAdresse .= "</table>";*/
+
+		//PLZ/Ort bearbeiten:
+//		$blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">PLZ:</td><td style="border:none"><input type="text" name="txtPostleitzahl" placeholder="PLZ" value="' . (($thisuser['postalcode']!=0)?$thisuser['postalcode']:'') . '"></td>';
+//		$blAdresse .= '<td style="border:none"><input type="text" name="txtOrt" placeholder="Ort" value="' . (($thisuser['postalcode']!=0)?$thisuser['place']:'') . '"></td></tr>';
 		$blAdresse .= "</table>";
 
 		//Block 5: Kontakt
@@ -165,8 +323,37 @@
 		//Ggf. Speichern / Verwerfen der geänderten Werte
 		if(isset($_POST['action']) && ($_POST['action'] == 'save')) 
 		{
+			// ALEX: If street is set, check name and find postal code. 
+			if($_POST['txtStrasse'] !== '')
+			{
+				// Check if street list contains entered street. If not, send mail to moderator.
+				$searchString = ">" . $_POST['txtStrasse'] . "<";
+				if (stripos($streetList, $searchString) === false) 
+				{
+					// TODO: Mail senden.
+				}
+				// Find postal code and place to address.
+				$lFoundValues = getPostalPlaceToAddress($_POST['txtStrasse'], $_POST['txtHausnummer']);
+								
+				if(is_numeric($lFoundValues['retPostal']))
+				{
+					// If postal code wasn't found in DB, add it and set foreign key in userdata.
+					$lIdPostal = db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+					
+					// If no corresponding postal code was found, add it to database.
+					if($lIdPostal == "")
+					{			
+						insertPostalCode($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+						$IdPostal = db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+					}
+					
+					$thisuser['idPostal'] = $lIdPostal;
+					
+				}
+			}
+
 			// Nutzerdaten überschreiben:
-			$thisuser['birthday'] = $_POST['txtGeburtstag'];
+			$thisuser['birthday'] = $_POST['txtYearOfBirth'] . '-' . $_POST['txtMonthOfBirth'] . '-' . $_POST['txtDayOfBirth'];
 			if ($_FILES['neuerAvatar']['name'] != '') {
 				move_uploaded_file($_FILES['neuerAvatar']['tmp_name'],'./img/tmp/avatar_' . $thisuser['idUser']);
 				$thisuser['avatar'] = 'data: ' . mime_content_type('./img/tmp/avatar_' . $thisuser['idUser']) . ';base64,' . base64_encode(file_get_contents('./img/tmp/avatar_' . $thisuser['idUser']));
@@ -178,7 +365,8 @@
 			$thisuser['telefonnumber'] = $_POST['txtTelNr'];
 			$thisuser['hobbys'] = $_POST['txtHobbys'];
 			$thisuser['description'] = $_POST['txtBeschreibung'];
-			$thisuser['postalcode'] = $_POST['txtPostleitzahl'];
+			$thisuser['postalcode'] = getPostalPlaceToAddress($thisuser['street'], $thisuser['housenumber'])['retPostal'];
+			$thisuser['place'] = getPostalPlaceToAddress($thisuser['street'], $thisuser['housenumber'])['retPlace'];
 			$thisuser['privacykey'] = $_POST['vsMail'] . $_POST['vsRegDate'] . $_POST['vsAvatar'] . $_POST['vsHobbys'] . $_POST['vsDescription'] . $_POST['vsFirstname'] . $_POST['vsLastname'] . $_POST['vsGender'] . $_POST['vsStreet'] . $_POST['vsHousenumber'] . $_POST['vsPlzOrt'] . $_POST['vsTelNr'] . $_POST['vsMsgNr'] . $_POST['vsBirthday'] . $_POST['vsBirthyear'];
 
 			//Änderungen speichern
@@ -252,10 +440,15 @@
 			
 			$blAdresse .= '<h3>Wo findet man ' . $thisuser['username'] . '?</h3><table style="border:none">';
 			//Adresse anzeigen:
-			if ($shStrasse || $shHausnummer) {
+			// ALEX: Strasse und Hausnummer werden nur angezeigt, wenn entweder mind. die Straße oder beides gesetzt ist.
+			if ($shStrasse) 
+			{
 				$blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Adresse:</td><td style="border:none">';
-				$blAdresse .= ($shStrasse?$thisuser['street']:'Geheime Geheimstraße') . ' ';
-				if ($shHausnummer) $blAdresse .= $thisuser['housenumber'];
+				$blAdresse .= $thisuser['street'];
+				if ($shHausnummer) 
+				{
+					$blAdresse .= ' ' . $thisuser['housenumber'];
+				}
 				$blAdresse .= "</td></tr>";
 			}
 
