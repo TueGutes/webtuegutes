@@ -153,7 +153,7 @@
 		$blPrivacy .= '<tr><td><select name="vsTelNr"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],11,1)?'':'selected') . '>Verbergen</option></select> Meine Telefonnummer</td></tr>';
 		$blPrivacy .= '<tr><td><select name="vsMsgNr"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],12,1)?'':'selected') . '>Verbergen</option></select> Meine Messengernummer</td></tr>';
 		$blPrivacy .= '<tr><td><select name="vsBirthday"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],13,1)?'':'selected') . '>Verbergen</option></select> Meinen Geburtstag</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsBrithyear"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],14,1)?'':'selected') . '>Verbergen</option></select> Mein Geburtsjahr</td></tr>';
+		$blPrivacy .= '<tr><td><select name="vsBirthyear"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],14,1)?'':'selected') . '>Verbergen</option></select> Mein Geburtsjahr</td></tr>';
 		$blPrivacy .= '</table>';
 
 		$form_bottom = '<p /><p /><input type=submit value="Änderungen speichern"><input type="hidden" name="action" value="save"><br><br><br><br><br></form>';
