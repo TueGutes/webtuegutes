@@ -66,9 +66,9 @@ class DateHandler
 		}
 		return false;
 	}
-	public function get()
+	public function get($format = 'Y-m-d H:i:s')
 	{
-		return $this->date->format('Y-m-d H:i:s');
+		return $this->date->format($format);
 	}
 	public function getYear()
 	{
