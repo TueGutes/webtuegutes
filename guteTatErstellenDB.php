@@ -34,17 +34,6 @@ require './includes/db_connector.php';
 require './includes/_top.php';
 
 
-
-function validateDate($date, $format = 'Y-m-d H:i:s')
-{
-	/*$date = "'" . $date . "'";
-    $d = DateTime::createFromFormat($format, $date);
-    return $d && $d->format($format) == $date;*/
-	return DateHandler::isValid($date, $format);
-}
-
-
-
 if (isset($_POST['name'])) {
 	$name= ($_POST['name']);
 	$description= ($_POST['description']);
