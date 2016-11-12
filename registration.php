@@ -9,155 +9,9 @@ require "./includes/DEF.php";
 include './includes/db_connector.php';
 
 //DB Funktionen, die später ausgelagert werden sollten
+// TIMM:
+// ausgelagert in db_connector, code ist gesaved in einer .txt bei mir
 
-//Gibt das Attribut idBenutzer zu einem gegebenen Benutzernamen zurück oder false,
-//falls es keinen Account mit dem Benutzernamen gibt
-function idOfBenutzername($benutzername) {
-	$db = db_connect();
-	$sql = "SELECT idUser FROM User WHERE username = ?";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('s',$benutzername);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	db_close($db);
-	if(isset($dbentry['idUser'])){
-		return $dbentry['idUser'];
-	}
-	else {
-		return false;
-	}
-
-	//return false; //Testzwecke
-}
-
-//Gibt das Attribut idBenutzer zu einer gegebenen email Adresse zurück oder false, falls
-//es keinen Account mit dieser Emailadresse gibt
-function idOfEmailAdresse($emailadresse) {
-	$db = db_connect();
-	$sql = "SELECT idUser FROM User WHERE email = LOWER(?)";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('s',$emailadresse);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	db_close($db);
-	if(isset($dbentry['idUser'])){
-		return $dbentry['idUser'];
-	}
-	else {
-		return false;
-	}
-
-	//return false; //Testzwecke
-}
-
-/*Erstellt einen Benutzeraccount mit den angegeben Parametern, der Status ist erste einmal "unverifiziert*/
-/*Liefert einen cryptkey, falls das Erstellen erfolgreich war, false falls nicht*/
-function createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
-	//TODO: Datenbank Insert ausarbeiten
-	$db = db_connect();
-	$sql = "Insert into User (username, password, email, regDate, points, status, idUserGroup, idTrust) values(?,?,LOWER(?),?,0,'nichtVerifiziert',1,1)";
-	$stmt = $db->prepare($sql);
-	$date = date("Y-m-d");
-	$pass_md5 = md5($passwort.$date);
-	$fulldate = new DateTime();
-	mysqli_stmt_bind_param($stmt, "ssss", $benutzername, $pass_md5, $email,$fulldate->format('Y-m-d H:i:s'));
-	$stmt->execute();
-	$affected_rows = mysqli_stmt_affected_rows($stmt);
-	if($affected_rows == 1) {
-		//return true;
-	} else {
-		echo 'beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db);
-		//return false;
-	}
-
-	$sql = "Insert into Privacy (idPrivacy, privacykey, cryptkey) values ((SELECT MAX(idUser) FROM User),?,?)";
-	$stmt = $db->prepare($sql);
-
-	$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
-	$privacykey = "111111111111111";
-	mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
-	$stmt->execute();
-	$affected_rows = mysqli_stmt_affected_rows($stmt);
-	if($affected_rows == 1) {
-		//return true;
-	}
-	else {
-		echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
-		return false;
-	}
-
-	$sql = "Insert into UserTexts (idUserTexts) values ((SELECT MAX(idUser) FROM User))";
-	$stmt = $db->prepare($sql);
-	$stmt->execute();
-	$affected_rows = mysqli_stmt_affected_rows($stmt);
-	if($affected_rows == 1) {
-		//return true;
-	}
-	else {
-		echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
-		return false;
-	}
-
-	$sql = "Insert into PersData (idPersData, firstname, lastname) values((SELECT MAX(idUser) FROM User),?,?)";
-	$stmt = $db->prepare($sql);
-	mysqli_stmt_bind_param($stmt, "ss", $vorname, $nachname);
-	$stmt->execute();
-	$affected_rows = mysqli_stmt_affected_rows($stmt);
-	if($affected_rows == 1) {
-		//return true;
-	}
-	else {
-		echo 'beim erstellen von PersData Eintrag ist was schief gegangen '.mysqli_error($db);
-		return false;
-	}
-
-	db_close($db);
-
-	return $cryptkey;
-
-	//return "asdfjklö"; //Für Testzwecke
-}
-
-/*Setzt den Status des zum cryptkey gehörenden Accounts auf "verifiziert"*/
-function activateAcount($cryptkey) {
-	$db = db_connect();
-	$sql = "UPDATE User SET status = 'Verifiziert' WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('s',$cryptkey);
-	$stmt->execute();
-	//$result = $stmt->get_result();
-	//$dbentry = $result->fetch_assoc();
-	db_close($db);
-	//if(isset($dbentry['idUser'])){
-	//	return $dbentry['idUser'];
-	//}
-	//else {
-	//	return false;
-	//}
-	//Verfiziert
-	return true;
-}
-
-/*Liefert den Benutzernamen des Accounts, der zum cryptkey gehört oder false*/
-function getUserByCryptkey($cryptkey) {
-	$db = db_connect();
-	$sql = "SELECT username FROM User WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('s',$cryptkey);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	db_close($db);
-	if(isset($dbentry['username'])){
-		return $dbentry['username'];
-	}
-	else {
-		return false;
-	}
-	//return "blecha"; //Testzwecke
-}
 
 
 $username = isset($_POST['benutzername']) ? $_POST['benutzername'] : '';
@@ -170,7 +24,7 @@ $mail = isset($_POST['mail']) ? $_POST['mail'] : '';
 $output = '';
 if(isset($_GET['c'])) // man kann auch wenn man mit einem Account angemeldet ist, einen anderen Account verifizieren
 {
-	if(activateAcount($_GET['c']) === true)
+	if(db_activateAccount($_GET['c']) === true)
 	{
 		$goto = $HOST . ($_USER->loggedIn() ? "" : "/login?code=101");
 		$_USER->redirect($goto);
@@ -203,7 +57,7 @@ else
 					$error = true;
 				}
 			}
-			if(idOfBenutzername($username) != false)
+			if(db_idOfBenutzername($username) != false)
 			{
 				$output .= "<red>Der gewählte Benutzername ist bereits registriert!</red><br>";
 				$error = true;
@@ -231,7 +85,7 @@ else
 
 			if(!$error)
 			{
-				$cryptkey = createBenutzerAccount($username, $vorname, $nachname, $mail, $pass);
+				$cryptkey = db_createBenutzerAccount($username, $vorname, $nachname, $mail, $pass);
 				if($cryptkey)
 				{
 					//Account erfolgreich in Datenbank erstellt

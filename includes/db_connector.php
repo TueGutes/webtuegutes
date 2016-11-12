@@ -139,59 +139,71 @@ function db_getGuteTatbyid($idvonGuteTat){
 function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 	//TODO: Datenbank Insert ausarbeiten
 	$db = db_connect();
-	$sql = "INSERT INTO User (username, password, email, regDate, points, status) VALUES(?,?,?,?,0,'nichtVerifiziert')";
+	$sql = "Insert into User (username, password, email, regDate, points, status, idUserGroup, idTrust) values(?,?,LOWER(?),?,0,'nichtVerifiziert',1,1)";
 	$stmt = $db->prepare($sql);
 	$date = date("Y-m-d");
 	$pass_md5 = md5($passwort.$date);
-	mysqli_stmt_bind_param($stmt, "ssss", $benutzername, $pass_md5, $email,$date);
+	$fulldate = new DateTime();
+	mysqli_stmt_bind_param($stmt, "ssss", $benutzername, $pass_md5, $email,$fulldate->format('Y-m-d H:i:s'));
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
-		//return true;	
-	}
-	else {
+		//return true;
+	} else {
 		echo 'beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db);
 		//return false;
 	}
-	
-	$sql = "INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) VALUES ((SELECT MAX(idUser) FROM User),?,?)";
+
+	$sql = "Insert into Privacy (idPrivacy, privacykey, cryptkey) values ((SELECT MAX(idUser) FROM User),?,?)";
 	$stmt = $db->prepare($sql);
-	
+
 	$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
-	$privacykey = "1111111111111"; //TODO: Privacykey richtig machen
+	$privacykey = "111111111111111";
 	mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
-		//return true;	
+		//return true;
 	}
 	else {
 		echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
 		return false;
 	}
-	
-	$sql = "INSERT INTO PersData (idPersData, firstname, lastname) VALUES((SELECT MAX(idUser) FROM User),?,?)";
+
+	$sql = "Insert into UserTexts (idUserTexts) values ((SELECT MAX(idUser) FROM User))";
+	$stmt = $db->prepare($sql);
+	$stmt->execute();
+	$affected_rows = mysqli_stmt_affected_rows($stmt);
+	if($affected_rows == 1) {
+		//return true;
+	}
+	else {
+		echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
+		return false;
+	}
+
+	$sql = "Insert into PersData (idPersData, firstname, lastname) values((SELECT MAX(idUser) FROM User),?,?)";
 	$stmt = $db->prepare($sql);
 	mysqli_stmt_bind_param($stmt, "ss", $vorname, $nachname);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
-		//return true;	
+		//return true;
 	}
 	else {
 		echo 'beim erstellen von PersData Eintrag ist was schief gegangen '.mysqli_error($db);
 		return false;
 	}
-	
-	db_close($db);	
-	
+
+	db_close($db);
+
 	return $cryptkey;
-	
+
 	//return "asdfjklö"; //Für Testzwecke
 }
 
 /*Setzt den Status des zum cryptkey gehörenden Accounts auf "verifiziert"*/
-function db_activateAcount($cryptkey) {
+function db_activateAccount($cryptkey) {
 	$db = db_connect();
 	$sql = "UPDATE User SET status = 'Verifiziert' WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
 	$stmt = $db->prepare($sql);
@@ -199,7 +211,7 @@ function db_activateAcount($cryptkey) {
 	$stmt->execute();
 	//$result = $stmt->get_result();
 	//$dbentry = $result->fetch_assoc();
-	db_close($db);				
+	db_close($db);
 	//if(isset($dbentry['idUser'])){
 	//	return $dbentry['idUser'];
 	//}
@@ -219,7 +231,7 @@ function db_getUserByCryptkey($cryptkey) {
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
-	db_close($db);				
+	db_close($db);
 	if(isset($dbentry['username'])){
 		return $dbentry['username'];
 	}
@@ -598,5 +610,67 @@ function db_getGuteTatenAnzahl(){
 	db_close($db);
 	return $dbentry['COUNT(*)'];
 }
+
+function db_regDateOfUserID($userID) {
+	$db = db_connect();
+	$sql = "SELECT regDate FROM User WHERE idUser = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$userID);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	if(isset($dbentry['regDate'])){
+		//echo 'RegDate '.$dbentry['regDate'];
+		$dateTeile = explode(" ", $dbentry['regDate']); //Im Datestring ist auch die Zeit, wir wollen nur das Datum (siehe Erstellung des Benutzeraccounts)
+		db_close($db);
+		return $dateTeile[0];
+	}
+	else {
+		echo "Error: ".mysqli_error($db);
+		db_close($db);
+		return false;
+	}
+}
+
+/*Liefert den PasswortHash zu einer UserID oder false*/
+function db_passwordHashOfUserID($userID) {
+	$db = db_connect();
+	$sql = "SELECT password FROM User WHERE idUser = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$userID);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	if(isset($dbentry['password'])){
+		db_close($db);
+		return $dbentry['password'];
+	}
+	else {
+		echo "Error: ".mysqli_error($db);
+		db_close($db);
+		return false;
+	}
+}
+
+/**/
+function db_statusByUserID($userID) {
+	$db = db_connect();
+	$sql = "SELECT status FROM User WHERE idUser = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$userID);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	if(isset($dbentry['status'])){
+		db_close($db);
+		return $dbentry['status'];
+	}
+	else {
+		echo "Error: ".mysqli_error($db);
+		db_close($db);
+		return false;
+	}
+}
+
 
 ?>

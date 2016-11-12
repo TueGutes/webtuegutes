@@ -11,89 +11,9 @@ if($_USER->loggedIn())
 include './includes/db_connector.php';
 
 //DB Funktionen, die später ausgelagert werden sollten
+// TIMM:
+// ausgelagert in db_connector, code ist gesaved in einer .txt bei mir
 
-//Gibt das Attribut idBenutzer zu einem gegebenen Benutzernamen zurück oder false,
-//falls es keinen Account mit dem Benutzernamen gibt
-function idOfBenutzername($benutzername) {
-	$db = db_connect();
-	$sql = "SELECT idUser FROM User WHERE username = ?";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('s',$benutzername);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	db_close($db);
-	if(isset($dbentry['idUser'])){
-		return $dbentry['idUser'];
-	}
-	else {
-		return false;
-	}
-	
-	//return false; //Testzwecke
-}
-
-/*Liefert das Registrierungsdatum zu einer UserID oder false*/
-function regDateOfUserID($userID) {
-	$db = db_connect();
-	$sql = "SELECT regDate FROM User WHERE idUser = ?";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('i',$userID);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	if(isset($dbentry['regDate'])){
-		//echo 'RegDate '.$dbentry['regDate'];
-		$dateTeile = explode(" ", $dbentry['regDate']); //Im Datestring ist auch die Zeit, wir wollen nur das Datum (siehe Erstellung des Benutzeraccounts)
-		db_close($db);
-		return $dateTeile[0];
-	}
-	else {
-		echo "Error: ".mysqli_error($db);
-		db_close($db);
-		return false;
-	}
-}
-
-/*Liefert den PasswortHash zu einer UserID oder false*/
-function passwordHashOfUserID($userID) {
-	$db = db_connect();
-	$sql = "SELECT password FROM User WHERE idUser = ?";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('i',$userID);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	if(isset($dbentry['password'])){
-		db_close($db);
-		return $dbentry['password'];
-	}
-	else {
-		echo "Error: ".mysqli_error($db);
-		db_close($db);
-		return false;
-	}
-}
-
-/**/
-function statusByUserID($userID) {
-	$db = db_connect();
-	$sql = "SELECT status FROM User WHERE idUser = ?";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('i',$userID);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	if(isset($dbentry['status'])){
-		db_close($db);
-		return $dbentry['status'];
-	}
-	else {
-		echo "Error: ".mysqli_error($db);
-		db_close($db);
-		return false;
-	}
-}
 
 
 $output = isset($_GET['code']) ? (isset($wlang['login_code_' . $_GET['code']]) ? $wlang['login_code_' . $_GET['code']] : "") : "";
@@ -103,12 +23,12 @@ if(isset($_POST['username']) && isset($_POST['password']))
 	if(isset($_POST['continue']) && $_POST['continue'] != '')
 		$continue = urldecode($_POST['continue']);
 	
-	$userID = idOfBenutzername($_POST['username']);
+	$userID = db_idOfBenutzername($_POST['username']);
 	if($userID != false)
 	{
-		$regDate = regDateOfUserID($userID);
-		$passHash = passwordHashOfUserID($userID);
-		$status = statusByUserID($userID);
+		$regDate = db_regDateOfUserID($userID);
+		$passHash = db_passwordHashOfUserID($userID);
+		$status = db_statusByUserID($userID);
 		if($status != "nichtVerifiziert")
 		{
 			if(md5($_POST['password'].$regDate) === $passHash) //Eingegebenes Passwort ist richtig
