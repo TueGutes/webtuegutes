@@ -104,11 +104,11 @@ $db = db_connect();
 					$error .= 'Bitte Postleitzahl überprüfen! Als Postleitzahl sind nur fünfstellige Zahlen erlaubt.<br>';
 
 				//Startzeitpunkt
-				if (!validateDate($starttime))
+				if (!DateHandler::isValid($$starttime))
 					$error .= 'Es wurde kein korrektes Startzeitpunkt für die gute Tat festgelegt.<br>';
 
 				//Endzeitpunkt
-				if (!validateDate($endtime))
+				if (!DateHandler::isValid($endtime))
 					$error .= 'Es wurde kein korrektes Endzeitpunkt für die gute Tat festgelegt.<br>';
 
 				if (!db_getIdPostalbyPostalcodePlace($postalcode,$place))
