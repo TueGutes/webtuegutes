@@ -511,33 +511,62 @@ function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $pi
 	db_close($db);
 }
 
-function db_getGuteTatenForList($startrow,$numberofrows){
+function db_getGuteTatenForList($startrow,$numberofrows,$stat){
 	$db = db_connect();
-	$sql = "SELECT 
-		Deeds.idGuteTat,
-		Deeds.name, 
-		Deeds.category, 
-		Deeds.street, 
-		Deeds.housenumber, 
-		Deeds.idPostal,
-		Deeds.organization, 
-		Deeds.countHelper,
-		Deeds.status, 
-		Trust.idTrust, 
-		Trust.trustleveldescription,
-		DeedTexts.description,
-		Postalcode.postalcode,
-		Postalcode.place
-	FROM Deeds 
-		Join DeedTexts
-			On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
-		Join Postalcode
-			On (Deeds.idPostal = Postalcode.idPostal)
-		Join Trust
-			On (Deeds.idTrust =	Trust.idTrust)
-	LIMIT ? , ?";
+	if ($stat == 'alle'){
+		$sql = "SELECT 
+			Deeds.idGuteTat,
+			Deeds.name, 
+			Deeds.category, 
+			Deeds.street, 
+			Deeds.housenumber, 
+			Deeds.idPostal,
+			Deeds.organization, 
+			Deeds.countHelper,
+			Deeds.status, 
+			Trust.idTrust, 
+			Trust.trustleveldescription,
+			DeedTexts.description,
+			Postalcode.postalcode,
+			Postalcode.place
+		FROM Deeds 
+			Join DeedTexts
+				On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
+			Join Postalcode
+				On (Deeds.idPostal = Postalcode.idPostal)
+			Join Trust
+				On (Deeds.idTrust =	Trust.idTrust)
+		WHERE NOT Deeds.status = 'nichtFreigegeben'
+		LIMIT ? , ?";
+	}
+	else{
+		$sql = "SELECT 
+			Deeds.idGuteTat,
+			Deeds.name, 
+			Deeds.category, 
+			Deeds.street, 
+			Deeds.housenumber, 
+			Deeds.idPostal,
+			Deeds.organization, 
+			Deeds.countHelper,
+			Deeds.status, 
+			Trust.idTrust, 
+			Trust.trustleveldescription,
+			DeedTexts.description,
+			Postalcode.postalcode,
+			Postalcode.place
+		FROM Deeds 
+			Join DeedTexts
+				On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
+			Join Postalcode
+				On (Deeds.idPostal = Postalcode.idPostal)
+			Join Trust
+				On (Deeds.idTrust =	Trust.idTrust)
+		WHERE Deeds.status = ?
+		LIMIT ? , ?";
+	}
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('ii',$startrow,$numberofrows);
+	$stmt->bind_param('sii',$stat,$startrow,$numberofrows);
 	$stmt->execute();
 	$result = $stmt->get_result();
 	db_close($db);
