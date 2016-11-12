@@ -23,7 +23,7 @@ if(!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 1
 </div>
 <br> 
 		<?php
-		
+			$placeholder = 'alle';
 			/*$intZahl=0;
 			$tatAusgeben=new tatAusgeben($intZahl);
 			$tatAusgeben->toStringTat();
@@ -31,7 +31,7 @@ if(!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 1
 			//$allDeedsCount = db_connector blabla
 			//$neededPages = $allDeedsCount/10;
 			
-			$arr = db_getGuteTatenForList(10*($_GET['page']-1), 10);
+			$arr = db_getGuteTatenForList(10*($_GET['page']-1), 10,$placeholder);
 			$maxZeichenFürDieKurzbeschreibung = 150;
 
 			for($i = 0; $i < sizeof($arr); $i++){
@@ -52,8 +52,9 @@ if(!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 1
 
 <!--Zurück / Weiter Buttons-->
 <?php
+	$placeholder = 'alle';
 	$vor = $_GET['page'] > 1;
-	$nach = db_getGuteTatenForList(10*($_GET['page']), 10); //Sobald Deeds nicht mehr doppelt ausgegeben werden -> Mit Anzahl prüfen!
+	$nach = db_getGuteTatenForList(10*($_GET['page']), 10,$placeholder); //Sobald Deeds nicht mehr doppelt ausgegeben werden -> Mit Anzahl prüfen!
 	if ($vor) echo '<a href="./deeds?page=' . ($_GET['page']-1) . '"><input type="button" value="Zurück"></a>';
 	if ($vor && $nach) echo '&nbsp';
 	if ($nach) echo '<a href="./deeds?page=' . ($_GET['page']+1) . '"><input type="button" value="Weiter"></a>';

@@ -538,6 +538,16 @@ function db_getGuteTatenForList($startrow,$numberofrows,$stat){
 				On (Deeds.idTrust =	Trust.idTrust)
 		WHERE NOT Deeds.status = 'nichtFreigegeben'
 		LIMIT ? , ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('ii',$startrow,$numberofrows);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		db_close($db);
+		$arr = array();
+		while($dbentry =$result->fetch_object()){
+			$arr[]= $dbentry;
+		}
+		return $arr;
 	}
 	else{
 		$sql = "SELECT 
@@ -564,17 +574,18 @@ function db_getGuteTatenForList($startrow,$numberofrows,$stat){
 				On (Deeds.idTrust =	Trust.idTrust)
 		WHERE Deeds.status = ?
 		LIMIT ? , ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('sii',$stat,$startrow,$numberofrows);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		db_close($db);
+		$arr = array();
+		while($dbentry =$result->fetch_object()){
+			$arr[]= $dbentry;
+		}
+		return $arr;
 	}
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('sii',$stat,$startrow,$numberofrows);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	db_close($db);
-	$arr = array();
-	while($dbentry =$result->fetch_object()){
-		$arr[]= $dbentry;
-	}
-	return $arr;
+	
 
 }
 
