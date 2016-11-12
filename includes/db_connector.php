@@ -673,4 +673,305 @@ function db_statusByUserID($userID) {
 }
 
 
+/*Liefert true, wenn eine Gute Tat mit der idGuteTat = $idGuteTat existiert, sonst false*/
+function db_doesGuteTatExists($idGuteTat) {
+	$db = db_connect();
+	$sql = "SELECT name FROM Deeds WHERE idGuteTat = ? ";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['name'])){
+		return true;
+	}
+	else {
+		return false;
+	}
+
+}
+
+/*Liefert true, wenn sich der Bewerber mit der idUser = $idUser
+bereits für die Gute Tat mit der idGuteTat = $idGuteTat beworben hat.
+false, falls nicht*/
+function db_isUserCandidateOfGuteTat($idGuteTat, $idUser) {
+	$db = db_connect();
+	$sql = "SELECT idUser FROM Application WHERE idUser = ? AND idGuteTat = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('ii',$idUser, $idGuteTat);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['idUser'])){
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/*Liefert die userID der Kontaktperson zu der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
+function db_getUserIdOfContactPersonByGuteTatID($idGuteTat) {
+	$db = db_connect();
+	$sql = "SELECT idUser FROM User U JOIN Deeds D on (U.idUser = D.contactPerson) WHERE idGuteTat = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['idUser'])){
+		return $dbentry['idUser'];
+	}
+	else {
+		return false;
+	}
+}
+
+/*Liefert den Status der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
+function db_getStatusOfGuteTatById($idGuteTat) {
+	$db = db_connect();
+	$sql = "SELECT status FROM Deeds WHERE idGuteTat = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['status'])) {
+		return $dbentry['status'];
+	}
+	else {
+		return false;
+	}
+}
+
+/*Liefert true, wenn die Anzahl der Helfer(Anzahl angenommener Bewerbungen)
+ gleich der Anzahl der angeforderten Helfer für die Gute Tat mit der idGuteTat = $idGuteTat
+ ansonsten false*/
+function db_isNumberOfAcceptedCandidatsEqualToRequestedHelpers($idGuteTat) {
+	$db = db_connect();
+	$sql = "SELECT Count(idUser) As helperCount FROM HelperForDeed WHERE idGuteTat = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+
+	if(isset($dbentry['helperCount'])) {
+		$helperCount =  $dbentry['helperCount'];
+		$sql = "SELECT countHelper As requestedHelperCount FROM Deeds WHERE idGuteTat = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idGuteTat);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		db_close($db);
+		if(isset($dbentry['requestedHelperCount'])) {
+			return $helperCount === $dbentry['requestedHelperCount'];
+		}
+		else {
+				return false;
+		}
+	}
+	else {
+		db_close($db);
+		return false;
+	}
+}
+
+/*Gibt den Status der Bewerbung des Bewerbers mit der idUser = $idUser
+zu der Guten Tat mit der idGuteTat = $idGuteTat zurück, oder false*/
+function db_getStatusOfBewerbung($idUser, $idGuteTat) {
+	$db = db_connect();
+	$sql = "SELECT status FROM Application WHERE idUser = ? AND idGuteTat = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('ii',$idUser, $idGuteTat);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['status'])) {
+		return $dbentry['status'];
+	}
+	else {
+		return false;
+	}
+}
+
+/*Gibt die Email Adresse des Benutzers mit der idUser = $idUser
+ zurück oder false*/
+function db_getMailOfBenutzerByID($idUser) {
+	$db = db_connect();
+	$sql = "SELECT email FROM User WHERE idUser = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idUser);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['email'])){
+		return $dbentry['email'];
+	}
+	else {
+		return false;
+	}
+}
+
+/*Gibt den Namen der Guten Tat mit der idGuteTat = $idGuteTat zurück oder false, falls keine gute Tat existiert*/
+function db_getNameOfGuteTatByID($idGuteTat) {
+	$db = db_connect();
+	$sql = "SELECT name FROM Deeds WHERE idGuteTat = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['name'])){
+		return $dbentry['name'];
+	}
+	else {
+		return false;
+	}
+}
+
+/*Liefert den Usernamen der ContactPerson der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
+function db_getUsernameOfContactPersonByGuteTatID($idGuteTat) {
+	$db = db_connect();
+	$sql = "SELECT username FROM User U JOIN Deeds D on (U.idUser = D.contactPerson) WHERE idGuteTat = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['username'])){
+		return $dbentry['username'];
+	}
+	else {
+		return false;
+	}
+
+}
+
+/*Liefert die Email-Adresse der ContactPerson der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
+function db_getEmailOfContactPersonByGuteTatID($idGuteTat) {
+	$db = db_connect();
+	$sql = "SELECT email FROM User U JOIN Deeds D on (U.idUser = D.contactPerson) WHERE idGuteTat = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['email'])){
+		return $dbentry['email'];
+	}
+	else {
+		return false;
+	}
+}
+
+/*Liefert den Usernamen zu einem Benutzeraccount mit der idUser = $idUser oder false*/
+function db_getUsernameOfBenutzerByID($idUser) {
+	$db = db_connect();
+	$sql = "SELECT username FROM User WHERE idUser = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idUser);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['username'])){
+		return $dbentry['username'];
+	}
+	else {
+		return false;
+	}
+}
+
+/*Fügt einen neuen Eintrag in der Relation Application hinzu
+	idUser = $idUser
+	idGuteTat = $idGuteTat
+	$applicationText = $Bewerbungstext
+	$status = 'offen'
+	$replyText = NULL
+	liefert true im Erfolgsfall, ansonsten false
+*/
+function db_addBewerbung($idUser, $idGuteTat, $Bewerbungstext) {
+	$db = db_connect();
+	$sql = "Insert into Application (idUser, idGuteTat, applicationText, status) values (?,?,?,'offen')";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('iis',$idUser, $idGuteTat, $Bewerbungstext);
+	$stmt->execute();
+	$affected_rows = mysqli_stmt_affected_rows($stmt);
+	db_close($db);
+	if($affected_rows == 1) {
+		return true;
+	} else {
+		echo 'Beim Erstellen der Bewerbung in der Datenbank ist etwas schief belaufen '.mysqli_error($db);
+		return false;
+	}
+}
+
+/*Setzt den status der Bewerbung die zu idUser=$candidateID und idGuteTat=$idGuteTat gehört auf 'angenommen'
+	und setzt die replyMsg auf $Begruendungstext
+	Erzeugt zusätzlich einen neuen Eintrag in der Relation HelpferForDeed mit den gleichen Daten und dem rating 0
+*/
+function db_acceptBewerbung($candidateID, $idGuteTat, $explanation) {
+	$db = db_connect();
+	$sql = 'UPDATE Application SET `status` = "angenommen", `replyMsg` = ? WHERE idUser = ? AND idGuteTat = ?';
+	//echo $sql;
+	//echo $explanation."  ".$idGuteTat."  ".$candidateID;
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('sii',$explanation, $candidateID, $idGuteTat);
+	$stmt->execute();
+	$affected_rows = mysqli_stmt_affected_rows($stmt);
+
+	if($affected_rows == 1) {
+		//Eintrag in HelpferForDeed einfügen
+		$sql = "Insert into HelperForDeed (idUser, idGuteTat, rating) values (?,?,0)";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('ii',$candidateID, $idGuteTat);
+		$stmt->execute();
+		$affected_rows = mysqli_stmt_affected_rows($stmt);
+		db_close($db);
+		if($affected_rows == 1) {
+			return true;
+		} else {
+			echo 'Beim Hinzufügen des Benutzers in der Datenbank zu den Helfern der guten Tat ist etwas schief gegangen '.mysqli_error($db);
+			return false;
+		}
+		return true;
+	} else {
+		echo 'Beim Aktualisieren der Bewerbungsinformation in der Datenbank ist etwas schief gegangen '.mysqli_error($db);
+		db_close($db);
+		return false;
+	}
+}
+
+/*Setzt den status der Bewerbung die zu idUser=$candidateID und idGuteTat=$idGuteTat gehört auf 'abgelehnt'
+	und die replyMsg auf $explanation
+	Liefert true im Erfolgsfall, sonst false
+*/
+function db_declineBewerbung($candidateID, $idGuteTat, $explanation) {
+	$db = db_connect();
+	$sql = "UPDATE Application SET status = 'abgelehnt', replyMsg = ? WHERE idUser = ? AND idGuteTat = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('sii',$explanation, $candidateID, $idGuteTat);
+	$stmt->execute();
+	$affected_rows = mysqli_stmt_affected_rows($stmt);
+	db_close($db);
+	if($affected_rows == 1) {
+		return true;
+	} else {
+		echo 'Beim Aktualisieren der Bewerbungsinformation in der Datenbank ist etwas schief gegangen '.mysqli_error($db);
+		return false;
+	}
+
+}
+
 ?>
