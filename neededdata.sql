@@ -33,6 +33,7 @@ Insert into PersData (idPersData, firstname, lastname) values(1,"testmax","testm
 -- -----------------------------------------------------
 -- Fügt Postleitzahlen und Orte ein
 -- -----------------------------------------------------
+
 INSERT INTO Postalcode(postalcode,place) VALUES(30159, "Bult");
 INSERT INTO Postalcode(postalcode,place) VALUES(30159, "Mitte");
 INSERT INTO Postalcode(postalcode,place) VALUES(30159, "Nordstadt");
@@ -177,3 +178,5 @@ INSERT INTO Postalcode(postalcode,place) VALUES(30659, "Groß Buchholz");
 INSERT INTO Postalcode(postalcode,place) VALUES(30659, "Lahe");
 
 INSERT INTO Postalcode(postalcode,place) VALUES(30669, "Flughafen");
+
+INSERT INTO Postalcode VALUES(-1,0, "404");

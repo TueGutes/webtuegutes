@@ -16,7 +16,7 @@ DEFINE('DB_NAME','tueGutes');
 *
 *Öffnet eine Datenbank Verbindung mit Parametern die vorher fest definiert sind. Die Parameter sind Host, Benutzer, password und Datenbankname
 *
-*@return mysqli <Datenbankverbindungsobjekt auf dem gearbeitet werden kann>
+*@return mysqli Datenbankverbindungsobjekt auf dem gearbeitet werden kann
 */
 function db_connect() {
 	return mysqli_connect(DB_HOST,DB_USER, DB_PASSWORD, DB_NAME);
@@ -27,7 +27,7 @@ function db_connect() {
 *
 *Schließt eine Datenbankverbindung unter verwendung eines Parameters, was ein mysqli Objekt ist
 *
-*@param mysqli <Datenbankverbindungsobjekt>
+*@param mysqli Datenbankverbindungsobjekt
 */
 function db_close(mysqli $db) {
 	mysqli_close($db);
@@ -38,9 +38,9 @@ function db_close(mysqli $db) {
 *
 *Gibt die Id von dem Benutzer zurück, dessen Name als Parameter in die Funktion übergeben wurde.
 *
-*@param String 
+*@param String Benutzername
 *
-*@return Int <Oder false wenn es den Benutzer nicht gibt>
+*@return Int Oder false wenn es den Benutzer nicht gibt
 */
 function db_idOfBenutzername($benutzername) {
 	$db = db_connect();
@@ -66,9 +66,9 @@ function db_idOfBenutzername($benutzername) {
 *
 *Gibt die Id von dem Benutzer zurück, dessen Email als Parameter in die Funktion übergeben wurde.
 *
-*@param String 
+*@param String Emailadresse
 *
-*@return Int <Oder false wenn es den Benutzer nicht gibt>
+*@return Int Oder false wenn es den Benutzer nicht gibt
 */
 function db_idOfEmailAdresse($emailadresse) {
 	$db = db_connect();
@@ -91,9 +91,9 @@ function db_idOfEmailAdresse($emailadresse) {
 /**
 *Gibt die Anzahl der Benutzer zurück.
 *
-*Gibt die Anzahl der Benutzer zurück, egal welchen Status sie haben, ob verifiziert doer nicht.
+*Gibt die Anzahl der Benutzer zurück, egal welchen Status sie haben, ob verifiziert oder nicht.
 *
-*@return Int <Anzahl>
+*@return Int Anzahl
 */
 function db_getBenutzerAnzahl(){
 	$db = db_connect();
@@ -104,8 +104,13 @@ function db_getBenutzerAnzahl(){
 	return $dbentry['COUNT(*)'];
 }
 
-
-//gibt die Gute Taten als Objekte in einem Array zurück
+/**
+*Gibt die Anzahl der Guten Taten zurück.
+*
+*Gibt die Anzahl der Guten Tatenzurück, egal welchen Status sie haben, ob sie freigegeben,geschlossen  oder noch freigeschaltet werden müssen.
+*
+*@return object[] Gute Taten als Objekte in einem Array
+*/
 function db_getGuteTaten(){
 	$db = db_connect();
 	$sql = "SELECT * FROM Deeds";
@@ -118,8 +123,15 @@ function db_getGuteTaten(){
 	return $arr;
 }
 
-
-//Gibt alle Daten einer Guten tat zu einer bestimmten Id der guten Tat aus.
+/**
+*Gibt die eine Guten Tat zurück.
+*
+*Gibt eine gute Tat zu ihrer ID zürück. Es werden alle Attribute der Guten Taten tabelle zurück gegeben.
+*
+*@param Int Id der guten Tat
+*
+*@return mixed[] Alle Attribute der Guten Taten Tabelle in einem Array als Werte
+*/
 function db_getGuteTatbyid($idvonGuteTat){
 	$db = db_connect();
 	$sql = "SELECT * FROM Deeds WHERE idguteTat = ?";
@@ -133,13 +145,22 @@ function db_getGuteTatbyid($idvonGuteTat){
 
 }
 
-
-/*Erstellt einen Benutzeraccount mit den angegeben Parametern, der Status ist erste einmal "unverifiziert*/
-/*Liefert einen cryptkey, falls das Erstellen erfolgreich war, false falls nicht*/
+/**
+*Erstellt einen Benutzer.
+*
+*Erstellt einen Benutzeraccount mit den angegeben Parametern, der Status ist erste einmal "unverifiziert" und liefert einen cryptkey, falls das Erstellen erfolgreich war, false falls nicht. Zudem werden alle nötigen Abhängigkeiten erstellt, wie die nötigen Einträge in "Privacy","PersData" und "Usertexts".
+*
+*@param String Benutzername
+*@param String Vorname
+*@param String Nachname
+*@param String Emailadresse
+*@param String Passwort
+*
+*@return String Verschlüsselungskey oder "false" wenn etwas bei der Erstellung schief geht.
+*/
 function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
-	//TODO: Datenbank Insert ausarbeiten
 	$db = db_connect();
-	$sql = "Insert into User (username, password, email, regDate, points, status, idUserGroup, idTrust) values(?,?,LOWER(?),?,0,'nichtVerifiziert',1,1)";
+	$sql = "INSERT INTO User (username, password, email, regDate, points, status, idUserGroup, idTrust) VALUES(?,?,LOWER(?),?,0,'nichtVerifiziert',1,1)";
 	$stmt = $db->prepare($sql);
 	$date = date("Y-m-d");
 	$pass_md5 = md5($passwort.$date);
@@ -154,7 +175,7 @@ function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $p
 		//return false;
 	}
 
-	$sql = "Insert into Privacy (idPrivacy, privacykey, cryptkey) values ((SELECT MAX(idUser) FROM User),?,?)";
+	$sql = "INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) VALUES ((SELECT MAX(idUser) FROM User),?,?)";
 	$stmt = $db->prepare($sql);
 
 	$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
@@ -170,7 +191,7 @@ function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $p
 		return false;
 	}
 
-	$sql = "Insert into UserTexts (idUserTexts) values ((SELECT MAX(idUser) FROM User))";
+	$sql = "INSERT INTO UserTexts (idUserTexts) VALUES ((SELECT MAX(idUser) FROM User))";
 	$stmt = $db->prepare($sql);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
@@ -182,7 +203,7 @@ function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $p
 		return false;
 	}
 
-	$sql = "Insert into PersData (idPersData, firstname, lastname) values((SELECT MAX(idUser) FROM User),?,?)";
+	$sql = "INSERT INTO PersData (idPersData, firstname, lastname) VALUES((SELECT MAX(idUser) FROM User),?,?)";
 	$stmt = $db->prepare($sql);
 	mysqli_stmt_bind_param($stmt, "ss", $vorname, $nachname);
 	$stmt->execute();
@@ -202,7 +223,15 @@ function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $p
 	//return "asdfjklö"; //Für Testzwecke
 }
 
-/*Setzt den Status des zum cryptkey gehörenden Accounts auf "verifiziert"*/
+/**
+*Aktiviert einen Benutzeraccount.
+*
+*Aktiviert einen Benutzeraccount unter Verwendung des "cryptkeys" der übergeben werden muss. Setzt den Status auf "verifiziert". Gibt "true" zurück.
+*
+*@param String Cryptkey
+*
+*@return boolean 
+*/
 function db_activateAccount($cryptkey) {
 	$db = db_connect();
 	$sql = "UPDATE User SET status = 'Verifiziert' WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
@@ -222,7 +251,15 @@ function db_activateAccount($cryptkey) {
 	return true;
 }
 
-/*Liefert den Benutzernamen des Accounts, der zum cryptkey gehört oder false*/
+/**
+*Gibt einen Benutzernamen zu einem Cryptkey zurück.
+*
+*Die Funktion returnt einen Benutzernamen der zu einem schon generierten Cryptkey gehört. Wenn ein nicht existenter Cryptkey eingefügt wird, so gibt die Funktion false zurück.
+*
+*@param String Cryptkey
+*
+*@return String Der Benutzername oder einen boolean mit dem Wert "false"
+*/
 function db_getUserByCryptkey($cryptkey) {
 	$db = db_connect();
 	$sql = "SELECT username FROM User WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
@@ -238,10 +275,20 @@ function db_getUserByCryptkey($cryptkey) {
 	else {
 		return false;
 	}
-	//return "blecha"; //Testzwecke
 }
 
-//füllt den Ort als Unbekannt, wenn eine Neue Postleitzahl eingefügt wird
+/**
+*Fügt einen neuen Datensatz in "Postalcode" ein.
+*
+*Funktion ist dazu da, falls eine Postleitzahl neu dazukommt, er in die Datenbank eingetragen wird, ohn zu wissen, welcher Ort sich dahinter verbirgt.
+*
+*@deprecated 1.0 Eine Hilfsfunktion dessen Hilfe wir nicht mehr benötigen, wird in Zukunft entfernt wenn sicher gestellt ist, das es nirgendswo verwendet wird.
+*
+*@param Int ID eines Datensatz aus Postalcode
+*@param Int Postleitzahl
+*@param String Stadtteil
+*
+*/
 function db_fix_plz($idPostal,$plz,$place) {
 	$db = db_connect();
 	$sql = "SELECT * from Postalcode where postalcode = ?";
@@ -258,7 +305,16 @@ function db_fix_plz($idPostal,$plz,$place) {
 	db_close($db);
 }
 
-//gibt die Postal id zurück
+/**
+*Gibt die ID zu einer korrekten Kombination aus PLZ und Ort zurück.
+*
+*Die Funktion soll die zugehörige ID zu einer korrekten Kombination aus PLZ und Ort der Postalcode Tabelle zurück geben. Vorraussetzung ist natürlich,dass Die Kombination schon in der Tabelle ist. Bei einer nicht vorhanden Kombination gibt die Funktion "false" zurück.
+*
+*@param Int Postleitzahl
+*@param String Stadtteil
+*
+*@return Int Id von dem entsprechendem Datensatz oder "false"
+*/
 function db_getIdPostalbyPostalcodePlace($plz,$place){
 	$db = db_connect();
 	$sql = "
@@ -280,6 +336,15 @@ function db_getIdPostalbyPostalcodePlace($plz,$place){
 	}
 }
 
+/**
+*Gibt die PLZ und Ort zu einer korrekten ID aus Postalcode zurück.
+*
+*Die Funktion soll die PLZ und den Ort zu einer korrekten ID der Postalcode Tabelle zurück geben. Vorraussetzung ist natürlich,dass Die ID schon in der Tabelle ist. Bei einer nicht vorhanden ID gibt die Funktion "false" zurück.
+*
+*@param Int ID eines Datenssatzes aus Postalcode
+*
+*@return mixed[] Array aus zwei Attributen(postalcode,place)
+*/
 function db_getPostalcodePlacebyIdPostal($idPostal){
 	$db = db_connect();
 	$sql = "
@@ -296,10 +361,19 @@ function db_getPostalcodePlacebyIdPostal($idPostal){
 	return $dbentry;
 }
 
+/**
+*Gibt eine Auswahl an Daten zu einem Benutzernamen zurück
+*
+*Die Funktion ist dazu da um einen Nutzer aus der Datenbank mit ausgwählten Daten zu laden. Die Daten werden in einem Array als Werte zurückgegeben. Man muss den Benutzernamen dazu übergeben. Falls es Werte nicht gibt in der Datenbank, werden sie als Leerstrings gesetzt. Die folgenden Werte werden ausgegeben: idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, idPostal, telefonnumber, messengernumber, birthday
+*
+*@param String Benutzername
+*
+*@return mixed[] Array aus verschiedenen Daten mit den Datentypen von Strings und Ints
+*/
 function db_get_user($user) {
 	$db = db_connect();
 	$sql = "
-		SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, idPostal, telefonnumber, messengernumber, birthday 
+		SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, idPostal, telefonnumber, messengernumber, birthday, place, postalcode 
 		FROM User
 			JOIN Trust
 		    	ON User.idTrust = Trust.idTrust
@@ -311,19 +385,15 @@ function db_get_user($user) {
 		    	ON User.idUser = UserTexts.idUserTexts
 			JOIN PersData
 		    	ON User.idUser = PersData.idPersData
+		    JOIN Postalcode
+		    	ON PersData.idPostal = Postalcode.idPostal
 		WHERE username = ?";
 	$stmt = $db->prepare($sql); 
 	$stmt->bind_param('s',$user);
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$thisuser = $result->fetch_assoc();
-	if (isset($thisuser['idPostal'])) {
-		//PLZ gesetzt -> Lade den Namen des Ortes aus der Datenbank
-		
-		$dbentry = db_getPostalcodePlacebyIdPostal($thisuser['idPostal']);
-		$thisuser['place'] = $dbentry['place'];
-		$thisuser['postalcode'] = $dbentry['postalcode'];
-	} else {
+	if (!isset($thisuser['idPostal'])) {
 		$thisuser['postalcode'] = '';
 		$thisuser['place'] = '';
 		$thisuser['idPostal'] = '';
@@ -346,10 +416,18 @@ function db_get_user($user) {
 
 }
 
-//Soll die Benutzerdaten abspeichern, die von Alex verlangt wurden
-function db_update_user($savedata)
-{
+/**
+*Speichert die die übergeben Daten für einen Nutzer ab.
+*
+*Die Funktion ist dazu da um das Profil eines Nutzers upzudaten. Dazu wird der Funktion ein Array mit den Daten übergeben. Je nachdem wo sie hingehören werden sie korrekt abgespeichert. Die folgenden Werte könne upgedatet werden: username, email, regDate, firstname, lastname, birthday, street, housenumber, telefonnumber, messengernumber, idPostal, avatar, hobbys, description, privacykey
+*
+*@param mixed[] Array aus verschiedenen Daten mit den Datentypen von Strings und Ints
+*/
+function db_update_user($savedata){
 	$savedata['idPostal'] = db_getIdPostalbyPostalcodePlace($savedata['postalcode'],$savedata['place']);
+	if($savedata['idPostal']==''){
+		$savedata['idPostal'] =-1;
+	}
 	$db = db_connect();
 	$sql ="UPDATE User,PersData,UserTexts,Privacy,UserGroup
 		SET 
@@ -397,7 +475,14 @@ function db_update_user($savedata)
 	db_close($db);
 }
 
-//Löscht alle informationen zu einem User
+/**
+*Löscht alle informationen zu einem User.
+*
+*Die Funktion löscht alle Informationen zu einem Benutzer. Da dies ein endgültiger Vorgang ist, wird für die Endgültige Löschung die Eingabe des Passworts verlangt. Es werden auch alle Abhängigkeiten entfernt.
+*
+*@param String Benutzername
+*@param String Passwort
+*/
 function db_delete_user($user, $pass) {
 	$me = db_get_user($user);
 	$pass_md5 = md5($pass.substr($me['regDate'],0,10));
@@ -430,8 +515,15 @@ function db_delete_user($user, $pass) {
 	}
 }
 
-
-// Holt sich eine Gute Tat und zusätzliche Parameter, die von Lukas gefordert waren.
+/**
+*Holt sich eine Gute Tat und zusätzliche Parameter.
+*
+*Durch Übergabe einer Id werden ausgewählte Daten zu einer Tat zurückgegeben. Die Rückgabe erfolgt in Form eines Arrays, in dem die Daten abgespeichert sind. Die folgenden Werte werden abgefragt: Deeds.name, User.username, UserTexts.avatar,Deeds.category, Deeds.street, Deeds.housenumber, Deeds.idPostal,Deeds.starttime, Deeds.endtime, Deeds.organization, Deeds.countHelper, Deeds.status,Trust.idTrust, Trust.trustleveldescription, DeedTexts.description, DeedTexts.pictures, Postalcode.postalcode, Postalcode.place
+*
+*@param Int Id einer Guten Tat
+*
+*@return mixed[] Array von den Attributen in Form der Datentypen String und Int
+*/
 function db_getGuteTat($idGuteTat){
 	$db = db_connect();
 	$sql = 'SELECT 
@@ -475,6 +567,15 @@ function db_getGuteTat($idGuteTat){
 }
 
 // Liefert True wenn der Name schon existiert, sonst false
+/**
+*Überprüft ob Der Name bei einer Guten Tat schon vergeben ist.
+*
+*Überprüfung unter Verwendung des Parameters des Namen, ob es schon eine Gute Tat mit dem Namen gibt. Wenn es den Namen gibt, wird "true" zurück gegeben und wenn es ihn noch nicht gibt, so wird "false" zurück gegeben.
+*
+*@param String Name einer möglichen Guten Tat
+*
+*@return boolean True oder false
+*/
 function db_doesGuteTatNameExists($name){
 	$db = db_connect();
 	$sql = "SELECT name FROM Deeds WHERE name = ?";
@@ -492,8 +593,26 @@ function db_doesGuteTatNameExists($name){
 	}
 }
 
-//erstellt eine gute Tat
-function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $pid, $starttime,$endtime, $organization, $countHelper,         $idTrust,$description, $pictures){
+/**
+*Erstellt eine gute Tat.
+*
+*Erstellung einer guten Tat. Zudem werden alle nötigen Abhängigkeiten erstellt. Es werden die folgenden Attribute der Funktion übergeben:$name,$user_id,$category,$street,$housenumber,$pid,$starttime,$endtime,$organization,$countHelper,$idTrust,$description,$pictures
+*
+*@param String Name der guten Tat
+*@param Int Id des Erstellers(Benutzer)
+*@param String Kategorie
+*@param String Straße
+*@param Int Hausnummer
+*@param Int Id der PLZ/Ort Kombination
+*@param String Startzeit
+*@param String Endzeit
+*@param String Organisation
+*@param Int Anzahl der Helfer
+*@param Int Vertrauenslevel
+*@param Beschreibung der guten Tat
+*@param Bilder zu einer guten Tat
+*/
+function db_createGuteTat($name,$user_id,$category,$street,$housenumber,$pid,$starttime,$endtime,$organization,$countHelper,$idTrust,$description,$pictures){
 	$db = db_connect();
 	//Datensatz in Deeds einfügen
 	//$plz = db_getIdPostalbyPostalcodePlace($postalcode,$place);
@@ -523,6 +642,17 @@ function db_createGuteTat($name, $user_id, $category, $street, $housenumber, $pi
 	db_close($db);
 }
 
+/**
+*Listet Gute Taten mit einer Auswahlmöglichkeit auf.
+*
+*Auflistung von guten Taten. Bei der Auflistung kann mit angegeben werden, aber welcher ID und wie viele Gute Taten aufgelistet werden sollen. Zudem kann über einen Filter angegeben werden ob freigegebene, geschlossene oder nur beides angezeigt werden soll. Es werden folgendene Attribute ausgegeben: Deeds.idGuteTat, Deeds.name, Deeds.category, Deeds.street, Deeds.housenumber, Deeds.idPostal, Deeds.organization, Deeds.countHelper, Deeds.status, Trust.idTrust, Trust.trustleveldescription, DeedTexts.description, Postalcode.postalcode, Postalcode.place
+*
+*@param Int Ab der ID werden die guten Taten aufgelistet
+*@param Int Anzahl der aufzulistenden guten Taten
+*@param String Filter: 'freigegeben','geschlossen','alle'
+*
+*@return mixed[] Array aus den ausgewählten Attributen mit den Datentypen String ung Int
+*/
 function db_getGuteTatenForList($startrow,$numberofrows,$stat){
 	$db = db_connect();
 	if ($stat == 'alle'){
@@ -597,11 +727,15 @@ function db_getGuteTatenForList($startrow,$numberofrows,$stat){
 		}
 		return $arr;
 	}
-	
-
 }
 
-//Gibt die Anzahl der Guten Taten zurück, egal welcher Status sie innehaben
+/**
+*Gibt die Gesamtanzahl der guten Taten zurück.
+*
+*Rückgabe eines Integers welches angibt, wie viele guten Taten insgesamt vorhanden sind. Dabei wird kein Unterschied gemacht, welchen Status sie inne haben.
+*
+*@return Int Anzahl der guten Taten
+*/
 function db_getGuteTatenAnzahl(){
 	$db = db_connect();
 	$sql = "SELECT COUNT(*) FROM Deeds";
@@ -611,6 +745,15 @@ function db_getGuteTatenAnzahl(){
 	return $dbentry['COUNT(*)'];
 }
 
+/**
+*Gibt das Registrierungsdatum des Benutzers zurück.
+*
+*Die Funktion liest das Registrierungsdatum aus und gibt nur Das Datum und nicth die Uhrzeit zurück. Also wenn dei Abfrage korrekt läuft gibt es das Datum zurück und wenn nicht gibt die Funktion "false" zurück.
+*
+*@param Int ID des Benutzers
+*
+*@return String Das Datum oder boolean "false"
+*/
 function db_regDateOfUserID($userID) {
 	$db = db_connect();
 	$sql = "SELECT regDate FROM User WHERE idUser = ?";
@@ -632,7 +775,15 @@ function db_regDateOfUserID($userID) {
 	}
 }
 
-/*Liefert den PasswortHash zu einer UserID oder false*/
+/**
+*Liefert den PasswortHash zu einer UserID oder false.
+*
+*Die Funktion bekommt als Parameter die Benutzer ID übergeben und ließt zu der ID den zugehörigen Passwort Hash aus Datenbank. Falls es die Benutzer ID nicht gibt, so wird false zurück gegeben.
+*
+*@param Int ID des Benutzers
+*
+*@return String Das PasswortHash oder boolean "false"
+*/
 function db_passwordHashOfUserID($userID) {
 	$db = db_connect();
 	$sql = "SELECT password FROM User WHERE idUser = ?";
@@ -652,7 +803,15 @@ function db_passwordHashOfUserID($userID) {
 	}
 }
 
-/**/
+/**
+*Liefert den Status zu einer UserID oder false.
+*
+*Die Funktion bekommt als Parameter die Benutzer ID übergeben und ließt zu der ID den zugehörigen Status aus Datenbank. Falls es die Benutzer ID nicht gibt, so wird false zurück gegeben.
+*
+*@param Int ID des Benutzers
+*
+*@return String Den Status oder boolean "false"
+*/
 function db_statusByUserID($userID) {
 	$db = db_connect();
 	$sql = "SELECT status FROM User WHERE idUser = ?";
@@ -672,8 +831,15 @@ function db_statusByUserID($userID) {
 	}
 }
 
-
-/*Liefert true, wenn eine Gute Tat mit der idGuteTat = $idGuteTat existiert, sonst false*/
+/**
+*Überprüft ob eine Gute Tat mit einer bestimmten ID gibt.
+*
+*Die Funktion bekommt als Parameter eine Gute Tat ID übergeben und überprüft ob die ID schon für ein Gute Tat vergeben wurde. Falls es die Gute Tat ID nicht gibt, so wird false zurück gegeben.
+*
+*@param Int ID einer Guten Tat
+*
+*@return boolean "true" oder "false"
+*/
 function db_doesGuteTatExists($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT name FROM Deeds WHERE idGuteTat = ? ";
@@ -692,9 +858,16 @@ function db_doesGuteTatExists($idGuteTat) {
 
 }
 
-/*Liefert true, wenn sich der Bewerber mit der idUser = $idUser
-bereits für die Gute Tat mit der idGuteTat = $idGuteTat beworben hat.
-false, falls nicht*/
+/**
+*Überprüft ob ein Benutzer sich schon für eine bestimme Gute Tat beworben hat.
+*
+*Die Funktion bekommt als Parameter eine Gute Tat ID und eine Benutzer ID übergeben. Sie prüft ob der Benutzer sich schon für eine bestimmte Gute Tat beworben hat. Ist das der Fall, so gibt die Funktion true zurück und sonst false.
+*
+*@param Int ID einer Guten Tat
+*@param Int ID eines Benutzers
+*
+*@return boolean "true" oder "false"
+*/
 function db_isUserCandidateOfGuteTat($idGuteTat, $idUser) {
 	$db = db_connect();
 	$sql = "SELECT idUser FROM Application WHERE idUser = ? AND idGuteTat = ?";
@@ -712,7 +885,15 @@ function db_isUserCandidateOfGuteTat($idGuteTat, $idUser) {
 	}
 }
 
-/*Liefert die userID der Kontaktperson zu der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
+/**
+*Gibt die ID der Kontaktperson zu einer Guten Tat zurück.
+*
+*Die Funktion bekommt als Parameter eine Gute Tat ID übergeben und gibt die ID der dazugehörigen Kontaktperson zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück.
+*
+*@param Int ID einer Guten Tat
+*
+*@return Int ID der Kontaktperson oder "false"
+*/
 function db_getUserIdOfContactPersonByGuteTatID($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT idUser FROM User U JOIN Deeds D on (U.idUser = D.contactPerson) WHERE idGuteTat = ?";
@@ -730,7 +911,15 @@ function db_getUserIdOfContactPersonByGuteTatID($idGuteTat) {
 	}
 }
 
-/*Liefert den Status der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
+/**
+*Gibt den Status einer Guten Tat zurück.
+*
+*Die Funktion bekommt als Parameter eine Gute Tat ID übergeben und gibt den Status der Guten Tat zurück. Wenn dies fehlschlägt, so gitb die Funktion "false" zurück.
+*
+*@param Int ID einer Guten Tat
+*
+*@return String Status oder "false"
+*/
 function db_getStatusOfGuteTatById($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT status FROM Deeds WHERE idGuteTat = ?";
@@ -748,9 +937,15 @@ function db_getStatusOfGuteTatById($idGuteTat) {
 	}
 }
 
-/*Liefert true, wenn die Anzahl der Helfer(Anzahl angenommener Bewerbungen)
- gleich der Anzahl der angeforderten Helfer für die Gute Tat mit der idGuteTat = $idGuteTat
- ansonsten false*/
+/**
+*Überprüft ob die angenommen Bewerberber die selbe Ańzahl wie der geforderten Anzahl Helfer ist.
+*
+*Die Funktion bekommt als Parameter eine Gute Tat ID übergeben und  überprüft ob die maximale Anzahl der geforderten Helfer erreicht ist oder nicht. Wenn die maximale Anzahl erreicht ist, gibt die Funktion true zurück. Wenn nicht so wird false zurück gegeben.
+*
+*@param Int ID einer Guten Tat
+*
+*@return boolean "true" oder "false"
+*/
 function db_isNumberOfAcceptedCandidatsEqualToRequestedHelpers($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT Count(idUser) As helperCount FROM HelperForDeed WHERE idGuteTat = ?";
@@ -782,8 +977,16 @@ function db_isNumberOfAcceptedCandidatsEqualToRequestedHelpers($idGuteTat) {
 	}
 }
 
-/*Gibt den Status der Bewerbung des Bewerbers mit der idUser = $idUser
-zu der Guten Tat mit der idGuteTat = $idGuteTat zurück, oder false*/
+/**
+*Gibt den Status einer Bewerbung zurück.
+*
+*Die Funktion bekommt als Parameter eine Gute Tat ID und die ID des Bewerbers übergeben. Sie gibt den Status der Bewerbung von dem Bewerber bei der bestimmten guten Tat zurück
+*
+*@param Int ID einer Guten Tat
+*@param Int ID des Benutzers/Bewerbers
+*
+*@return String Status der Bewerbung oder "false"
+*/
 function db_getStatusOfBewerbung($idUser, $idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT status FROM Application WHERE idUser = ? AND idGuteTat = ?";
@@ -801,8 +1004,15 @@ function db_getStatusOfBewerbung($idUser, $idGuteTat) {
 	}
 }
 
-/*Gibt die Email Adresse des Benutzers mit der idUser = $idUser
- zurück oder false*/
+/**
+*Gibt die Email eines Benutzers zurück.
+*
+*Die Funktion bekommt als Parameter eine Benutzer ID übergeben und gibt die Emailadresse dazu zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück.
+*
+*@param Int ID eines Benutzers
+*
+*@return String Emailadresse oder "false"
+*/ 
 function db_getMailOfBenutzerByID($idUser) {
 	$db = db_connect();
 	$sql = "SELECT email FROM User WHERE idUser = ?";
@@ -820,7 +1030,15 @@ function db_getMailOfBenutzerByID($idUser) {
 	}
 }
 
-/*Gibt den Namen der Guten Tat mit der idGuteTat = $idGuteTat zurück oder false, falls keine gute Tat existiert*/
+/**
+*Gibt den Namen einer Guten Tat zurück.
+*
+*Die Funktion bekommt als Parameter eine Gute Tat ID übergeben und gibt den Namen dazu zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück.
+*
+*@param Int ID einer Guten Tat
+*
+*@return String Name oder "false"
+*/ 
 function db_getNameOfGuteTatByID($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT name FROM Deeds WHERE idGuteTat = ?";
@@ -838,7 +1056,15 @@ function db_getNameOfGuteTatByID($idGuteTat) {
 	}
 }
 
-/*Liefert den Usernamen der ContactPerson der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
+/**
+*Gibt den Namen der Kontaktperson einer Guten Tat zurück.
+*
+*Die Funktion bekommt als Parameter eine Gute Tat ID übergeben und gibt den Namen der Kontaktperson von der guten Tat dazu zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück.
+*
+*@param Int ID einer Guten Tat
+*
+*@return String Name oder "false"
+*/ 
 function db_getUsernameOfContactPersonByGuteTatID($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT username FROM User U JOIN Deeds D on (U.idUser = D.contactPerson) WHERE idGuteTat = ?";
@@ -857,7 +1083,15 @@ function db_getUsernameOfContactPersonByGuteTatID($idGuteTat) {
 
 }
 
-/*Liefert die Email-Adresse der ContactPerson der Guten Tat mit der idGuteTat = $idGuteTat oder false*/
+/**
+*Gibt die Emailadresse der Kontaktperson einer Guten Tat zurück.
+*
+*Die Funktion bekommt als Parameter eine Gute Tat ID übergeben und gibt die Emailadresse der Kontaktperson dazu zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück.
+*
+*@param Int ID einer Guten Tat
+*
+*@return String Emailadresse oder "false"
+*/ 
 function db_getEmailOfContactPersonByGuteTatID($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT email FROM User U JOIN Deeds D on (U.idUser = D.contactPerson) WHERE idGuteTat = ?";
@@ -876,6 +1110,15 @@ function db_getEmailOfContactPersonByGuteTatID($idGuteTat) {
 }
 
 /*Liefert den Usernamen zu einem Benutzeraccount mit der idUser = $idUser oder false*/
+/**
+*Gibt den Namen eines Benutzers zurück.
+*
+*Die Funktion bekommt als Parameter eine Benutzer ID übergeben und gibt den Namen des Benutzers dazu zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück.
+*
+*@param Int ID eines Benutzers
+*
+*@return String Benutzername oder "false"
+*/ 
 function db_getUsernameOfBenutzerByID($idUser) {
 	$db = db_connect();
 	$sql = "SELECT username FROM User WHERE idUser = ?";
@@ -893,17 +1136,20 @@ function db_getUsernameOfBenutzerByID($idUser) {
 	}
 }
 
-/*Fügt einen neuen Eintrag in der Relation Application hinzu
-	idUser = $idUser
-	idGuteTat = $idGuteTat
-	$applicationText = $Bewerbungstext
-	$status = 'offen'
-	$replyText = NULL
-	liefert true im Erfolgsfall, ansonsten false
-*/
+/**
+*Fügt eine Bewerbung in die Datenbank ein.
+*
+*Die Funktion bekommt als Parameter eine Gute Tat ID, eine Benutzer ID und den Bewerbungstext übergeben und legt mit den Daten eine Bewerbung an. Ist eine Anlegung einer Bewerbung erfolgreich so gibt die Funktion true zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück. Zudem werden noch folgende Werte gesetzt: $status = 'offen', $replyText = NULL
+*
+*@param Int ID eines Benutzers
+*@param Int ID einer Guten Tat
+*@param String Bewerbungstext
+*
+*@return boolean "true" oder "false"
+*/ 
 function db_addBewerbung($idUser, $idGuteTat, $Bewerbungstext) {
 	$db = db_connect();
-	$sql = "Insert into Application (idUser, idGuteTat, applicationText, status) values (?,?,?,'offen')";
+	$sql = "INSERT INTO Application (idUser, idGuteTat, applicationText, status) VALUES (?,?,?,'offen')";
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('iis',$idUser, $idGuteTat, $Bewerbungstext);
 	$stmt->execute();
@@ -917,10 +1163,17 @@ function db_addBewerbung($idUser, $idGuteTat, $Bewerbungstext) {
 	}
 }
 
-/*Setzt den status der Bewerbung die zu idUser=$candidateID und idGuteTat=$idGuteTat gehört auf 'angenommen'
-	und setzt die replyMsg auf $Begruendungstext
-	Erzeugt zusätzlich einen neuen Eintrag in der Relation HelpferForDeed mit den gleichen Daten und dem rating 0
-*/
+/**
+*Setzt den Status einer Bewerbung in "angenommen" um.
+*
+*Die Funktion bekommt als Parameter eine Benutzer ID, eine Gute Tat ID und die Antwort der Kontaktperson übergeben und setzt den Status in "angenommen" um. Zudem wird ein Eintrag in einer neuer Tabelle angelegt, in denen die akzeptierten Bewerbungen gespeichert werden. Ist eine Akzeptierung einer Bewerbung erfolgreich so gibt die Funktion true zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück. 
+*
+*@param Int ID eines Benutzers
+*@param Int ID einer Guten Tat
+*@param String Erklärung der Kontaktperson
+*
+*@return boolean "true" oder "false"
+*/ 	
 function db_acceptBewerbung($candidateID, $idGuteTat, $explanation) {
 	$db = db_connect();
 	$sql = 'UPDATE Application SET `status` = "angenommen", `replyMsg` = ? WHERE idUser = ? AND idGuteTat = ?';
@@ -933,7 +1186,7 @@ function db_acceptBewerbung($candidateID, $idGuteTat, $explanation) {
 
 	if($affected_rows == 1) {
 		//Eintrag in HelpferForDeed einfügen
-		$sql = "Insert into HelperForDeed (idUser, idGuteTat, rating) values (?,?,0)";
+		$sql = "INSERT INTO HelperForDeed (idUser, idGuteTat, rating) VALUES (?,?,0)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('ii',$candidateID, $idGuteTat);
 		$stmt->execute();
@@ -953,10 +1206,17 @@ function db_acceptBewerbung($candidateID, $idGuteTat, $explanation) {
 	}
 }
 
-/*Setzt den status der Bewerbung die zu idUser=$candidateID und idGuteTat=$idGuteTat gehört auf 'abgelehnt'
-	und die replyMsg auf $explanation
-	Liefert true im Erfolgsfall, sonst false
-*/
+/**
+*Setzt den Status einer Bewerbung in "abgelehnt" um.
+*
+*Die Funktion bekommt als Parameter eine Benutzer ID, eine Gute Tat ID und die Antwort der Kontaktperson übergeben und setzt den Status in "abgelehnt" um. Ist eine Ablehnung einer Bewerbung erfolgreich so gibt die Funktion true zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück. 
+*
+*@param Int ID eines Benutzers
+*@param Int ID einer Guten Tat
+*@param String Erklärung der Kontaktperson
+*
+*@return boolean "true" oder "false"
+*/ 	
 function db_declineBewerbung($candidateID, $idGuteTat, $explanation) {
 	$db = db_connect();
 	$sql = "UPDATE Application SET status = 'abgelehnt', replyMsg = ? WHERE idUser = ? AND idGuteTat = ?";
