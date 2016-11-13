@@ -19,7 +19,7 @@
 */
 
 /*
-*@author Christian Hock
+*@author Christian Hock, Nick Nolting
 *Verlinkung zu Orten fehlt
 *Kategorie soll editierbar sein
 *
@@ -86,29 +86,29 @@ $db = db_connect();
 
 				//Name der guten Tat
 				if ($name === '')
-					$error .= 'Es wurde kein Name für die gute Tat vergeben.<br>';
+					$error .= '<li>Es wurde kein Name für die gute Tat vergeben.</li>';
 
 				//Falls eine fehlerhafte PLZ angegeben wird
 				if (!is_numeric($postalcode))
-					$error .= 'Bitte Postleitzahl überprüfen! Als Postleitzahl sind nur fünfstellige Zahlen erlaubt.<br>';
+					$error .= '<li>Bitte Postleitzahl überprüfen! Als Postleitzahl sind nur fünfstellige Zahlen erlaubt.</li>';
 
 				//Startzeitpunkt
 				if (!DateHandler::isValid($starttime))
-					$error .= 'Es wurde kein korrektes Startzeitpunkt für die gute Tat festgelegt.<br>';
+					$error .= '<li>Es wurde kein korrektes Startzeitpunkt für die gute Tat festgelegt.</li>';
 
 				//Endzeitpunkt
 				if (!DateHandler::isValid($endtime))
-					$error .= 'Es wurde kein korrektes Endzeitpunkt für die gute Tat festgelegt.<br>';
+					$error .= '<li>Es wurde kein korrektes Endzeitpunkt für die gute Tat festgelegt.</li>';
 
 				if (!db_getIdPostalbyPostalcodePlace($postalcode,$place))
-					$error .= 'Es wurde keine korrekter Ort und Postleitzahl angegeben.<br>';
+					$error .= '<li>Derzeit sind leider nur Adressen in Hannover möglich. Deine Adresse wird nicht angenommen?<br><a href="./contact">Kontaktiere uns hier</a></li>';
 
 				//Anzahl Helfer keine Zahl
 				if (!is_numeric($countHelper))
-					$error .= 'Bitte Anzahl der Helfer überprüfen! Als Anzahl muss eine einfache Zahl eingegeben werden.<br>';
+					$error .= '<li>Bitte Anzahl der Helfer überprüfen! Als Anzahl muss eine einfache Zahl eingegeben werden.</li>';
 
 				if ($error != '')
-					die ('Da ist etwas schief gegangen... bitte überprüfe die folgenden Fehler:<br>' . $error . '<input type="button" onclick="history.go(-1)" value="Eingaben korrigieren">');
+					die ('<h3>Uhpps..</h3>Beim Erstellen deiner guten Tat ist leider etwas schief gegangen... bitte überprüfe die folgenden Dinge:<ul align="left" style="margin-left:30%">' . $error . '</ul><input type="button" onclick="history.go(-1)" value="Eingaben korrigieren">');
 	
 		//Einfügen der Guten Tat
 		$uid = db_idOfBenutzername($_USER->getUsername());
