@@ -2,73 +2,94 @@
 /*
 *@author Shanghui Dai
 */
-
 require './includes/DEF.php';
-
 include './includes/db_connector.php';
 require './includes/_top.php';
 error_reporting(0);
-
-// demo, es gibt noch Problem
-// Man muss die URL in href weiter einfuegen.
 ?>
-<form action="#" method="get">
+
+<!-- enter and input keyword-->
+<form action="" method="post">
     <span style="font-size:20px">Stichwort:</span>
-    <input type="text" name="st">
+    <input type="text" name="stichwort">
     <select class="" name="selector">
         <option value="gutes">Gutes</option>
-        <option value="user_name">User</option>
-        <option value="ort">Ort</option>
+        <option value="user_name" <?php if($_POST['selector'] == 'user_name'){echo "selected";} ?>>User</option>
+        <option value="ort" <?php if($_POST['selector'] == 'ort'){echo "selected";} ?>>Ort</option>
     </select>
     <input type="submit" name="sub" value="search">
 </form>
+
+
 <?php
-//$db = db_connect();
-$db = mysqli_connect('localhost', 'tueGutes', 'Sadi23n2os', 'tueGutes');
-if ($_GET['st']) {//suche nach Namen der guten Taten
-    $k = explode(' ', $_GET['st']);
-    if ($_GET['selector'] == 'gutes') {
-        $sql = "SELECT * FROM `User` join `Deeds` on (`User`.idUser = `Deeds`.contactPerson) where `Deeds`.name like '%$k[0]$k[1]%' or `Deeds`.category like '%$k[0]$k[1]%'";
-    }else if($_GET['selector'] == 'user_name'){
-        $sql = "SELECT * FROM `User` join `Deeds` on (`User`.idUser = `Deeds`.contactPerson) where `User`.username like '%$k[0]$k[1]%'";
-    }else{
-        $sql = "SELECT * FROM `User` join `Deeds` on (`User`.idUser = `Deeds`.contactPerson) where `Deeds`.street like '%$k[0]$k[1]%'";
+$db = db_connect();
+
+// $db = mysqli_connect('localhost', 'tueGutes', 'Sadi23n2os', 'tueGutes');
+// Fuzzy Matching, die Ergebnisse in Form der Tabelle zu zeigen
+if ($_POST['stichwort']) {
+    $keyword = explode(' ', $_POST['stichwort']);
+    if ($_POST['selector'] == 'gutes') {
+        $sql = "SELECT * FROM `User` join `Deeds`
+        on (`User`.idUser = `Deeds`.contactPerson)
+        where `Deeds`.name like '%$keyword[0]$keyword[1]%'
+        or `Deeds`.category like '%$keyword[0]$keyword[1]%'";
+    } elseif ($_POST['selector'] == 'user_name') {
+        $sql = "SELECT * FROM `User` join `Deeds`
+        on (`User`.idUser = `Deeds`.contactPerson)
+        where `User`.username like '%$keyword[0]$keyword[1]%'";
+    } else {
+        $sql = "SELECT * FROM `User` join `Deeds`
+        on (`User`.idUser = `Deeds`.contactPerson)
+        where `Deeds`.street like '%$keyword[0]$keyword[1]%'";
     }
-        $result = mysqli_query($db, $sql); ?>
-    <br><br><br><br><br><br><br>
-    <table style="line-height:40px;text-align:center;width:100%;font-size:20px;border:1px solid gray;clear:both">
-        <caption><h1>Result</h1></caption>
-        <tr style="font-size: 24px">
-            <th>Gute Taten</th>
-            <th>Kategorie</th>
-            <th>Ersteller</th>
-            <th>Ort</th>
-            <th>Trust</th>
-            <th>Status</th>
-        </tr>
-        <tbody>
-        <?php
-        while ($row = mysqli_fetch_object($result)) {
-            ?>
-            <tr>
-                <td><a href=""><?php echo $row->name; ?></a></td>
-                <td><?php echo $row->category; ?></td>
-                <td><a href=""><?php echo $row->username;?></a></td>
-                <td><a href=""><?php echo $row->street;?></a></td>
-                <td><?php echo $row->idTrust; ?>
-                <td><?php echo $row->status; ?></td>
-                </td>
-            </tr>
-        <?php
-        } ?>
-        </tbody>
-    </table>
-    <?php mysqli_close($db);
+    $result = mysqli_query($db, $sql);
 
+//create table_header
+//temporary style
+//style needs to be moved into css file
+    $table_header_str = '<br><br><br><br><br><br><br>';
+    $table_header_str .= '<table style="line-height:40px;text-align:center;width:100%;font-size:20px;border:1px solid gray;">';
+    $table_header_str .= '<caption><h1>Result</h1></caption>';
+    $table_header_str .= '<tr style="font-size: 24px">';
+    $table_header_str .= '<th>Gute Taten</th>';
+    $table_header_str .= '<th>Kategorie</th>';
+    $table_header_str .= '<th>Ersteller</th>';
+    $table_header_str .= '<th>Ort</th>';
+    $table_header_str .= '<th>Trust</th>';
+    $table_header_str .= '<th>Status</th>';
+    $table_header_str .= '</tr>';
+    $table_header_str .= '<tbody>';
+//table_header end
 
+    echo $table_header_str;
+
+//create table_body
+    while ($row = mysqli_fetch_object($result)) {
+        $table_body = '<tr>';
+        $table_body .= '<td><a href="deeds_details?id=' . $row->idGuteTat . '">' . $row->name . '</a></td>';
+        $table_body .= '<td>' . $row->category . '</td>';
+        $table_body .= '<td><a href="profile?user=' . $row->username . '">' . $row->username . '</a></td>';
+        $table_body .= '<td>' . $row->street . '</td>';
+        $table_body .= '<td>' . $row->idTrust . '</td>';
+        $table_body .= '<td>' . $row->status . '</td>';
+        $table_body .= '</tr>';
+    }
+    $table_body .= '</tbody>';
+    $table_body .= '</table>';
+//table_body end
+
+    echo $table_body.'<br>';
+    db_close($db);
+//    $js_selector = '<script type="text/javascript">';
+//    $js_selector .= 'var selector= document.getElementsByName("selector");';
+//    $js_selector .= 'selector.options["ort"].selected=true;';
+//    $js_selector .= '</script>';
+//    echo $js_selector;
 }
 ?>
-<!--        echo "Gute Tat:$row->name,&nbsp;Kategorie:$row->category,&nbsp;Status:$row->status";-->
-<?php
-require './includes/_bottom.php';
-?>
+
+
+<!--select.options[i].selected = true;-->
+
+
+<?php require "./includes/_bottom.php"; ?>
