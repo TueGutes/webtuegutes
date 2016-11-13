@@ -11,6 +11,8 @@ include './includes/db_connector.php';
 
 require './includes/_top.php';
 
+include './includes/Map.php';
+
 if(!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 1;
 ?>
 
@@ -94,6 +96,19 @@ if(!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 1
 					}
 		?>
 
+		<!--Einbinden der Map-->
+		<br><br>
+		<style>
+			#mapid{ 
+				left: 10%;
+				height: 500px; width: 80%;
+			}
+		</style>
+		<div id="mapid"></div>
+		<?php
+			createDeedsMap($tatenProSeite, $placeholder);
+		?>
+		
 <br><br><hr>
 </form>
 
