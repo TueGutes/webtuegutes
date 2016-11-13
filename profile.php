@@ -201,8 +201,8 @@
 		$blPersoenlich .= $thisuser['lastname'];
 		$blPersoenlich .= '</td></tr>';
 
-		//Geschlecht anzeigen:
-		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none">' . (($thisuser['gender']==='w')?'weiblich':'männlich') . '</td></tr>';
+		//Geschlecht bearbeiten:
+		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none"><select name="txtGender" size=1><option' . (($thisuser['gender']==='w')?'':' selected') . '>Männlich</option><option' . (($thisuser['gender']==='w')?' select':'') . '>Weiblich</option></td></tr>';
 
 		// Textbox für Tag.
 		$blPersoenlich .= '<tr><td>Geboren:</td><td><input type="text" size="2px"
