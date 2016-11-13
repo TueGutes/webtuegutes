@@ -373,7 +373,7 @@ function db_getPostalcodePlacebyIdPostal($idPostal){
 function db_get_user($user) {
 	$db = db_connect();
 	$sql = "
-		SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, idPostal, telefonnumber, messengernumber, birthday, place, postalcode 
+		SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, PersData.idPostal, telefonnumber, messengernumber, birthday, place, postalcode 
 		FROM User
 			JOIN Trust
 		    	ON User.idTrust = Trust.idTrust
