@@ -35,18 +35,22 @@ if ($_GET['stichwort']) {
     $keyword = explode(' ', $_GET['stichwort']);
     if ($_GET['selector'] == 'gutes') {
         $sql = "SELECT DISTINCT * FROM `User` join `Deeds`
-        on (`User`.idUser = `Deeds`.contactPerson)
+        on (`User`.`idUser` = `Deeds`.`contactPerson`) join `Postalcode`
+        on(`Deeds`.`idPostal` = `Postalcode`.`idPostal`)
+
         where `Deeds`.name like '%$keyword[0]$keyword[1]%'
         or `Deeds`.category like '%$keyword[0]$keyword[1]%'
         ORDER BY `Deeds`.category";
     } elseif ($_GET['selector'] == 'user_name') {
         $sql = "SELECT DISTINCT * FROM `User` join `Deeds`
-        on (`User`.idUser = `Deeds`.contactPerson)
+        on (`User`.idUser = `Deeds`.contactPerson) join `Postalcode`
+        on(`Deeds`.`idPostal` = `Postalcode`.`idPostal`)
         where `User`.username like '%$keyword[0]$keyword[1]%'
         ORDER BY `Deeds`.category";
     } else {
         $sql = "SELECT DISTINCT * FROM `User` join `Deeds`
-        on (`User`.idUser = `Deeds`.contactPerson)
+        on (`User`.idUser = `Deeds`.contactPerson) join `Postalcode`
+        on(`Deeds`.`idPostal` = `Postalcode`.`idPostal`)
         where `Deeds`.street like '%$keyword[0]$keyword[1]%'
         ORDER BY `Deeds`.category";
     }
@@ -54,7 +58,7 @@ if ($_GET['stichwort']) {
     $num = mysqli_num_rows($result);
 
     // you can change pagesize here, 5 is now a very small number but it's easy to see changes
-    $pagesize = 5;
+    $pagesize = 2;
 
     //calculate how many pages we need
     $maxpage = ceil($num / $pagesize);
@@ -78,11 +82,13 @@ if ($_GET['stichwort']) {
     $table_header_str .= '<table style="line-height:40px;text-align:center;width:100%;font-size:20px;border:1px solid gray;">';
     $table_header_str .= '<caption><h1>Result</h1></caption>';
     $table_header_str .= '<tr style="font-size: 24px">';
-    $table_header_str .= '<th>Gute Taten</th>';
+    $table_header_str .= '<th>Taten</th>';
     $table_header_str .= '<th>Kategorie</th>';
-    $table_header_str .= '<th>Ersteller</th>';
-    $table_header_str .= '<th>Ort</th>';
+    $table_header_str .= '<th>User</th>';
+    $table_header_str .= '<th>Stadtteil</th>';
     $table_header_str .= '<th>Trust</th>';
+    $table_header_str .= '<th>Startzeit</th>';
+    $table_header_str .= '<th>Endzeit</th>';
     $table_header_str .= '<th>Status</th>';
     $table_header_str .= '</tr>';
     $table_header_str .= '<tbody>';
@@ -97,8 +103,10 @@ if ($_GET['stichwort']) {
         $table_body .= '<td><a href="deeds_details?id='.$row['idGuteTat'].'">'.$row['name'].'</a></td>';
         $table_body .= '<td>'.$row['category'].'</td>';
         $table_body .= '<td><a href="profile?user='.$row['username'].'">'.$row['username'].'</a></td>';
-        $table_body .= '<td>'.$row['street'].'</td>';
+        $table_body .= '<td>'.$row['place'].'</td>';
         $table_body .= '<td>'.$row['idTrust'].'</td>';
+        $table_body .= '<td>'.$row['starttime'].'</td>';
+        $table_body .= '<td>'.$row['endtime'].'</td>';
         $table_body .= '<td>'.$row['status'].'</td>';
         $table_body .= '</tr>';
     }
@@ -107,6 +115,7 @@ if ($_GET['stichwort']) {
 //  table_body end
     echo $table_body.'<br>';
     mysqli_free_result($result);
+    mysqli_free_result($res);
 //  pages
 //    echo "<a href='search.php?page=1&stichwort=".$_GET['stichwort']."&selector=".$_GET['selector']."'style='margin-left:30px;font-size:20px'>first</a> ";
 //    echo "<a href='search.php?page=".($page-1)."&stichwort=".$_GET['stichwort']."&selector=".$_GET['selector']."' style='margin-left:30px;font-size:20px'>previous</a>";
