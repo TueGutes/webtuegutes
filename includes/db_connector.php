@@ -202,10 +202,10 @@ function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $p
 		echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
 		return false;
 	}
-
-	$sql = "INSERT INTO PersData (idPersData, firstname, lastname) VALUES((SELECT MAX(idUser) FROM User),?,?)";
+	$placeholderidpostal = -1;
+	$sql = "INSERT INTO PersData (idPersData, firstname, lastname,idPostal) VALUES((SELECT MAX(idUser) FROM User),?,?,?)";
 	$stmt = $db->prepare($sql);
-	mysqli_stmt_bind_param($stmt, "ss", $vorname, $nachname);
+	mysqli_stmt_bind_param($stmt, "ssi", $vorname, $nachname,$placeholderidpostal);
 	$stmt->execute();
 	$affected_rows = mysqli_stmt_affected_rows($stmt);
 	if($affected_rows == 1) {
