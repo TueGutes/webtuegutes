@@ -1279,4 +1279,20 @@ function db_getAllAdministrators(){
 	return $arr;
 }
 
+function db_getIDOfGuteTatbyName($name) {
+	$db = db_connect();
+	$sql = "SELECT idGuteTat FROM Deeds WHERE name = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$name);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['idGuteTat'])){
+		return $dbentry['idGuteTat'];
+	}
+	else {
+		return false;
+	}
+}
 ?>
