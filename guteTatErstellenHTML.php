@@ -8,6 +8,8 @@ require './includes/DEF.php';
 	
 require './includes/_top.php';
 
+if (isset($_POST['opened'])) Header("Refresh: 0");
+
 ?>
 
 <h2><?php echo "Eine Tat Erstellen"; ?></h2>

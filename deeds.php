@@ -20,6 +20,7 @@ if(!isset($_GET['page']) /* || db_getGuteTatenAnzahl() >=  */) $_GET['page'] = 1
 
 <div>
 <form action="guteTatErstellenHTML.php" method="post">
+	<input type="hidden" name="opened">
 <input type="submit" value="Gute Tat erstellen" target="_self">
 <br><hr>
 </div>
