@@ -1253,7 +1253,7 @@ function db_declineBewerbung($candidateID, $idGuteTat, $explanation) {
 
 function db_getAllModerators(){
 	$db = db_connect();
-	$sql "SELECT User.username,User.email FROM User WHERE User.idUserGroup = 2";
+	$sql "SELECT username,email FROM User WHERE idUserGroup = 2";
 	$stmt = $db->prepare($sql);
 	$stmt->execute();
 	$result= $stmt->get_result();
@@ -1267,7 +1267,7 @@ function db_getAllModerators(){
 
 function db_getAllAdministrators(){
 	$db = db_connect();
-	$sql "SELECT User.username,User.email FROM User WHERE User.idUserGroup = 3";
+	$sql "SELECT username,email FROM User WHERE idUserGroup = 3";
 	$stmt = $db->prepare($sql);
 	$stmt->execute();
 	$result= $stmt->get_result();
