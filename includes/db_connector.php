@@ -1251,4 +1251,32 @@ function db_declineBewerbung($candidateID, $idGuteTat, $explanation) {
 
 }
 
+function db_getAllModerators(){
+	$db = db_connect();
+	$sql "SELECT User.username,User.email FROM User WHERE User.idUserGroup = 2";
+	$stmt = $db->prepare($sql);
+	$stmt->execute();
+	$result= $stmt->get_result();
+	db_close($db);
+	$arr = array();
+	while($dbentry =$result->fetch_object()){
+		$arr[]= $dbentry;
+	}
+	return $arr;	
+}
+
+function db_getAllAdministrators(){
+	$db = db_connect();
+	$sql "SELECT User.username,User.email FROM User WHERE User.idUserGroup = 3";
+	$stmt = $db->prepare($sql);
+	$stmt->execute();
+	$result= $stmt->get_result();
+	db_close($db);
+	$arr = array();
+	while($dbentry =$result->fetch_object()){
+		$arr[]= $dbentry;
+	}
+	return $arr;	
+}
+
 ?>
