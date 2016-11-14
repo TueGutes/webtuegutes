@@ -119,7 +119,7 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 
 		//Link zum Profil des Bewerbers
 		//TODO: Link zum Profil mit richtigem Parameter
-		echo '<a href="./profile?user='.$candidateID.'">Zum Benutzer-Profil des Bewerbers</a><br><br>';
+		echo '<a href="./profile?user='.db_getUsernameOfBenutzerByID($candidateID).'">Zum Benutzer-Profil des Bewerbers</a><br><br>';
 
 		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
 		$_SESSION['$candidateID'] = $candidateID;

@@ -117,6 +117,9 @@ $db = db_connect();
 		db_createGuteTat($name, $uid, $category, $street, $housenumber, 
 			$plz, $starttime,$endtime, $organization, $countHelper, $idTrust,
 			$description, $pictures);
+
+		//HIER: MAIL SCHREIBEN
+		
 		/*
 		$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,postalcode,time,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		$stmt = $db->prepare($sql);
