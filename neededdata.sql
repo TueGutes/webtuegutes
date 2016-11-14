@@ -28,7 +28,7 @@ INSERT INTO UserGroup(idUserGroup,groupDescription) VALUES(3, "Administrator");
 INSERT INTO User (idUser,username, password, email, regDate, points, status, idUserGroup, idTrust) values(1,"testuser","9d53fbca481ed20edc0c10d6e45fcedf","testmailgutetaten@gmail.com","2016-11-01",0,'Verifiziert',3,3);
 INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) values (1,"111111111111111","345485c1dfc5ebc4dd3fb90e3d591518");
 INSERT INTO UserTexts (idUserTexts) values (1);
-Insert into PersData (idPersData, firstname, lastname) values(1,"testmax","testmuster");
+Insert into PersData (idPersData, firstname, lastname,idPostal) values(1,"testmax","testmuster",-1);
 
 -- -----------------------------------------------------
 -- Fügt Postleitzahlen und Orte ein
