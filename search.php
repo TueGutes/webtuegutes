@@ -2,20 +2,24 @@
 /*
 *@author Shanghui Dai
 */
-require './includes/DEF.php';
-include './includes/db_connector.php';
-require './includes/_top.php';
+require_once './includes/DEF.php';
+include_once './includes/db_connector.php';
+require_once './includes/_top.php';
 error_reporting(0);
 ?>
 
 <!-- enter and input keyword-->
-<form action="" method="post">
+<form action="" method="get">
     <span style="font-size:20px">Stichwort:</span>
     <input type="text" name="stichwort">
     <select class="" name="selector">
         <option value="gutes">Gutes</option>
-        <option value="user_name" <?php if($_POST['selector'] == 'user_name'){echo "selected";} ?>>User</option>
-        <option value="ort" <?php if($_POST['selector'] == 'ort'){echo "selected";} ?>>Ort</option>
+        <option value="user_name"
+        <?php if ($_POST['selector'] == 'user_name') {echo 'selected';}?>>User
+        </option>
+        <option value="ort"
+        <?php if ($_POST['selector'] == 'ort') {echo 'selected';} ?>>Ort
+        </option>
     </select>
     <input type="submit" name="sub" value="search">
 </form>
@@ -26,27 +30,50 @@ $db = db_connect();
 
 // $db = mysqli_connect('localhost', 'tueGutes', 'Sadi23n2os', 'tueGutes');
 // Fuzzy Matching, die Ergebnisse in Form der Tabelle zu zeigen
-if ($_POST['stichwort']) {
-    $keyword = explode(' ', $_POST['stichwort']);
-    if ($_POST['selector'] == 'gutes') {
-        $sql = "SELECT * FROM `User` join `Deeds`
+
+if ($_GET['stichwort']) {
+    $keyword = explode(' ', $_GET['stichwort']);
+    if ($_GET['selector'] == 'gutes') {
+        $sql = "SELECT DISTINCT * FROM `User` join `Deeds`
         on (`User`.idUser = `Deeds`.contactPerson)
         where `Deeds`.name like '%$keyword[0]$keyword[1]%'
-        or `Deeds`.category like '%$keyword[0]$keyword[1]%'";
-    } elseif ($_POST['selector'] == 'user_name') {
-        $sql = "SELECT * FROM `User` join `Deeds`
+        or `Deeds`.category like '%$keyword[0]$keyword[1]%'
+        ORDER BY `Deeds`.category";
+    } elseif ($_GET['selector'] == 'user_name') {
+        $sql = "SELECT DISTINCT * FROM `User` join `Deeds`
         on (`User`.idUser = `Deeds`.contactPerson)
-        where `User`.username like '%$keyword[0]$keyword[1]%'";
+        where `User`.username like '%$keyword[0]$keyword[1]%'
+        ORDER BY `Deeds`.category";
     } else {
-        $sql = "SELECT * FROM `User` join `Deeds`
+        $sql = "SELECT DISTINCT * FROM `User` join `Deeds`
         on (`User`.idUser = `Deeds`.contactPerson)
-        where `Deeds`.street like '%$keyword[0]$keyword[1]%'";
+        where `Deeds`.street like '%$keyword[0]$keyword[1]%'
+        ORDER BY `Deeds`.category";
     }
     $result = mysqli_query($db, $sql);
+    $num = mysqli_num_rows($result);
+
+    // you can change pagesize here, 5 is now a very small number but it's easy to see changes
+    $pagesize = 5;
+
+    //calculate how many pages we need
+    $maxpage = ceil($num / $pagesize);
+    $page = isset($_GET['page']) ? $_GET['page'] : 1;
+    if ($page < 1) {
+        $page = 1;
+    }
+    if ($page > $maxpage) {
+        $page = $maxpage;
+    }
+    //get one page
+    $limit = ' limit '.($page - 1) * $pagesize.','.$pagesize * $page;
+    $sql2 = $sql." {$limit}";
+    $res = mysqli_query($db, $sql2);
 
 //create table_header
 //temporary style
 //style needs to be moved into css file
+
     $table_header_str = '<br><br><br><br><br><br><br>';
     $table_header_str .= '<table style="line-height:40px;text-align:center;width:100%;font-size:20px;border:1px solid gray;">';
     $table_header_str .= '<caption><h1>Result</h1></caption>';
@@ -64,21 +91,33 @@ if ($_POST['stichwort']) {
     echo $table_header_str;
 
 //create table_body
-    while ($row = mysqli_fetch_object($result)) {
-        $table_body = '<tr>';
-        $table_body .= '<td><a href="deeds_details?id=' . $row->idGuteTat . '">' . $row->name . '</a></td>';
-        $table_body .= '<td>' . $row->category . '</td>';
-        $table_body .= '<td><a href="profile?user=' . $row->username . '">' . $row->username . '</a></td>';
-        $table_body .= '<td>' . $row->street . '</td>';
-        $table_body .= '<td>' . $row->idTrust . '</td>';
-        $table_body .= '<td>' . $row->status . '</td>';
+    $table_body;
+    while ($row = mysqli_fetch_array($res)) {
+        $table_body .= '<tr>';
+        $table_body .= '<td><a href="deeds_details?id='.$row['idGuteTat'].'">'.$row['name'].'</a></td>';
+        $table_body .= '<td>'.$row['category'].'</td>';
+        $table_body .= '<td><a href="profile?user='.$row['username'].'">'.$row['username'].'</a></td>';
+        $table_body .= '<td>'.$row['street'].'</td>';
+        $table_body .= '<td>'.$row['idTrust'].'</td>';
+        $table_body .= '<td>'.$row['status'].'</td>';
         $table_body .= '</tr>';
     }
     $table_body .= '</tbody>';
     $table_body .= '</table>';
-//table_body end
-
+//  table_body end
     echo $table_body.'<br>';
+    mysqli_free_result($result);
+//  pages
+//    echo "<a href='search.php?page=1&stichwort=".$_GET['stichwort']."&selector=".$_GET['selector']."'style='margin-left:30px;font-size:20px'>first</a> ";
+//    echo "<a href='search.php?page=".($page-1)."&stichwort=".$_GET['stichwort']."&selector=".$_GET['selector']."' style='margin-left:30px;font-size:20px'>previous</a>";
+//    echo "<a href='search.php?page=".($page+1)."&stichwort=".$_GET['stichwort']."&selector=".$_GET['selector']."' style='margin-left:30px;font-size:20px'>next</a>";
+//    echo "<a href='search.php?page={$maxpage}&stichwort=".$_GET['stichwort']."&selector=".$_GET['selector']."' style='margin-left:30px;font-size:20px'>last</a>";
+//set page URLs
+
+    echo setPageUrl(1, 'first');
+    echo setPageUrl($page - 1, 'previous');
+    echo setPageUrl($page + 1, 'next');
+    echo setPageUrl($maxpage, 'last');
     db_close($db);
 //    $js_selector = '<script type="text/javascript">';
 //    $js_selector .= 'var selector= document.getElementsByName("selector");';
@@ -86,10 +125,15 @@ if ($_POST['stichwort']) {
 //    $js_selector .= '</script>';
 //    echo $js_selector;
 }
+
+//this function will be moved to file includes/db_connector.php after all job been done
+function setPageUrl($page, $sort)
+{
+    $str = "<a href='search.php?page=".$page.'&stichwort='.$_GET['stichwort'].'&selector='.$_GET['selector'].
+        "' style='margin-left:30px;font-size:20px'>".$sort.'</a>';
+    return $str;
+}
+
 ?>
 
-
-<!--select.options[i].selected = true;-->
-
-
-<?php require "./includes/_bottom.php"; ?>
+<?php require './includes/_bottom.php'; ?>
