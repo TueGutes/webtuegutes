@@ -1257,12 +1257,9 @@ function db_getAllModerators(){
 	$stmt = $db->prepare($sql);
 	$stmt->execute();
 	$result= $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
 	db_close($db);
-	$arr = array();
-	while($dbentry =$result->fetch_object()){
-		$arr[]= $dbentry;
-	}
-	return $arr;
+	return $dbentry;
 }
 
 function db_getAllAdministrators(){
@@ -1271,12 +1268,10 @@ function db_getAllAdministrators(){
 	$stmt = $db->prepare($sql);
 	$stmt->execute();
 	$result= $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
 	db_close($db);
-	$arr = array();
-	while($dbentry =$result->fetch_object()){
-		$arr[]= $dbentry;
-	}
-	return $arr;
+	
+	return $dbentry;
 }
 
 function db_getIDOfGuteTatbyName($name) {
