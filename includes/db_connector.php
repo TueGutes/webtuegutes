@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
 * @author Timm Romanik <timm.romanik@stud.hs-hannover.de
@@ -57,7 +57,7 @@ function db_idOfBenutzername($benutzername) {
 	else {
 		return false;
 	}
-	
+
 	//return false; //Testzwecke
 }
 
@@ -78,14 +78,14 @@ function db_idOfEmailAdresse($emailadresse) {
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
-	db_close($db);				
+	db_close($db);
 	if(isset($dbentry['idUser'])){
 		return $dbentry['idUser'];
 	}
 	else {
 		return false;
 	}
-	
+
 }
 
 /**
@@ -230,7 +230,7 @@ function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $p
 *
 *@param String Cryptkey
 *
-*@return boolean 
+*@return boolean
 */
 function db_activateAccount($cryptkey) {
 	$db = db_connect();
@@ -318,11 +318,11 @@ function db_fix_plz($idPostal,$plz,$place) {
 function db_getIdPostalbyPostalcodePlace($plz,$place){
 	$db = db_connect();
 	$sql = "
-		SELECT idPostal 
-		FROM Postalcode 
+		SELECT idPostal
+		FROM Postalcode
 		WHERE postalcode = ?
 		AND place = ?";
-	$stmt = $db->prepare($sql); 
+	$stmt = $db->prepare($sql);
 	$stmt->bind_param('is',$plz,$place);
 	$stmt->execute();
 	$result = $stmt->get_result();
@@ -348,7 +348,7 @@ function db_getIdPostalbyPostalcodePlace($plz,$place){
 function db_getPostalcodePlacebyIdPostal($idPostal){
 	$db = db_connect();
 	$sql = "
-			SELECT postalcode, place 
+			SELECT postalcode, place
 			FROM Postalcode
 			WHERE idPostal = ?
 		";
@@ -373,7 +373,7 @@ function db_getPostalcodePlacebyIdPostal($idPostal){
 function db_get_user($user) {
 	$db = db_connect();
 	$sql = "
-		SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, PersData.idPostal, telefonnumber, messengernumber, birthday, place, postalcode 
+		SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, PersData.idPostal, telefonnumber, messengernumber, birthday, place, postalcode
 		FROM User
 			JOIN Trust
 		    	ON User.idTrust = Trust.idTrust
@@ -388,7 +388,7 @@ function db_get_user($user) {
 		    JOIN Postalcode
 		    	ON PersData.idPostal = Postalcode.idPostal
 		WHERE username = ?";
-	$stmt = $db->prepare($sql); 
+	$stmt = $db->prepare($sql);
 	$stmt->bind_param('s',$user);
 	$stmt->execute();
 	$result = $stmt->get_result();
@@ -411,7 +411,7 @@ function db_get_user($user) {
 	if (!isset($thisuser['telefonnumber'])) $thisuser['telefonnumber'] = "";
 	if (!isset($thisuser['messengernumber'])) $thisuser['messengernumber'] = "";
 	if (!isset($thisuser['birthday'])) $thisuser['birthday'] = "";
-	
+
 	return $thisuser;
 
 }
@@ -430,7 +430,7 @@ function db_update_user($savedata){
 	}
 	$db = db_connect();
 	$sql ="UPDATE User,PersData,UserTexts,Privacy,UserGroup
-		SET 
+		SET
 		User.username = ?,
 		User.email = ?,
 		User.regDate = ?,
@@ -446,7 +446,7 @@ function db_update_user($savedata){
 		UserTexts.hobbys = ?,
 		UserTexts.description = ?,
 		Privacy.privacykey = ?
-		WHERE User.idUser = ? 
+		WHERE User.idUser = ?
 		AND PersData.idPersData = User.idUser
 		AND UserTexts.idUserTexts = User.idUser
 		AND User.idUser = Privacy.idPrivacy
@@ -526,26 +526,26 @@ function db_delete_user($user, $pass) {
 */
 function db_getGuteTat($idGuteTat){
 	$db = db_connect();
-	$sql = 'SELECT 
-		Deeds.name, 
-		User.username, 
+	$sql = 'SELECT
+		Deeds.name,
+		User.username,
 		UserTexts.avatar,
-		Deeds.category, 
-		Deeds.street, 
-		Deeds.housenumber, 
+		Deeds.category,
+		Deeds.street,
+		Deeds.housenumber,
 		Deeds.idPostal,
-		Deeds.starttime, 
-        Deeds.endtime, 
-		Deeds.organization, 
-		Deeds.countHelper, 
+		Deeds.starttime,
+        Deeds.endtime,
+		Deeds.organization,
+		Deeds.countHelper,
 		Deeds.status,
-		Trust.idTrust, 
+		Trust.idTrust,
 		Trust.trustleveldescription,
 		DeedTexts.description,
 		DeedTexts.pictures,
 		Postalcode.postalcode,
 		Postalcode.place
-	FROM Deeds 
+	FROM Deeds
 		Join User
 			On (Deeds.contactPerson = User.idUser)
 		Join UserTexts
@@ -555,7 +555,7 @@ function db_getGuteTat($idGuteTat){
 		Join DeedTexts
 			On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
 		Join Postalcode
-			On (Deeds.idPostal = Postalcode.idPostal)			
+			On (Deeds.idPostal = Postalcode.idPostal)
 	WHERE idGuteTat = ?';
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('i',$idGuteTat);
@@ -618,7 +618,7 @@ function db_createGuteTat($name,$user_id,$category,$street,$housenumber,$pid,$st
 	//$plz = db_getIdPostalbyPostalcodePlace($postalcode,$place);
 	$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,idPostal,starttime,endtime,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('sisssisssii', $name, $user_id, $category, $street, 
+	$stmt->bind_param('sisssisssii', $name, $user_id, $category, $street,
 		$housenumber, $pid, $starttime,$endtime, $organization, $countHelper,
 		$idTrust);
 	$stmt->execute();
@@ -656,22 +656,22 @@ function db_createGuteTat($name,$user_id,$category,$street,$housenumber,$pid,$st
 function db_getGuteTatenForList($startrow,$numberofrows,$stat){
 	$db = db_connect();
 	if ($stat == 'alle'){
-		$sql = "SELECT 
+		$sql = "SELECT
 			Deeds.idGuteTat,
-			Deeds.name, 
-			Deeds.category, 
-			Deeds.street, 
-			Deeds.housenumber, 
+			Deeds.name,
+			Deeds.category,
+			Deeds.street,
+			Deeds.housenumber,
 			Deeds.idPostal,
-			Deeds.organization, 
+			Deeds.organization,
 			Deeds.countHelper,
-			Deeds.status, 
-			Trust.idTrust, 
+			Deeds.status,
+			Trust.idTrust,
 			Trust.trustleveldescription,
 			DeedTexts.description,
 			Postalcode.postalcode,
 			Postalcode.place
-		FROM Deeds 
+		FROM Deeds
 			Join DeedTexts
 				On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
 			Join Postalcode
@@ -692,22 +692,22 @@ function db_getGuteTatenForList($startrow,$numberofrows,$stat){
 		return $arr;
 	}
 	else{
-		$sql = "SELECT 
+		$sql = "SELECT
 			Deeds.idGuteTat,
-			Deeds.name, 
-			Deeds.category, 
-			Deeds.street, 
-			Deeds.housenumber, 
+			Deeds.name,
+			Deeds.category,
+			Deeds.street,
+			Deeds.housenumber,
 			Deeds.idPostal,
-			Deeds.organization, 
+			Deeds.organization,
 			Deeds.countHelper,
-			Deeds.status, 
-			Trust.idTrust, 
+			Deeds.status,
+			Trust.idTrust,
 			Trust.trustleveldescription,
 			DeedTexts.description,
 			Postalcode.postalcode,
 			Postalcode.place
-		FROM Deeds 
+		FROM Deeds
 			Join DeedTexts
 				On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
 			Join Postalcode
@@ -1029,7 +1029,7 @@ function db_getStatusOfBewerbung($idUser, $idGuteTat) {
 *@param Int ID eines Benutzers
 *
 *@return String Emailadresse oder "false"
-*/ 
+*/
 function db_getMailOfBenutzerByID($idUser) {
 	$db = db_connect();
 	$sql = "SELECT email FROM User WHERE idUser = ?";
@@ -1055,7 +1055,7 @@ function db_getMailOfBenutzerByID($idUser) {
 *@param Int ID einer Guten Tat
 *
 *@return String Name oder "false"
-*/ 
+*/
 function db_getNameOfGuteTatByID($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT name FROM Deeds WHERE idGuteTat = ?";
@@ -1081,7 +1081,7 @@ function db_getNameOfGuteTatByID($idGuteTat) {
 *@param Int ID einer Guten Tat
 *
 *@return String Name oder "false"
-*/ 
+*/
 function db_getUsernameOfContactPersonByGuteTatID($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT username FROM User U JOIN Deeds D on (U.idUser = D.contactPerson) WHERE idGuteTat = ?";
@@ -1108,7 +1108,7 @@ function db_getUsernameOfContactPersonByGuteTatID($idGuteTat) {
 *@param Int ID einer Guten Tat
 *
 *@return String Emailadresse oder "false"
-*/ 
+*/
 function db_getEmailOfContactPersonByGuteTatID($idGuteTat) {
 	$db = db_connect();
 	$sql = "SELECT email FROM User U JOIN Deeds D on (U.idUser = D.contactPerson) WHERE idGuteTat = ?";
@@ -1135,7 +1135,7 @@ function db_getEmailOfContactPersonByGuteTatID($idGuteTat) {
 *@param Int ID eines Benutzers
 *
 *@return String Benutzername oder "false"
-*/ 
+*/
 function db_getUsernameOfBenutzerByID($idUser) {
 	$db = db_connect();
 	$sql = "SELECT username FROM User WHERE idUser = ?";
@@ -1163,7 +1163,7 @@ function db_getUsernameOfBenutzerByID($idUser) {
 *@param String Bewerbungstext
 *
 *@return boolean "true" oder "false"
-*/ 
+*/
 function db_addBewerbung($idUser, $idGuteTat, $Bewerbungstext) {
 	$db = db_connect();
 	$sql = "INSERT INTO Application (idUser, idGuteTat, applicationText, status) VALUES (?,?,?,'offen')";
@@ -1183,14 +1183,14 @@ function db_addBewerbung($idUser, $idGuteTat, $Bewerbungstext) {
 /**
 *Setzt den Status einer Bewerbung in "angenommen" um.
 *
-*Die Funktion bekommt als Parameter eine Benutzer ID, eine Gute Tat ID und die Antwort der Kontaktperson übergeben und setzt den Status in "angenommen" um. Zudem wird ein Eintrag in einer neuer Tabelle angelegt, in denen die akzeptierten Bewerbungen gespeichert werden. Ist eine Akzeptierung einer Bewerbung erfolgreich so gibt die Funktion true zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück. 
+*Die Funktion bekommt als Parameter eine Benutzer ID, eine Gute Tat ID und die Antwort der Kontaktperson übergeben und setzt den Status in "angenommen" um. Zudem wird ein Eintrag in einer neuer Tabelle angelegt, in denen die akzeptierten Bewerbungen gespeichert werden. Ist eine Akzeptierung einer Bewerbung erfolgreich so gibt die Funktion true zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück.
 *
 *@param Int ID eines Benutzers
 *@param Int ID einer Guten Tat
 *@param String Erklärung der Kontaktperson
 *
 *@return boolean "true" oder "false"
-*/ 	
+*/
 function db_acceptBewerbung($candidateID, $idGuteTat, $explanation) {
 	$db = db_connect();
 	$sql = 'UPDATE Application SET `status` = "angenommen", `replyMsg` = ? WHERE idUser = ? AND idGuteTat = ?';
@@ -1226,14 +1226,14 @@ function db_acceptBewerbung($candidateID, $idGuteTat, $explanation) {
 /**
 *Setzt den Status einer Bewerbung in "abgelehnt" um.
 *
-*Die Funktion bekommt als Parameter eine Benutzer ID, eine Gute Tat ID und die Antwort der Kontaktperson übergeben und setzt den Status in "abgelehnt" um. Ist eine Ablehnung einer Bewerbung erfolgreich so gibt die Funktion true zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück. 
+*Die Funktion bekommt als Parameter eine Benutzer ID, eine Gute Tat ID und die Antwort der Kontaktperson übergeben und setzt den Status in "abgelehnt" um. Ist eine Ablehnung einer Bewerbung erfolgreich so gibt die Funktion true zurück. Falls dies fehlschlägt aufgrund verschiedener möglicher Einflüsse, so gibt die Funktion false zurück.
 *
 *@param Int ID eines Benutzers
 *@param Int ID einer Guten Tat
 *@param String Erklärung der Kontaktperson
 *
 *@return boolean "true" oder "false"
-*/ 	
+*/
 function db_declineBewerbung($candidateID, $idGuteTat, $explanation) {
 	$db = db_connect();
 	$sql = "UPDATE Application SET status = 'abgelehnt', replyMsg = ? WHERE idUser = ? AND idGuteTat = ?";
@@ -1253,7 +1253,7 @@ function db_declineBewerbung($candidateID, $idGuteTat, $explanation) {
 
 function db_getAllModerators(){
 	$db = db_connect();
-	$sql "SELECT username,email FROM User WHERE idUserGroup = 2";
+	$sql = "SELECT username,email FROM User WHERE idUserGroup = 2";
 	$stmt = $db->prepare($sql);
 	$stmt->execute();
 	$result= $stmt->get_result();
@@ -1262,12 +1262,12 @@ function db_getAllModerators(){
 	while($dbentry =$result->fetch_object()){
 		$arr[]= $dbentry;
 	}
-	return $arr;	
+	return $arr;
 }
 
 function db_getAllAdministrators(){
 	$db = db_connect();
-	$sql "SELECT username,email FROM User WHERE idUserGroup = 3";
+	$sql = "SELECT username,email FROM User WHERE idUserGroup = 3";
 	$stmt = $db->prepare($sql);
 	$stmt->execute();
 	$result= $stmt->get_result();
@@ -1276,7 +1276,7 @@ function db_getAllAdministrators(){
 	while($dbentry =$result->fetch_object()){
 		$arr[]= $dbentry;
 	}
-	return $arr;	
+	return $arr;
 }
 
 ?>
