@@ -24,6 +24,7 @@ INSERT INTO UserGroup(idUserGroup,groupDescription) VALUES(3, "Administrator");
 -- -----------------------------------------------------
 -- Fügt ein TestUser ein
 -- -----------------------------------------------------
+INSERT INTO Postalcode VALUES(-1,0, "404");
 
 INSERT INTO User (idUser,username, password, email, regDate, points, status, idUserGroup, idTrust) values(1,"testuser","9d53fbca481ed20edc0c10d6e45fcedf","testmailgutetaten@gmail.com","2016-11-01",0,'Verifiziert',3,3);
 INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) values (1,"111111111111111","345485c1dfc5ebc4dd3fb90e3d591518");
@@ -179,4 +180,3 @@ INSERT INTO Postalcode(postalcode,place) VALUES(30659, "Lahe");
 
 INSERT INTO Postalcode(postalcode,place) VALUES(30669, "Flughafen");
 
-INSERT INTO Postalcode VALUES(-1,0, "404");
