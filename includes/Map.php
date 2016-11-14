@@ -18,8 +18,8 @@
 	*	 -	Beispiel für den definierten Bereich:
 	*			<style>
 	*				#mapid{ 
-	*					position:absolute; top:50px; left:100px;
-	*					height: 400px; width: 400px;
+	*					position; left:10%;
+	*					height: 400px; width: 80%;
 	*				}
 	*			</style>
 	*
@@ -78,7 +78,6 @@
 			var markers = L.markerClusterGroup();
 		</script>
 		<?php
-			require './includes/db_connector.php';
 			$arr = db_getGuteTaten();
 			
 			// Gehe alle Taten durch und erstelle für jeden Eintrag ein Marker.
@@ -105,8 +104,10 @@
 	
 	/*
 	*	createDeedsMap erstellt eine Map, für die Gute Taten Liste, auf der die Guten Taten angezeigt werden, die auch in der Liste stehen.
+	*	$tatenProSeite -> Wie viele Taten sollen geladen werden.
+	*	$placeholder -> Filter: 'freigegeben','geschlossen','alle'.
 	*/
-	function createDeedsMap(){
+	function createDeedsMap($tatenProSeite, $placeholder){
 		?>
 		<script type="text/javascript">
 			// Generieren der Map. Map wird auf Hannover zentriert.
@@ -119,8 +120,7 @@
 			var markers = L.markerClusterGroup();
 		</script>
 		<?php
-			require './includes/db_connector.php';
-			$arr = db_getGuteTatenForList(10*($_GET['page']-1),10);
+			$arr = db_getGuteTatenForList($tatenProSeite*($_GET['page']-1),$tatenProSeite,$placeholder);
 			
 			// Gehe alle Taten durch und erstelle für jeden Eintrag ein Marker.
 			foreach($arr as $i){
