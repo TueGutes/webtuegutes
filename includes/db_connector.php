@@ -743,7 +743,7 @@ function db_getGuteTatenAnzahl($stat){
 	if ($stat == 'alle'){
 		$sql = "SELECT COUNT(*) FROM Deeds WHERE NOT Deeds.status = 'nichtFreigegeben'";
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('s',$stat);
+		//$stmt->bind_param('s',$stat);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
