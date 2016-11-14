@@ -734,15 +734,32 @@ function db_getGuteTatenForList($startrow,$numberofrows,$stat){
 *
 *Rückgabe eines Integers welches angibt, wie viele guten Taten insgesamt vorhanden sind. Dabei wird kein Unterschied gemacht, welchen Status sie inne haben.
 *
+*@param String Status
+*
 *@return Int Anzahl der guten Taten
 */
-function db_getGuteTatenAnzahl(){
+function db_getGuteTatenAnzahl($stat){
 	$db = db_connect();
-	$sql = "SELECT COUNT(*) FROM Deeds";
-	$result = $db->query($sql);
-	$dbentry = $result->fetch_assoc();
-	db_close($db);
-	return $dbentry['COUNT(*)'];
+	if ($stat == 'alle'){
+		$sql = "SELECT COUNT(*) FROM Deeds WHERE NOT Deeds.status = 'nichtFreigegeben'";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('s',$stat);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		db_close($db);
+		return $dbentry['COUNT(*)'];
+	}
+	else{
+		$sql = "SELECT COUNT(*) FROM Deeds WHERE Deeds.status = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('s',$stat);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		db_close($db);
+		return $dbentry['COUNT(*)'];
+	}
 }
 
 /**
