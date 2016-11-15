@@ -1,6 +1,6 @@
 <?php
 //@author: Andreas Blech
-/*Description: Auf dieser Seite werden zwei Szenarien behandelt.
+/*Beschreibung: Auf dieser Seite werden zwei Szenarien behandelt.
 * 1. Ein Nutzer bewirbt sich für eine gute Tat eines anderen Nutzers
   2. Ein Nutzer schaut sich die Bewerbung eines anderen Nutzers für seine gute Tat an und kann diese annehmen oder ablehnen
 */
@@ -11,14 +11,9 @@ require "./includes/_top.php";
 //Inkludieren von script-Dateien
 include './includes/db_connector.php';
 
-//TODO: DB Funktionen, die später ausgelagert werden sollten
-
-
-
-
 /*
-Es gibt ... Fälle:
-	0. Der Nutzer ist nicht eingeloggt und darf sich keine Bewerbungen anschauen
+Es gibt 6 Fälle:
+	0. Der Nutzer ist nicht eingeloggt und darf sich keine Bewerbungen anschauen (ACCESS.php)
 	1. Ein Nutzer bewirbt sich für eine gute Tat (isset $_GET['tatID'])
 		1.1 Es existiert keine gute Tat zu dieser ID (db_doesGuteTatExists())
 		1.2 Der Nutzer hatte sich bereits für diese Tat beworben (db_isUserCandidateOfGuteTat()
@@ -39,8 +34,6 @@ Es gibt ... Fälle:
 	5. Fall: Bewerbung-Absage Formular wurde abgeschickt. Der Bewerber bekommt eine Absage-Email mit dem Link zur Detailseite der guten Tat
 	(db_declineBewerbung()) der Datenbankeintrag wird angepasst und eine Bestätigung + LInk zur Detailseite der Guten Tat wird angezeigt
 */
-//Fall 0: Profile sind nur für eingeloggte Nutzer sichtbar:
-//if (!$_USER->loggedIn()) die ('<h3>Bewerbungen sind nur für eingeloggte Nutzer sichtbar!</h3><p/><a href="./login">Zum Login</a>');
 
 echo '<h2>Bewerbung</h2>';
 
@@ -56,7 +49,7 @@ if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 	}
 	else if(db_isUserCandidateOfGuteTat($idGuteTat, $idUser)) {
 		//Fall 1.2: Der Nutzer hatte sich bereits für diese Tat beworben
-		echo '<h3><red>Du hast dich bereits für diese Gute Tat beworben</red></h3>';
+		echo '<h3><red>Du hast dich bereits für diese gute Tat beworben</red></h3>';
 	}
 	else if(db_getUserIdOfContactPersonByGuteTatID($idGuteTat) === $idUser) {
 		//Fall 1.3: Der Bewerber selbst hat die gute Tat erstellt
@@ -75,9 +68,6 @@ if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 
 		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
 
-//<table> <tr> <td>
-//<input type="textbox" name="Bewerbungstext"><br><br><br>
-//<b>Bewerbungstext:</b><br>
 		echo '<div class="center">
 		<form action="deeds_bewerbung" method="post">
 				<textarea id="bewerbungstext" name="Bewerbungstext" cols="80" rows="6" placeholder="Bewerbungstext - Schreibe etwas zu deiner Bewerbung um die gute Tat"></textarea><br><br>
@@ -118,7 +108,6 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 		//Fall 1.6: Bewerbung ist okay und kann angenommen oder abgelehnt werden inkl. einer Begründung.
 
 		//Link zum Profil des Bewerbers
-		//TODO: Link zum Profil mit richtigem Parameter
 		echo '<a href="./profile?user='.db_getUsernameOfBenutzerByID($candidateID).'">Zum Benutzer-Profil des Bewerbers</a><br><br>';
 
 		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
@@ -137,7 +126,6 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 }
 else if(isset($_POST['Bewerbungstext'])) {
 	//Fall 3: Bewerbungsformular wurde abgeschickt
-	//TODO: Variablen setzen
 	$Bewerbungstext = $_POST['Bewerbungstext'];
 	$idUser = $_USER->getID();
 	$idGuteTat = $_SESSION['idGuteTat'];
@@ -158,26 +146,22 @@ else if(isset($_POST['Bewerbungstext'])) {
 		"<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
 			<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
 		</div>
-		<h2>Hallo $UsernameOfBewerber!</h2><br>
+		<h2>Hallo $UsernameOfErsteller!</h2><br>
 		<h3>$UsernameOfBewerber hat sich für deine gute Tat '$NameOfGuteTat' beworben. <br>
 		<h3>Er schreibt dazu: \"$Bewerbungstext\"</h3><br>
-		<h3>Besuche die URL, um Details zur Bewerbung einzusehen $actual_link</h3>";
-
-
+		<h3>Besuche die <a href=\"$actual_link\">URL, um Details zur Bewerbung einzusehen</a></h3>";
 
 	//Sende mail an Ersteller der guten Tat
 	sendEmail($MailOfErsteller, $MailSubject, $MailContent);
-	//Datenbank Eintrag
+	//Datenbank Eintrag in Application Relation
 	db_addBewerbung($idUser, $idGuteTat, $Bewerbungstext);
 	//Bestätigung anzeigen
-	echo '<h2><green>Deine Bewerbung wurde erfolgreich abgeschickt</green></h2>';
-	//TODO: Link zu Detailseite der guten Tat
+	echo '<h3><green>Deine Bewerbung wurde erfolgreich abgeschickt</green></h3>';
 	echo '<a href="./deeds_details?id='.$idGuteTat.'">Zur \'Guten Tat\'</a>';
 
 }
 else if(isset($_POST['AnnehmenButton'])) {
 	//Fall 4: Bewerbungs-Annahme Formular wurde abgeschickt
-	//TODO: Variablen setzen
 	$Begruendungstext = $_POST['Begruendungstext'];
 	$idGuteTat = $_SESSION['idGuteTat']; //Zwischengespeicherte Variablen laden und anschließend löschen
 	unset($_SESSION['idGuteTat']);
@@ -202,17 +186,15 @@ else if(isset($_POST['AnnehmenButton'])) {
 
 	//Sende Mail an Bewerber
 	sendEmail($MailOfBewerber, $MailSubject, $MailContent);
-	//Datenbankeintrag anpassen
-	//neuer Datenbankeintrag in der Helper Relation
+	//Datenbankeintrag in Application Relation anpassen
+	//+ neuer Datenbankeintrag in der Helper Relation
 	db_acceptBewerbung($candidateID, $idGuteTat, $Begruendungstext);
 	//Bestätigung anzeigen
-	echo '<h2><green>Der Bewerber wurde über die Annahme seiner Bewerbung informiert</green></h2>';
-	//TODO: Link zu Detailseite der guten Tat
+	echo '<h3><green>Der Bewerber wurde über die Annahme seiner Bewerbung informiert</green></h2>';
 	echo '<a href="./deeds_details?id='.$idGuteTat.'">Zur \'Guten Tat\'</a>';
 }
 else if(isset($_POST['AblehnenButton'])) {
 	//Fall 5: Bewerbung-Absage Formular wurde abgeschickt
-	//TODO: Variablen setzen
 	$Begruendungstext = $_POST['Begruendungstext'];
 	$idGuteTat = $_SESSION['idGuteTat']; //Zwischengespeicherte Variablen laden und anschließend löschen
 	unset($_SESSION['idGuteTat']);
@@ -232,28 +214,16 @@ else if(isset($_POST['AblehnenButton'])) {
 		<h2>Hallo $UsernameOfBewerber!</h2><br>
 		<h3>Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller mit folgender Begründung abgelehnt:</h3> <br> \"$Begruendungstext\"";
 
-
-	/*$mailcontent =
-		"<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
-			<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
-		</div>
-		<div style=\"margin-left:10%;margin-right:10%\">
-			<h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1>
-			<h3>Klicke auf den Link, um deine Registrierung abzuschließen: ".$actual_link."?c=".$cryptkey." </h3>
-		</div>";
-*/
-
 	//Sende Absage-Mail an Bewerber
 	sendEmail($MailOfBewerber, $MailSubject, $MailContent);
-	//Datenbankeintrag anpassen
+	//Datenbankeintrag in Application Relation anpassen
 	db_declineBewerbung($candidateID, $idGuteTat, $Begruendungstext);
 	//Bestätigung anzeigen
-	echo '<h2><green>Der Bewerber wurde über die Ablehnung seiner Bewerbung informiert</green></h2>';
-	//TODO: Link zu Detailseite der guten Tat
+	echo '<h3><green>Der Bewerber wurde über die Ablehnung seiner Bewerbung informiert</green></h2>';
 	echo '<a href="./deeds_details?id='.$idGuteTat.'">Zur \'Guten Tat\'</a>';
 }
 else {
-	//Die URL wurde ohne Argumente aufgerufen
+	//Die URL wurde mit ungültigen Argumenten aufgerufen
 	echo '<h3><red>Der Bewerbungslink wurde mit ungültigen Argumenten aufgerufen</red></h3>';
 }
 

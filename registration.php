@@ -13,7 +13,6 @@ include './includes/db_connector.php';
 // ausgelagert in db_connector, code ist gesaved in einer .txt bei mir
 
 
-
 $username = isset($_POST['benutzername']) ? $_POST['benutzername'] : '';
 $vorname = isset($_POST['vorname']) ? $_POST['vorname']: '';
 $nachname = isset($_POST['nachname']) ? $_POST['nachname'] : '';
@@ -92,7 +91,7 @@ else
 					//Sende Bestätigungslink an Mailadresse
 					$actual_link = $HOST . "/registration";
 
-					$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den Link, um deine Registrierung abzuschließen: ".$actual_link."?c=".$cryptkey." </h3></div>";
+					$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Herzlich Willkommen <b>".$vorname."</b> bei 'Tue Gutes in Hannover':</h1> <h3>Klicke auf den <a href=\"$actual_link?c=$cryptkey\">Link</a>, um deine Registrierung abzuschließen </h3></div>";
 
 					if(sendEmail($mail, "Ihre Registrierung bei TueGutes in Hannover", $mailcontent) === true)
 						$_USER->redirect($HOST. "/login?code=102");

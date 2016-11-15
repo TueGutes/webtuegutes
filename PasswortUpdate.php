@@ -19,14 +19,13 @@ function getCryptkeyByMail($mail) {
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
-	db_close($db);				
+	db_close($db);
 	if(isset($dbentry['cryptkey'])){
 		return $dbentry['cryptkey'];
 	}
 	else {
 		return false;
 	}
-	//return "asdfjklö"; //Testzwecke
 }
 
 /*Liefert das Registrierungsdatum zu einer UserID oder false*/
@@ -56,16 +55,22 @@ function regDateByCryptkey($cryptkey) {
 /*Ändert das Passwort des zum Cryptkey gehörenden Accounts*/
 /*Liefert true bei Erfolg und false beim Fehlerfall*/
 function changePasswortByCryptkey($cryptkey, $newPasswort) {
-	$date = regDateByCryptkey($cryptkey);	
+	$date = regDateByCryptkey($cryptkey);
 	$pass_md5 = md5($newPasswort.$date);
 	$db = db_connect();
 	$sql = "UPDATE User SET password = ? WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
 	$stmt = $db->prepare($sql);
 	mysqli_stmt_bind_param($stmt, "ss", $pass_md5, $cryptkey);
 	$stmt->execute();
-	db_close($db);				
-	
-	return true; //Testzwecke
+
+	$affected_rows = mysqli_stmt_affected_rows($stmt);
+	db_close($db);
+	if($affected_rows == 1) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 /*Liefert den Benutzernamen des Accounts, der zum cryptkey gehört*/
@@ -77,14 +82,13 @@ function getUserByCryptkey($cryptkey) {
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$dbentry = $result->fetch_assoc();
-	db_close($db);				
+	db_close($db);
 	if(isset($dbentry['username'])){
 		return $dbentry['username'];
 	}
 	else {
 		return false;
 	}
-	//return "blecha"; //Testzwecke
 }
 
 				/*
@@ -95,13 +99,11 @@ function getUserByCryptkey($cryptkey) {
 				3. Der Nutzer hat auf den E-Mail Link geklickt und kommt auf ein
 					Formular mit zwei Felder (Passwort und Passwort wdh.)
 				4. Das Formular mit einem neuen Passwort wurde abgeschickt, das neue Passwort wird 		gesetzt und der Nutzer wird über die Änderung informiert
-				5. Der Nutzer ist eingeloggt: <Placeholder> 
+				5. Der Nutzer ist eingeloggt: <Placeholder>
 				*/
-				
-				//$_SESSION['loggedIn'] = false;
-				
+
 				if(!$_USER->loggedIn()) { //Schauen, ob Nutzer schon eingeloggt ist
-					if(isset($_GET['c'])) { //3. Fall: Der Link mit dem Cryptkey wurde aufgerufen 
+					if(isset($_GET['c'])) { //3. Fall: Der Link mit dem Cryptkey wurde aufgerufen
 						//Zeige Formular mit 2 Passwort Feldern ("Passwort" und "Passwort wiederholen")
 						echo'<form action="./PasswortUpdate" method="post">
 									<center>
@@ -120,7 +122,7 @@ function getUserByCryptkey($cryptkey) {
 									</center>
 								</form>';
 							//Speichere den Cryptkey temporär in der Session, damit man ihn auslesen kann, wenn das Formular versendet wurde
-							$_SESSION['cryptkey'] = $_GET['c'];	
+							$_SESSION['cryptkey'] = $_GET['c'];
 					} elseif(isset($_POST['mail'])) { //2.Fall: Zeige Meldung und schicke Bestätigungslink
 						echo '<h2>Passwort Ändern</h2>';
 						//echo '<h3>Email gesendet an: '.$_POST['mail'].'</h3>';
@@ -132,7 +134,7 @@ function getUserByCryptkey($cryptkey) {
 									<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
 							</div>
 							<div style=\"margin-left:10%;margin-right:10%\">
-								<h2>Klicke auf den Link, um ein neues Passwort zu setzen ".$actual_link."?c=$cryptkey </h2>
+								<h2>Klicke auf den <a href=\"$actual_link?c=$cryptkey\">Link</a>, um ein neues Passwort zu setzen </h2>
 							</div>";
 							//"http://localhost/git/PasswortUpdate.php?c=$cryptkey";
 							if(sendEmail($_POST['mail'], "TueGutes - Passwort Ändern", $mailcontent)===true) {
@@ -157,7 +159,7 @@ function getUserByCryptkey($cryptkey) {
 										</table>
 									<input type="submit" value="Email senden">
 									</center>
-								</form>';	
+								</form>';
 						}
 					} elseif(isset($_POST['passwort']) && isset($_POST['passwortwdh'])) {//4.Fall: Neues Passwort setzen, darüber benachrichtigen
 						//Einloggen
@@ -182,16 +184,10 @@ function getUserByCryptkey($cryptkey) {
 						}
 						else {
 							changePasswortByCryptkey($_SESSION['cryptkey'], $_POST['passwort']);
-							//TODO: Auf Profilseite weiterleiten
-							//TODO besser auf die loginseite weiterleiten
-							//$_SESSION['loggedIn'] = true;
-							//$_SESSION['user'] = getUserByCryptkey($_SESSION['cryptkey']); 
 							unset($_SESSION['cryptkey']);
 							echo'<h3>Passwort erfolgreich geändert</h3>';
 						}
-						//$_SESSION['loggedIn']=true;
-						//Header("Location: ./");
-					} else{ //1. Fall: Nutzer ist nicht eingeloggt und auf PasswortUpdate.php gelangt 
+					} else{ //1. Fall: Nutzer ist nicht eingeloggt und auf PasswortUpdate.php gelangt
 						echo '<h2>Passwort Ändern</h2>';
 						echo'<form action="./PasswortUpdate" method="post">
 									<center>
@@ -203,12 +199,12 @@ function getUserByCryptkey($cryptkey) {
 										</table>
 									<input type="submit" value="Email senden">
 									</center>
-								</form>';	
+								</form>';
 					}
 				} else { //5. Fall: Nutzer ist bereits eingeloggt
 					echo '<h3>Du bist bereits eingeloggt</h3>';
 					echo'<a href="./profile">Profil anzeigen</a>';
 				}
 
-include "./includes/_bottom.php"; 			
+include "./includes/_bottom.php";
 ?>
