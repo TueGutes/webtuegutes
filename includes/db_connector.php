@@ -1253,30 +1253,84 @@ function db_declineBewerbung($candidateID, $idGuteTat, $explanation) {
 
 function db_getAllModerators(){
 	$db = db_connect();
-	$sql = "SELECT username,email FROM User WHERE idUserGroup = 2";
+	$sql = "SELECT email FROM User WHERE idUserGroup = 2";
 	$stmt = $db->prepare($sql);
 	$stmt->execute();
 	$result= $stmt->get_result();
 	db_close($db);
-	$arr = array();
+	$arr = array();		
 	while($dbentry =$result->fetch_object()){
-		$arr[]= $dbentry;
+		$arr[]= $dbentry->email;
 	}
 	return $arr;
 }
 
 function db_getAllAdministrators(){
 	$db = db_connect();
-	$sql = "SELECT username,email FROM User WHERE idUserGroup = 3";
+	$sql = "SELECT email FROM User WHERE idUserGroup = 3";
 	$stmt = $db->prepare($sql);
 	$stmt->execute();
 	$result= $stmt->get_result();
 	db_close($db);
-	$arr = array();
+	$arr = array();		
 	while($dbentry =$result->fetch_object()){
-		$arr[]= $dbentry;
+		$arr[]= $dbentry->email;
 	}
 	return $arr;
+}
+
+function db_getIDOfGuteTatbyName($name) {
+	$db = db_connect();
+	$sql = "SELECT idGuteTat FROM Deeds WHERE name = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('s',$name);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	if(isset($dbentry['idGuteTat'])){
+		return $dbentry['idGuteTat'];
+	}
+	else {
+		return false;
+	}
+}
+
+function db_istFreigegeben($idGuteTat) {
+	$db = db_connect();
+	$sql = "
+			SELECT status
+			FROM Deeds
+			WHERE idGuteTat = ?
+		";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	db_close($db);
+	return $dbentry['status']!='nichtFreigegeben';
+}
+
+//Nick
+function db_guteTatFreigeben($idGuteTat) {
+	$db = db_connect();
+	$sql = 'UPDATE Deeds SET Status = "freigegeben" WHERE idGuteTat = ?';
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	db_close($db);	
+}
+
+//Nick
+function db_guteTatAblehnen($idGuteTat) {
+	$db = db_connect();
+	//TODO: Eigenen Status "abgelehnt" für Protestverfahren
+	$sql = 'UPDATE Deeds SET Status = "geschlossen" WHERE idGuteTat = ?';
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i',$idGuteTat);
+	$stmt->execute();
+	db_close($db);	
 }
 
 ?>

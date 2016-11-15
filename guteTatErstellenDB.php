@@ -118,8 +118,27 @@ $db = db_connect();
 			$plz, $starttime,$endtime, $organization, $countHelper, $idTrust,
 			$description, $pictures);
 
-		//HIER: MAIL SCHREIBEN
+		//Versenden der Info-Mails
 		
+		//Bestimmen der Empfänger
+		$mods = db_getAllModerators();
+		$admins = db_getAllAdministrators();
+
+		//Festlegen des Mail-Inhalts
+		$mailSubject = 'Gute Tat ' . "'" . $_POST['name'] . "'" . ' wurde erstellt!';
+		$mailContent1 = '<div style="margin-left:10%;margin-right:10%;background-color:#757575"><img src="img/wLogo.png" alt="TueGutes" title="TueGutes" style="width:25%"/></div><h2>Hallo!';
+		$mailContent2 = '</h2><br>' . $_USER->getUsername() . ' hat gerade eine neue gute Tat erstellt. <br>Um die gute Tat zu bestätigen oder abzulehnen, klicke auf den folgenden Link: <br><a href="' . $HOST . '/deeds_details?id=' . db_getIDOfGuteTatByName($_POST['name']) . '">Zur guten Tat</a>';
+
+		//Versenden der Emails an Moderatoren
+		for ($i = 0; $i < sizeof($mods); $i++) {
+			sendEmail($mods[$i], $mailSubject, $mailContent1 . $mailContent2);
+		}
+		//Versenden der Emails an Administratoren
+		for ($i = 0; $i < sizeof($admins); $i++) {
+			sendEmail($admins[$i], $mailSubject, $mailContent1 . $mailContent2);
+		}
+
+
 		/*
 		$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,postalcode,time,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		$stmt = $db->prepare($sql);
