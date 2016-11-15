@@ -1,6 +1,7 @@
 <?php
 /*
 *@Autor Christian Hock
+* das Bild und den Zeitrahmen zu ändern wurde ausgelassen, da man diese momentan nicht erstellen kann.
 * Es wird die Funktion db_fix_plz($plz) genutzt...
 */
 
