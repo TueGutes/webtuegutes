@@ -12,9 +12,41 @@ include './includes/db_connector.php';
 
 require './includes/_top.php';
 
+$myRole = db_get_user($_USER->getUsername())['groupDescription'];
+if (!(db_istFreigegeben($_GET['id']) || $myRole=='Moderator' || $myRole=='Administrator'))
+	die ('Diese gute Tat muss zuerst von einem Moderator freigegeben werden.<br><a href="./deeds">Schade...</a>');
+
 //------------Einlesen der Daten---------------
 $idTat = $_GET["id"];
 $tat = db_getGuteTat($idTat);
+
+if (!isset($tat['name']))
+	die ('Ungültiger Parameter: Page=' . $_GET['page'] . '<p />Zu dieser ID konnte keine gute Tat gefunden werden.<p />Du meinst das ist ein Fehler? <a href="'.$HOST.'contact">Kontaktiere uns!</a>');
+
+$erstellerName = db_getUsernameOfContactPersonByGuteTatID($idTat);
+$erstellerEmail = db_getEmailOfContactPersonByGuteTatID($idTat);
+
+//Gute Tat freigeben oder ablehnen (inkl. Bestätigungsmail an den Ersteller):
+$gutetat = db_getGuteTat($_GET['id']);
+
+if (isset($_POST['allow'])) {
+	db_guteTatFreigeben($_GET['id']);
+	$mailText = '<h3>Hallo ' . $erstellerName . '</h3><p>Deine gute Tat "' . $tat['name'] . '" wurde gerade von ' . $_USER->getUsername() . ' freigegeben.</p>';
+	$mailText .= '<a href="' . $HOST . '/deeds_details?id=' . $idTat . '">Klicke hier</a>, um sofort zu deiner guten Tat zu gelangen.';
+	sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde angenommen!', $mailText);
+	Header("Refresh: 0");
+} else if (isset($_POST['deny'])) {
+	//TODO: Beim ablehnen soll nicht einfach dieser Block aufgerufen werden. 
+	//Stattdessen soll über "die" ein weiteres Formular mit einem Feld für 
+	//die Begründung angezeigt werden. Erst wenn auch das abgeschickt ist, 
+	//soll dieser Block ausgeführt und die Begründung in die Email integriert werden.
+	db_guteTatAblehnen($_GET['id']);
+	$mailText = '<h3>Hallo ' . $erstellerName . '</h3><p>Deine gute Tat "' . $tat['name'] . '" wurde gerade von ' . $_USER->getUsername() . ' abgelehnt.</p>';
+	$mailText .= '<a href="' . $HOST . '/guteTatErstellenHTML">Klicke hier</a>, um eine neue gute Tat zu erstellen.';
+	sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde abgelehnt', $mailText);
+	die ('Die gute Tat wurde abgelehnt. Der Ersteller der guten Tat wird per Email darüber informiert.<br><a href="'.$HOST.'/deeds">Zurück zur Übersicht</a>');
+}
+
 ?>
 
 <style>
@@ -69,7 +101,21 @@ echo '</div>';
 echo '<p />';
 
 echo '<br> <hr> <br> ';
-if($_USER->loggedIn() && $_USER->getUsername() == $tat["username"]) {
+
+if (!db_istFreigegeben($_GET['id'])) {
+	$form1 = '<form method="post" action="">';
+	$form1 .= '<input type="submit" value="Gute Tat freigeben" width>';
+	$form1 .= '<input type="hidden" name="allow" width>';
+	$form1 .= '</form>';
+
+	$form2 = '<form method="post" action="">';
+	$form2 .= '<input type="submit" value=" Gute Tat ablehnen ">';
+	$form2 .= '<input type="hidden" name="deny" width>';
+	$form2 .= '</form>';
+
+	echo $form1 . '<br>' . $form2;
+}
+else if($_USER->loggedIn() && $_USER->getUsername() == $tat["username"]) {
 
 $link = './deeds_bearbeiten?id='.$idTat;
 
