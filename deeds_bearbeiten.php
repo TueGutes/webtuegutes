@@ -18,8 +18,8 @@ echo '<h3>Es ist ein Aufruffehler aufgetreten.<br>Vermutlich haben Sie den Link 
 $idGuteTat = $_GET['idGuteTat'];
 	}
 //Tat-Objekt holen	für Nutzerüberprüfung
-	$tat = db_getGuteTat($idGuteTat);
-	$nutzer =db_get_user($tat['username']);
+	$tat = DBFunctions::db_getGuteTat($idGuteTat);
+	$nutzer =DBFunctions::db_get_user($tat['username']);
 	if($nutzer['username']!=$tat['username']){
 		die("<h3>unberechtigter Zugriff");
 	}
@@ -32,27 +32,27 @@ $idGuteTat = $_GET['idGuteTat'];
 	if ($data === ''){
 		echo '<h3>Bitte eine neue Beschreibung eingeben.</h3><br>';
 	}else{
-	db_update_deeds_description($data,$idGuteTat);}}
+	DBFunctions::db_update_deeds_description($data,$idGuteTat);}}
 //Name
  else if (isset($_POST['name'])) {
 	$data=$_POST['name'];
-	if(db_doesGuteTatNameExists($data)){
+	if(DBFunctions::db_doesGuteTatNameExists($data)){
 		echo '<h3>Eine andere Tat ist bereits unter diesem Namen veröffentlicht.</h3>';
 	}else if ($data === ''){
 		echo '<h3>Bitte einen neuen Namen eingeben.</h3><br>';
 	}else{
-	db_update_deeds_name($data,$idGuteTat);}}
+	DBFunctions::db_update_deeds_name($data,$idGuteTat);}}
 //Kategorie
 else if(isset($_POST['category'])) {
 	$data=$_POST['category'];
-	db_update_deeds_category($data,$idGuteTat);}
+	DBFunctions::db_update_deeds_category($data,$idGuteTat);}
 //Straße
 	else if(isset($_POST['street'])) {
 	$data=$_POST['street'];
 	if ($data === ''){
 	echo '<h3>Bitte eine neue Straße eingeben.</h3><br>';	
 	}else{
-	db_update_deeds_street($data,$idGuteTat);}
+	DBFunctions::db_update_deeds_street($data,$idGuteTat);}
 	}
 //Hausnummer
 else if(isset($_POST['housenumber'])) {
@@ -60,7 +60,7 @@ else if(isset($_POST['housenumber'])) {
 	if ($data === ''){
 	echo '<h3>Bitte eine neue Hausnummer eingeben.</h3><br>';	
 	}else{
-	db_update_deeds_housenumber($data,$idGuteTat);}
+	DBFunctions::db_update_deeds_housenumber($data,$idGuteTat);}
 	}		
 //Postleitzahl
 	else if(isset($_POST['postalcode'])) {
@@ -70,8 +70,8 @@ else if(isset($_POST['housenumber'])) {
 	}else if (!is_numeric($data)){
 		echo '<h3>Die Postleitzahl bitte als Zahl eingeben.</h3><br>';	
 	}else{
-	db_fix_plz($data);
-	db_update_deeds_postalcode($data,$idGuteTat);}
+	DBFunctions::db_fix_plz($data);
+	DBFunctions::db_update_deeds_postalcode($data,$idGuteTat);}
 	}
 //Organisation
 else if(isset($_POST['organization'])) {
@@ -79,7 +79,7 @@ else if(isset($_POST['organization'])) {
 	if ($data === ''){
 	echo '<h3>Bitte eine neue Organisation eingeben.</h3><br>';	
 	}else{
-	db_update_deeds_organization($data,$idGuteTat);}	
+	DBFunctions::db_update_deeds_organization($data,$idGuteTat);}	
 	}
 //Anzahl Helfer
 else if(isset($_POST['countHelper'])) {
@@ -89,12 +89,12 @@ else if(isset($_POST['countHelper'])) {
 	}else if (!is_numeric($data)){
 		echo '<h3>Die Anzahl der gewünschten Helfer bitte als Zahl eingeben.</h3><br>';	
 	}else{
-	db_update_deeds_countHelper($data,$idGuteTat);}
+	DBFunctions::db_update_deeds_countHelper($data,$idGuteTat);}
 	}
 //Verantwortungslevel
 else if(isset($_POST['idTrust'])) {
 	$data=$_POST['idTrust'];
-	db_update_deeds_IdTrust($data,$idGuteTat);}
+	DBFunctions::db_update_deeds_IdTrust($data,$idGuteTat);}
 //Zeitrahmen
 else if(isset($_POST['von'])) {
 		$data=$_POST['von'];
@@ -107,8 +107,8 @@ else if(isset($_POST['von'])) {
 	else if($data === '' ||$data2 === ''){
 	echo 'bitte Start und Endzeit neu eingeben.';
 	}else{
-		db_update_deeds_starttime($data,$idGuteTat);
-		db_update_deeds_endtime($data2,$idGuteTat);
+		DBFunctions::db_update_deeds_starttime($data,$idGuteTat);
+		DBFunctions::db_update_deeds_endtime($data2,$idGuteTat);
 		}
 	}
 else if(isset($_POST['bis'])) {
@@ -129,11 +129,11 @@ if(!in_array($dateiendung, $bildformate)) {
  echo("Die Maximalgröße beträgt $kb kb.");
 }else{																		     
 $gleichcodiert='data: ' . mime_content_type($_FILES['picture']['tmp_name']) . ';base64,' . base64_encode (file_get_contents($_FILES['picture']['tmp_name']));
-db_update_deeds_picture($gleichcodiert,$idGuteTat);	
+DBFunctions::db_update_deeds_picture($gleichcodiert,$idGuteTat);	
 }
 }
 //Tat-Objekt holen -> jetzt damit es akutell ist
-	$tat = db_getGuteTat($idGuteTat);	
+	$tat = DBFunctions::db_getGuteTat($idGuteTat);	
 //Stringbuilder für den Link und die angezeigen Zeit.
 $link = './deeds_bearbeiten?idGuteTat=' . $idGuteTat;
 $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
@@ -258,160 +258,6 @@ $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 //Autor dieser Funktionen : Christian Hock
 //Es folgt eine lange Liste an anrufen einzelner Bestandteile von Deeds
 //kommt bitte wieder zurück nach connector
-function db_update_deeds_starttime($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deeds
-			SET 
-			deeds.starttime = ?
-			WHERE deeds.idGuteTat = ?";	
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('si',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
-function db_update_deeds_endtime($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deeds
-			SET 
-			deeds.endtime = ?
-			WHERE deeds.idGuteTat = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('si',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
-function db_update_deeds_picture($data,$idGuteTat){
-$db = db_connect();
-		$sql ="UPDATE deedtexts
-			SET 
-			deedtexts.pictures = ?
-			WHERE deedtexts.idDeedTexts = ?";	
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('si',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));	
-			}
-			db_close($db);
-	}
-	function db_update_deeds_description($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deedtexts
-			SET 
-			deedtexts.description = ?
-			WHERE deedtexts.idDeedTexts = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('si',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
-	function db_update_deeds_name($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deeds
-			SET 
-			deeds.name = ?
-			WHERE deeds.idGuteTat = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('si',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
-	function db_update_deeds_category($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deeds
-			SET 
-			deeds.category = ?
-			WHERE deeds.idGuteTat = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('si',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
-	function db_update_deeds_street($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deeds
-			SET 
-			deeds.street = ?
-			WHERE deeds.idGuteTat = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('si',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
-	function db_update_deeds_housenumber($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deeds
-			SET 
-			deeds.housenumber = ?
-			WHERE deeds.idGuteTat = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('si',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
-	function db_update_deeds_postalcode($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deeds
-			SET 
-			deeds.postalcode = ?
-			WHERE deeds.idGuteTat = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('ii',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
-	function db_update_deeds_organization($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deeds
-			SET 
-			deeds.organization = ?
-			WHERE deeds.idGuteTat = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('si',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
-	function db_update_deeds_countHelper($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deeds
-			SET 
-			deeds.countHelper = ?
-			WHERE deeds.idGuteTat = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('ii',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
-	function db_update_deeds_idTrust($data,$idGuteTat){
-		$db = db_connect();
-		$sql ="UPDATE deeds
-			SET 
-			deeds.idTrust = ?
-			WHERE deeds.idGuteTat = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('ii',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-}
+
+//TIMM: Hab ich rauskopiert und in db_connector eingefügt
 ?>

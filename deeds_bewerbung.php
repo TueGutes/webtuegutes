@@ -50,24 +50,24 @@ if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 	$idGuteTat = $_GET['idGuteTat'];
 	$idUser = $_USER->getID();
 
-	if(!db_doesGuteTatExists($idGuteTat)) {
+	if(!DBFunctions::db_doesGuteTatExists($idGuteTat)) {
 		//Fall 1.1: Es existiert keine gute Tat mit der übergebenen ID
 		echo '<h3><red>Die gute Tat konnte nicht gefunden werden :(</red></h3>';
 	}
-	else if(db_isUserCandidateOfGuteTat($idGuteTat, $idUser)) {
+	else if(DBFunctions::db_isUserCandidateOfGuteTat($idGuteTat, $idUser)) {
 		//Fall 1.2: Der Nutzer hatte sich bereits für diese Tat beworben
 		echo '<h3><red>Du hast dich bereits für diese Gute Tat beworben</red></h3>';
 	}
-	else if(db_getUserIdOfContactPersonByGuteTatID($idGuteTat) === $idUser) {
+	else if(DBFunctions::db_getUserIdOfContactPersonByGuteTatID($idGuteTat) === $idUser) {
 		//Fall 1.3: Der Bewerber selbst hat die gute Tat erstellt
 		echo '<h3><red>Du kannst dich nicht für eine gute Tat bewerben, die du selbst ausgeschieben hast</red></h3>';
 	}
-	else if(db_getStatusOfGuteTatById($idGuteTat) === 'geschlossen') {
+	else if(DBFunctions::db_getStatusOfGuteTatById($idGuteTat) === 'geschlossen') {
 		//Fall 1.4: Die Gute Tat ist bereits geschlossen
 		echo '<h3><red>Diese gute Tat wurde bereits abgeschlossen</red></h3>';
 	}
 	else {
-		if(db_isNumberOfAcceptedCandidatsEqualToRequestedHelpers($idGuteTat) === true) {
+		if(DBFunctions::db_isNumberOfAcceptedCandidatsEqualToRequestedHelpers($idGuteTat) === true) {
 			//Fall 1.5: Die Anzahl der angenommenen Bewerbungen erfüllt die Anzahl der gewünschten Helfer
 			echo '<h4>Hinweis: Diese gute Tat hat bereits genügend Helfer, du wirst u.U. als Reserve eingesetzt</h4>';
 		}
@@ -93,8 +93,8 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 	$idGuteTat = $_GET['idGuteTat'];
 	$candidateID = $_GET['candidateID'];
 	$idUser = $_USER->getID();
-	$status = db_getStatusOfBewerbung($candidateID, $idGuteTat);
-	if(db_getUserIdOfContactPersonByGuteTatID($idGuteTat) != $idUser) {
+	$status = DBFunctions::db_getStatusOfBewerbung($candidateID, $idGuteTat);
+	if(DBFunctions::db_getUserIdOfContactPersonByGuteTatID($idGuteTat) != $idUser) {
 		//Fall 1.1: Der Nutzer hat die gute Tat nicht erstellt und darf dementsprechend ihre Bewerbungen nicht annehmen
 		echo '<h3><red>Du darfst nur Bewerbungen zu guten Taten einsehen, die du selbst erstellt hat</red></h3>';
 	}
@@ -110,7 +110,7 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 		//Fall 1.4: Es existiert keine Bewerbung dieses Nutzers für die gute Tat (sollte Websitetechnisch niemals passieren)
 		echo '<h3><red>Es existiert keine Bewerbung des Bewerbers für die Tat</red></h3>';
 	}
-	else if(db_isNumberOfAcceptedCandidatsEqualToRequestedHelpers($idGuteTat) === true) {
+	else if(DBFunctions::db_isNumberOfAcceptedCandidatsEqualToRequestedHelpers($idGuteTat) === true) {
 		//Fall 1.5: Anzahl der angeforderten Helfer bereits erreicht, Bewerbung kann nicht angenommen werden, bleibt ausstehend
 		echo '<h3><red>Die Anzahl der angeforderten Helfer für diese Tat wurde bereits erreicht. </p> Die Bewerbung muss u.U. später akzeptiert werden, falls ein Helfer absagt.</red></h3>';
 	}
@@ -119,7 +119,7 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 
 		//Link zum Profil des Bewerbers
 		//TODO: Link zum Profil mit richtigem Parameter
-		echo '<a href="./profile?user='.db_getUsernameOfBenutzerByID($candidateID).'">Zum Benutzer-Profil des Bewerbers</a><br><br>';
+		echo '<a href="./profile?user='.DBFunctions::db_getUsernameOfBenutzerByID($candidateID).'">Zum Benutzer-Profil des Bewerbers</a><br><br>';
 
 		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
 		$_SESSION['$candidateID'] = $candidateID;
@@ -144,9 +144,9 @@ else if(isset($_POST['Bewerbungstext'])) {
 	unset($_SESSION['idGuteTat']); //Zwischengespeicherte Variable lesen und anschließend löschen
 	$UsernameOfBewerber = $_USER->getUsername();
 
-	$NameOfGuteTat = db_getNameOfGuteTatByID($idGuteTat);
-	$UsernameOfErsteller = db_getUsernameOfContactPersonByGuteTatID($idGuteTat);
-	$MailOfErsteller = db_getEmailOfContactPersonByGuteTatID($idGuteTat);
+	$NameOfGuteTat = DBFunctions::db_getNameOfGuteTatByID($idGuteTat);
+	$UsernameOfErsteller = DBFunctions::db_getUsernameOfContactPersonByGuteTatID($idGuteTat);
+	$MailOfErsteller = DBFunctions::db_getEmailOfContactPersonByGuteTatID($idGuteTat);
 
 	//URL der Bewerbungsseite generieren
 	$actual_link = $HOST."/deeds_bewerbung"."?idGuteTat=$idGuteTat&candidateID=$idUser";
@@ -168,7 +168,7 @@ else if(isset($_POST['Bewerbungstext'])) {
 	//Sende mail an Ersteller der guten Tat
 	sendEmail($MailOfErsteller, $MailSubject, $MailContent);
 	//Datenbank Eintrag
-	db_addBewerbung($idUser, $idGuteTat, $Bewerbungstext);
+	DBFunctions::db_addBewerbung($idUser, $idGuteTat, $Bewerbungstext);
 	//Bestätigung anzeigen
 	echo '<h2><green>Deine Bewerbung wurde erfolgreich abgeschickt</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
@@ -185,9 +185,9 @@ else if(isset($_POST['AnnehmenButton'])) {
 	unset($_SESSION['candidateID']);
 	$UsernameOfErsteller = $_USER->getUsername();
 
-	$MailOfBewerber = db_getMailOfBenutzerByID($candidateID);
-	$UsernameOfBewerber = db_getUsernameOfBenutzerByID($candidateID);
-	$NameOfGuteTat = db_getNameOfGuteTatByID($idGuteTat);
+	$MailOfBewerber = DBFunctions::db_getMailOfBenutzerByID($candidateID);
+	$UsernameOfBewerber = DBFunctions::db_getUsernameOfBenutzerByID($candidateID);
+	$NameOfGuteTat = DBFunctions::db_getNameOfGuteTatByID($idGuteTat);
 
 	$MailSubject = "Bewerbung angenommen!";
 	//$MailContent = "Hallo $UsernameOfBewerber! Deine Bewerbung für die gute Tat '$NameOfGuteTat' wurde von $UsernameOfErsteller angenommen! Er schreibt dazu: $Begruendungstext";
@@ -204,7 +204,7 @@ else if(isset($_POST['AnnehmenButton'])) {
 	sendEmail($MailOfBewerber, $MailSubject, $MailContent);
 	//Datenbankeintrag anpassen
 	//neuer Datenbankeintrag in der Helper Relation
-	db_acceptBewerbung($candidateID, $idGuteTat, $Begruendungstext);
+	DBFunctions::db_acceptBewerbung($candidateID, $idGuteTat, $Begruendungstext);
 	//Bestätigung anzeigen
 	echo '<h2><green>Der Bewerber wurde über die Annahme seiner Bewerbung informiert</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat
@@ -220,9 +220,9 @@ else if(isset($_POST['AblehnenButton'])) {
 	unset($_SESSION['candidateID']);
 	$UsernameOfErsteller = $_USER->getUsername();
 
-	$MailOfBewerber = db_getMailOfBenutzerByID($candidateID);
-	$UsernameOfBewerber = db_getUsernameOfBenutzerByID($candidateID);
-	$NameOfGuteTat = db_getNameOfGuteTatByID($idGuteTat);
+	$MailOfBewerber = DBFunctions::db_getMailOfBenutzerByID($candidateID);
+	$UsernameOfBewerber = DBFunctions::db_getUsernameOfBenutzerByID($candidateID);
+	$NameOfGuteTat = DBFunctions::db_getNameOfGuteTatByID($idGuteTat);
 
 	$MailSubject = "Bewerbung abgelehnt!";
 	$MailContent =
@@ -246,7 +246,7 @@ else if(isset($_POST['AblehnenButton'])) {
 	//Sende Absage-Mail an Bewerber
 	sendEmail($MailOfBewerber, $MailSubject, $MailContent);
 	//Datenbankeintrag anpassen
-	db_declineBewerbung($candidateID, $idGuteTat, $Begruendungstext);
+	DBFunctions::db_declineBewerbung($candidateID, $idGuteTat, $Begruendungstext);
 	//Bestätigung anzeigen
 	echo '<h2><green>Der Bewerber wurde über die Ablehnung seiner Bewerbung informiert</green></h2>';
 	//TODO: Link zu Detailseite der guten Tat

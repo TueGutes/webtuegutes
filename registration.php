@@ -24,7 +24,7 @@ $mail = isset($_POST['mail']) ? $_POST['mail'] : '';
 $output = '';
 if(isset($_GET['c'])) // man kann auch wenn man mit einem Account angemeldet ist, einen anderen Account verifizieren
 {
-	if(db_activateAccount($_GET['c']) === true)
+	if(DBFunctions::db_activateAccount($_GET['c']) === true)
 	{
 		$goto = $HOST . ($_USER->loggedIn() ? "" : "/login?code=101");
 		$_USER->redirect($goto);
@@ -57,7 +57,7 @@ else
 					$error = true;
 				}
 			}
-			if(db_idOfBenutzername($username) != false)
+			if(DBFunctions::db_idOfBenutzername($username) != false)
 			{
 				$output .= "<red>Der gewählte Benutzername ist bereits registriert!</red><br>";
 				$error = true;
@@ -85,7 +85,7 @@ else
 
 			if(!$error)
 			{
-				$cryptkey = db_createBenutzerAccount($username, $vorname, $nachname, $mail, $pass);
+				$cryptkey = DBFunctions::db_createBenutzerAccount($username, $vorname, $nachname, $mail, $pass);
 				if($cryptkey)
 				{
 					//Account erfolgreich in Datenbank erstellt
