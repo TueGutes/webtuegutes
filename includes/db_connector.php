@@ -1344,7 +1344,7 @@ function db_guteTatAblehnen($idGuteTat) {
 *@param Int Ab der ID werden die guten Taten aufgelistet
 *@param Int Anzahl der aufzulistenden guten Taten
 *@param String Filter: 'freigegeben','geschlossen','alle'
-*@param String Username: Usernam des Users, der an den Taten beteiligt sein soll
+*@param int idUser: ID des Nutzers, der für die Tat angenommen sein soll
 *
 *@return mixed[] Array der gefundenen Taten
 */
@@ -1389,6 +1389,82 @@ $db = db_connect();
 			$arr[]= $dbentry;
 		}
 		return $arr;
+	}
+	else{
+		$sql = "SELECT
+			Deeds.idGuteTat,
+			Deeds.name,
+			Deeds.category,
+			Deeds.street,
+			Deeds.housenumber,
+			Deeds.idPostal,
+			Deeds.organization,
+			Deeds.countHelper,
+			Deeds.status,
+			Trust.idTrust,
+			Trust.trustleveldescription,
+			DeedTexts.description,
+			Postalcode.postalcode,
+			Postalcode.place
+		FROM Deeds
+			Join DeedTexts
+				On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
+			Join Postalcode
+				On (Deeds.idPostal = Postalcode.idPostal)
+			Join Trust
+				On (Deeds.idTrust =	Trust.idTrust)
+			JOIN Application
+				On (Deeds.idGuteTat = Application.idGuteTat)
+		WHERE Deeds.status = ?
+		AND Application.status = 'angenommen'
+		AND Application.idUser = ?
+		LIMIT ? , ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('sii',$stat,$idUser,$startrow,$numberofrows);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		db_close($db);
+		$arr = array();
+		while($dbentry =$result->fetch_object()){
+			$arr[]= $dbentry;
+		}
+		return $arr;
+	}
+}
+
+/**
+*Gibt die Anzahl der Gute Taten eines Users mit einer Auswahlmöglichkeit auf.
+*
+*@param String Filter: 'freigegeben','geschlossen','alle'
+*@param int idUser: ID des Nutzers, der für die Tat angenommen sein soll
+*
+*@return int Anzahl der gefundenen Taten
+*/
+function db_countGuteTatenForUser($stat, $idUser) {
+$db = db_connect();
+	if ($stat == 'alle'){
+		$sql = "SELECT
+			COUNT(*) AS Anzahl
+		FROM Deeds
+			Join DeedTexts
+				On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
+			Join Postalcode
+				On (Deeds.idPostal = Postalcode.idPostal)
+			Join Trust
+				On (Deeds.idTrust =	Trust.idTrust)
+			JOIN Application
+				On (Deeds.idGuteTat = Application.idGuteTat)
+		WHERE NOT Deeds.status = 'nichtFreigegeben'
+		AND Application.status = 'angenommen'
+		AND Application.idUser = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idUser);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		db_close($db);
+		$arr = array();
+		$dbentry = $result->fetch_assoc();
+		return $dbentry['Anzahl'];
 	}
 	else{
 		$sql = "SELECT
