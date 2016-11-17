@@ -5,6 +5,25 @@
   2. Ein Nutzer schaut sich die Bewerbung eines anderen Nutzers für seine gute Tat an und kann diese annehmen oder ablehnen
 */
 
+/*Gibt den Bewerbungstext zu einer Bewerbung zurück*/
+function db_getApplicationTextOfApplication($idGuteTat, $candidateID) {
+	$db = DBFunctions::db_connect();
+	$sql = "SELECT applicationText FROM Application WHERE idGuteTat = ? AND idUser = ?";
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('ss',$idGuteTat, $candidateID);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$dbentry = $result->fetch_assoc();
+	DBFunctions::db_close($db);
+	if(isset($dbentry['applicationText'])){
+		return $dbentry['applicationText'];
+	}
+	else {
+		return false;
+	}
+}
+
+
 require "./includes/DEF.php";
 include './includes/ACCESS.php';
 require "./includes/_top.php";
@@ -84,6 +103,8 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 	$candidateID = $_GET['candidateID'];
 	$idUser = $_USER->getID();
 	$status = DBFunctions::db_getStatusOfBewerbung($candidateID, $idGuteTat);
+	$candidateUsername = DBFunctions::db_getUsernameOfBenutzerByID($candidateID);
+	$explanation = db_getApplicationTextOfApplication($idGuteTat, $candidateID);
 	if(DBFunctions::db_getUserIdOfContactPersonByGuteTatID($idGuteTat) != $idUser) {
 		//Fall 1.1: Der Nutzer hat die gute Tat nicht erstellt und darf dementsprechend ihre Bewerbungen nicht annehmen
 		echo '<h3><red>Du darfst nur Bewerbungen zu guten Taten einsehen, die du selbst erstellt hat</red></h3>';
@@ -109,10 +130,16 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 
 		//Link zum Profil des Bewerbers
 
-		echo '<a href="./profile?user='.DBFunctions::db_getUsernameOfBenutzerByID($candidateID).'">Zum Benutzer-Profil des Bewerbers</a><br><br>';
-
 		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
 		$_SESSION['$candidateID'] = $candidateID;
+
+		echo "<h3>$candidateUsername schreibt: <i>\"$explanation\"</i></h3>";
+
+
+		echo '<a href="./profile?user='.DBFunctions::db_getUsernameOfBenutzerByID($candidateID).'">Zum Benutzer-Profil des Bewerbers</a><br><br>';
+
+		echo '<a href="./deeds_details?id='.$idGuteTat.'">Zur Detailseite deiner Guten Tag</a><br><br>';
+
 
 		echo '<div class="center">
 		<form action="deeds_bewerbung" method="post">
