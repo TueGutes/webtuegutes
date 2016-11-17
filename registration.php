@@ -1,7 +1,14 @@
 <?php
-/*
-*@author: Andreas Blech (refactored Henrik Huckauf)
-*/
+/**
+ * Bietet die Möglichkeit sich im System zu registrieren
+ *
+ * Ein Nutzer gibt seinen gewünschten Benutzernamen, seinen Vornamen, Nachnamen, sein gewünschtes Passwort und seine Email-Adresse ein
+ * Falls alle Daten den Anforderungen entsprechen (Benutzername und Email noch nicht registriert) wird eine Email mit einem Bestätigungslink
+ * zum aktivieren des Accounts gesendet
+ *
+ * @author     Andreas Blech <andreas.blech@stud.hs-hannover.de>
+ * @author		 Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 require "./includes/DEF.php";
 

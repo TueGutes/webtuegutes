@@ -1,5 +1,13 @@
 <?php
-//@author: Andreas Blech
+/**
+ * Bietet die Möglichkeit das Passwort für einen Account zu ändern ohne das alte zu kennen
+ *
+ * Ein nicht eingeloggter Nutzer gelangt auf die Seite und gibt entweder seinen Benutzernamen oder seine Email-Adresse ein
+ * Anschließend wird eine Email an die zum Account gehörige Email-Adresse gesendet mit einer URL auf der man ein neues Passwort setzen kann
+ *
+ * @author     Andreas Blech <andreas.blech@stud.hs-hannover.de>
+ */
+ 
 require "./includes/DEF.php";
 
 //Inkludieren von script-Dateien

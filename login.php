@@ -1,7 +1,14 @@
 <?php
-/*
-*@author Henrik Huckauf, Andreas Blech
-*/
+/**
+ * Bietet die Möglichkeit sich im System anzumelden
+ *
+ * Ein Nutzer gibt seinen Benutzernamen und sein Passwort ein
+ * Sind alle Daten korrekt wird er eingeloggt und anschließend standardmäßig zu seiner Profilseite (profile.php) weiterleitet
+ * Wollte der Nutzer ursprünglich zu einer anderen Seite, war allerdings noch nicht eingeloggt, so wird er nach dem Login dorthin weitergeleitet (continue Parameter)
+ *
+ * @author     Andreas Blech <andreas.blech@stud.hs-hannover.de>
+ * @author		 Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 require './includes/DEF.php';
 
@@ -22,7 +29,7 @@ if(isset($_POST['username']) && isset($_POST['password']))
 	$continue = $HOST . "/profile";
 	if(isset($_POST['continue']) && $_POST['continue'] != '')
 		$continue = urldecode($_POST['continue']);
-	
+
 	$userID = DBFunctions::db_idOfBenutzername($_POST['username']);
 	if($userID != false)
 	{
@@ -46,7 +53,7 @@ if(isset($_POST['username']) && isset($_POST['password']))
 			$output = '<red>Der Account ist noch nicht verifiziert, bitte auf den Bestätigungslink in der Email klicken!</red>';
 	}
 	else
-		$output = '<red>Der eingegebene Benutzername ist uns nicht bekannt!</red>';	
+		$output = '<red>Der eingegebene Benutzername ist uns nicht bekannt!</red>';
 }
 
 
