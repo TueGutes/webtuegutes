@@ -36,7 +36,7 @@ if(!isset($_GET['page'])) $_GET['page'] = 1;
 				//$neededPages = $allDeedsCount/10;
 				
 				$tatenProSeite=10; //anzahl der tataen die pro seite angezeigt werden
-				$arr = db_getGuteTatenForList($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder);
+				$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder);
 
 				$maxZeichenFürDieKurzbeschreibung = 150;
 
@@ -51,7 +51,7 @@ if(!isset($_GET['page'])) $_GET['page'] = 1;
 					echo "<br><br><hr><br>";
 				}
 
-			$anzahlAllerTaten=db_getGuteTatenAnzahl($placeholder);
+			$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder);
 			$aktuelleSeite=$_GET['page'];
 			$letzteseite=intval($anzahlAllerTaten / $tatenProSeite);
 			if ($letzteseite * $tatenProSeite < $anzahlAllerTaten) $letzteseite++;
@@ -113,7 +113,7 @@ if(!isset($_GET['page'])) $_GET['page'] = 1;
 <?php
 	$placeholder = 'alle';
 	$vor = $_GET['page'] > 1;
-	$nach = db_getGuteTatenForList($tatenProSeite*($_GET['page']), $tatenProSeite, $placeholder); //Sobald Deeds nicht mehr doppelt ausgegeben werden -> Mit Anzahl prüfen!
+	$nach = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']), $tatenProSeite, $placeholder); //Sobald Deeds nicht mehr doppelt ausgegeben werden -> Mit Anzahl prüfen!
 	if ($vor) echo '<a href="./deeds?page=' . ($_GET['page']-1) . '"><input type="button" value="Zurück"></a>';
 	if ($vor && $nach) echo '&nbsp';
 	if ($nach) echo '<a href="./deeds?page=' . ($_GET['page']+1) . '"><input type="button" value="Weiter"></a>';

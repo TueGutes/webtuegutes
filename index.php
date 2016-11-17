@@ -14,28 +14,83 @@ require './includes/_top.php';
 <?php 
 if(!$_USER->loggedIn()) 
 	echo "
-		<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. </p>
-		<p><a href='./registration'>Jetzt Mitglied werden!</a></p>
-		<p>Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. </p>
-		<p>Schon Registriert? <br><a href='./login'>Zum Login</a></p>
-		<p>Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. </p>
-		<p>Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-		<p>Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. </p>
-		<p>At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. </p>
+		<form action='./login' method='post'>
+			<input type='text' value='' name='username' placeholder='" . $wlang['login_placeholder_username'] . "' required />
+			<br><br>
+			<input type='password' name='password' value='' placeholder='" . $wlang['login_placeholder_password'] . "' required />
+			<br><br>
+			<input type='submit' value='" . $wlang['login_button_submit'] . "' />
+		</form>
+		<br><br>
+		<a href='./PasswortUpdate'>Ich habe mein Passwort vergessen!</a>
+		<br><br><br><br>
+		Ich bin noch nicht registriert:<br>
+		<a href='./registration'>Zur Registrierung</a> 
 	";
 else
+{
+	echo "<a href='./guteTatErstellenHTML'><input type='button' value='Gute Tat erstellen' /></a><br>";
+
 	echo "
+		<div class='module'>
+			<h3>Meine letzten Taten</h3><a href='./deeds?user=" . $_USER->getUsername() . "'><input type='button' value='Mehr' /></a>
+			<div class='output'>";
+			for($i = 0; $i < 5; $i++)
+			{
+				echo "<a href='./deeds_details?id=x' class='deedAnchor'><div class='deed'>";
+					echo "<div class='name'><h4>Test " . $i . "</h4></div><div class='category'>Test</div>";
+					echo "<br><br><br><br><div class='description'>Dies ist eine Testbeschreibung, yo...</div>";
+					echo "<div class='address'>Staße 42<br>1234 / Stadtteil</div>";
+					echo "<div>Anzahl der Helfer: 2</div><div class='trustLevel'>Minimaler Vertrauenslevel: 42 (krasser Typ)</div>";
+					echo "<div>Organisation</div>";
+				echo "</div></a>";
+				echo "<br><br>";
+			}
+	echo "
+			</div>
+		</div>";
+		
+		
+	echo "
+		<div class='module'>
+			<h3>Die neusten Taten</h3><a href='./deeds'><input type='button' value='Mehr' /></a>
+			<div class='output'>";
+			for($i = 0; $i < 5; $i++)
+			{
+				echo "<a href='./deeds_details?id=x' class='deedAnchor'><div class='deed'>";
+					echo "<div class='name'><h4>Test " . $i . "</h4></div><div class='category'>Test</div>";
+					echo "<br><br><br><br><div class='description'>Dies ist eine Testbeschreibung, yo...</div>";
+					echo "<div class='address'>Staße 42<br>1234 / Stadtteil</div>";
+					echo "<div>Anzahl der Helfer: 2</div><div class='trustLevel'>Minimaler Vertrauenslevel: 42 (krasser Typ)</div>";
+					echo "<div>Organisation</div>";
+				echo "</div></a>";
+				echo "<br><br>";
+			}
+	echo "
+			</div>
+		</div>
+		<br><br>
+		<div class='module'>
+			<h3>Nach Taten suchen</h3>
+			<form action='./search' method='get'>
+				<span></span>
+				<input type='text' name='stichwort'>
+				<select class='' name='selector'>
+					<option value='gutes'>Gutes</option>
+					<option value='user_name'>User</option>
+					<option value='ort'>Ort</option>
+				</select>
+				<input type='submit' name='sub' value='suchen' />
+			</form>
+		</div>
+		<br><br><br><br>
+		<br><br><br><br>
 		<a href='./profile'><input type='button' value='Mein Profil' /></a><br>
 		<br><br><br><br>
-		<a href='./guteTatErstellenHTML'><input type='button' value='Gute Tat erstellen' /></a><br>
-		<br>
-		<a href='./deeds'><input type='button' value='Alle guten Taten' /></a><br>
-		<br><br><br><br>
-		<a href='./search'><input type='button' value='Suche' /></a>
-		<br>
 		<br><br><br><br>
 		<a href='./contact'><input type='button' value='Kontakt zu uns' /></a>
 	";
+}
 ?>
 <!--
 <div class='center'>

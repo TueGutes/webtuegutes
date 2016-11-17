@@ -1,26 +1,28 @@
 <?php
 /*
-*@author Christian Hock
+*@Autor Christian Hock
 * das Bild und den Zeitrahmen zu ändern wurde ausgelassen, da man diese momentan nicht erstellen kann.
 * Es wird die Funktion db_fix_plz($plz) genutzt...
 */
 
+require './includes/UTILS.php';
 require './includes/DEF.php';
-
-include './includes/ACCESS.php';
-
+require './includes/ACCESS.php';
 require './includes/db_connector.php';
-
 require './includes/_top.php';
 
 //Fehlerüberprüfung auf den Getparameter und prüfung ob die Seite ein zweites mal aufgerufen wurde
-if (!isset($_GET['id'])){
+if (!isset($_GET['idGuteTat'])){
 echo '<h3>Es ist ein Aufruffehler aufgetreten.<br>Vermutlich haben Sie den Link für diese Seite manuell eingegeben, bzw. herauskopiert und dabei einen Fehler gemacht.<br>Oder die Tat gibt es nicht mehr.<br>Sollte weder noch zutreffen kontaktieren Sie uns bitte.</h3><br>';	
 	}else{
-$idGuteTat = $_GET['id'];
+$idGuteTat = $_GET['idGuteTat'];
 	}
 //Tat-Objekt holen	für Nutzerüberprüfung
-	$tat = db_getGuteTat($idGuteTat);
+	$tat = DBFunctions::db_getGuteTat($idGuteTat);
+	$nutzer =DBFunctions::db_get_user($tat['username']);
+	if($nutzer['username']!=$tat['username']){
+		die("<h3>unberechtigter Zugriff");
+	}
 
 //Prüft welche Tat betroffen ist und fängt Fehler ab 
 //Beschreibung
@@ -30,27 +32,27 @@ $idGuteTat = $_GET['id'];
 	if ($data === ''){
 		echo '<h3>Bitte eine neue Beschreibung eingeben.</h3><br>';
 	}else{
-	db_update_deeds($data,$idGuteTat,'0');}}
+	DBFunctions::db_update_deeds_description($data,$idGuteTat);}}
 //Name
  else if (isset($_POST['name'])) {
 	$data=$_POST['name'];
-	if(db_doesGuteTatNameExists($data)){
+	if(DBFunctions::db_doesGuteTatNameExists($data)){
 		echo '<h3>Eine andere Tat ist bereits unter diesem Namen veröffentlicht.</h3>';
 	}else if ($data === ''){
 		echo '<h3>Bitte einen neuen Namen eingeben.</h3><br>';
 	}else{
-	db_update_deeds($data,$idGuteTat,'2');}}
+	DBFunctions::db_update_deeds_name($data,$idGuteTat);}}
 //Kategorie
 else if(isset($_POST['category'])) {
 	$data=$_POST['category'];
-	db_update_deeds($data,$idGuteTat,'4');}
+	DBFunctions::db_update_deeds_category($data,$idGuteTat);}
 //Straße
 	else if(isset($_POST['street'])) {
 	$data=$_POST['street'];
 	if ($data === ''){
 	echo '<h3>Bitte eine neue Straße eingeben.</h3><br>';	
 	}else{
-	db_update_deeds($data,$idGuteTat,'5');}
+	DBFunctions::db_update_deeds_street($data,$idGuteTat);}
 	}
 //Hausnummer
 else if(isset($_POST['housenumber'])) {
@@ -58,7 +60,7 @@ else if(isset($_POST['housenumber'])) {
 	if ($data === ''){
 	echo '<h3>Bitte eine neue Hausnummer eingeben.</h3><br>';	
 	}else{
-	db_update_deeds($data,$idGuteTat,'6');}
+	DBFunctions::db_update_deeds_housenumber($data,$idGuteTat);}
 	}		
 //Postleitzahl
 	else if(isset($_POST['postalcode'])) {
@@ -68,8 +70,8 @@ else if(isset($_POST['housenumber'])) {
 	}else if (!is_numeric($data)){
 		echo '<h3>Die Postleitzahl bitte als Zahl eingeben.</h3><br>';	
 	}else{
-	db_fix_plz($data);
-	db_update_deeds($data,$idGuteTat,'7');}
+	DBFunctions::db_fix_plz($data);
+	DBFunctions::db_update_deeds_postalcode($data,$idGuteTat);}
 	}
 //Organisation
 else if(isset($_POST['organization'])) {
@@ -77,7 +79,7 @@ else if(isset($_POST['organization'])) {
 	if ($data === ''){
 	echo '<h3>Bitte eine neue Organisation eingeben.</h3><br>';	
 	}else{
-	db_update_deeds($data,$idGuteTat,'9');}	
+	DBFunctions::db_update_deeds_organization($data,$idGuteTat);}	
 	}
 //Anzahl Helfer
 else if(isset($_POST['countHelper'])) {
@@ -87,95 +89,55 @@ else if(isset($_POST['countHelper'])) {
 	}else if (!is_numeric($data)){
 		echo '<h3>Die Anzahl der gewünschten Helfer bitte als Zahl eingeben.</h3><br>';	
 	}else{
-	db_update_deeds($data,$idGuteTat,'10');}
+	DBFunctions::db_update_deeds_countHelper($data,$idGuteTat);}
 	}
 //Verantwortungslevel
 else if(isset($_POST['idTrust'])) {
 	$data=$_POST['idTrust'];
-	db_update_deeds($data,$idGuteTat,'11');}
-//Tat-Objekt holen -> jetzt damit es akutell ist
-	$tat = db_getGuteTat($idGuteTat);	
-//link zusammenbauen
-
-
-//Autor dieser Methode : Christian Hock
-//Einzelne Tat bearbeiten -> Diese Methode finded Anwendung bei der tat_bearbeiten.php-Seite
-//$data -> neuer Inhalt, $idGuteTat -> logo, $Spalte-> Spalte innerhalb der Deedstabelle, $Variablentyp-> gibt an welchen Typ die Variable hat
-//&Spalte 0 entsrpricht der Beschreibung der Tat
-function db_update_deeds($data,$idGuteTat,$Spalte)
-	{
-		$Variablentyp='s';
-		$db = db_connect();
-	if($Spalte==0){
-		$sql ="UPDATE deedtexts
-			SET 
-			deedtexts.description = ?
-			WHERE deedtexts.idDeedTexts = ?";
-		
-		
-	}else if($Spalte==2){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.name = ?
-			WHERE deeds.idGuteTat = ?";
-	}else if($Spalte==4){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.category = ?
-			WHERE deeds.idGuteTat = ?";
+	DBFunctions::db_update_deeds_IdTrust($data,$idGuteTat);}
+//Zeitrahmen
+else if(isset($_POST['von'])) {
+		$data=$_POST['von'];
+		$data2=$_POST['bis'];
+	if (!DateHandler::isValid($data)){
+		echo 'Das Format von der Startzeit ist falsch.';
+	}else if (!DateHandler::isValid($data2)){
+		echo 'Das Format von der Endzeit ist falsch.';
 	}
-	else if($Spalte==5){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.street = ?
-			WHERE deeds.idGuteTat = ?";
-	}
-	else if($Spalte==6){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.housenumber = ?
-			WHERE deeds.idGuteTat = ?";
-	}
-	else if($Spalte==7){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.postalcode = ?
-			WHERE deeds.idGuteTat = ?";
-			$Variablentyp='i';
-	}
-	else if($Spalte==9){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.organization = ?
-			WHERE deeds.idGuteTat = ?";
-	}
-	else if($Spalte==10){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.countHelper = ?
-			WHERE deeds.idGuteTat = ?";
-			$Variablentyp='i';
-	}
-	else if($Spalte==11){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.idTrust = ?
-			WHERE deeds.idGuteTat = ?";
-			$Variablentyp='i';
-	}
-		$stmt = $db->prepare($sql);
-		if($Variablentyp=='s')$stmt->bind_param('si',$data,$idGuteTat);
-		if($Variablentyp=='i')$stmt->bind_param('ii',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
+	else if($data === '' ||$data2 === ''){
+	echo 'bitte Start und Endzeit neu eingeben.';
+	}else{
+		DBFunctions::db_update_deeds_starttime($data,$idGuteTat);
+		DBFunctions::db_update_deeds_endtime($data2,$idGuteTat);
 		}
-		db_close($db);
 	}
-
-
-$link = './deeds_bearbeiten?id=' . $idGuteTat;
-?>
-	
+else if(isset($_POST['bis'])) {
+	echo 'bitte Start und Endzeit neu eingeben.';
+	}
+//Bild
+else if(isset($_FILES['picture'])){
+//Bei Bedarf aendern
+$bildgroesze = 600*1024; 
+$kb = $bildgroesze/1024;
+//falls es mehr Bildformate geben sollte, bitte ergänzen
+$bildformate = array('jpeg','jpg', 'gif','png');
+$dateiendung = strtolower(pathinfo($_FILES['picture']['name'], PATHINFO_EXTENSION));
+// Fehler überprüfen
+if(!in_array($dateiendung, $bildformate)) {
+ echo'<h2>Bitte ein Bild hochladen.';
+}else if($_FILES['picture']['size'] > $bildgroesze) {
+ echo("Die Maximalgröße beträgt $kb kb.");
+}else{																		     
+$gleichcodiert='data: ' . mime_content_type($_FILES['picture']['tmp_name']) . ';base64,' . base64_encode (file_get_contents($_FILES['picture']['tmp_name']));
+DBFunctions::db_update_deeds_picture($gleichcodiert,$idGuteTat);	
+}
+}
+//Tat-Objekt holen -> jetzt damit es akutell ist
+	$tat = DBFunctions::db_getGuteTat($idGuteTat);	
+//Stringbuilder für den Link und die angezeigen Zeit.
+$link = './deeds_bearbeiten?idGuteTat=' . $idGuteTat;
+$zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
+?> 
 		<center>
 		<br>
 		<br>
@@ -187,8 +149,20 @@ $link = './deeds_bearbeiten?id=' . $idGuteTat;
 				<td><input type="text" name="name" placeholder="neuer Name"/></td>	
 				<td><input type="submit" name="button" value="ändern"/></td>
 				</form>
-				</tr>
-				<tr>
+			</tr>				
+			<tr>
+			
+				<form method="post" action="<?php echo $link; ?>" enctype="multipart/form-data">
+				<td><h3>Bild: </td>
+				<td></td>
+				<td><input type="file" name="picture" accept="image/*"></td>
+				<td><input type="submit" name="button" value="ändern"/></td>
+				</form>
+			</tr>	
+			<tr>
+			<td></td><td><?php echo '<img src="'.$tat["pictures"] .'" >'?></td>	
+			</tr>	
+			<tr>
 				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Beschreibung: </td>
 				<td><h3><?php echo $tat['description']; ?></td>	
@@ -236,10 +210,10 @@ $link = './deeds_bearbeiten?id=' . $idGuteTat;
 			</tr>	
 			<tr>
 				<form method="post" action="<?php echo $link; ?>">
-				<td><h3>Zeitrahmen:WarteBisZeitformatklar </td>
-				<td><h3><?php echo $tat['time']; ?></td>	
-				<td><input type="text" name="name" placeholder="neuer Zeitrahmen"/></td>
-				<td><input type="submit" name="button" value="ändern"/></td>
+				<td><br><h3>Zeitrahmen:</td>
+				<td><h3><?php echo $zeit; ?></td>	
+				<td><input type="text" name="von" placeholder="Von"/><br><br><input type="text" name="bis" placeholder="bis"/></td>
+				<td><br><br><br><input type="submit" name="button" value="ändern"/></td>
 				</form>
 			</tr>
 			<tr>
@@ -280,84 +254,10 @@ $link = './deeds_bearbeiten?id=' . $idGuteTat;
 		<a href="./deeds.php"><input type="button" name="button" value="Fertig" /></a>
 		</center>
 		</form>
-		
 <?php require "./includes/_bottom.php"; 
-/*Bitte in den Db-Connector einfügen
+//Autor dieser Funktionen : Christian Hock
+//Es folgt eine lange Liste an anrufen einzelner Bestandteile von Deeds
+//kommt bitte wieder zurück nach connector
 
-//Autor dieser Methode : Christian Hock
-//Einzelne Tat bearbeiten -> Diese Methode finded Anwendung bei der tat_bearbeiten.php-Seite
-//$data -> neuer Inhalt, $idGuteTat -> logo, $Spalte-> Spalte innerhalb der Deedstabelle, $Variablentyp-> gibt an welchen Typ die Variable hat
-//&Spalte 0 entsrpricht der Beschreibung der Tat
-function db_update_deeds($data,$idGuteTat,$Spalte)
-	{
-		$Variablentyp='s';
-		$db = db_connect();
-	if($Spalte==0){
-		$sql ="UPDATE deedtexts
-			SET 
-			deedtexts.description = ?
-			WHERE deedtexts.idDeedTexts = ?";
-		
-		
-	}else if($Spalte==2){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.name = ?
-			WHERE deeds.idGuteTat = ?";
-	}else if($Spalte==4){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.category = ?
-			WHERE deeds.idGuteTat = ?";
-	}
-	else if($Spalte==5){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.street = ?
-			WHERE deeds.idGuteTat = ?";
-	}
-	else if($Spalte==6){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.housenumber = ?
-			WHERE deeds.idGuteTat = ?";
-	}
-	else if($Spalte==7){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.postalcode = ?
-			WHERE deeds.idGuteTat = ?";
-			$Variablentyp='i';
-	}
-	else if($Spalte==9){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.organization = ?
-			WHERE deeds.idGuteTat = ?";
-	}
-	else if($Spalte==10){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.countHelper = ?
-			WHERE deeds.idGuteTat = ?";
-			$Variablentyp='i';
-	}
-	else if($Spalte==11){
-		$sql ="UPDATE deeds
-			SET 
-			deeds.idTrust = ?
-			WHERE deeds.idGuteTat = ?";
-			$Variablentyp='i';
-	}
-		$stmt = $db->prepare($sql);
-		if($Variablentyp=='s')$stmt->bind_param('si',$data,$idGuteTat);
-		if($Variablentyp=='i')$stmt->bind_param('ii',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
-		db_close($db);
-	}
-
-?>
-*/
+//TIMM: Hab ich rauskopiert und in db_connector eingefügt
 ?>
