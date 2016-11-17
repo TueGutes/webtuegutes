@@ -44,10 +44,20 @@ require "./includes/_top.php";
 								</form>';
 							//Speichere den Cryptkey temporär in der Session, damit man ihn auslesen kann, wenn das Formular versendet wurde
 							$_SESSION['cryptkey'] = $_GET['c'];
-					} elseif(isset($_POST['mail'])) { //2.Fall: Zeige Meldung und schicke Bestätigungslink
+					} elseif(isset($_POST['UsernameOrMail'])) { //2.Fall: Zeige Meldung und schicke Bestätigungslink
 						echo '<h2>Passwort Ändern</h2>';
-						//echo '<h3>Email gesendet an: '.$_POST['mail'].'</h3>';
-						$cryptkey = DBFunctions::db_getCryptkeyByMail($_POST['mail']);
+						$mail = $_POST['UsernameOrMail'];
+						$userID = DBFunctions::db_idOfBenutzername($_POST['UsernameOrMail']);
+						if($userID === false) {
+							//Falls es kein Username war, gehe davon aus, dass es eine Email-Adresse war.
+							//Wenn es auch keine bekannte Email-Adresse war ist cryptekey später false
+							$cryptkey = DBFunctions::db_getCryptkeyByMail($_POST['UsernameOrMail']);
+						}
+						else {
+							$mail = DBFunctions::db_getMailOfBenutzerByID($userID);
+							$cryptkey = DBFunctions::db_getCryptkeyByMail($mail);
+						}
+
 						if($cryptkey != false) {
 							$actual_link = $HOST . '/PasswortUpdate';
 							//$actual_link = explode('.', $actual_link)[0];
@@ -58,27 +68,24 @@ require "./includes/_top.php";
 								<h2>Klicke auf den <a href=\"$actual_link?c=$cryptkey\">Link</a>, um ein neues Passwort zu setzen </h2>
 							</div>";
 							//"http://localhost/git/PasswortUpdate.php?c=$cryptkey";
-							if(sendEmail($_POST['mail'], "TueGutes - Passwort Ändern", $mailcontent)===true) {
-									echo '<h3><font color=green>Es wurde ein Passwort-Änderungs-Link an '.$_POST['mail'].' gesendet</font></h3><p>';
+							if(sendEmail($mail, "TueGutes - Passwort Ändern", $mailcontent)===true) {
+									echo '<h3><font color=green>Es wurde ein Passwort-Änderungs-Link an '.$mail.' gesendet</font></h3><p>';
 									echo '<h4>Klicken sie auf die URL in der Email, um das Passwort zu ändern</h4>';
 							}
 							else {
 								//Das Senden der Email ist fehlgeschlagen
-								echo '<h3><font color=red>Email an $mail konnte nicht gesendet werden</font></h3><p>';
+								echo "<h3><font color=red>Email an $mail konnte nicht gesendet werden</font></h3><p>";
 							}
 						}
 						else {
 							//Es wurde kein Account zu der angegebenen Email gefunden
-							echo '<h3><font color=red>Fehler! Kein Account zu '.$_POST['mail'].' gefunden</font></h3><p>';
+							echo '<h3><font color=red>Fehler! Kein Account zu '.$_POST['UsernameOrMail'].' gefunden</font></h3><p>';
 							echo'<form action="PasswortUpdate.php" method="post">
 									<center>
-										<table>
-											<tr>
-												<td><b>E-Mail Adresse:</b></td>
-												<td><input type="text" name="mail"></td>
-											</tr>
-										</table>
-									<input type="submit" value="Email senden">
+											<br>
+											<input type="text" size = 35 placeholder = "Benutzename oder Email-Adresse" name="UsernameOrMail"><br>
+											<br>
+											<input type="submit" value="Email senden">
 									</center>
 								</form>';
 						}
@@ -106,21 +113,19 @@ require "./includes/_top.php";
 						else {
 
 							DBFunctions::db_changePasswortByCryptkey($_SESSION['cryptkey'], $_POST['passwort']);
-							
+
 							unset($_SESSION['cryptkey']);
 							echo'<h3>Passwort erfolgreich geändert</h3>';
 						}
 					} else{ //1. Fall: Nutzer ist nicht eingeloggt und auf PasswortUpdate.php gelangt
 						echo '<h2>Passwort Ändern</h2>';
+						echo '<h3>Gebe deinen Benutzernamen oder deine Email-Adresse ein';
 						echo'<form action="./PasswortUpdate" method="post">
 									<center>
-										<table>
-											<tr>
-												<td><b>E-Mail Adresse:</b></td>
-												<td><input type="text" name="mail"></td>
-											</tr>
-										</table>
-									<input type="submit" value="Email senden">
+											<br>
+											<input type="text" size = 35 placeholder = "Benutzename oder Email-Adresse" name="UsernameOrMail"><br>
+											<br>
+											<input type="submit" value="Email senden">
 									</center>
 								</form>';
 					}
