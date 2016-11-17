@@ -50,7 +50,7 @@ else
 			else
 			{
 				// http://regexr.com/
-				if(strlen($username) < 3 || strlen($username) > 20 || !preg_match("/^[a-zA-Z0-9 äöü ÄÖÜ ß]+([_.\-]?[a-zA-Z0-9 äöü ÄÖÜ ß])*$/", $username)) ///^[a-zA-Z0-9 äöü ÄÖÜ ß]+([_.\s\-]?[a-zA-Z0-9 äöü ÄÖÜ ß])*$/
+				if(strlen($username) < 3 || strlen($username) > 20 || preg_match("/@/",$username) ||!preg_match("/^[a-zA-Z0-9 äöü ÄÖÜ ß]+([_.\-]?[a-zA-Z0-9 äöü ÄÖÜ ß])*$/", $username)) ///^[a-zA-Z0-9 äöü ÄÖÜ ß]+([_.\s\-]?[a-zA-Z0-9 äöü ÄÖÜ ß])*$/
 				{
 					$output .= "<red>Für den Benutzernamen gilt:<br>- der Benutzername muss zwischen 3 und 20 Zeichen lang sein<br>- der Benutzername darf nicht mit Sonderzeichen beginnen oder enden<br>- es dürfen nicht mehrere Sonderzeichen aufeinander folgen<br>- der Benutzername darf nur aus a-z A-Z 0-9 äöü ÄÖÜ ß _ . und LEERZEICHEN bestehen</red><br>";
 					$error = true;
@@ -79,6 +79,18 @@ else
 			else if($pass !== $passwdh)
 			{
 				$output .= "<red>Die Passwörter stimmen nicht überein!</red><br>";
+				$error = true;
+			}
+			else if(strlen($pass) < 6) {
+				$output .= "<red>Das Passwort muss mindestens 6 Zeichen lang sein!</red><br>";
+				$error = true;
+			}
+			if(empty($mail)) {
+				$output .= "<red>Geben Sie eine Email-Adresse ein!</red><br>";
+				$error = true;
+			}
+			else if(!preg_match("/@/",$mail)) { //Jede Emailadresse enthält ein @ Zeichen
+				$output .= "<red>Geben Sie eine korrekte Email-Adresse an!</red><br>";
 				$error = true;
 			}
 
