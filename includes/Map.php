@@ -78,7 +78,7 @@
 			var markers = L.markerClusterGroup();
 		</script>
 		<?php
-			$arr = db_getGuteTaten();
+			$arr = DBFunctions::db_getGuteTaten();
 			
 			// Gehe alle Taten durch und erstelle für jeden Eintrag ein Marker.
 			foreach($arr as $i){
@@ -120,7 +120,7 @@
 			var markers = L.markerClusterGroup();
 		</script>
 		<?php
-			$arr = db_getGuteTatenForList($tatenProSeite*($_GET['page']-1),$tatenProSeite,$placeholder);
+			$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']-1),$tatenProSeite,$placeholder);
 			
 			// Gehe alle Taten durch und erstelle für jeden Eintrag ein Marker.
 			foreach($arr as $i){

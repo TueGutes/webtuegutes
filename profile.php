@@ -22,15 +22,8 @@
 	}
 
 	// ALEX: Inserts a new postal code.
-	function insertPostalCode($pPostalCode, $pPlace)
-	{
-		$db = db_connect();
-		$sql = 'INSERT INTO Postalcode (postalcode, place) VALUES (?, ?)';
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('is',$pPostalCode, $pPlace);
-		$stmt->execute();
-		db_close($db);
-	}
+	// TIMM: Ausgelagert in db_connector.
+	// hat auch db_ davor jetzt: db_insertPostalCode
 	
 
 	// Returns a map of postal code and place to a given address.
@@ -109,11 +102,11 @@
 
 	//Sollte das Profil gelöscht werden?
 	if (isset($_POST['save_pw']))
-		db_delete_user($_USER->getUsername(), $_POST['save_pw']);
+		DBFunctions::db_delete_user($_USER->getUsername(), $_POST['save_pw']);
 
 	//Festlegen des auszulesenden Nutzers:
 	if (!isset($_GET['user'])) $_GET['user'] = $_USER->getUsername();
-	$thisuser = db_get_user($_GET['user']);
+	$thisuser = DBFunctions::db_get_user($_GET['user']);
 
 	//Festlegen der Sichtbarkeitseinstellungen
 	if (strtoupper($_USER->getUsername())===strtoupper($thisuser['username']) && !(@$_GET['view']==="public")) {
@@ -328,13 +321,13 @@
 				if(is_numeric($lFoundValues['retPostal']))
 				{
 					// If postal code wasn't found in DB, add it and set foreign key in userdata.
-					$lIdPostal = db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+					$lIdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
 					
 					// If no corresponding postal code was found, add it to database.
 					if($lIdPostal == "")
 					{			
-						insertPostalCode($lFoundValues['retPostal'], $lFoundValues['retPlace']);
-						$IdPostal = db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+						DBFunctions::db_insertPostalCode($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+						$IdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
 					}
 					
 					$thisuser['idPostal'] = $lIdPostal;
@@ -360,7 +353,7 @@
 			$thisuser['privacykey'] = $_POST['vsMail'] . $_POST['vsRegDate'] . $_POST['vsAvatar'] . $_POST['vsHobbys'] . $_POST['vsDescription'] . $_POST['vsFirstname'] . $_POST['vsLastname'] . $_POST['vsGender'] . $_POST['vsStreet'] . $_POST['vsHousenumber'] . $_POST['vsPlzOrt'] . $_POST['vsTelNr'] . $_POST['vsMsgNr'] . $_POST['vsBirthday'] . $_POST['vsBirthyear'];
 
 			//Änderungen speichern
-			db_update_user($thisuser);
+			DBFunctions::db_update_user($thisuser);
 			header("Refresh:0");
 		}
 

@@ -494,6 +494,18 @@ red
 	display: inline-block;
 }
 
+/*====index====*/
+.module
+{
+	display: inline-block; background: rgba(100, 100, 100, .4); width: 100%; max-width: 500px; padding: 10px; margin: 15px; border: 1px solid #424242;
+}
+.module .output
+{
+	overflow-y: scroll;
+	max-height: 400px;
+}
+/*====/index====*/
+
 /*====contact====*/
 #contact
 {

@@ -23,18 +23,18 @@ if(isset($_POST['username']) && isset($_POST['password']))
 	if(isset($_POST['continue']) && $_POST['continue'] != '')
 		$continue = urldecode($_POST['continue']);
 	
-	$userID = db_idOfBenutzername($_POST['username']);
+	$userID = DBFunctions::db_idOfBenutzername($_POST['username']);
 	if($userID != false)
 	{
-		$regDate = db_regDateOfUserID($userID);
-		$passHash = db_passwordHashOfUserID($userID);
-		$status = db_statusByUserID($userID);
+		$regDate = DBFunctions::db_regDateOfUserID($userID);
+		$passHash = DBFunctions::db_passwordHashOfUserID($userID);
+		$status = DBFunctions::db_statusByUserID($userID);
 		if($status != "nichtVerifiziert")
 		{
 			if(md5($_POST['password'].$regDate) === $passHash) //Eingegebenes Passwort ist richtig
 			{
 				$username = $_POST['username'];
-				$dbentry = db_get_user($username);
+				$dbentry = DBFunctions::db_get_user($username);
 				$_USER->login($userID, $username, $dbentry['email']);
 				$_USER->redirect($continue); //Weiterleiten auf URL in $continue
 				exit;

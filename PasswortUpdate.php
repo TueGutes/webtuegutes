@@ -9,83 +9,9 @@ include './includes/db_connector.php';
 require "./includes/_top.php";
 
 //DB Funktionen, die später ausgelagert werden sollten
+//TIMM:
+//Ausgelagert in db_connector.php
 
-/*Liefert den Cryptkey zum Account, der zu der übergeben Email-Adresse gehört oder false*/
-function getCryptkeyByMail($mail) {
-	$db = db_connect();
-	$sql = "SELECT cryptkey FROM Privacy WHERE idPrivacy = (SELECT idUser FROM User WHERE email = LOWER(?))";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('s',$mail);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	db_close($db);				
-	if(isset($dbentry['cryptkey'])){
-		return $dbentry['cryptkey'];
-	}
-	else {
-		return false;
-	}
-	//return "asdfjklö"; //Testzwecke
-}
-
-/*Liefert das Registrierungsdatum zu einer UserID oder false*/
-function regDateByCryptkey($cryptkey) {
-	$db = db_connect();
-	$sql = "SELECT regDate FROM User, Privacy WHERE idUser = idPrivacy AND cryptkey = ?";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('s',$cryptkey);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	if(isset($dbentry['regDate'])){
-		//echo 'RegDate '.$dbentry['regDate'];
-		$dateTeile = explode(" ", $dbentry['regDate']); //Im Datestring ist auch die Zeit, wir wollen nur das Datum (siehe Erstellung des Benutzeraccounts)
-		db_close($db);
-		return $dateTeile[0];
-	}
-	else {
-		echo "Error: ".mysqli_error($db);
-		db_close($db);
-		return false;
-	}
-}
-
-
-
-/*Ändert das Passwort des zum Cryptkey gehörenden Accounts*/
-/*Liefert true bei Erfolg und false beim Fehlerfall*/
-function changePasswortByCryptkey($cryptkey, $newPasswort) {
-	$date = regDateByCryptkey($cryptkey);	
-	$pass_md5 = md5($newPasswort.$date);
-	$db = db_connect();
-	$sql = "UPDATE User SET password = ? WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
-	$stmt = $db->prepare($sql);
-	mysqli_stmt_bind_param($stmt, "ss", $pass_md5, $cryptkey);
-	$stmt->execute();
-	db_close($db);				
-	
-	return true; //Testzwecke
-}
-
-/*Liefert den Benutzernamen des Accounts, der zum cryptkey gehört*/
-function getUserByCryptkey($cryptkey) {
-	$db = db_connect();
-	$sql = "SELECT username FROM User WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('s',$cryptkey);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	db_close($db);				
-	if(isset($dbentry['username'])){
-		return $dbentry['username'];
-	}
-	else {
-		return false;
-	}
-	//return "blecha"; //Testzwecke
-}
 
 				/*
 				Es gibt ... Fälle
@@ -124,7 +50,7 @@ function getUserByCryptkey($cryptkey) {
 					} elseif(isset($_POST['mail'])) { //2.Fall: Zeige Meldung und schicke Bestätigungslink
 						echo '<h2>Passwort Ändern</h2>';
 						//echo '<h3>Email gesendet an: '.$_POST['mail'].'</h3>';
-						$cryptkey = getCryptkeyByMail($_POST['mail']);
+						$cryptkey = DBFunctions::db_getCryptkeyByMail($_POST['mail']);
 						if($cryptkey != false) {
 							$actual_link = $HOST . '/PasswortUpdate';
 							//$actual_link = explode('.', $actual_link)[0];
@@ -181,7 +107,7 @@ function getUserByCryptkey($cryptkey) {
 								</form>';
 						}
 						else {
-							changePasswortByCryptkey($_SESSION['cryptkey'], $_POST['passwort']);
+							DBFunctions::db_changePasswortByCryptkey($_SESSION['cryptkey'], $_POST['passwort']);
 							//TODO: Auf Profilseite weiterleiten
 							//TODO besser auf die loginseite weiterleiten
 							//$_SESSION['loggedIn'] = true;

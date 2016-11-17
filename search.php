@@ -26,7 +26,7 @@ error_reporting(0);
 
 
 <?php
-$db = db_connect();
+$db = DBFunctions::db_connect();
 
 // $db = mysqli_connect('localhost', 'tueGutes', 'Sadi23n2os', 'tueGutes');
 // Fuzzy Matching, die Ergebnisse in Form der Tabelle zu zeigen
@@ -127,7 +127,7 @@ if ($_GET['stichwort']) {
     echo setPageUrl($page - 1, 'previous');
     echo setPageUrl($page + 1, 'next');
     echo setPageUrl($maxpage, 'last');
-    db_close($db);
+    DBFunctions::db_close($db);
 //    $js_selector = '<script type="text/javascript">';
 //    $js_selector .= 'var selector= document.getElementsByName("selector");';
 //    $js_selector .= 'selector.options["ort"].selected=true;';

@@ -1,7 +1,7 @@
 <?php
 /*
-*@author Klaus Sobotta
-*@author Christian Hock
+*@Autor Klaus Sobotta
+*@Autor Christian Hock
 */
 	
 require './includes/DEF.php';	
