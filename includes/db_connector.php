@@ -379,27 +379,27 @@ class DBFunctions
 	*Gibt eine Auswahl an Daten zu einem Benutzernamen zurück
 	*
 	*Die Funktion ist dazu da um einen Nutzer aus der Datenbank mit ausgwählten Daten zu laden. Die Daten werden in einem Array als Werte zurückgegeben. Man muss den Benutzernamen dazu übergeben. Falls es Werte nicht gibt in der Datenbank, werden sie als Leerstrings gesetzt. Die folgenden Werte werden ausgegeben: 
-	*	idUser 
-	*	password, 
-	*	username,
-	*	email,
-	*	regDate, 
-	*	points, 
-	*	trustleveldescription, 
-	*	groupDescription, 
-	*	privacykey, 
-	*	avatar, 
-	*	hobbys, 
-	*	description, 
-	*	firstname, 
-	*	lastname, 
-	*	gender, 
-	*	street, 
-	*	housenumber, 
-	*	idPostal, 
-	*	telefonnumber, 
-	*	messengernumber, 
-	*	birthday
+	* * idUser 
+	* * password, 
+	* * username,
+	* * email,
+	* * regDate, 
+	* * points, 
+	* * trustleveldescription, 
+	* * groupDescription, 
+	* * privacykey, 
+	* * avatar, 
+	* * hobbys, 
+	* * description, 
+	* * firstname, 
+	* * lastname, 
+	* * gender, 
+	* * street, 
+	* * housenumber, 
+	* * idPostal, 
+	* * telefonnumber, 
+	* * messengernumber, 
+	* * birthday
 	*
 	*@param string $user Benutzername des Benutzers
 	*
@@ -455,21 +455,21 @@ class DBFunctions
 	*Speichert die die übergeben Daten für einen Nutzer ab.
 	*
 	*Die Funktion ist dazu da um das Profil eines Nutzers upzudaten. Dazu wird der Funktion ein Array mit den Daten übergeben. Je nachdem wo sie hingehören werden sie korrekt abgespeichert. Die folgenden Werte könne upgedatet werden: 
-	*	username, 
-	*	email, 
-	*	regDate, 
-	*	firstname, 
-	*	lastname, 
-	*	birthday, 
-	*	street, 
-	*	housenumber, 
-	*	telefonnumber, 
-	*	messengernumber, 
-	*	idPostal, 
-	*	avatar, 
-	*	hobbys, 
-	*	description, 
-	*	privacykey
+	* * username, 
+	* * email, 
+	* * regDate, 
+	* * firstname, 
+	* * lastname, 
+	* * birthday, 
+	* * street, 
+	* * housenumber, 
+	* * telefonnumber, 
+	* * messengernumber, 
+	* * idPostal, 
+	* * avatar, 
+	* * hobbys, 
+	* * description, 
+	* * privacykey
 	*
 	*@param mixed[] $savedata Array aus verschiedenen Daten mit den Datentypen von Strings und Ints
 	*/
@@ -622,7 +622,7 @@ class DBFunctions
 	*
 	*Überprüfung unter Verwendung des Parameters des Namen, ob es schon eine Gute Tat mit dem Namen gibt. Wenn es den Namen gibt, wird "true" zurück gegeben und wenn es ihn noch nicht gibt, so wird "false" zurück gegeben.
 	*
-	*@param String Name einer möglichen Guten Tat
+	*@param string $name Name einer möglichen Guten Tat
 	*
 	*@return boolean True oder false
 	*/
@@ -648,19 +648,19 @@ class DBFunctions
 	*
 	*Erstellung einer guten Tat. Zudem werden alle nötigen Abhängigkeiten erstellt. Es werden die folgenden Attribute der Funktion übergeben:$name,$user_id,$category,$street,$housenumber,$pid,$starttime,$endtime,$organization,$countHelper,$idTrust,$description,$pictures
 	*
-	*@param String Name der guten Tat
-	*@param Int Id des Erstellers(Benutzer)
-	*@param String Kategorie
-	*@param String Straße
-	*@param Int Hausnummer
-	*@param Int Id der PLZ/Ort Kombination
-	*@param String Startzeit
-	*@param String Endzeit
-	*@param String Organisation
-	*@param Int Anzahl der Helfer
-	*@param Int Vertrauenslevel
-	*@param Beschreibung der guten Tat
-	*@param Bilder zu einer guten Tat
+	*@param string $name Name der guten Tat
+	*@param int $user_id Id des Erstellers(Benutzer)
+	*@param string $category Kategorie
+	*@param string $street Straße
+	*@param int $housenumber Hausnummer
+	*@param int $pid Id der PLZ/Ort Kombination
+	*@param string $starttime Startzeit
+	*@param string $endtime Endzeit
+	*@param string $organization Organisation
+	*@param int $countHelper Anzahl der Helfer
+	*@param int $idTrust Vertrauenslevel
+	*@param string $description Beschreibung der guten Tat
+	*@param string $pictures Bilder zu einer guten Tat
 	*/
 	public function db_createGuteTat($name,$user_id,$category,$street,$housenumber,$pid,$starttime,$endtime,$organization,$countHelper,$idTrust,$description,$pictures){
 		$db = self::db_connect();
