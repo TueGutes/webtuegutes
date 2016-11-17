@@ -1,11 +1,29 @@
 <?php
+/**
+ * Für gute Taten bewerben und Bewerbungen annehmen&ablehnen
+ *
+ * Hauptsächlich zwei Szenarien:
+ * 1. Ein Nutzer bewirbt sich für die gute Tat eines anderen Nutzers
+ * 2. Ein Ersteller einer guten Tat schaut sich die Bewerbung eines anderen Nutzers für seine gute Tat an und kann diese annehmen oder ablehnen
+ *
+ * @author     Andreas Blech <andreas.blech@stud.hs-hannover.de>
+ */
+
+
 //@author: Andreas Blech
 /*Beschreibung: Auf dieser Seite werden zwei Szenarien behandelt.
 * 1. Ein Nutzer bewirbt sich für eine gute Tat eines anderen Nutzers
   2. Ein Nutzer schaut sich die Bewerbung eines anderen Nutzers für seine gute Tat an und kann diese annehmen oder ablehnen
 */
 
-/*Gibt den Bewerbungstext zu einer Bewerbung zurück*/
+/**Gibt den Bewerbungstext zu einer Bewerbung zurück
+ *
+ * Gibt den applicationText in der Relation Application zurück, wo idGuteTat = $idGuteTat und userID = $candidateID gilt
+ *
+ * @param integer $idGuteTat die ID der guten Tat
+ * @param integer $candidateID die UserID des Bewerbers
+ * @return string|boolean Bewerbungstext oder false, falls kein Eintrag gefunden wurde
+ */
 function db_getApplicationTextOfApplication($idGuteTat, $candidateID) {
 	$db = DBFunctions::db_connect();
 	$sql = "SELECT applicationText FROM Application WHERE idGuteTat = ? AND idUser = ?";
@@ -56,7 +74,6 @@ Es gibt 6 Fälle:
 
 echo '<h2>Bewerbung</h2>';
 
-//TODO: Das hier muss im Link der Email gesetzt sein
 //Fall 1: Bewerbung abschicken
 if(isset($_GET['idGuteTat']) && !isset($_GET['candidateID'])) {
 	$idGuteTat = $_GET['idGuteTat'];
