@@ -10,13 +10,8 @@
  */
 
 
-//@author: Andreas Blech
-/*Beschreibung: Auf dieser Seite werden zwei Szenarien behandelt.
-* 1. Ein Nutzer bewirbt sich für eine gute Tat eines anderen Nutzers
-  2. Ein Nutzer schaut sich die Bewerbung eines anderen Nutzers für seine gute Tat an und kann diese annehmen oder ablehnen
-*/
-
-/**Gibt den Bewerbungstext zu einer Bewerbung zurück
+/**
+ * Gibt den Bewerbungstext zu einer Bewerbung zurück
  *
  * Gibt den applicationText in der Relation Application zurück, wo idGuteTat = $idGuteTat und userID = $candidateID gilt
  *
