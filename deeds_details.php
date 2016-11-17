@@ -13,18 +13,19 @@ include './includes/db_connector.php';
 require './includes/_top.php';
 
 
-
 $idTat = $_GET["id"];
 if(isset($_POST["close"])){
 	DBFunctions::db_guteTatClose($idTat);
+	echo '<h3> Gute Tat erfolgreich abgeschlossen !! </h>';
+	echo '<hr> <a href="./deeds.php"> <input type="Button" value="Zurück"> </a> ';
 }
+else{
+	$myRole = DBFunctions::db_get_user($_USER->getUsername())['groupDescription'];
+	if (!(DBFunctions::db_istFreigegeben($idTat) || $myRole=='Moderator' || $myRole=='Administrator'))
+		die ('<h3> Diese gute Tat muss zuerst von einem Moderator freigegeben werden.<br><a href="./deeds">Schade...</a> </h>');
 
-$myRole = DBFunctions::db_get_user($_USER->getUsername())['groupDescription'];
-if (!(DBFunctions::db_istFreigegeben($idTat) || $myRole=='Moderator' || $myRole=='Administrator'))
-	die ('<h3> Diese gute Tat muss zuerst von einem Moderator freigegeben werden.<br><a href="./deeds">Schade...</a> </h>');
-
-if (!(DBFunctions::db_istGeschlossen($idTat)))
-	die ('<h3> Diese gute Tat wurde bereits von einem Moderator geschlossen.<br> <a href="./deeds">Schade...</a> </h>');
+	if (!(DBFunctions::db_istGeschlossen($idTat)))
+		die ('<h3> Diese gute Tat wurde bereits von einem Moderator geschlossen! <br> <a href="./deeds"></a> </h>');
 
 
 
@@ -57,18 +58,6 @@ if (isset($_POST['allow'])) {
 	sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde abgelehnt', $mailText);
 	die ('Die gute Tat wurde abgelehnt. Der Ersteller der guten Tat wird per Email darüber informiert.<br><a href="'.$HOST.'/deeds">Zurück zur Übersicht</a>');
 }
-
-?>
-
-
-<style>
-	#mapid {
-		height:350px;
-		width:350px;
-	}
-</style>
-
-<?php
 
 // --------Erstellen von Blöcken zur Formatierten ausgabe
 $blAbout = '<h2>'.$tat["name"] .'</h2>';
@@ -153,8 +142,16 @@ $form .= '</form>';
 
 echo $form;
 }
-
+}
 ?>
+
+<style>
+	#mapid {
+		height:350px;
+		width:350px;
+	}
+</style>
+
 
 <?php
 require './includes/_bottom.php';

@@ -14,20 +14,23 @@ require './includes/_top.php';
 
 $extraPoints = $_POST['bewertung'];
 $username  = $_POST['user'];
-
-$user = DBFunctions::db_getUserIDByUsername($username);
+$user = DBFunctions::db_idOfBenutzername($username);
 
 if(!is_null($user))
 {
 
-	// Momentan überschreibt er dummerweise die alten Points mit den Neuen
-	// weil er es nicht schafft, die alten points auszulesen ...
-
-	$thisuser = DBFunctions::db_get_user($user);
+	$thisuser = DBFunctions::db_get_user($username);
 	$userPoint = $thisuser['points'];
 	$points = $userPoint + $extraPoints;
 	DBFunctions::db_userBewertung($points,$user);
 
+	$userTrust = $thisuser['idTrust'];
+	if((($points % 10) == 0)&&($points <= 60))
+	{
+		$trust = $userTrust + 1;
+		DBFunctions::db_userAnsehen($trust,$user);
+		echo "<h4> Trustlevel aufgestiegen ! </h>";
+	}
 }
 echo '<h2> Sie haben '.$username.' mit '.$extraPoints.' Punkten bewertet! </h>';
 echo '<hr> <a href="./profile?user='.$username.'"> <input type="Button" value="Zurück"> </a> ';

@@ -1607,18 +1607,14 @@ class DBFunctions
 		self::db_close($db);	
 	}
 
-	public function db_getUserIDByUsername($username) {
+	//Lukas
+	public function db_userAnsehen($trust,$user) {
 		$db = self::db_connect();
-		$sql = "SELECT idUser FROM User WHERE username = ? ";
+		$sql = 'UPDATE User SET idTrust = ? WHERE idUser = ?';
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('s',$username);
+		$stmt->bind_param('ii',$trust,$user);
 		$stmt->execute();
-		$result = $stmt->get_result();
-		$dbentry = $result->fetch_assoc();
-		self::db_close($db);				
-		return $dbentry['idUser'];
-		
+		self::db_close($db);	
 	}
-
 }
 ?>
