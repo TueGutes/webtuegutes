@@ -1,6 +1,10 @@
 <?php
 /**
-* @author Timm Romanik <timm.romanik@stud.hs-hannover.de
+*Datei zur Sammlung aller Datenbankzugriffe
+*
+*In dieser Datei ist es das Ziel, alle Datenbankzugriffe zu sammeln. Dass heißt, wenn es optimal läuft, würde nur in dieser Datei SQL Code stehen. Was auch heißt dass in anderen nur Funktionsaufrufe von hier stattfinden. Funktionsaufrufe werden realisiert durch <DBFunctions::funktionsname>.
+*
+*@author Timm Romanik <timm.romanik@stud.hs-hannover.de
 */
 
 
@@ -10,6 +14,14 @@ DEFINE('DB_PASSWORD','Sadi23n2os');
 DEFINE('DB_HOST','localhost');
 DEFINE('DB_NAME','tueGutes');
 
+
+/**
+*Klasse um die Funktionen zu sammeln
+*
+*In dieser Klasse werden alle Funktionen gesammelt. Auch geschieht über diese Klasse der Funktionsaufruf der Funktion in anderen Dateien.
+*
+*@author Timm Romanik <timm.romanik@stud.hs-hannover.de
+*/
 class DBFunctions
 {
 	/**
@@ -17,7 +29,7 @@ class DBFunctions
 	*
 	*Öffnet eine Datenbank Verbindung mit Parametern die vorher fest definiert sind. Die Parameter sind Host, Benutzer, password und Datenbankname
 	*
-	*@return mysqli Datenbankverbindungsobjekt auf dem gearbeitet werden kann
+	*@return object Datenbankverbindungsobjekt auf dem gearbeitet werden kann
 	*/
 	public function db_connect() {
 		return mysqli_connect(DB_HOST,DB_USER, DB_PASSWORD, DB_NAME);
@@ -28,7 +40,7 @@ class DBFunctions
 	*
 	*Schließt eine Datenbankverbindung unter verwendung eines Parameters, was ein mysqli Objekt ist
 	*
-	*@param mysqli Datenbankverbindungsobjekt
+	*@param object $db Datenbankverbindungsobjekt
 	*/
 	public function db_close(mysqli $db) {
 		mysqli_close($db);
@@ -39,9 +51,9 @@ class DBFunctions
 	*
 	*Gibt die Id von dem Benutzer zurück, dessen Name als Parameter in die Funktion übergeben wurde.
 	*
-	*@param String Benutzername
+	*@param string $benutzername Der benutzername eines Benutzers
 	*
-	*@return Int Oder false wenn es den Benutzer nicht gibt
+	*@return int|false Gibt einen Int Wert zurück wenn es erfolgreich war. War es nicht erfolgreich, dann false.
 	*/
 	public function db_idOfBenutzername($benutzername) {
 		$db = self::db_connect();
@@ -67,9 +79,9 @@ class DBFunctions
 	*
 	*Gibt die Id von dem Benutzer zurück, dessen Email als Parameter in die Funktion übergeben wurde.
 	*
-	*@param String Emailadresse
+	*@param string $emailadresse Die Emailadresse eines Nutzers
 	*
-	*@return Int Oder false wenn es den Benutzer nicht gibt
+	*@return int|false Gibt einen Int Wert zurück wenn es erfolgreich war. War es nicht erfolgreich, dann false.
 	*/
 	public function db_idOfEmailAdresse($emailadresse) {
 		$db = self::db_connect();
@@ -94,7 +106,7 @@ class DBFunctions
 	*
 	*Gibt die Anzahl der Benutzer zurück, egal welchen Status sie haben, ob verifiziert oder nicht.
 	*
-	*@return Int Anzahl
+	*@return int Anzahl der Benutzer
 	*/
 	public function db_getBenutzerAnzahl(){
 		$db = self::db_connect();
@@ -129,9 +141,9 @@ class DBFunctions
 	*
 	*Gibt eine gute Tat zu ihrer ID zürück. Es werden alle Attribute der Guten Taten tabelle zurück gegeben.
 	*
-	*@param Int Id der guten Tat
+	*@param int $idvonGuteTat Id der guten Tat
 	*
-	*@return mixed[] Alle Attribute der Guten Taten Tabelle in einem Array als Werte
+	*@return (int|string)[] Alle Attribute der Guten Taten Tabelle in einem Array als Werte
 	*/
 	public function db_getGuteTatbyid($idvonGuteTat){
 		$db = self::db_connect();
@@ -151,13 +163,13 @@ class DBFunctions
 	*
 	*Erstellt einen Benutzeraccount mit den angegeben Parametern, der Status ist erste einmal "unverifiziert" und liefert einen cryptkey, falls das Erstellen erfolgreich war, false falls nicht. Zudem werden alle nötigen Abhängigkeiten erstellt, wie die nötigen Einträge in "Privacy","PersData" und "Usertexts".
 	*
-	*@param String Benutzername
-	*@param String Vorname
-	*@param String Nachname
-	*@param String Emailadresse
-	*@param String Passwort
+	*@param string $benutzername Der Benutzername des Benutzers
+	*@param string $vorname Der Vorname des Benutzers
+	*@param string $nachname Der Nachname des Benutzers
+	*@param string $email Die Emailadresse ders Benutzers
+	*@param string $passwort Das Passwort des Benutzers
 	*
-	*@return String Verschlüsselungskey oder "false" wenn etwas bei der Erstellung schief geht.
+	*@return string|false Gibt den Verschlüsselungskey zurück oder "false" wenn etwas bei der Erstellung schief geht.
 	*/
 	public function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 		$db = self::db_connect();
