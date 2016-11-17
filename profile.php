@@ -412,8 +412,11 @@
 
 		//Block 3: Taten
 		$blTaten = '<h3>Taten von ' . $thisuser['username'] . '</h3><table style="border:none">';
-		$blTaten .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Karma:</td><td style="border:none">';
-		$blTaten .= $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')';
+		$blTaten .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Bewertung:</td><td style="border:none">';
+		$blTaten .= $thisuser['points'];
+
+		$blTaten .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Vertrauenslevel:</td>';
+		$blTaten .= '<td style="border:none">'. $thisuser['idTrust']. ' ('.$thisuser['trustleveldescription'].') ';
 			//Hier können noch weitere Informationen wie z.B. die letzten Guten Taten des Nutzers, die von ihm ausgeschriebenen Taten, etc. aufgeführt werden
 		$blTaten .= "</table>";
 
@@ -511,7 +514,22 @@
 ?>
 
 <!--Ende des Formulars zum Ändern der Profileinstellungen:-->
-<?php echo $form_bottom; ?>
+<?php
+echo $form_bottom; ?>
+
+<?php
+
+$myRole = DBFunctions::db_get_user($_USER->getUsername())['groupDescription'];
+if(($_USER->loggedIn() && $_USER->getUsername() != $thisuser["username"])) {
+$link = 'profile_bewertung.php';
+$bewert = '<form action="'.$link.'" method="post">';
+$bewert .= 'Bitte bewerten sie mit einer Zahl von 1 bis 10 <br> Wobei 10 das beste und 1 das schlechtestes ist <br>';
+$bewert .= '<input type="text" name="bewertung" placeholder="Zahl von 1 bis 10"> <br> ';
+$bewert .= '<input type="hidden" name="user" value="'.$thisuser["username"].'"> <br> ';
+$bewert .= '<input type="submit" value="Bewerten"> </form>';
+echo $bewert;
+}
+?>
 
 <?php require "./includes/_bottom.php"; ?>
 

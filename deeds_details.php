@@ -12,12 +12,23 @@ include './includes/db_connector.php';
 
 require './includes/_top.php';
 
+
+
+$idTat = $_GET["id"];
+if(isset($_POST["close"])){
+	DBFunctions::db_guteTatClose($idTat);
+}
+
 $myRole = DBFunctions::db_get_user($_USER->getUsername())['groupDescription'];
-if (!(DBFunctions::db_istFreigegeben($_GET['id']) || $myRole=='Moderator' || $myRole=='Administrator'))
-	die ('Diese gute Tat muss zuerst von einem Moderator freigegeben werden.<br><a href="./deeds">Schade...</a>');
+if (!(DBFunctions::db_istFreigegeben($idTat) || $myRole=='Moderator' || $myRole=='Administrator'))
+	die ('<h3> Diese gute Tat muss zuerst von einem Moderator freigegeben werden.<br><a href="./deeds">Schade...</a> </h>');
+
+if (!(DBFunctions::db_istGeschlossen($idTat)))
+	die ('<h3> Diese gute Tat wurde bereits von einem Moderator geschlossen.<br> <a href="./deeds">Schade...</a> </h>');
+
+
 
 //------------Einlesen der Daten---------------
-$idTat = $_GET["id"];
 $tat = DBFunctions::db_getGuteTat($idTat);
 
 if (!isset($tat['name']))
@@ -48,6 +59,7 @@ if (isset($_POST['allow'])) {
 }
 
 ?>
+
 
 <style>
 	#mapid {
@@ -102,7 +114,7 @@ echo '<p />';
 
 echo '<br> <hr> <br> ';
 
-if (!DBFunctions::db_istFreigegeben($_GET['id'])) {
+if (!DBFunctions::db_istFreigegeben($idTat)) {
 	$form1 = '<form method="post" action="">';
 	$form1 .= '<input type="submit" value="Gute Tat freigeben" width>';
 	$form1 .= '<input type="hidden" name="allow" width>';
@@ -115,15 +127,21 @@ if (!DBFunctions::db_istFreigegeben($_GET['id'])) {
 
 	echo $form1 . '<br>' . $form2;
 }
-else if($_USER->loggedIn() && $_USER->getUsername() == $tat["username"]) {
+else if(($_USER->loggedIn() && $_USER->getUsername() == $tat["username"])||($myRole=='Moderator' || $myRole=='Administrator')) {
 
 $link = './deeds_bearbeiten?id='.$idTat;
+$link2 = './deeds_details?id='.$idTat;
 
 $form = '<form method="post" action="'.$link.'">';
 $form .= '<input type="submit" value="Bearbeiten">';
 $form .= '</form>';
 
-echo $form;
+$form2 = '<form method="post" action="'.$link2.'">';
+$form2 .= '<input type="hidden" name="close" value="true">';
+$form2 .= '<input type="submit" value="Close">';
+$form2 .= '</form>';
+
+echo $form . $form2;
 }
 else{
 
@@ -141,3 +159,4 @@ echo $form;
 <?php
 require './includes/_bottom.php';
 ?>
+

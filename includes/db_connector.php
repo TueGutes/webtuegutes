@@ -375,7 +375,7 @@ class DBFunctions
 	public function db_get_user($user) {
 		$db = self::db_connect();
 		$sql = "
-			SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, PersData.idPostal, telefonnumber, messengernumber, birthday, place, postalcode
+			SELECT idUser, password, username, email, regDate, points, Trust.idTrust, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, PersData.idPostal, telefonnumber, messengernumber, birthday, place, postalcode
 			FROM User
 				JOIN Trust
 			    	ON User.idTrust = Trust.idTrust
@@ -520,7 +520,8 @@ class DBFunctions
 	/**
 	*Holt sich eine Gute Tat und zusätzliche Parameter.
 	*
-	*Durch Übergabe einer Id werden ausgewählte Daten zu einer Tat zurückgegeben. Die Rückgabe erfolgt in Form eines Arrays, in dem die Daten abgespeichert sind. Die folgenden Werte werden abgefragt: Deeds.name, User.username, UserTexts.avatar,Deeds.category, Deeds.street, Deeds.housenumber, Deeds.idPostal,Deeds.starttime, Deeds.endtime, Deeds.organization, Deeds.countHelper, Deeds.status,Trust.idTrust, Trust.trustleveldescription, DeedTexts.description, DeedTexts.pictures, Postalcode.postalcode, Postalcode.place
+	*Durch Übergabe einer Id werde
+	n ausgewählte Daten zu einer Tat zurückgegeben. Die Rückgabe erfolgt in Form eines Arrays, in dem die Daten abgespeichert sind. Die folgenden Werte werden abgefragt: Deeds.name, User.username, UserTexts.avatar,Deeds.category, Deeds.street, Deeds.housenumber, Deeds.idPostal,Deeds.starttime, Deeds.endtime, Deeds.organization, Deeds.countHelper, Deeds.status,Trust.idTrust, Trust.trustleveldescription, DeedTexts.description, DeedTexts.pictures, Postalcode.postalcode, Postalcode.place
 	*
 	*@param Int Id einer Guten Tat
 	*
@@ -1567,5 +1568,57 @@ class DBFunctions
 		$stmt->execute();
 		self::db_close($db);
 	}	
+
+
+	//Lukas
+	public function db_guteTatClose($idGuteTat) {
+		$db = self::db_connect();
+		$sql = 'UPDATE Deeds SET Status = "geschlossen" WHERE idGuteTat = ?';
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idGuteTat);
+		$stmt->execute();
+		self::db_close($db);	
+	}
+
+	//Lukas
+	public function db_istGeschlossen($idGuteTat) {
+		$db = self::db_connect();
+		$sql = "
+				SELECT status
+				FROM Deeds
+				WHERE idGuteTat = ?
+			";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idGuteTat);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		return $dbentry['status']!='geschlossen';
+	}
+
+	//Lukas
+	public function db_userBewertung($points,$user) {
+		$db = self::db_connect();
+		$sql = 'UPDATE User SET points = ? WHERE idUser = ?';
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('ii',$points,$user);
+		$stmt->execute();
+		self::db_close($db);	
+	}
+
+	public function db_getUserIDByUsername($username) {
+		$db = self::db_connect();
+		$sql = "SELECT idUser FROM User WHERE username = ? ";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('s',$username);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);				
+		return $dbentry['idUser'];
+		
+	}
+
 }
 ?>
