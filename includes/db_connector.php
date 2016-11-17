@@ -241,9 +241,9 @@ class DBFunctions
 	*
 	*Aktiviert einen Benutzeraccount unter Verwendung des "cryptkeys" der übergeben werden muss. Setzt den Status auf "verifiziert". Gibt "true" zurück.
 	*
-	*@param String Cryptkey
+	*@param string $cryptkey Der generierte Cryptkey des Benutzers
 	*
-	*@return boolean
+	*@return true
 	*/
 	public function db_activateAccount($cryptkey) {
 		$db = self::db_connect();
@@ -269,9 +269,9 @@ class DBFunctions
 	*
 	*Die Funktion returnt einen Benutzernamen der zu einem schon generierten Cryptkey gehört. Wenn ein nicht existenter Cryptkey eingefügt wird, so gibt die Funktion false zurück.
 	*
-	*@param String Cryptkey
+	*@param string $cryptkey Der generierte Cryptkey des Benutzers
 	*
-	*@return String Der Benutzername oder einen boolean mit dem Wert "false"
+	*@return string|false Der Benutzername oder einen boolean mit dem Wert "false" wird zurückgegeben
 	*/
 	public function db_getUserByCryptkey($cryptkey) {
 		$db = self::db_connect();
@@ -298,9 +298,9 @@ class DBFunctions
 	*
 	*@deprecated 1.0 Eine Hilfsfunktion dessen Hilfe wir nicht mehr benötigen, wird in Zukunft entfernt wenn sicher gestellt ist, das es nirgendswo verwendet wird.
 	*
-	*@param Int ID eines Datensatz aus Postalcode
-	*@param Int Postleitzahl
-	*@param String Stadtteil
+	*@param int $idPostal Die ID eines Datensatz aus Postalcode
+	*@param int $plz Die Postleitzahl
+	*@param string $place Der Stadtteil
 	*
 	*/
 	public function db_fix_plz($idPostal,$plz,$place) {
@@ -324,10 +324,10 @@ class DBFunctions
 	*
 	*Die Funktion soll die zugehörige ID zu einer korrekten Kombination aus PLZ und Ort der Postalcode Tabelle zurück geben. Vorraussetzung ist natürlich,dass Die Kombination schon in der Tabelle ist. Bei einer nicht vorhanden Kombination gibt die Funktion "false" zurück.
 	*
-	*@param Int Postleitzahl
-	*@param String Stadtteil
+	*@param int $plz Eine Postleitzahl
+	*@param string $place Ein Stadtteil
 	*
-	*@return Int Id von dem entsprechendem Datensatz oder "false"
+	*@return int|false Id von dem entsprechendem Datensatz oder "false"
 	*/
 	public function db_getIdPostalbyPostalcodePlace($plz,$place){
 		$db = self::db_connect();
@@ -355,9 +355,9 @@ class DBFunctions
 	*
 	*Die Funktion soll die PLZ und den Ort zu einer korrekten ID der Postalcode Tabelle zurück geben. Vorraussetzung ist natürlich,dass Die ID schon in der Tabelle ist. Bei einer nicht vorhanden ID gibt die Funktion "false" zurück.
 	*
-	*@param Int ID eines Datenssatzes aus Postalcode
+	*@param int $idPostal ID eines Datenssatzes aus Postalcode
 	*
-	*@return mixed[] Array aus zwei Attributen(postalcode,place)
+	*@return (int|string)[] Array aus zwei Attributen(postalcode,place)
 	*/
 	public function db_getPostalcodePlacebyIdPostal($idPostal){
 		$db = self::db_connect();
@@ -378,9 +378,30 @@ class DBFunctions
 	/**
 	*Gibt eine Auswahl an Daten zu einem Benutzernamen zurück
 	*
-	*Die Funktion ist dazu da um einen Nutzer aus der Datenbank mit ausgwählten Daten zu laden. Die Daten werden in einem Array als Werte zurückgegeben. Man muss den Benutzernamen dazu übergeben. Falls es Werte nicht gibt in der Datenbank, werden sie als Leerstrings gesetzt. Die folgenden Werte werden ausgegeben: idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, idPostal, telefonnumber, messengernumber, birthday
+	*Die Funktion ist dazu da um einen Nutzer aus der Datenbank mit ausgwählten Daten zu laden. Die Daten werden in einem Array als Werte zurückgegeben. Man muss den Benutzernamen dazu übergeben. Falls es Werte nicht gibt in der Datenbank, werden sie als Leerstrings gesetzt. Die folgenden Werte werden ausgegeben: 
+	*	idUser 
+	*	password, 
+	*	username,
+	*	email,
+	*	regDate, 
+	*	points, 
+	*	trustleveldescription, 
+	*	groupDescription, 
+	*	privacykey, 
+	*	avatar, 
+	*	hobbys, 
+	*	description, 
+	*	firstname, 
+	*	lastname, 
+	*	gender, 
+	*	street, 
+	*	housenumber, 
+	*	idPostal, 
+	*	telefonnumber, 
+	*	messengernumber, 
+	*	birthday
 	*
-	*@param String Benutzername
+	*@param string $user Benutzername des Benutzers
 	*
 	*@return mixed[] Array aus verschiedenen Daten mit den Datentypen von Strings und Ints
 	*/
@@ -433,9 +454,24 @@ class DBFunctions
 	/**
 	*Speichert die die übergeben Daten für einen Nutzer ab.
 	*
-	*Die Funktion ist dazu da um das Profil eines Nutzers upzudaten. Dazu wird der Funktion ein Array mit den Daten übergeben. Je nachdem wo sie hingehören werden sie korrekt abgespeichert. Die folgenden Werte könne upgedatet werden: username, email, regDate, firstname, lastname, birthday, street, housenumber, telefonnumber, messengernumber, idPostal, avatar, hobbys, description, privacykey
+	*Die Funktion ist dazu da um das Profil eines Nutzers upzudaten. Dazu wird der Funktion ein Array mit den Daten übergeben. Je nachdem wo sie hingehören werden sie korrekt abgespeichert. Die folgenden Werte könne upgedatet werden: 
+	*	username, 
+	*	email, 
+	*	regDate, 
+	*	firstname, 
+	*	lastname, 
+	*	birthday, 
+	*	street, 
+	*	housenumber, 
+	*	telefonnumber, 
+	*	messengernumber, 
+	*	idPostal, 
+	*	avatar, 
+	*	hobbys, 
+	*	description, 
+	*	privacykey
 	*
-	*@param mixed[] Array aus verschiedenen Daten mit den Datentypen von Strings und Ints
+	*@param mixed[] $savedata Array aus verschiedenen Daten mit den Datentypen von Strings und Ints
 	*/
 	public function db_update_user($savedata){
 		$savedata['idPostal'] = self::db_getIdPostalbyPostalcodePlace($savedata['postalcode'],$savedata['place']);
@@ -494,8 +530,8 @@ class DBFunctions
 	*
 	*Die Funktion löscht alle Informationen zu einem Benutzer. Da dies ein endgültiger Vorgang ist, wird für die Endgültige Löschung die Eingabe des Passworts verlangt. Es werden auch alle Abhängigkeiten entfernt.
 	*
-	*@param String Benutzername
-	*@param String Passwort
+	*@param string $user Benutzername des Benutzers
+	*@param string $pass Das Passwort des Benutzers
 	*/
 	public function db_delete_user($user, $pass) {
 		$me = self::db_get_user($user);
@@ -534,7 +570,7 @@ class DBFunctions
 	*
 	*Durch Übergabe einer Id werden ausgewählte Daten zu einer Tat zurückgegeben. Die Rückgabe erfolgt in Form eines Arrays, in dem die Daten abgespeichert sind. Die folgenden Werte werden abgefragt: Deeds.name, User.username, UserTexts.avatar,Deeds.category, Deeds.street, Deeds.housenumber, Deeds.idPostal,Deeds.starttime, Deeds.endtime, Deeds.organization, Deeds.countHelper, Deeds.status,Trust.idTrust, Trust.trustleveldescription, DeedTexts.description, DeedTexts.pictures, Postalcode.postalcode, Postalcode.place
 	*
-	*@param Int Id einer Guten Tat
+	*@param int $idGuteTat Id einer Guten Tat
 	*
 	*@return mixed[] Array von den Attributen in Form der Datentypen String und Int
 	*/
