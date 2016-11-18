@@ -1,7 +1,11 @@
 <?php
-/*
-*@author Henrik Huckauf
-*/
+/**
+ * Nutzungsbedingungen
+ *
+ * Zeigt die Nutzungsbedingungen (bzw. AGBs) an
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 require './includes/DEF.php';
 require './includes/_top.php';

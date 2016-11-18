@@ -5,9 +5,10 @@
  * Ein Nutzer gibt seinen Benutzernamen und sein Passwort ein
  * Sind alle Daten korrekt wird er eingeloggt und anschließend standardmäßig zu seiner Profilseite (profile.php) weiterleitet
  * Wollte der Nutzer ursprünglich zu einer anderen Seite, war allerdings noch nicht eingeloggt, so wird er nach dem Login dorthin weitergeleitet (continue Parameter)
+ * (refactored von Henrik Huckauf)
  *
- * @author     Andreas Blech <andreas.blech@stud.hs-hannover.de>
- * @author		 Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ * @author Andreas Blech <andreas.blech@stud.hs-hannover.de>
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
  */
 
 require './includes/DEF.php';
@@ -27,7 +28,7 @@ $output = isset($_GET['code']) ? (isset($wlang['login_code_' . $_GET['code']]) ?
 if(isset($_POST['username']) && isset($_POST['password']))
 {
 	$continue = $HOST . "/profile";
-	if(isset($_POST['continue']) && $_POST['continue'] != '')
+	if(isset($_POST['continue']) && $_POST['continue'] != '' && parse_url($_POST['continue'])['host'] == parse_url($HOST)['host'])
 		$continue = urldecode($_POST['continue']);
 
 	$userID = DBFunctions::db_idOfBenutzername($_POST['username']);
@@ -65,7 +66,7 @@ require './includes/_top.php';
 <div id='output'><?php echo $output; ?></div>
 <br><br>
 <form action="" method="post">
-	<input type="text" value="" name="username" placeholder="<?php echo $wlang['login_placeholder_username']; ?>" required />
+	<input type="text" value="" name="username" placeholder="<?php echo $wlang['login_placeholder_username']; ?>" required autofocus />
 	<br><br>
 	<input type="password" name="password" value="" placeholder="<?php echo $wlang['login_placeholder_password']; ?>" required />
 	<br><br>

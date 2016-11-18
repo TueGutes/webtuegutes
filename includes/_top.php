@@ -1,7 +1,11 @@
 <?php
-/*
-*@author Henrik Huckauf
-*/
+/**
+ * Oberer Teil der Website
+ *
+ * Enthält den oberen Teil der Website (z.B. das Menü)
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 $currentPath = $_SERVER['PHP_SELF'];
 $extension = '.php';

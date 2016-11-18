@@ -1,7 +1,11 @@
 <?php
-/*
-*@author Henrik Huckauf
-*/
+/**
+ * Error handling
+ *
+ * Regelt, wie mit auftretenden Error umgegangen wird 
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 $errorCode = $_SERVER["REDIRECT_STATUS"];
 if($errorCode == 200) // sollte man die error Seite manuell besuchen... (Status Code 200 -> OK)
