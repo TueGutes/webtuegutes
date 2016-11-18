@@ -3,7 +3,7 @@
 * @author Timm Romanik <timm.romanik@stud.hs-hannover.de
 */
 
-//Noch 123 eine Teständerung, um die Permissions zu testen
+//Noch 12345 eine Teständerung, um die Permissions zu testen
 
 //Definition der Datenbankverbindung
 DEFINE('DB_USER','tueGutes');
