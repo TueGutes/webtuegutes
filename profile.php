@@ -517,19 +517,5 @@
 <?php
 echo $form_bottom; ?>
 
-<?php
-
-$myRole = DBFunctions::db_get_user($_USER->getUsername())['groupDescription'];
-if(($_USER->loggedIn() && $_USER->getUsername() != $thisuser["username"])) {
-$link = 'profile_bewertung.php';
-$bewert = '<form action="'.$link.'" method="post">';
-$bewert .= 'Bitte bewerten sie mit einer Zahl von 1 bis 10 <br> Wobei 10 das beste und 1 das schlechtestes ist <br>';
-$bewert .= '<input type="text" name="bewertung" placeholder="Zahl von 1 bis 10"> <br> ';
-$bewert .= '<input type="hidden" name="user" value="'.$thisuser["username"].'"> <br> ';
-$bewert .= '<input type="submit" value="Bewerten"> </form>';
-echo $bewert;
-}
-?>
-
 <?php require "./includes/_bottom.php"; ?>
 

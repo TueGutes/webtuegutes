@@ -12,136 +12,174 @@ include './includes/db_connector.php';
 
 require './includes/_top.php';
 
-
 $idTat = $_GET["id"];
+$tat = DBFunctions::db_getGuteTat($idTat);
+$ex = false;
+
 if(isset($_POST["close"])){
 	DBFunctions::db_guteTatClose($idTat);
 	echo '<h3> Gute Tat erfolgreich abgeschlossen !! </h>';
+	$ex = true;
+
+			$mail = DBFunctions::db_get_user($_USER->getUsername())['email'];
+			$actual_link = $HOST . '/deeds_detaisl?id='.$idTat;
+			$content = '"Gute Tat '.$idTat.' geschlossen"';
+
+			$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Gute Tat <b>".$tat['name']."</b> bei 'Tue Gutes in Hannover':</h1> <br><h3>Wurde erfolgreich geschlossen: ".$actual_link." </h3></div>";
+
+			if(sendEmail($mail, $content, $mailcontent) === true)
+					echo '<h4> Sie werden in kürze per Mail benachrichtigt </h>';
+			else
+				$output = '<red>Bestätigungsmail an ' . $mail . ' konnte nicht gesendet werden!</red>';
+
+
 	echo '<hr> <a href="./deeds.php"> <input type="Button" value="Zurück"> </a> ';
+
 }
 else{
 	$myRole = DBFunctions::db_get_user($_USER->getUsername())['groupDescription'];
-	if (!(DBFunctions::db_istFreigegeben($idTat) || $myRole=='Moderator' || $myRole=='Administrator'))
-		die ('<h3> Diese gute Tat muss zuerst von einem Moderator freigegeben werden.<br><a href="./deeds">Schade...</a> </h>');
-
-	if (!(DBFunctions::db_istGeschlossen($idTat)))
-		die ('<h3> Diese gute Tat wurde bereits von einem Moderator geschlossen! <br> <a href="./deeds"></a> </h>');
-
-
-
-//------------Einlesen der Daten---------------
-$tat = DBFunctions::db_getGuteTat($idTat);
-
-if (!isset($tat['name']))
-	die ('Ungültiger Parameter: Page=' . $_GET['page'] . '<p />Zu dieser ID konnte keine gute Tat gefunden werden.<p />Du meinst das ist ein Fehler? <a href="'.$HOST.'contact">Kontaktiere uns!</a>');
-
-$erstellerName = DBFunctions::db_getUsernameOfContactPersonByGuteTatID($idTat);
-$erstellerEmail = DBFunctions::db_getEmailOfContactPersonByGuteTatID($idTat);
-
-//Gute Tat freigeben oder ablehnen (inkl. Bestätigungsmail an den Ersteller):
-$gutetat = DBFunctions::db_getGuteTat($_GET['id']);
-
-if (isset($_POST['allow'])) {
-	DBFunctions::db_guteTatFreigeben($_GET['id']);
-	$mailText = '<h3>Hallo ' . $erstellerName . '</h3><p>Deine gute Tat "' . $tat['name'] . '" wurde gerade von ' . $_USER->getUsername() . ' freigegeben.</p>';
-	$mailText .= '<a href="' . $HOST . '/deeds_details?id=' . $idTat . '">Klicke hier</a>, um sofort zu deiner guten Tat zu gelangen.';
-	sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde angenommen!', $mailText);
-	Header("Refresh: 0");
-} else if (isset($_POST['deny'])) {
-	//TODO: Beim ablehnen soll nicht einfach dieser Block aufgerufen werden. 
-	//Stattdessen soll über "die" ein weiteres Formular mit einem Feld für 
-	//die Begründung angezeigt werden. Erst wenn auch das abgeschickt ist, 
-	//soll dieser Block ausgeführt und die Begründung in die Email integriert werden.
-	DBFunctions::db_guteTatAblehnen($_GET['id']);
-	$mailText = '<h3>Hallo ' . $erstellerName . '</h3><p>Deine gute Tat "' . $tat['name'] . '" wurde gerade von ' . $_USER->getUsername() . ' abgelehnt.</p>';
-	$mailText .= '<a href="' . $HOST . '/guteTatErstellenHTML">Klicke hier</a>, um eine neue gute Tat zu erstellen.';
-	sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde abgelehnt', $mailText);
-	die ('Die gute Tat wurde abgelehnt. Der Ersteller der guten Tat wird per Email darüber informiert.<br><a href="'.$HOST.'/deeds">Zurück zur Übersicht</a>');
-}
-
-// --------Erstellen von Blöcken zur Formatierten ausgabe
-$blAbout = '<h2>'.$tat["name"] .'</h2>';
-//$blAbout .= ' Gute Tat #'.$idTat.' </h>';
-
-// -----------Gute Taten Details - genauer
-$blTaten = '<table width="65%"> <tr> <td width="25%"> Kategorie: </td> <td style="padding:10px">'.$tat["category"].'</td> </tr>';
-$blTaten .= '<tr> <td> Kontaktperson: </td> <td style="padding:10px"> <a href="./profile?user='.$tat["username"].'">'.'<img src="' . $tat["avatar"] . '" style="height:3%;float:left" >&nbsp'.$tat["username"].'</a> </td>';
-$blTaten .= '<tr> <td> Gewünschter Vertrauenslevel: </td> <td style="padding:10px">'.$tat["idTrust"]. ' ('.$tat['trustleveldescription'].')' .'</td> </tr>';
-$blTaten .= '<tr> <td> Beschreibung: </td> <td style="padding:10px">'.(($tat['description']!='')?$tat["description"]:'keine Beschreibung angegeben').'</td> </tr>';
-if ($tat['starttime']!='0000-00-00 00:00:00') $blTaten .= '<tr> <td> Beginn: </td> <td style="padding:10px">'.$tat['starttime'].'</td> </tr>';
-if ($tat['endtime']!='0000-00-00 00:00:00') $blTaten .= '<tr> <td> Ende: </td> <td style="padding:10px">'.$tat['endtime'].'</td> </tr>';
-if ($tat['organization']!='') $blTaten .= '<tr> <td> Organisation: </td> <td style="padding:10px">'.$tat["organization"].'</td> </tr>';
-$blTaten .= '<tr> <td> Anzahl Helfer: </td> <td style="padding:10px">'.$tat["countHelper"].'</td> </tr> </table>';
-
-// -------------- Einbindung der Map -------------------------
-$blMap = '<h3>Adresse der Guten Tat:</h3>';
-
-$shPlzOrt = isset($tat["postalcode"]) && $tat['postalcode'] != '';
-$shStrasse = isset($tat["street"]) && $tat['street'] != '';
-$shHausnummer = isset($tat["housenumber"]) && $tat['housenumber'] != '';
-$showMap = ($shPlzOrt && $shStrasse && $shHausnummer);
-
-
-// --------------- Ausgabe der Blöcke, eingepackt in div boxen ----------
-echo '<div align="center">' . $blAbout . '</div>';
-echo '<p />';
-echo '<div align="center">' . $blTaten . '</div>';
-echo '<p />';
-echo '<div align="center">' .$blMap;
-
-if ($showMap) {
-		echo '<div id="mapid">';
-		createMap($tat['postalcode'] . ',' . $tat['street'] . ',' . $tat['housenumber']);
-		echo '</div>';
+	if (!(DBFunctions::db_istFreigegeben($idTat) || $myRole=='Moderator' || $myRole=='Administrator')){
+		echo '<h3> Diese gute Tat muss zuerst von einem Moderator freigegeben werden.<br><a href="./deeds">Schade...</a> </h>';
+		$ex = true;
 	}
-else{
-	echo '<div align="center" style="font-size:200%;">'.'Adresse wurde gar nicht oder <br> nur unvollständig angegeben! ';
+
+	if (!(DBFunctions::db_istGeschlossen($idTat))){
+		echo '<h3> Diese gute Tat wurde bereits von einem Moderator geschlossen! <br>';
+		echo '<a href="./deeds">Zurück...</a> </h>';
+		$ex = true;
+
+		echo '<br> <hr> <br>';
+		if(!isset($_POST['user'])){
+			$myRole = DBFunctions::db_get_user($_USER->getUsername())['groupDescription'];
+			if(($_USER->loggedIn() && $_USER->getUsername() != $tat["username"])) {
+				$link = 'profile_bewertung.php';
+				$bewert = '<form action="'.$link.'" method="post">';
+				$bewert .= 'Bitte bewerten sie: <b>'.$tat["username"].'</b> mit einer Zahl von 1 bis 10 <br> Wobei 10 das beste und 1 das schlechtestes ist <br>';
+				$bewert .= '<input type="text" name="bewertung" placeholder="Zahl von 1 bis 10"> <br> ';
+				$bewert .= '<input type="hidden" name="user" value="'.$tat["username"].'"> <br> ';
+				$bewert .= '<input type="submit" value="Bewerten"> </form>';
+				echo $bewert;
+			}
+		}
+
+	}
 }
 
-echo '</div>';
-echo '<p />';
+if($ex == false){
+	//------------Einlesen der Daten---------------
 
-echo '<br> <hr> <br> ';
 
-if (!DBFunctions::db_istFreigegeben($idTat)) {
-	$form1 = '<form method="post" action="">';
-	$form1 .= '<input type="submit" value="Gute Tat freigeben" width>';
-	$form1 .= '<input type="hidden" name="allow" width>';
-	$form1 .= '</form>';
+	if (!isset($tat['name']))
+		die ('Ungültiger Parameter: Page=' . $_GET['page'] . '<p />Zu dieser ID konnte keine gute Tat gefunden werden.<p />Du meinst das ist ein Fehler? <a href="'.$HOST.'contact">Kontaktiere uns!</a>');
 
-	$form2 = '<form method="post" action="">';
-	$form2 .= '<input type="submit" value=" Gute Tat ablehnen ">';
-	$form2 .= '<input type="hidden" name="deny" width>';
+	$erstellerName = DBFunctions::db_getUsernameOfContactPersonByGuteTatID($idTat);
+	$erstellerEmail = DBFunctions::db_getEmailOfContactPersonByGuteTatID($idTat);
+
+	//Gute Tat freigeben oder ablehnen (inkl. Bestätigungsmail an den Ersteller):
+	$gutetat = DBFunctions::db_getGuteTat($_GET['id']);
+
+	if (isset($_POST['allow'])) {
+		DBFunctions::db_guteTatFreigeben($_GET['id']);
+		$mailText = '<h3>Hallo ' . $erstellerName . '</h3><p>Deine gute Tat "' . $tat['name'] . '" wurde gerade von ' . $_USER->getUsername() . ' freigegeben.</p>';
+		$mailText .= '<a href="' . $HOST . '/deeds_details?id=' . $idTat . '">Klicke hier</a>, um sofort zu deiner guten Tat zu gelangen.';
+		sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde angenommen!', $mailText);
+		Header("Refresh: 0");
+	} else if (isset($_POST['deny'])) {
+		//TODO: Beim ablehnen soll nicht einfach dieser Block aufgerufen werden. 
+		//Stattdessen soll über "die" ein weiteres Formular mit einem Feld für 
+		//die Begründung angezeigt werden. Erst wenn auch das abgeschickt ist, 
+		//soll dieser Block ausgeführt und die Begründung in die Email integriert werden.
+		DBFunctions::db_guteTatAblehnen($_GET['id']);
+		$mailText = '<h3>Hallo ' . $erstellerName . '</h3><p>Deine gute Tat "' . $tat['name'] . '" wurde gerade von ' . $_USER->getUsername() . ' abgelehnt.</p>';
+		$mailText .= '<a href="' . $HOST . '/guteTatErstellenHTML">Klicke hier</a>, um eine neue gute Tat zu erstellen.';
+		sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde abgelehnt', $mailText);
+		die ('Die gute Tat wurde abgelehnt. Der Ersteller der guten Tat wird per Email darüber informiert.<br><a href="'.$HOST.'/deeds">Zurück zur Übersicht</a>');
+	}
+
+	// --------Erstellen von Blöcken zur Formatierten ausgabe
+	$blAbout = '<h2>'.$tat["name"] .'</h2>';
+	//$blAbout .= ' Gute Tat #'.$idTat.' </h>';
+
+	// -----------Gute Taten Details - genauer
+	$blTaten = '<table width="65%"> <tr> <td width="25%"> Kategorie: </td> <td style="padding:10px">'.$tat["category"].'</td> </tr>';
+	$blTaten .= '<tr> <td> Kontaktperson: </td> <td style="padding:10px"> <a href="./profile?user='.$tat["username"].'">'.'<img src="' . $tat["avatar"] . '" style="height:3%;float:left" >&nbsp'.$tat["username"].'</a> </td>';
+	$blTaten .= '<tr> <td> Gewünschter Vertrauenslevel: </td> <td style="padding:10px">'.$tat["idTrust"]. ' ('.$tat['trustleveldescription'].')' .'</td> </tr>';
+	$blTaten .= '<tr> <td> Beschreibung: </td> <td style="padding:10px">'.(($tat['description']!='')?$tat["description"]:'keine Beschreibung angegeben').'</td> </tr>';
+	if ($tat['starttime']!='0000-00-00 00:00:00') $blTaten .= '<tr> <td> Beginn: </td> <td style="padding:10px">'.$tat['starttime'].'</td> </tr>';
+	if ($tat['endtime']!='0000-00-00 00:00:00') $blTaten .= '<tr> <td> Ende: </td> <td style="padding:10px">'.$tat['endtime'].'</td> </tr>';
+	if ($tat['organization']!='') $blTaten .= '<tr> <td> Organisation: </td> <td style="padding:10px">'.$tat["organization"].'</td> </tr>';
+	$blTaten .= '<tr> <td> Anzahl Helfer: </td> <td style="padding:10px">'.$tat["countHelper"].'</td> </tr> </table>';
+
+	// -------------- Einbindung der Map -------------------------
+	$blMap = '<h3>Adresse der Guten Tat:</h3>';
+
+	$shPlzOrt = isset($tat["postalcode"]) && $tat['postalcode'] != '';
+	$shStrasse = isset($tat["street"]) && $tat['street'] != '';
+	$shHausnummer = isset($tat["housenumber"]) && $tat['housenumber'] != '';
+	$showMap = ($shPlzOrt && $shStrasse && $shHausnummer);
+
+
+	// --------------- Ausgabe der Blöcke, eingepackt in div boxen ----------
+	echo '<div align="center">' . $blAbout . '</div>';
+	echo '<p />';
+	echo '<div align="center">' . $blTaten . '</div>';
+	echo '<p />';
+	echo '<div align="center">' .$blMap;
+
+	if ($showMap) {
+			echo '<div id="mapid">';
+			createMap($tat['postalcode'] . ',' . $tat['street'] . ',' . $tat['housenumber']);
+			echo '</div>';
+		}
+	else{
+		echo '<div align="center" style="font-size:200%;">'.'Adresse wurde gar nicht oder <br> nur unvollständig angegeben! ';
+	}
+
+	echo '</div>';
+	echo '<p />';
+
+	echo '<br> <hr> <br> ';
+
+	if (!DBFunctions::db_istFreigegeben($idTat)) {
+		$form1 = '<form method="post" action="">';
+		$form1 .= '<input type="submit" value="Gute Tat freigeben" width>';
+		$form1 .= '<input type="hidden" name="allow" width>';
+		$form1 .= '</form>';
+
+		$form2 = '<form method="post" action="">';
+		$form2 .= '<input type="submit" value=" Gute Tat ablehnen ">';
+		$form2 .= '<input type="hidden" name="deny" width>';
+		$form2 .= '</form>';
+
+		echo $form1 . '<br>' . $form2;
+	}
+	else if(($_USER->loggedIn() && $_USER->getUsername() == $tat["username"])||($myRole=='Moderator' || $myRole=='Administrator')) {
+
+	$link = './deeds_bearbeiten?id='.$idTat;
+	$link2 = './deeds_details?id='.$idTat;
+
+	$form = '<form method="post" action="'.$link.'">';
+	$form .= '<input type="submit" value="Bearbeiten">';
+	$form .= '</form>';
+
+	$form2 = '<form method="post" action="'.$link2.'">';
+	$form2 .= '<input type="hidden" name="close" value="true">';
+	$form2 .= '<input type="submit" value="Close">';
 	$form2 .= '</form>';
 
-	echo $form1 . '<br>' . $form2;
-}
-else if(($_USER->loggedIn() && $_USER->getUsername() == $tat["username"])||($myRole=='Moderator' || $myRole=='Administrator')) {
+	echo $form . $form2;
+	}
+	else{
 
-$link = './deeds_bearbeiten?id='.$idTat;
-$link2 = './deeds_details?id='.$idTat;
+		$link = 'deeds_bewerbung?idGuteTat='.$idTat; 
 
-$form = '<form method="post" action="'.$link.'">';
-$form .= '<input type="submit" value="Bearbeiten">';
-$form .= '</form>';
+		$form = '<form method="post" action="'.$link.'">';
+		$form .= '<input type="submit" value="Bewerben">';
+		$form .= '</form>';
 
-$form2 = '<form method="post" action="'.$link2.'">';
-$form2 .= '<input type="hidden" name="close" value="true">';
-$form2 .= '<input type="submit" value="Close">';
-$form2 .= '</form>';
+		echo $form;
+	}
 
-echo $form . $form2;
-}
-else{
-
-$link = 'deeds_bewerbung?idGuteTat='.$idTat; 
-
-$form = '<form method="post" action="'.$link.'">';
-$form .= '<input type="submit" value="Bewerben">';
-$form .= '</form>';
-
-echo $form;
-}
 }
 ?>
 
