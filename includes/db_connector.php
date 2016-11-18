@@ -3,6 +3,7 @@
 * @author Timm Romanik <timm.romanik@stud.hs-hannover.de
 */
 
+//Irgendeine Teständerung, um die Permissions zu testen
 
 //Definition der Datenbankverbindung
 DEFINE('DB_USER','tueGutes');
@@ -269,7 +270,7 @@ class DBFunctions
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
-		self::db_close($db);				
+		self::db_close($db);
 		if(isset($dbentry['username'])){
 			return $dbentry['username'];
 		}
@@ -1260,7 +1261,7 @@ class DBFunctions
 		$stmt->execute();
 		$result= $stmt->get_result();
 		self::db_close($db);
-		$arr = array();		
+		$arr = array();
 		while($dbentry =$result->fetch_object()){
 			$arr[]= $dbentry->email;
 		}
@@ -1274,7 +1275,7 @@ class DBFunctions
 		$stmt->execute();
 		$result= $stmt->get_result();
 		self::db_close($db);
-		$arr = array();		
+		$arr = array();
 		while($dbentry =$result->fetch_object()){
 			$arr[]= $dbentry->email;
 		}
@@ -1321,7 +1322,7 @@ class DBFunctions
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$idGuteTat);
 		$stmt->execute();
-		self::db_close($db);	
+		self::db_close($db);
 	}
 
 	//Nick
@@ -1332,7 +1333,7 @@ class DBFunctions
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$idGuteTat);
 		$stmt->execute();
-		self::db_close($db);	
+		self::db_close($db);
 	}
 
 	/*Liefert den Cryptkey zum Account, der zu der übergeben Email-Adresse gehört oder false*/
@@ -1344,7 +1345,7 @@ class DBFunctions
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
-		self::db_close($db);				
+		self::db_close($db);
 		if(isset($dbentry['cryptkey'])){
 			return $dbentry['cryptkey'];
 		}
@@ -1379,24 +1380,24 @@ class DBFunctions
 	/*Ändert das Passwort des zum Cryptkey gehörenden Accounts*/
 	/*Liefert true bei Erfolg und false beim Fehlerfall*/
 	public function db_changePasswortByCryptkey($cryptkey, $newPasswort) {
-		$date = self::db_regDateByCryptkey($cryptkey);	
+		$date = self::db_regDateByCryptkey($cryptkey);
 		$pass_md5 = md5($newPasswort.$date);
 		$db = self::db_connect();
 		$sql = "UPDATE User SET password = ? WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
 		$stmt = $db->prepare($sql);
 		mysqli_stmt_bind_param($stmt, "ss", $pass_md5, $cryptkey);
 		$stmt->execute();
-		self::db_close($db);				
-		
+		self::db_close($db);
+
 		return true; //Testzwecke
 	}
 
 	public function db_update_deeds_starttime($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.starttime = ?
-			WHERE deeds.idGuteTat = ?";	
+			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1408,7 +1409,7 @@ class DBFunctions
 	public function db_update_deeds_endtime($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.endtime = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1422,13 +1423,13 @@ class DBFunctions
 	public function db_update_deeds_picture($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deedtexts
-			SET 
+			SET
 			deedtexts.pictures = ?
-			WHERE deedtexts.idDeedTexts = ?";	
+			WHERE deedtexts.idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));	
+			die('Fehler: ' . mysqli_error($db));
 			}
 			self::db_close($db);
 	}
@@ -1436,7 +1437,7 @@ class DBFunctions
 	public function db_update_deeds_description($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deedtexts
-			SET 
+			SET
 			deedtexts.description = ?
 			WHERE deedtexts.idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
@@ -1450,7 +1451,7 @@ class DBFunctions
 	public function db_update_deeds_name($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.name = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1464,7 +1465,7 @@ class DBFunctions
 	public function db_update_deeds_category($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.category = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1478,7 +1479,7 @@ class DBFunctions
 	public function db_update_deeds_street($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.street = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1492,7 +1493,7 @@ class DBFunctions
 	public function db_update_deeds_housenumber($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.housenumber = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1506,7 +1507,7 @@ class DBFunctions
 	public function db_update_deeds_postalcode($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.postalcode = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1520,7 +1521,7 @@ class DBFunctions
 	public function db_update_deeds_organization($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.organization = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1534,7 +1535,7 @@ class DBFunctions
 	public function db_update_deeds_countHelper($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.countHelper = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1543,12 +1544,12 @@ class DBFunctions
 			die('Fehler: ' . mysqli_error($db));
 		}
 		self::db_close($db);
-	}	
+	}
 
 	public function db_update_deeds_idTrust($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.idTrust = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1566,6 +1567,6 @@ class DBFunctions
 		$stmt->bind_param('is',$pPostalCode, $pPlace);
 		$stmt->execute();
 		self::db_close($db);
-	}	
+	}
 }
 ?>
