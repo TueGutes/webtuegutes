@@ -13,7 +13,7 @@ require './includes/_top.php';
 
 include './includes/Map.php';
 
-if(!isset($_GET['page'])) $_GET['page'] = 1;
+if(!isset($_GET['page'])) $_GET['page'] = 1  && $placeholder="Alle";
 ?>
 
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
@@ -25,17 +25,37 @@ if(!isset($_GET['page'])) $_GET['page'] = 1;
 	<br><hr>
 	</div>
 	<br> 
+	</form>
+	
+		<form method="post" action="deeds">
+				<td><h5>Status:</td>
+				<td><select name="status" size="1">
+				<option value="Alle">Alle</option>                                   <?/*hier wird der status abgefragt */?>
+				<option value="Nicht abgeschlossen">Nicht abgeschlossen</option>     <?/*hier wird der status abgefragt */?>
+				<option value="Abgeschlossen">abgeschlossen</option>				 <?/*hier wird der status abgefragt */?>
+				</select>
+				
 		
+				<td><h5>Anzahl Der Taten:</td>
+				<td><select name="adt" size="1">
+				<option value="5">5</option>                                   <?/*hier wird der status abgefragt */?>
+				<option value="10">10</option>     <?/*hier wird der status abgefragt */?>
+				<option value="15">15</option>				 <?/*hier wird der status abgefragt */?>
+				</select>
+				<input type="submit" name="button" value="Anzahl"/>
+		</form>
 			<?php
-				$placeholder = 'alle';
+				
+				$placeholder = $_POST['status'];
+
+				echo $placeholder;
 				/*$intZahl=0;
 				$tatAusgeben=new tatAusgeben($intZahl);
 				$tatAusgeben->toStringTat();
 				*/
 				//$allDeedsCount = db_connector blabla
 				//$neededPages = $allDeedsCount/10;
-				
-				$tatenProSeite=10; //anzahl der tataen die pro seite angezeigt werden
+				$tatenProSeite=$_POST['adt']; //anzahl der tataen die pro seite angezeigt werden
 				$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder);
 
 				$maxZeichenFürDieKurzbeschreibung = 150;
