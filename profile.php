@@ -29,15 +29,14 @@
 	// Returns a map of postal code and place to a given address.
 	function getPostalPlaceToAddress($pStreet, $pHouseNumber)
 	{
-		// Defining map to return.
+		// ALEX2: Added entry retHouseNumber.
 		$lRetVals = [
 			"retPostal" => "",
 			"retPlace" => "",
+			"retHouseNumber" => "",
 		];
-		if(!is_numeric($pHouseNumber))
-		{
-			$pHouseNumber = 1;
-		}
+		// ALEX2: Added value $lHouseNumber to set a valid search value if neccessary.
+		$lHouseNumber = (!is_numeric($pHouseNumber)) ? 1 : $pHouseNumber;
 		
 		// Create address in format "<street>[+<street appendices],<house number>,Hannover".
 		$lAddressString = $pStreet . ',' . $pHouseNumber . ',Hannover';
@@ -47,6 +46,17 @@
 		$lContents = file('http://nominatim.openstreetmap.org/search?format=json&limit=2&q=' . $lAddressString);
 		// Put string in new variable for safety.
 		$lResult = $lContents[0];
+		
+		// TODO: Raus
+		//echo $lResult;
+		//echo strlen($lResult);
+		
+		// ALEX2: If result string is too short, no address was found.
+		if(strlen($lResult) < 10)
+		{
+			return $lRetVals;
+		}
+		
 		$lContents = explode('"', $lResult);
 		// Get the proper string containing postal code and place.
 		$lFoundIndex = -1;
@@ -64,8 +74,7 @@
 		}		
 		// Put string in variable for safety.
 		$lResult = $lContents[$lFoundIndex];
-		$lContents = explode(',', $lResult);
-				
+		$lContents = explode(',', $lResult);				
 				
 		// Important for correctness.
 		// OSM indices for place and postal code.
@@ -84,7 +93,36 @@
 		$lRetVals['retPostal'] = $lContents[$lIndexPostal];
 		$lRetVals['retPlace'] = $lContents[$lIndexPlace];
 		
+		// ALEX2: If housenumber was given, check if it was found.
+		if(is_numeric($pHouseNumber))
+		{
+			if(is_numeric($lContents[0]))
+			{
+				$lRetVals['retHouseNumber'] = $lContents[0];
+			}
+			else if(is_numeric($lContents[1]))
+			{
+				$lRetVals['retHouseNumber'] = $lContents[1];
+			}
+		}
+		
 		return $lRetVals;
+	}
+	
+	// ALEX2: Checks whether the given value is a number and if yes, is it out of the given range.
+	function checkNumberAndRange($pValue, $pMin, $pMax)
+	{
+		// Not a number?
+		if(!is_numeric($pValue))
+		{
+			return false;
+		}
+		// Out of range?
+		if(($pValue < $pMin) || ($pValue > $pMax))
+		{
+			return false;
+		}
+		return true;
 	}
 
 	//Includes
@@ -96,6 +134,9 @@
 
 	// ALEX
 	include "./includes/streets.php";
+	// ALEX2
+	// Darf hier nicht erneut eingebunden werden, da dies schon in "DEF.php" geschieht.
+	//include "./includes/mail.php";
 
 	//Profile sind nur für eingeloggte Nutzer sichtbar:
 	if (!$_USER->loggedIn()) die ('Profile sind nur für eingeloggte Nutzer sichtbar!<p/><a href="./login">Zum Login</a>');	
@@ -125,8 +166,11 @@
 		$shPlzOrt = ($thisuser['postalcode']!="");
 		$shTelefon = ($thisuser['telefonnumber']!="");
 		$shMessenger = ($thisuser['messengernumber']!="");
-		$shGeburtstag = ($thisuser['birthday']!="");
-		$shJahrgang = ($thisuser['birthday']!="");
+		// ALEX2: Hides day and month of birth if one value is equal 0 or empty.
+		$shGeburtstag = ((substr($thisuser['birthday'],8,2) != 0) && (substr($thisuser['birthday'],8,2) != "")
+			&& (substr($thisuser['birthday'],5,2) != 0) && (substr($thisuser['birthday'],5,2) != ""));
+		// ALEX2: Hides year of birth in value is equal 0 or empty.
+		$shJahrgang = ((substr($thisuser['birthday'],0,4) != "") && (substr($thisuser['birthday'],0,4) != 0));
 	} else {
 		$headline = "Profil von " . $thisuser['username'];
 		$link = '';
@@ -143,41 +187,64 @@
 		$shPlzOrt = (substr($thisuser['privacykey'],10,1) === "1" && $thisuser['postalcode']!="0");
 		$shTelefon = (substr($thisuser['privacykey'],11,1) === "1" && $thisuser['telefonnumber']!="");
 		$shMessenger = (substr($thisuser['privacykey'],12,1) === "1" && $thisuser['messengernumber']!="");
-		$shGeburtstag = (substr($thisuser['privacykey'],13,1) === "1" && $thisuser['birthday']!="");
-		$shJahrgang = (substr($thisuser['privacykey'],14,1) === "1" && $thisuser['birthday']!="");
+		$shGeburtstag = (substr($thisuser['privacykey'],13,1) === "1" 
+			&& ((substr($thisuser['birthday'],8,2) != 0) && (substr($thisuser['birthday'],8,2) != "")
+			&& (substr($thisuser['birthday'],5,2) != 0) && (substr($thisuser['birthday'],5,2) != "")));
+		$shJahrgang = (substr($thisuser['privacykey'],14,1) === "1" 
+			&& ((substr($thisuser['birthday'],0,4) != "") && (substr($thisuser['birthday'],0,4) != 0)));
 	}
 
-	// ALEX
-	// Variable, die angibt, ob ungültige Daten eingegeben wurden.
-	$error = false;	
+	// ALEX2: Renamed $error in $errorMessage. 
+	$errorMessage = "";
 	// Fehlerüberprüfung, wenn das Formular zum speichern gesendet wurde.
 	if(isset($_POST['action']) && ($_POST['action'] == 'save'))
 	{			
-		// Geburtsdaten überprüfen. (Nur einfache Prüfung auf 01 <= Tag <= 31 und 01 <= Monat <= 12 nd 1900 <= Jahr <= 2016
-		if((!is_numeric($_POST['txtDayOfBirth'])) && ($_POST['txtDayOfBirth'] < 1) || ($_POST['txtDayOfBirth'] > 31))
+		// ALEX2: Valid states: All empty, year or month/day filled, year/month/day filled.
+		// Only day OR month filled?
+		if((($_POST['txtDayOfBirth'] != "") && ($_POST['txtMonthOfBirth'] == "")) 
+			|| (($_POST['txtDayOfBirth'] == "") && ($_POST['txtMonthOfBirth'] != "")))
 		{
-			echo 'Tag im Geburtsdatum ist ungueltig.';
-			$error = true;
+			$errorMessage = '<p>Bitte entweder Geburtsmonat und Geburtstag eintragen oder beides leer lassen.</p>';
 		}
-		if((!is_numeric($_POST['txtMonthOfBirth'])) && ($_POST['txtMonthOfBirth'] < 1) || ($_POST['txtMonthOfBirth'] > 12))
+		// If day AND month filled, check values.
+		else if(($_POST['txtDayOfBirth'] != "") && ($_POST['txtMonthOfBirth'] != ""))
 		{
-			echo 'Monat im Geburtsdatum ist ungueltig.';
-			$error = true;
+			if(!checkNumberAndRange($_POST['txtDayOfBirth'], 1, 31))
+			{
+				$errorMessage .= '<p>Geburtstag ist ungueltig.</p>';
+			}
+			if(!checkNumberAndRange($_POST['txtMonthOfBirth'], 1, 12))
+			{
+				$errorMessage .= '<p>Geburtsmonat ist ungueltig.</p>';
+			}
 		}
-		if((!is_numeric($_POST['txtYearOfBirth'])) && ($_POST['txtYearOfBirth'] < 1900) || ($_POST['txtYearOfBirth'] > 2016))
+		// If filled, check year.
+		if(($_POST['txtYearOfBirth'] != "") && !checkNumberAndRange($_POST['txtYearOfBirth'], 1900, 2000))
 		{
-			echo 'Jahr im Geburtsdatum ist ungueltig.';
-			$error = true;
+			$errorMessage .= '<p>Geburtsjahr ist ungueltig.</p>';
 		}
-		if(($_POST['txtHausnummer'] != "") && (!is_numeric($_POST['txtHausnummer'])))
+		
+		// Check house number if street is set.
+		// ALEX2: Advanced check for street and house number.
+		// Scenarios: Both empty, both set and valid.
+		if(($_POST['txtStrasse'] != "") || ($_POST['txtHausnummer'] != ""))
 		{
-			echo 'Hausnummer ist ungültig.';
-			$error = true;
+			if((($_POST['txtStrasse'] != "") && ($_POST['txtHausnummer'] == ""))
+				|| (($_POST['txtStrasse'] == "") && ($_POST['txtHausnummer'] != "")))
+			{
+				$errorMessage .= 'Bitte Strasse und Hausnummer zusammen angeben oder keins von beidem.';
+			}
+			else if (!is_numeric($_POST['txtHausnummer']))
+			{
+				$errorMessage .= 'Hausnummer ist ungueltig.';
+			}
 		}
+		
+		echo $errorMessage;
 	}
 			
 	//Prüfen, ob das Eingabefeld angefordert wurde oder ob ein ungueltiger Eintrag gesetzt wurde.
-	if((isset($_POST['action']) && ($_POST['action'] == 'edit')) || ($error === true)) {
+	if((isset($_POST['action']) && ($_POST['action'] == 'edit')) || ($errorMessage != "")) {
 		//Zeige die Seite mit Eingabefeldern zum Bearbeiten der Daten an
 
 		$form_head = '<form action="" method="post" enctype="multipart/form-data">';
@@ -197,15 +264,20 @@
 		//Geschlecht bearbeiten:
 		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none"><select name="txtGender" size=1><option' . (($thisuser['gender']==='w')?'':' selected') . '>Männlich</option><option' . (($thisuser['gender']==='w')?' select':'') . '>Weiblich</option></td></tr>';
 
-		// Textbox für Tag.
+		// ALEX2: Leaves text boxes empty if value is 0. Added $tempValue.
+		$tempValue = getDayOfBirth($thisuser['birthday']);
+		$tempValue = ($tempValue == 0) ? "" : $tempValue;
+		// Text box for day of birth.
 		$blPersoenlich .= '<tr><td>Geboren:</td><td><input type="text" size="2px"
-		name="txtDayOfBirth" placeholder="TT" value="' . getDayOfBirth($thisuser['birthday']) . '">';	
-
-		// Textbox für Monat.
-		$blPersoenlich .= '.<input type="text" size="2px" name="txtMonthOfBirth" placeholder="MM" value="' . getMonthOfBirth($thisuser['birthday']) . '">';		
-
-		// Textbox für Jahr.
-		$blPersoenlich .= '.<input type="text" size="4px" name="txtYearOfBirth" placeholder="JJJJ" value="' . getYearOfBirth($thisuser['birthday']) . '"></td></tr>';		
+		name="txtDayOfBirth" placeholder="TT" value="' . $tempValue . '">';	
+		// Text box for month of birth.
+		$tempValue = getMonthOfBirth($thisuser['birthday']);
+		$tempValue = ($tempValue == 0) ? "" : $tempValue;
+		$blPersoenlich .= '.<input type="text" size="2px" name="txtMonthOfBirth" placeholder="MM" value="' . $tempValue . '">';	
+		// Text box for year of birth.
+		$tempValue = getYearOfBirth($thisuser['birthday']);
+		$tempValue = ($tempValue == 0) ? "" : $tempValue;
+		$blPersoenlich .= '.<input type="text" size="4px" name="txtYearOfBirth" placeholder="JJJJ" value="' . $tempValue . '"></td></tr>';		
 
 		//RegDate anzeigen
 		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Tut Gutes seit:</td><td style="border:none">' . substr($thisuser['regDate'],8,2) . '. ' . substr($thisuser['regDate'],5,2) . '. ' . substr($thisuser['regDate'],0,4) . '</td></tr>';
@@ -298,7 +370,8 @@
 		$blPrivacy .= '</table>';
 
 		$form_bottom = '<p /><p /><input type=submit value="Änderungen speichern"><input type="hidden" name="action" value="save"><br><br><br><br><br></form>';
-		$form_bottom .= '<form action="" method="post"><input type="password" name="save_pw" placeholder="Passwort zur Sicherheit erneut eingeben..."><br><br><input type=submit value="Profil entgültig löschen"></form>';
+		// ALEX2: Increased text box size.
+		$form_bottom .= '<form action="" method="post"><input type="password" size="50px" name="save_pw" placeholder="Passwort zur Sicherheit erneut eingeben..."><br><br><input type=submit value="Profil entgültig löschen"></form>';
 
 	} else {
 		//Zeige das Profil ohne Änderungsmöglichkeit an
@@ -308,16 +381,21 @@
 		{
 			// ALEX: If street is set, check name and find postal code. 
 			if($_POST['txtStrasse'] !== '')
-			{
-				// Check if street list contains entered street. If not, send mail to moderator.
-				$searchString = ">" . $_POST['txtStrasse'] . "<";
-				if (stripos($streetList, $searchString) === false) 
-				{
-					// TODO: Mail senden.
-				}
+			{				
 				// Find postal code and place to address.
 				$lFoundValues = getPostalPlaceToAddress($_POST['txtStrasse'], $_POST['txtHausnummer']);
-								
+				
+				// ALEX2: Added check for valid house number.
+				$searchString = ">" . $_POST['txtStrasse'] . "<";
+				
+				// If no valid street or house number was entered, send mail to moderator.
+				if ((stripos($streetList, $searchString) === false) || ($lFoundValues['retHouseNumber'] == ""))
+				{
+					// ALEX2
+					sendEmail('alexander.gauggel@stud.hs-hannover.de', 'TG_Strasse', 'Bitte Strasseneingabe "' 
+						. $_POST['txtStrasse'] . '" von User "' . $thisuser['username'] . '" pruefen.');
+				}
+				
 				if(is_numeric($lFoundValues['retPostal']))
 				{
 					// If postal code wasn't found in DB, add it and set foreign key in userdata.
@@ -336,7 +414,13 @@
 			}
 
 			// Nutzerdaten überschreiben:
-			$thisuser['birthday'] = $_POST['txtYearOfBirth'] . '-' . $_POST['txtMonthOfBirth'] . '-' . $_POST['txtDayOfBirth'];
+			// ALEX2: Replace empty values with 0. Created $tempValue.
+			$tempValue = ($_POST['txtYearOfBirth'] == "") ? 0 : $_POST['txtYearOfBirth'];
+			$thisuser['birthday'] = $tempValue . '-';
+			$tempValue = ($_POST['txtMonthOfBirth'] == "") ? 0 : $_POST['txtMonthOfBirth'];
+			$thisuser['birthday'] .= $tempValue . '-';
+			$tempValue = ($_POST['txtDayOfBirth'] == "") ? 0 : $_POST['txtDayOfBirth'];
+			$thisuser['birthday'] .= $tempValue;
 			if ($_FILES['neuerAvatar']['name'] != '') {
 				move_uploaded_file($_FILES['neuerAvatar']['tmp_name'],'./img/tmp/avatar_' . $thisuser['idUser']);
 				$thisuser['avatar'] = 'data: ' . mime_content_type('./img/tmp/avatar_' . $thisuser['idUser']) . ';base64,' . base64_encode(file_get_contents('./img/tmp/avatar_' . $thisuser['idUser']));
