@@ -1,7 +1,5 @@
 .DS_Store
-**/migrations/
 **/vendor/
-**/db/
 composer.json
 composer.lock
-phinx.yml
+
