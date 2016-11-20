@@ -1834,5 +1834,31 @@ class DBFunctions
 		$stmt->execute();
 		self::db_close($db);
 	}	
+
+	/**
+	 * Gibt den Bewerbungstext zu einer Bewerbung zurück
+	 *
+	 * Gibt den applicationText in der Relation Application zurück, wo idGuteTat = $idGuteTat und userID = $candidateID gilt
+	 *
+	 * @param integer $idGuteTat die ID der guten Tat
+	 * @param integer $candidateID die UserID des Bewerbers
+	 * @return string|boolean Bewerbungstext oder false, falls kein Eintrag gefunden wurde
+	 */
+	function db_getApplicationTextOfApplication($idGuteTat, $candidateID) {
+		$db = self::db_connect();
+		$sql = "SELECT applicationText FROM Application WHERE idGuteTat = ? AND idUser = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('ss',$idGuteTat, $candidateID);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['applicationText'])){
+			return $dbentry['applicationText'];
+		}
+		else {
+			return false;
+		}
+	}
 }
 ?>
