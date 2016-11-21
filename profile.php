@@ -550,6 +550,7 @@
 			$blTaten .= ((($thisuser['username']==$_USER->getUsername()) && !(@$_GET['view']!='public'))?'<br><a href="./deeds?user=' . $thisuser['idUser'] . '">Alle deine guten Taten</a>':'<br><a href="./deeds?user=' . $thisuser['idUser'] . '">Alle guten Taten des Nutzers</a>');
 		}
 
+
 		//Block 4: Adresse 
 		$blAdresse = "";
 		if ($shStrasse || $shHausnummer || $shPlzOrt) {
@@ -644,7 +645,8 @@
 ?>
 
 <!--Ende des Formulars zum Ändern der Profileinstellungen:-->
-<?php echo $form_bottom; ?>
+<?php
+echo $form_bottom; ?>
 
 <?php require "./includes/_bottom.php"; ?>
 

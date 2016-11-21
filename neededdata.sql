@@ -85,6 +85,7 @@ INSERT INTO Postalcode(postalcode,place) VALUES(30179, "Sahlkamp");
 INSERT INTO Postalcode(postalcode,place) VALUES(30179, "Vahrenheide");
 INSERT INTO Postalcode(postalcode,place) VALUES(30179, "Vahrenwald");
 
+INSERT INTO Postalcode(postalcode,place) VALUES(31303, "Burgdorf");
 INSERT INTO Postalcode(postalcode,place) VALUES(30419, "Burg");
 INSERT INTO Postalcode(postalcode,place) VALUES(30419, "Hainholz");
 INSERT INTO Postalcode(postalcode,place) VALUES(30419, "Herrenhausen");

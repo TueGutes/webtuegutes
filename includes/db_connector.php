@@ -409,7 +409,7 @@ class DBFunctions
 	public function db_get_user($user) {
 		$db = self::db_connect();
 		$sql = "
-			SELECT idUser, password, username, email, regDate, points, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, PersData.idPostal, telefonnumber, messengernumber, birthday, place, postalcode
+			SELECT idUser, password, username, email, regDate, points, Trust.idTrust, trustleveldescription, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, PersData.idPostal, telefonnumber, messengernumber, birthday, place, postalcode
 			FROM User
 				JOIN Trust
 			    	ON User.idTrust = Trust.idTrust
@@ -1863,6 +1863,34 @@ class DBFunctions
 		}
 	}
 
+
+	//Lukas
+	public function db_guteTatClose($idGuteTat) {
+		$db = self::db_connect();
+		$sql = 'UPDATE Deeds SET Status = "geschlossen" WHERE idGuteTat = ?';
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idGuteTat);
+		$stmt->execute();
+		self::db_close($db);	
+	}
+
+	//Lukas
+	public function db_istGeschlossen($idGuteTat) {
+		$db = self::db_connect();
+		$sql = "
+				SELECT status
+				FROM Deeds
+				WHERE idGuteTat = ?
+			";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idGuteTat);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		return $dbentry['status'] == 'geschlossen';
+	}
+
 	/**
 	*Listet Gute Taten eines Users mit einer Auswahlmöglichkeit auf.
 	*
@@ -2036,7 +2064,51 @@ class DBFunctions
 			}
 			return $arr;
 		}
+	}
 
+	//Lukas
+	public function db_userBewertung($points,$user) {
+		$db = self::db_connect();
+		$sql = 'UPDATE User SET points = ? WHERE username = ?';
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('is',$points,$user);
+		$stmt->execute();
+		self::db_close($db);	
+	}
+
+	//Lukas
+	public function db_userAnsehen($trust,$user) {
+		$db = self::db_connect();
+		$sql = 'UPDATE User SET idTrust = ? WHERE username = ?';
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('is',$trust,$user);
+		$stmt->execute();
+		self::db_close($db);	
+	}
+
+	//Lukas
+	function db_getBewerb($idGuteTat) 
+	{
+		$db = self::db_connect();
+		$sql = "SELECT idUser
+			FROM Application
+			WHERE idGuteTat = ?
+			AND status = 'angenommen'";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idGuteTat);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry =$result->fetch_object();
+		self::db_close($db);
+		return $dbentry;
+		/*$arr = array();
+		$i=0; 
+		while($dbentry =$result->fetch_assoc()){
+			$arr[$i]= $dbentry;
+			$i++;
+		}
+		return $arr;
+		*/
 	}
 }
 
