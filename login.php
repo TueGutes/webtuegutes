@@ -1,7 +1,7 @@
 <?php
 /**
  * Bietet die Möglichkeit sich im System anzumelden
- *
+ * exampe2345678910111213jetzt aber super
  * Ein Nutzer gibt seinen Benutzernamen und sein Passwort ein
  * Sind alle Daten korrekt wird er eingeloggt und anschließend standardmäßig zu seiner Profilseite (profile.php) weiterleitet
  * Wollte der Nutzer ursprünglich zu einer anderen Seite, war allerdings noch nicht eingeloggt, so wird er nach dem Login dorthin weitergeleitet (continue Parameter)
