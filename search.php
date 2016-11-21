@@ -1,7 +1,10 @@
 <?php
-/*
-*@author Shanghui Dai
-*/
+/**
+ * Search function
+ * Durch "Zeit", "Ort", "Username", "Gutes"
+ * "Zeit" in a different form, using "datetime-local"
+ * @author     Shanghui Dai <shanghui.dai@stud.hs-hannover.de>
+ */
 require_once './includes/DEF.php';
 include_once './includes/db_connector.php';
 require_once './includes/_top.php';
@@ -10,7 +13,6 @@ date_default_timezone_set("Europe/Berlin");
 ?>
 
 <!----------------  enter and input keyword  ----------------->
-<!---------------- if you choose 'Zeit', the style will change-------------->
 
 
 
@@ -150,7 +152,7 @@ if ($_GET['stichwort']) {
 
 
 
-    // -------------  you can change pagesize here, 5 is now a very small number but it's easy to see changes  -----------
+    // -------------  5 is now a very small number but it's easy to see changes  -----------
 
     $pagesize = 5;
 
@@ -297,6 +299,14 @@ if ($_GET['stichwort']) {
 
 //this function will be moved to file includes/ after all job been done
 
+
+/**
+ * set URL
+ *
+ * @param int $page the current page
+ * @param String $sort the type of the search results
+ * @return string $str return url in string form
+ */
 
 function setPageUrl($page, $sort)
 {
