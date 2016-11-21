@@ -281,7 +281,7 @@ class DBFunctions
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
-		self::db_close($db);				
+		self::db_close($db);
 		if(isset($dbentry['username'])){
 			return $dbentry['username'];
 		}
@@ -378,27 +378,27 @@ class DBFunctions
 	/**
 	*Gibt eine Auswahl an Daten zu einem Benutzernamen zurück
 	*
-	*Die Funktion ist dazu da um einen Nutzer aus der Datenbank mit ausgwählten Daten zu laden. Die Daten werden in einem Array als Werte zurückgegeben. Man muss den Benutzernamen dazu übergeben. Falls es Werte nicht gibt in der Datenbank, werden sie als Leerstrings gesetzt. Die folgenden Werte werden ausgegeben: 
-	* * idUser 
-	* * password, 
+	*Die Funktion ist dazu da um einen Nutzer aus der Datenbank mit ausgwählten Daten zu laden. Die Daten werden in einem Array als Werte zurückgegeben. Man muss den Benutzernamen dazu übergeben. Falls es Werte nicht gibt in der Datenbank, werden sie als Leerstrings gesetzt. Die folgenden Werte werden ausgegeben:
+	* * idUser
+	* * password,
 	* * username,
 	* * email,
-	* * regDate, 
-	* * points, 
-	* * trustleveldescription, 
-	* * groupDescription, 
-	* * privacykey, 
-	* * avatar, 
-	* * hobbys, 
-	* * description, 
-	* * firstname, 
-	* * lastname, 
-	* * gender, 
-	* * street, 
-	* * housenumber, 
-	* * idPostal, 
-	* * telefonnumber, 
-	* * messengernumber, 
+	* * regDate,
+	* * points,
+	* * trustleveldescription,
+	* * groupDescription,
+	* * privacykey,
+	* * avatar,
+	* * hobbys,
+	* * description,
+	* * firstname,
+	* * lastname,
+	* * gender,
+	* * street,
+	* * housenumber,
+	* * idPostal,
+	* * telefonnumber,
+	* * messengernumber,
 	* * birthday
 	*
 	*@param string $user Benutzername des Benutzers
@@ -454,21 +454,21 @@ class DBFunctions
 	/**
 	*Speichert die die übergeben Daten für einen Nutzer ab.
 	*
-	*Die Funktion ist dazu da um das Profil eines Nutzers upzudaten. Dazu wird der Funktion ein Array mit den Daten übergeben. Je nachdem wo sie hingehören werden sie korrekt abgespeichert. Die folgenden Werte könne upgedatet werden: 
-	* * username, 
-	* * email, 
-	* * regDate, 
-	* * firstname, 
-	* * lastname, 
-	* * birthday, 
-	* * street, 
-	* * housenumber, 
-	* * telefonnumber, 
-	* * messengernumber, 
-	* * idPostal, 
-	* * avatar, 
-	* * hobbys, 
-	* * description, 
+	*Die Funktion ist dazu da um das Profil eines Nutzers upzudaten. Dazu wird der Funktion ein Array mit den Daten übergeben. Je nachdem wo sie hingehören werden sie korrekt abgespeichert. Die folgenden Werte könne upgedatet werden:
+	* * username,
+	* * email,
+	* * regDate,
+	* * firstname,
+	* * lastname,
+	* * birthday,
+	* * street,
+	* * housenumber,
+	* * telefonnumber,
+	* * messengernumber,
+	* * idPostal,
+	* * avatar,
+	* * hobbys,
+	* * description,
 	* * privacykey
 	*
 	*@param mixed[] $savedata Array aus verschiedenen Daten mit den Datentypen von Strings und Ints
@@ -568,24 +568,24 @@ class DBFunctions
 	/**
 	*Holt sich eine Gute Tat und zusätzliche Parameter.
 	*
-	*Durch Übergabe einer Id werden ausgewählte Daten zu einer Tat zurückgegeben. Die Rückgabe erfolgt in Form eines Arrays, in dem die Daten abgespeichert sind. Die folgenden Werte werden abgefragt: 
-	* * Deeds.name, 
-	* * User.username, 
+	*Durch Übergabe einer Id werden ausgewählte Daten zu einer Tat zurückgegeben. Die Rückgabe erfolgt in Form eines Arrays, in dem die Daten abgespeichert sind. Die folgenden Werte werden abgefragt:
+	* * Deeds.name,
+	* * User.username,
 	* * UserTexts.avatar,
-	* * Deeds.category, 
-	* * Deeds.street, 
-	* * Deeds.housenumber, 
+	* * Deeds.category,
+	* * Deeds.street,
+	* * Deeds.housenumber,
 	* * Deeds.idPostal,
-	* * Deeds.starttime, 
-	* * Deeds.endtime, 
-	* * Deeds.organization, 
-	* * Deeds.countHelper, 
+	* * Deeds.starttime,
+	* * Deeds.endtime,
+	* * Deeds.organization,
+	* * Deeds.countHelper,
 	* * Deeds.status,
-	* * Trust.idTrust, 
-	* * Trust.trustleveldescription, 
-	* * DeedTexts.description, 
-	* * DeedTexts.pictures, 
-	* * Postalcode.postalcode, 
+	* * Trust.idTrust,
+	* * Trust.trustleveldescription,
+	* * DeedTexts.description,
+	* * DeedTexts.pictures,
+	* * Postalcode.postalcode,
 	* * Postalcode.place
 	*
 	*@param int $idGuteTat Id einer Guten Tat
@@ -726,20 +726,20 @@ class DBFunctions
 	/**
 	*Listet Gute Taten mit einer Auswahlmöglichkeit auf.
 	*
-	*Auflistung von guten Taten. Bei der Auflistung kann mit angegeben werden, aber welcher ID und wie viele Gute Taten aufgelistet werden sollen. Zudem kann über einen Filter angegeben werden ob freigegebene, geschlossene oder nur beides angezeigt werden soll. Es werden folgendene Attribute ausgegeben: 
-	* * Deeds.idGuteTat, 
-	* * Deeds.name, 
-	* * Deeds.category, 
-	* * Deeds.street, 
-	* * Deeds.housenumber, 
-	* * Deeds.idPostal, 
-	* * Deeds.organization, 
-	* * Deeds.countHelper, 
-	* * Deeds.status, 
-	* * Trust.idTrust, 
-	* * Trust.trustleveldescription, 
-	* * DeedTexts.description, 
-	* * Postalcode.postalcode, 
+	*Auflistung von guten Taten. Bei der Auflistung kann mit angegeben werden, aber welcher ID und wie viele Gute Taten aufgelistet werden sollen. Zudem kann über einen Filter angegeben werden ob freigegebene, geschlossene oder nur beides angezeigt werden soll. Es werden folgendene Attribute ausgegeben:
+	* * Deeds.idGuteTat,
+	* * Deeds.name,
+	* * Deeds.category,
+	* * Deeds.street,
+	* * Deeds.housenumber,
+	* * Deeds.idPostal,
+	* * Deeds.organization,
+	* * Deeds.countHelper,
+	* * Deeds.status,
+	* * Trust.idTrust,
+	* * Trust.trustleveldescription,
+	* * DeedTexts.description,
+	* * Postalcode.postalcode,
 	* * Postalcode.place
 	*
 	*@param int $startrow Ab der ID werden die guten Taten aufgelistet
@@ -1360,7 +1360,7 @@ class DBFunctions
 		$stmt->execute();
 		$result= $stmt->get_result();
 		self::db_close($db);
-		$arr = array();		
+		$arr = array();
 		while($dbentry =$result->fetch_object()){
 			$arr[]= $dbentry->email;
 		}
@@ -1381,7 +1381,7 @@ class DBFunctions
 		$stmt->execute();
 		$result= $stmt->get_result();
 		self::db_close($db);
-		$arr = array();		
+		$arr = array();
 		while($dbentry =$result->fetch_object()){
 			$arr[]= $dbentry->email;
 		}
@@ -1452,7 +1452,7 @@ class DBFunctions
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$idGuteTat);
 		$stmt->execute();
-		self::db_close($db);	
+		self::db_close($db);
 	}
 
 	/**
@@ -1469,7 +1469,7 @@ class DBFunctions
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$idGuteTat);
 		$stmt->execute();
-		self::db_close($db);	
+		self::db_close($db);
 	}
 
 	/**
@@ -1489,7 +1489,7 @@ class DBFunctions
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
-		self::db_close($db);				
+		self::db_close($db);
 		if(isset($dbentry['cryptkey'])){
 			return $dbentry['cryptkey'];
 		}
@@ -1538,20 +1538,21 @@ class DBFunctions
 	*@return boolean
 	*/
 	public function db_changePasswortByCryptkey($cryptkey, $newPasswort) {
-		$date = self::db_regDateByCryptkey($cryptkey);	
+		$date = self::db_regDateByCryptkey($cryptkey);
 		$pass_md5 = md5($newPasswort.$date);
 		$db = self::db_connect();
 		$sql = "UPDATE User SET password = ? WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
 		$stmt = $db->prepare($sql);
 		mysqli_stmt_bind_param($stmt, "ss", $pass_md5, $cryptkey);
-		self::db_close($db);				
+
+		self::db_close($db);
 		if (!$stmt->execute()) {
 			return false;
 		}
 		else{
 			return true;
 		}
-		
+
 	}
 
 	/**
@@ -1565,9 +1566,9 @@ class DBFunctions
 	public function db_update_deeds_starttime($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.starttime = ?
-			WHERE deeds.idGuteTat = ?";	
+			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1587,7 +1588,7 @@ class DBFunctions
 	public function db_update_deeds_endtime($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.endtime = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1609,13 +1610,13 @@ class DBFunctions
 	public function db_update_deeds_picture($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deedtexts
-			SET 
+			SET
 			deedtexts.pictures = ?
-			WHERE deedtexts.idDeedTexts = ?";	
+			WHERE deedtexts.idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));	
+			die('Fehler: ' . mysqli_error($db));
 			}
 			self::db_close($db);
 	}
@@ -1631,7 +1632,7 @@ class DBFunctions
 	public function db_update_deeds_description($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deedtexts
-			SET 
+			SET
 			deedtexts.description = ?
 			WHERE deedtexts.idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
@@ -1653,7 +1654,7 @@ class DBFunctions
 	public function db_update_deeds_name($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.name = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1675,7 +1676,7 @@ class DBFunctions
 	public function db_update_deeds_category($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.category = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1697,7 +1698,7 @@ class DBFunctions
 	public function db_update_deeds_street($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.street = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1719,7 +1720,7 @@ class DBFunctions
 	public function db_update_deeds_housenumber($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.housenumber = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1741,7 +1742,7 @@ class DBFunctions
 	public function db_update_deeds_postalcode($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.postalcode = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1763,7 +1764,7 @@ class DBFunctions
 	public function db_update_deeds_organization($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.organization = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1785,7 +1786,7 @@ class DBFunctions
 	public function db_update_deeds_countHelper($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.countHelper = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1794,7 +1795,7 @@ class DBFunctions
 			die('Fehler: ' . mysqli_error($db));
 		}
 		self::db_close($db);
-	}	
+	}
 
 	/**
 	*Aktualisiert das Vertrauenslevel einer Guten Tat.
@@ -1807,7 +1808,7 @@ class DBFunctions
 	public function db_update_deeds_idTrust($data,$idGuteTat){
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
-			SET 
+			SET
 			deeds.idTrust = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
@@ -1833,7 +1834,7 @@ class DBFunctions
 		$stmt->bind_param('is',$pPostalCode, $pPlace);
 		$stmt->execute();
 		self::db_close($db);
-	}	
+	}
 
 	/**
 	 * Gibt den Bewerbungstext zu einer Bewerbung zurück
@@ -1858,14 +1859,16 @@ class DBFunctions
 		}
 		else {
 			return false;
+		}
+	}
 
 	/**
 	*Listet Gute Taten eines Users mit einer Auswahlmöglichkeit auf.
 	*
-	*Auflistung von guten Taten, bei denen ein übergebener User als Helfer angenommen ist. 
-	* Bei der Auflistung kann mit angegeben werden, ab welcher ID und wie viele Gute Taten 
-	* aufgelistet werden sollen. Zudem kann über einen Filter angegeben werden ob auch bzw. 
-	* nur geschlossene Taten angezeigt werden sollen. 
+	*Auflistung von guten Taten, bei denen ein übergebener User als Helfer angenommen ist.
+	* Bei der Auflistung kann mit angegeben werden, ab welcher ID und wie viele Gute Taten
+	* aufgelistet werden sollen. Zudem kann über einen Filter angegeben werden ob auch bzw.
+	* nur geschlossene Taten angezeigt werden sollen.
 	*
 	*@param Int Ab der ID werden die guten Taten aufgelistet
 	*@param Int Anzahl der aufzulistenden guten Taten
@@ -2032,6 +2035,8 @@ class DBFunctions
 			}
 			return $arr;
 		}
+
 	}
 }
+
 ?>
