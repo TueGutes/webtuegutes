@@ -231,7 +231,7 @@
 		$blTaten = '<h3>Taten von ' . $thisuser['username'] . '</h3><table style="border:none">';
 		$blTaten .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Karma:</td><td style="border:none">';
 		$blTaten .= $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')';
-			//Hier können noch weitere Informationen wie z.B. die letzten Guten Taten des Nutzers, die von ihm ausgeschriebenen Taten, etc. aufgeführt werden
+
 		$blTaten .= "</table>";
 
 		//Block 4: Adresse 
@@ -412,10 +412,28 @@
 
 		//Block 3: Taten
 		$blTaten = '<h3>Taten von ' . $thisuser['username'] . '</h3><table style="border:none">';
-		$blTaten .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Karma:</td><td style="border:none">';
-		$blTaten .= $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')';
-			//Hier können noch weitere Informationen wie z.B. die letzten Guten Taten des Nutzers, die von ihm ausgeschriebenen Taten, etc. aufgeführt werden
-		$blTaten .= "</table>";
+		$blTaten .= 'Karma: ' . $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')';
+
+		//Die letzten Taten des Nutzers
+		$arr = DBFunctions::db_getGuteTatenForUser(0,3,'alle',$thisuser['idUser']);
+		if (sizeof($arr)==0) {
+			$blTaten .= '<br>' . $thisuser['username'] . ' hat noch keine guten Taten...' . ((($thisuser['username']==$_USER->getUsername()) && !(@$_GET['view']!='public'))?'<br><a href="./deeds">Jetzt gute Taten finden</a>':'');
+		} else {
+			$maxZeichenFürDieKurzbeschreibung = 150;
+			$blTaten .= '<br><br><h5>Aktuelle Taten:</h5>';
+			for($i = 0; $i < sizeof($arr); $i++){
+					$blTaten .= '<br>';
+					$blTaten .=  "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+					$blTaten .=  "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
+					$blTaten .=  "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
+					$blTaten .=  "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";
+					$blTaten .=  "<div>" . (is_numeric($arr[$i]->countHelper) ? "Anzahl der Helfer: " . $arr[$i]->countHelper : '') ."</div><div class='trustLevel'>Minimaler Vertrauenslevel: " . $arr[$i]->idTrust . " (" . $arr[$i]->trustleveldescription . ")</div>";
+					$blTaten .=  "<div>" . $arr[$i]->organization . "</div>";
+					$blTaten .=  "</div></a>";
+					$blTaten .=  "<br>";
+				}
+			$blTaten .= ((($thisuser['username']==$_USER->getUsername()) && !(@$_GET['view']!='public'))?'<br><a href="./deeds?user=' . $thisuser['idUser'] . '">Alle deine guten Taten</a>':'<br><a href="./deeds?user=' . $thisuser['idUser'] . '">Alle guten Taten des Nutzers</a>');
+		}
 
 		//Block 4: Adresse 
 		$blAdresse = "";
