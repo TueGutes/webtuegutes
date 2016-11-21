@@ -1600,9 +1600,9 @@ class DBFunctions
 	//Lukas
 	public function db_userBewertung($points,$user) {
 		$db = self::db_connect();
-		$sql = 'UPDATE User SET points = ? WHERE idUser = ?';
+		$sql = 'UPDATE User SET points = ? WHERE username = ?';
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('ii',$points,$user);
+		$stmt->bind_param('is',$points,$user);
 		$stmt->execute();
 		self::db_close($db);	
 	}
@@ -1610,11 +1610,36 @@ class DBFunctions
 	//Lukas
 	public function db_userAnsehen($trust,$user) {
 		$db = self::db_connect();
-		$sql = 'UPDATE User SET idTrust = ? WHERE idUser = ?';
+		$sql = 'UPDATE User SET idTrust = ? WHERE username = ?';
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('ii',$trust,$user);
+		$stmt->bind_param('is',$trust,$user);
 		$stmt->execute();
 		self::db_close($db);	
+	}
+
+	//Lukas
+	function db_getBewerb($idGuteTat) 
+	{
+		$db = self::db_connect();
+		$sql = "SELECT idUser
+			FROM Application
+			WHERE idGuteTat = ?
+			AND status = 'angenommen'";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idGuteTat);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry =$result->fetch_object();
+		self::db_close($db);
+		return $dbentry;
+		/*$arr = array();
+		$i=0; 
+		while($dbentry =$result->fetch_assoc()){
+			$arr[$i]= $dbentry;
+			$i++;
+		}
+		return $arr;
+		*/
 	}
 }
 ?>

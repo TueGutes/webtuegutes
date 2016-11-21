@@ -14,58 +14,17 @@ require './includes/_top.php';
 
 $idTat = $_GET["id"];
 $tat = DBFunctions::db_getGuteTat($idTat);
-$ex = false;
-
-if(isset($_POST["close"])){
-	DBFunctions::db_guteTatClose($idTat);
-	echo '<h3> Gute Tat erfolgreich abgeschlossen !! </h>';
-	$ex = true;
-
-			$mail = DBFunctions::db_get_user($_USER->getUsername())['email'];
-			$actual_link = $HOST . '/deeds_detaisl?id='.$idTat;
-			$content = '"Gute Tat '.$idTat.' geschlossen"';
-
-			$mailcontent = "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\"><img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/></div><div style=\"margin-left:10%;margin-right:10%\"><h1>Gute Tat <b>".$tat['name']."</b> bei 'Tue Gutes in Hannover':</h1> <br><h3>Wurde erfolgreich geschlossen: ".$actual_link." </h3></div>";
-
-			if(sendEmail($mail, $content, $mailcontent) === true)
-					echo '<h4> Sie werden in kürze per Mail benachrichtigt </h>';
-			else
-				$output = '<red>Bestätigungsmail an ' . $mail . ' konnte nicht gesendet werden!</red>';
 
 
-	echo '<hr> <a href="./deeds.php"> <input type="Button" value="Zurück"> </a> ';
-
-}
-else{
 	$myRole = DBFunctions::db_get_user($_USER->getUsername())['groupDescription'];
 	if (!(DBFunctions::db_istFreigegeben($idTat) || $myRole=='Moderator' || $myRole=='Administrator')){
-		echo '<h3> Diese gute Tat muss zuerst von einem Moderator freigegeben werden.<br><a href="./deeds">Schade...</a> </h>';
-		$ex = true;
+		die ('Diese gute Tat muss zuerst von einem Moderator freigegeben werden.<br><a href="./deeds">Schade...</a>');
 	}
 
 	if (!(DBFunctions::db_istGeschlossen($idTat))){
-		echo '<h3> Diese gute Tat wurde bereits von einem Moderator geschlossen! <br>';
-		echo '<a href="./deeds">Zurück...</a> </h>';
-		$ex = true;
-
-		echo '<br> <hr> <br>';
-		if(!isset($_POST['user'])){
-			$myRole = DBFunctions::db_get_user($_USER->getUsername())['groupDescription'];
-			if(($_USER->loggedIn() && $_USER->getUsername() != $tat["username"])) {
-				$link = 'profile_bewertung.php';
-				$bewert = '<form action="'.$link.'" method="post">';
-				$bewert .= 'Bitte bewerten sie: <b>'.$tat["username"].'</b> mit einer Zahl von 1 bis 10 <br> Wobei 10 das beste und 1 das schlechtestes ist <br>';
-				$bewert .= '<input type="text" name="bewertung" placeholder="Zahl von 1 bis 10"> <br> ';
-				$bewert .= '<input type="hidden" name="user" value="'.$tat["username"].'"> <br> ';
-				$bewert .= '<input type="submit" value="Bewerten"> </form>';
-				echo $bewert;
-			}
-		}
-
+		die ('Diese Tat wurde bereits vom Besitzer geschlossen !<br><a href="./deeds">gehe zurück...</a>');
 	}
-}
 
-if($ex == false){
 	//------------Einlesen der Daten---------------
 
 
@@ -156,15 +115,15 @@ if($ex == false){
 	else if(($_USER->loggedIn() && $_USER->getUsername() == $tat["username"])||($myRole=='Moderator' || $myRole=='Administrator')) {
 
 	$link = './deeds_bearbeiten?id='.$idTat;
-	$link2 = './deeds_details?id='.$idTat;
+	$link2 = './deeds_bewerten?id='.$idTat;
 
 	$form = '<form method="post" action="'.$link.'">';
 	$form .= '<input type="submit" value="Bearbeiten">';
 	$form .= '</form>';
 
 	$form2 = '<form method="post" action="'.$link2.'">';
-	$form2 .= '<input type="hidden" name="close" value="true">';
-	$form2 .= '<input type="submit" value="Close">';
+	//$form2 .= '<input type="hidden" name="close" value="true">';
+	$form2 .= '<input type="submit" value="Schließen">';
 	$form2 .= '</form>';
 
 	echo $form . $form2;
@@ -180,7 +139,7 @@ if($ex == false){
 		echo $form;
 	}
 
-}
+
 ?>
 
 <style>
