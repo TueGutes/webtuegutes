@@ -337,10 +337,39 @@
 
 			// Nutzerdaten überschreiben:
 			$thisuser['birthday'] = $_POST['txtYearOfBirth'] . '-' . $_POST['txtMonthOfBirth'] . '-' . $_POST['txtDayOfBirth'];
+			
+			//Speichern des Profilbildes
 			if ($_FILES['neuerAvatar']['name'] != '') {
-				move_uploaded_file($_FILES['neuerAvatar']['tmp_name'],'./img/tmp/avatar_' . $thisuser['idUser']);
-				$thisuser['avatar'] = 'data: ' . mime_content_type('./img/tmp/avatar_' . $thisuser['idUser']) . ';base64,' . base64_encode(file_get_contents('./img/tmp/avatar_' . $thisuser['idUser']));
-				unlink('./img/tmp/avatar_' . $thisuser['idUser']); //Später kann diese Zeile ggf. gelöscht werden
+				$uploadDir = './img/profiles/'.$thisuser['idUser'].'/';
+				if (!is_dir($uploadDir)) mkdir($uploadDir);
+				imagepng(imagecreatefromstring(file_get_contents($_FILES['neuerAvatar']['tmp_name'])), $uploadDir . 'converted.png');
+				$size = getimagesize($uploadDir . 'converted.png');
+				
+				//Anlegen der Dateien
+				$uploaded = imagecreatefrompng($uploadDir . 'converted.png');
+				$avatar_256 = imagecreatetruecolor(256,256);
+				$avatar_128 = imagecreatetruecolor(128,128);
+				$avatar_64 = imagecreatetruecolor(64,64);
+				$avatar_32 = imagecreatetruecolor(32,32);
+				$avatar_16 = imagecreatetruecolor(16,16);
+
+				//Resizing
+				imagecopyresized($avatar_256, $uploaded, 0, 0, 0, 0, 256, 256 , $size[0], $size[1]);
+				imagecopyresized($avatar_128, $uploaded, 0, 0, 0, 0, 128, 128 , $size[0], $size[1]);
+				imagecopyresized($avatar_64, $uploaded, 0, 0, 0, 0, 64, 64 , $size[0], $size[1]);
+				imagecopyresized($avatar_32, $uploaded, 0, 0, 0, 0, 32, 32 , $size[0], $size[1]);
+				imagecopyresized($avatar_16, $uploaded, 0, 0, 0, 0, 16, 16 , $size[0], $size[1]);
+
+				imagepng($avatar_256, $uploadDir . 'avatar_256.png');
+				imagepng($avatar_128, $uploadDir . 'avatar_128.png');
+				imagepng($avatar_64, $uploadDir . 'avatar_64.png');
+				imagepng($avatar_32, $uploadDir . 'avatar_32.png');
+				imagepng($avatar_16, $uploadDir . 'avatar_16.png');
+
+				unlink($uploadDir . 'converted.png');
+
+				//Speichern des neuen Avatars im Nutzerprofil
+				$thisuser['avatar'] = $uploadDir.'avatar_256.png';
 			}
 			$thisuser['street'] = $_POST['txtStrasse'];
 			$thisuser['housenumber'] = $_POST['txtHausnummer'];
@@ -354,7 +383,7 @@
 
 			//Änderungen speichern
 			DBFunctions::db_update_user($thisuser);
-			header("Refresh:0");
+			//header("Refresh:0");
 		}
 
 		//Anzeige des eigentlichen Nutzerprofils
