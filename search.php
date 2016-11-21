@@ -45,7 +45,7 @@ date_default_timezone_set("Europe/Berlin");
 </form>
 
 
-<!---------------  change Style when 'Zeit' ist selected  ------------------>
+<!----------------- change Style when 'Zeit' ist selected  ------------------>
 
 
 <script type="text/javascript">
@@ -97,6 +97,7 @@ date_default_timezone_set("Europe/Berlin");
 
 
 <?php
+//$db = db_connect();
 $db = DBFunctions::db_connect();
 
 // $db = mysqli_connect('localhost', 'tueGutes', 'Sadi23n2os', 'tueGutes');
@@ -116,23 +117,23 @@ if ($_GET['stichwort']) {
         ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`)
-        WHERE `Deeds`.`name` like '%$keyword[0]$keyword[1]%'
-        OR `Deeds`.`category` like '%$keyword[0]$keyword[1]%'
+        WHERE `Deeds`.`name` like '%$keyword[0]%$keyword[1]%'
+        OR `Deeds`.`category` like '%$keyword[0]%$keyword[1]%'
         ORDER BY `Deeds`.`category`, `Deeds`.`starttime`";
     } elseif ($_GET['selector'] == 'user_name') {
         $sql = "SELECT DISTINCT * FROM `User` JOIN `Deeds`
         ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`)
-        WHERE `User`.`username` like '%$keyword[0]$keyword[1]%'
+        WHERE `User`.`username` like '%$keyword[0]%$keyword[1]%'
         ORDER BY `Deeds`.`category`, `Deeds`.`starttime`";
     } else if ($_GET['selector'] == 'ort') {
         $sql = "SELECT DISTINCT * FROM `User` JOIN `Deeds`
         ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`)
-        WHERE `Deeds`.`street` like '%$keyword[0]$keyword[1]%'
-        OR `Postalcode`.`place` like '%$keyword[0]$keyword[1]%'
+        WHERE `Deeds`.`street` like '%$keyword[0]%$keyword[1]%'
+        OR `Postalcode`.`place` like '%$keyword[0]%$keyword[1]%'
         ORDER BY `Deeds`.`category`, `Deeds`.`starttime`";
     } else {
         $sql = " SELECT DISTINCT * FROM `User` JOIN `Deeds`
@@ -284,6 +285,7 @@ if ($_GET['stichwort']) {
         echo setPageUrl($maxpage, 'last');
         echo '<span style="position:relative;left:18%;font-size: 15px ">current:' . $page . ' of ' . $maxpage . '</span>';
         DBFunctions::db_close($db);
+//        db_close($db);
 //$js_selector = '<script type="text/javascript">';
 //$js_selector .= 'var selector= document.getElementsByName("selector");';
 //$js_selector .= 'selector.options["ort"].selected=true;';
