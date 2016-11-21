@@ -29,6 +29,10 @@ $erstellerEmail = DBFunctions::db_getEmailOfContactPersonByGuteTatID($idTat);
 //Gute Tat freigeben oder ablehnen (inkl. Bestätigungsmail an den Ersteller):
 $gutetat = DBFunctions::db_getGuteTat($_GET['id']);
 
+//Falls zwei Moderatoren die gleiche Tat gleichzeitig bearbeiten:
+if (DBFunctions::db_istFreigegeben($_GET['id']) && (isset($_POST['allow']) || isset($_POST['dontAllow']) || isset($_POST['deny'])))
+	die ('Ein anderer Moderator hat diese Tat bereits bearbeitet. Vielen Dank für deine Mühe!');
+
 if (isset($_POST['allow'])) {
 	DBFunctions::db_guteTatFreigeben($_GET['id']);
 	$mailText = '<h3>Hallo ' . $erstellerName . '</h3><p>Deine gute Tat "' . $tat['name'] . '" wurde gerade von ' . $_USER->getUsername() . ' freigegeben.</p>';
