@@ -2,6 +2,7 @@
 /**
 *Datei zur Sammlung aller Datenbankzugriffe
 *
+* Datei veränderung
 *In dieser Datei ist es das Ziel, alle Datenbankzugriffe zu sammeln. Dass heißt, wenn es optimal läuft, würde nur in dieser Datei SQL Code stehen. Was auch heißt dass in anderen nur Funktionsaufrufe von hier stattfinden. Funktionsaufrufe werden realisiert durch <DBFunctions::funktionsname>.
 *
 *@author Timm Romanik <timm.romanik@stud.hs-hannover.de

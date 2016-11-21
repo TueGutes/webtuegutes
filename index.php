@@ -15,8 +15,8 @@ require './includes/_top.php';
 <h2><?php echo $wlang['welcome']; ?></h2>
 <br>
 
-<?php 
-if(!$_USER->loggedIn()) 
+<?php
+if(!$_USER->loggedIn())
 	echo "
 		<form action='./login' method='post'>
 			<input type='text' value='' name='username' placeholder='" . $wlang['login_placeholder_username'] . "' required />
@@ -29,7 +29,7 @@ if(!$_USER->loggedIn())
 		<a href='./PasswortUpdate'>Ich habe mein Passwort vergessen!</a>
 		<br><br><br><br>
 		Ich bin noch nicht registriert:<br>
-		<a href='./registration'>Zur Registrierung</a> 
+		<a href='./registration'>Zur Registrierung</a>
 	";
 else
 {
@@ -53,8 +53,8 @@ else
 	echo "
 			</div>
 		</div>";
-		
-		
+
+
 	echo "
 		<div class='module'>
 			<h3>Die neusten Taten</h3><a href='./deeds'><input type='button' value='Mehr' /></a>
@@ -79,10 +79,11 @@ else
 			<form action='./search' method='get'>
 				<span></span>
 				<input type='text' name='stichwort'>
-				<select class='' name='selector'>
+				<select class='' name='selector' onchange='setTimeLabel(this)'>
 					<option value='gutes'>Gutes</option>
 					<option value='user_name'>User</option>
 					<option value='ort'>Ort</option>
+					<option value='zeit'>Zeit</option>
 				</select>
 				<input type='submit' name='sub' value='suchen' />
 			</form>
@@ -95,7 +96,56 @@ else
 		<a href='./contact'><input type='button' value='Kontakt zu uns' /></a>
 	";
 }
+echo "
+<script type='text/javascript'>
+    function setTimeLabel(event) {
+        var form = document.getElementById('form');
+        var keyword = document.getElementsByName('stichwort');
+        var origin = document.createElement('input');
+        if (event.value == 'zeit') {
+            var time = document.createElement('input');
+            var format = getFormat();
+            time.type = 'datetime-local';
+            time.name = 'stichwort';
+            time.value = format;
+            keyword[0].parentNode.replaceChild(time,keyword[0]);
+
+        }else{
+            var origin = document.createElement('input');
+            origin.type = 'text';
+            origin.name = 'stichwort';
+            keyword[0].parentNode.replaceChild(origin,keyword[0]);
+        }
+    }
+
+    function getFormat(){
+        var format = '';
+        var nTime = new Date();
+        format += nTime.getFullYear()+'-';
+        format += (nTime.getMonth()+1)<10?'0'+(nTime.getMonth()+1):(nTime.getMonth()+1);
+        format += '-';
+        format += nTime.getDate()<10?'0'+(nTime.getDate()):(nTime.getDate());
+        format += 'T';
+        format += nTime.getHours()<10?'0'+(nTime.getHours()):(nTime.getHours());
+        format += ':';
+        format += nTime.getMinutes()<10?'0'+(nTime.getMinutes()):(nTime.getMinutes());
+        format += ':00';
+        return format;
+    }
+
+</script>
+";
+
+
+
+
+
+
+
+
 ?>
+
+
 <!--
 <div class='center'>
 	<a href='/login'>(Link) zum Login</a>
@@ -117,7 +167,7 @@ else
 		<option value="1">Option 1</option>
 		<option value="2">Option 2</option>
 		<option value="3">Option 3</option>
-	</select> 
+	</select>
 	<br><br>
 	<input id="radio1" name="radio" type="radio" checked="checked"><label for="radio1">Option 1</label>
 	<br><br>

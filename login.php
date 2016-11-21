@@ -1,7 +1,6 @@
 <?php
 /**
  * Bietet die Möglichkeit sich im System anzumelden
- *
  * Ein Nutzer gibt seinen Benutzernamen und sein Passwort ein
  * Sind alle Daten korrekt wird er eingeloggt und anschließend standardmäßig zu seiner Profilseite (profile.php) weiterleitet
  * Wollte der Nutzer ursprünglich zu einer anderen Seite, war allerdings noch nicht eingeloggt, so wird er nach dem Login dorthin weitergeleitet (continue Parameter)
@@ -23,7 +22,7 @@ include './includes/db_connector.php';
 // ausgelagert in db_connector, code ist gesaved in einer .txt bei mir
 
 
-
+$username = isset($_POST['username']) ? $_POST['username'] : '';
 $output = isset($_GET['code']) ? (isset($wlang['login_code_' . $_GET['code']]) ? $wlang['login_code_' . $_GET['code']] : "") : "";
 if(isset($_POST['username']) && isset($_POST['password']))
 {
@@ -66,7 +65,7 @@ require './includes/_top.php';
 <div id='output'><?php echo $output; ?></div>
 <br><br>
 <form action="" method="post">
-	<input type="text" value="" name="username" placeholder="<?php echo $wlang['login_placeholder_username']; ?>" required autofocus />
+	<input type="text" value="<?php echo $username; ?>" name="username" placeholder="<?php echo $wlang['login_placeholder_username']; ?>" required autofocus />
 	<br><br>
 	<input type="password" name="password" value="" placeholder="<?php echo $wlang['login_placeholder_password']; ?>" required />
 	<br><br>
