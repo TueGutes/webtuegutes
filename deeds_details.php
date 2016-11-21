@@ -35,13 +35,16 @@ if (isset($_POST['allow'])) {
 	$mailText .= '<a href="' . $HOST . '/deeds_details?id=' . $idTat . '">Klicke hier</a>, um sofort zu deiner guten Tat zu gelangen.';
 	sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde angenommen!', $mailText);
 	Header("Refresh: 0");
+} else if (isset($_POST['dontAllow'])) {
+	$form3 = '<form method="post" action="">';
+	$form3 .= '<textarea rows=20 cols=100 placeholder="Bitte begründe deine Entscheidung..." name="txtBegründung">' . '</textarea><br><br><br>';
+	$form3 .= '<input type="submit" value=" Gute Tat ablehnen ">';
+	$form3 .= '<input type="hidden" name="deny" width>';
+	$form3 .= '</form>';
+	die($form3);
 } else if (isset($_POST['deny'])) {
-	//TODO: Beim ablehnen soll nicht einfach dieser Block aufgerufen werden. 
-	//Stattdessen soll über "die" ein weiteres Formular mit einem Feld für 
-	//die Begründung angezeigt werden. Erst wenn auch das abgeschickt ist, 
-	//soll dieser Block ausgeführt und die Begründung in die Email integriert werden.
 	DBFunctions::db_guteTatAblehnen($_GET['id']);
-	$mailText = '<h3>Hallo ' . $erstellerName . '</h3><p>Deine gute Tat "' . $tat['name'] . '" wurde gerade von ' . $_USER->getUsername() . ' abgelehnt.</p>';
+	$mailText = '<h3>Hallo ' . $erstellerName . '</h3><p>Deine gute Tat "' . $tat['name'] . '" wurde gerade von ' . $_USER->getUsername() . ' abgelehnt. Als Begründung für diese Entscheidung schreibt ' . $_USER->getUsername() . ':</p><p>' . $_POST['txtBegründung'] . '</p>';
 	$mailText .= '<a href="' . $HOST . '/guteTatErstellenHTML">Klicke hier</a>, um eine neue gute Tat zu erstellen.';
 	sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde abgelehnt', $mailText);
 	die ('Die gute Tat wurde abgelehnt. Der Ersteller der guten Tat wird per Email darüber informiert.<br><a href="'.$HOST.'/deeds">Zurück zur Übersicht</a>');
@@ -110,7 +113,7 @@ if (!DBFunctions::db_istFreigegeben($_GET['id'])) {
 
 	$form2 = '<form method="post" action="">';
 	$form2 .= '<input type="submit" value=" Gute Tat ablehnen ">';
-	$form2 .= '<input type="hidden" name="deny" width>';
+	$form2 .= '<input type="hidden" name="dontAllow" width>';
 	$form2 .= '</form>';
 
 	echo $form1 . '<br>' . $form2;
