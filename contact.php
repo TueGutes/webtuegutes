@@ -1,15 +1,19 @@
 <?php
-/*
-*@author Henrik Huckauf
-*/
+/**
+ * Kontaktformular
+ *
+ * Kontaktformular mit dem Nutzer (ob eingeloggt oder nicht) mit uns in Kontakt treten können 
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 require './includes/DEF.php';
 
-$vorname = '';
-$nachname = '';
-$alter = '';
-$email = '';
-$message = '';
+$vorname = isset($_POST['vorname']) ? $_POST['vorname'] : '';
+$nachname = isset($_POST['nachname']) ? $_POST['nachname'] : '';
+$alter = isset($_POST['alter']) ? $_POST['alter'] : '';
+$email = isset($_POST['email']) ? $_POST['email'] : '';
+$message = isset($_POST['message']) ? $_POST['message'] : '';
 if($_USER->loggedIn())
 {
 	$vorname = /*$_USER->*/'';
@@ -21,12 +25,6 @@ $output = '';
 
 if(isset($_POST['set']) && $_POST['set'] == '1')
 {
-	$vorname = $_POST['vorname'];
-	$nachname = $_POST['nachname'];
-	$alter = $_POST['alter'];
-	$email = $_POST['email'];
-	$message = $_POST['message'];
-
 	$IP = $_SERVER['REMOTE_ADDR'];
 	$BROWSER = $_SERVER['HTTP_USER_AGENT'];
 	$USERLANGUAGE = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -68,7 +66,7 @@ if(isset($_POST['set']) && $_POST['set'] == '1')
 	}
 	
 	// session_start(); // ganz oben bevor header gesendet wird
-	if(strtoupper($_POST['captcha_code']) != $_SESSION['captcha_spam'])
+	if(!$_USER->loggedIn() && strtoupper($_POST['captcha_code']) != $_SESSION['captcha_spam'])
 	{
 		$output .= "<red>" . $wlang['contact_err_captcha'] . "</red><br>";
 		$error = true;
@@ -125,13 +123,16 @@ require './includes/_top.php';
 		<br>
 		<input type='email' name='email' value='<?php echo $email; ?>' size='40' placeholder='<?php echo $wlang['contact_form_email']; ?>' /><br>
 		<br>
-		<textarea cols='42' rows='10' name='message' size='20' placeholder='<?php echo $wlang['contact_form_message']; ?>' required><?php echo $message; ?></textarea>&nbsp;*<br>
+		<textarea cols='42' rows='10' name='message' size='20' placeholder='<?php echo $wlang['contact_form_message']; ?>' required <?php if(isset($_POST['suggestCategory']) && $_POST['suggestCategory'] == '1') echo 'autofocus'; ?>><?php echo $message; ?></textarea>&nbsp;*<br>
 		* = <?php echo $wlang['contact_form_mandatoryField']; ?><br>
 		<div class='center'>
-			<img id='captcha_image' class='block' src='./includes/captcha/captcha.php' alt='Captcha...' title='<?php echo $wlang['contact_captcha_title']; ?>' width='140' height='40' /><br>
+			<?php  if(!$_USER->loggedIn()) echo "
+			<img id='captcha_image' class='block' src='./includes/captcha/captcha.php' alt='Captcha...' title='" . $wlang['contact_captcha_title'] . "' width='140' height='40' /><br>
 			<br>
 			<span id='captcha_reload'>&#8635;</span><br>
 			<input type='text' name='captcha_code' size='10' placeholder='Code' required autocomplete='off' />&nbsp;*
+			";
+			?>
 			<br><br>
 			<input type='hidden' name='set' value='1' />
 			<input type='submit' value='<?php echo $wlang['contact_form_submit']; ?>'>

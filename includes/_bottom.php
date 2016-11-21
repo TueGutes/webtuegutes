@@ -1,3 +1,12 @@
+<?php
+/**
+ * Unterer Teil der Website
+ *
+ * Enthält den unteren Teil der Website (wie z.B. Footer)
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
+?>
 			</div>
 			<div class="bottom">
 				<footer>

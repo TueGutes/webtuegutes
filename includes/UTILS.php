@@ -1,7 +1,11 @@
 <?php
-/*
-*@author Henrik Huckauf
-*/
+/**
+ * Sammlung von Hilfsklassen und Hilffunktionen
+ *
+ * Bietet eine Sammlung von Hilfsklassen und Hilfsfunktionen, um Redundanz zu vermeiden
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 /*
 * DateHandler

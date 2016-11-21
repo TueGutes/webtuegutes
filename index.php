@@ -1,7 +1,11 @@
 <?php
-/*
-*@author Henrik Huckauf
-*/
+/**
+ * Index
+ *
+ * Startseite, die für eingeloggte Nutzer einen Schnellzugriff zu wichtigen Funktionen bietet
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 require './includes/DEF.php';
 

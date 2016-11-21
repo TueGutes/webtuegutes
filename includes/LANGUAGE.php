@@ -1,7 +1,11 @@
 <?php
-/*
-*@author Henrik Huckauf
-*/
+/**
+ * Sprachvariablen
+ *
+ * Enthält alle Sprachvariablen, was das Warten und hinzufügen anderer Sprachen stark vereinfacht
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 //====error====
 $wlang['error'][403] = 'Zugriff verweigert...';

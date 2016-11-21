@@ -1,7 +1,11 @@
 <?php
-/*
-*@author Henrik Huckauf
-*/
+/**
+ * Fügt Standardvariablen und Funktionen hinzu
+ *
+ * Fügt Standardvariablen und Funktionen (wie zum Beispiel die SESSION des Nutzers mit $_USER Objekt und Sprachvariablen) zum Script hinzu
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 //====Server====
 $ABSOLUE_PATH = "/";

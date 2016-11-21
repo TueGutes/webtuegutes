@@ -1,7 +1,11 @@
 <?php
-/*
-*@author Henrik Huckauf
-*/
+/**
+ * Klasse für $_USER Objekt
+ *
+ * Bietet Funktionen, um die SESSION des Users zu handlen
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 class User
 {

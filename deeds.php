@@ -13,7 +13,8 @@ require './includes/_top.php';
 
 include './includes/Map.php';
 
-if(!isset($_GET['page'])) $_GET['page'] = 1;
+if(!isset($_GET['page'])) $_GET['page'] = 1  && $placeholder="Alle";
+if (!isset($_POST['status'])) $_POST['status'] = 'alle' && $_POST['adt'] = 10;
 ?>
 
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
@@ -25,17 +26,30 @@ if(!isset($_GET['page'])) $_GET['page'] = 1;
 	<br><hr>
 	</div>
 	<br> 
-		
-			<?php
-				$placeholder = 'alle';
-				/*$intZahl=0;
-				$tatAusgeben=new tatAusgeben($intZahl);
-				$tatAusgeben->toStringTat();
-				*/
-				//$allDeedsCount = db_connector blabla
-				//$neededPages = $allDeedsCount/10;
+	</form>
+	
+		<form method="post" action="deeds">
+				<td><h5>Anzeigen:</td>
+				<td><select name="status" size="1">
+				<option value="alle" <?php echo (@$_POST['status']=="alle")?'selected':'' ?> >alle</option>                                   <?/*hier wird der status abgefragt */?>
+				<option value="freigegeben" <?php echo (@$_POST['status']=="freigegeben")?'selected':'' ?> >Nicht abgeschlossen</option>     <?/*hier wird der status abgefragt */?>
+				<option value="geschlossen" <?php echo (@$_POST['status']=="geschlossen")?'selected':'' ?> >abgeschlossen</option>				 <?/*hier wird der status abgefragt */?>
+				</select>
 				
-				$tatenProSeite=10; //anzahl der tataen die pro seite angezeigt werden
+		
+				<td><h5>Anzahl Der Taten:</td>
+				<td><select name="adt" size="1">
+				<option value="5" <?php echo (@$_POST['adt']==5)?'selected':'' ?> >5</option>        <?/*hier wird der status abgefragt */?>
+				<option value="10" <?php echo (@$_POST['adt']==10)?'selected':'' ?> >10</option>     <?/*hier wird der status abgefragt */?>
+				<option value="15" <?php echo (@$_POST['adt']==15)?'selected':'' ?> >15</option>	 <?/*hier wird der status abgefragt */?>
+				</select>
+				<input type="submit" name="button" value="Anzahl"/>
+		</form>
+			<?php
+				
+				$placeholder = $_POST['status'];
+				$tatenProSeite=$_POST['adt'];
+
 				$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder);
 
 				$maxZeichenFürDieKurzbeschreibung = 150;

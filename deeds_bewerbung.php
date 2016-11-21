@@ -9,34 +9,6 @@
  * @author     Andreas Blech <andreas.blech@stud.hs-hannover.de>
  */
 
-
-/**
- * Gibt den Bewerbungstext zu einer Bewerbung zurück
- *
- * Gibt den applicationText in der Relation Application zurück, wo idGuteTat = $idGuteTat und userID = $candidateID gilt
- *
- * @param integer $idGuteTat die ID der guten Tat
- * @param integer $candidateID die UserID des Bewerbers
- * @return string|boolean Bewerbungstext oder false, falls kein Eintrag gefunden wurde
- */
-function db_getApplicationTextOfApplication($idGuteTat, $candidateID) {
-	$db = DBFunctions::db_connect();
-	$sql = "SELECT applicationText FROM Application WHERE idGuteTat = ? AND idUser = ?";
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('ss',$idGuteTat, $candidateID);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$dbentry = $result->fetch_assoc();
-	DBFunctions::db_close($db);
-	if(isset($dbentry['applicationText'])){
-		return $dbentry['applicationText'];
-	}
-	else {
-		return false;
-	}
-}
-
-
 require "./includes/DEF.php";
 include './includes/ACCESS.php';
 require "./includes/_top.php";
@@ -116,7 +88,7 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 	$idUser = $_USER->getID();
 	$status = DBFunctions::db_getStatusOfBewerbung($candidateID, $idGuteTat);
 	$candidateUsername = DBFunctions::db_getUsernameOfBenutzerByID($candidateID);
-	$explanation = db_getApplicationTextOfApplication($idGuteTat, $candidateID);
+	$explanation = DBFunctions::db_getApplicationTextOfApplication($idGuteTat, $candidateID);
 	if(DBFunctions::db_getUserIdOfContactPersonByGuteTatID($idGuteTat) != $idUser) {
 		//Fall 1.1: Der Nutzer hat die gute Tat nicht erstellt und darf dementsprechend ihre Bewerbungen nicht annehmen
 		echo '<h3><red>Du darfst nur Bewerbungen zu guten Taten einsehen, die du selbst erstellt hat</red></h3>';

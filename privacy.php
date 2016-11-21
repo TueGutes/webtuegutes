@@ -1,7 +1,11 @@
 <?php
-/*
-*@author Henrik Huckauf
-*/
+/**
+ * Datenschutzerklärung
+ *
+ * Zeigt die Datenschutzerklärung an
+ *
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ */
 
 require './includes/DEF.php';
 require './includes/_top.php';
