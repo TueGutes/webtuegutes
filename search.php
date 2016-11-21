@@ -1,7 +1,10 @@
 <?php
-/*
-*@author Shanghui Dai
-*/
+/**
+ * Search function
+ * Durch "Zeit", "Ort", "Username", "Gutes"
+ * "Zeit" in a different form, using "datetime-local"
+ * @author     Shanghui Dai <shanghui.dai@stud.hs-hannover.de>
+ */
 require_once './includes/DEF.php';
 include_once './includes/db_connector.php';
 require_once './includes/_top.php';
@@ -10,7 +13,6 @@ date_default_timezone_set("Europe/Berlin");
 ?>
 
 <!----------------  enter and input keyword  ----------------->
-<!---------------- if you choose 'Zeit', the style will change-------------->
 
 
 
@@ -45,7 +47,7 @@ date_default_timezone_set("Europe/Berlin");
 </form>
 
 
-<!---------------  change Style when 'Zeit' ist selected  ------------------>
+<!----------------- change Style when 'Zeit' ist selected  ------------------>
 
 
 <script type="text/javascript">
@@ -97,6 +99,7 @@ date_default_timezone_set("Europe/Berlin");
 
 
 <?php
+//$db = db_connect();
 $db = DBFunctions::db_connect();
 
 // $db = mysqli_connect('localhost', 'tueGutes', 'Sadi23n2os', 'tueGutes');
@@ -116,23 +119,23 @@ if ($_GET['stichwort']) {
         ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`)
-        WHERE `Deeds`.`name` like '%$keyword[0]$keyword[1]%'
-        OR `Deeds`.`category` like '%$keyword[0]$keyword[1]%'
+        WHERE `Deeds`.`name` like '%$keyword[0]%$keyword[1]%'
+        OR `Deeds`.`category` like '%$keyword[0]%$keyword[1]%'
         ORDER BY `Deeds`.`category`, `Deeds`.`starttime`";
     } elseif ($_GET['selector'] == 'user_name') {
         $sql = "SELECT DISTINCT * FROM `User` JOIN `Deeds`
         ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`)
-        WHERE `User`.`username` like '%$keyword[0]$keyword[1]%'
+        WHERE `User`.`username` like '%$keyword[0]%$keyword[1]%'
         ORDER BY `Deeds`.`category`, `Deeds`.`starttime`";
     } else if ($_GET['selector'] == 'ort') {
         $sql = "SELECT DISTINCT * FROM `User` JOIN `Deeds`
         ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`)
-        WHERE `Deeds`.`street` like '%$keyword[0]$keyword[1]%'
-        OR `Postalcode`.`place` like '%$keyword[0]$keyword[1]%'
+        WHERE `Deeds`.`street` like '%$keyword[0]%$keyword[1]%'
+        OR `Postalcode`.`place` like '%$keyword[0]%$keyword[1]%'
         ORDER BY `Deeds`.`category`, `Deeds`.`starttime`";
     } else {
         $sql = " SELECT DISTINCT * FROM `User` JOIN `Deeds`
@@ -149,7 +152,7 @@ if ($_GET['stichwort']) {
 
 
 
-    // -------------  you can change pagesize here, 5 is now a very small number but it's easy to see changes  -----------
+    // -------------  5 is now a very small number but it's easy to see changes  -----------
 
     $pagesize = 5;
 
@@ -284,6 +287,7 @@ if ($_GET['stichwort']) {
         echo setPageUrl($maxpage, 'last');
         echo '<span style="position:relative;left:18%;font-size: 15px ">current:' . $page . ' of ' . $maxpage . '</span>';
         DBFunctions::db_close($db);
+//        db_close($db);
 //$js_selector = '<script type="text/javascript">';
 //$js_selector .= 'var selector= document.getElementsByName("selector");';
 //$js_selector .= 'selector.options["ort"].selected=true;';
@@ -295,6 +299,14 @@ if ($_GET['stichwort']) {
 
 //this function will be moved to file includes/ after all job been done
 
+
+/**
+ * set URL
+ *
+ * @param int $page the current page
+ * @param String $sort the type of the search results
+ * @return string $str return url in string form
+ */
 
 function setPageUrl($page, $sort)
 {
