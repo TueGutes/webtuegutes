@@ -14,7 +14,13 @@ require './includes/_top.php';
 include './includes/Map.php';
 
 if(!isset($_GET['page'])) $_GET['page'] = 1  && $placeholder="Alle";
-if (!isset($_POST['status'])) $_POST['status'] = 'alle' && $_POST['adt'] = 10;
+if (!isset($_POST['status'])) {
+		$_POST['status'] = 'alle';
+		$_POST['adt'] = 10;
+		$first=TRUE;
+	} else {
+		$first=FALSE;
+	}
 ?>
 
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
@@ -29,21 +35,22 @@ if (!isset($_POST['status'])) $_POST['status'] = 'alle' && $_POST['adt'] = 10;
 	</form>
 	
 		<form method="post" action="deeds">
-				<td><h5>Anzeigen:</td>
-				<td><select name="status" size="1">
-				<option value="alle" <?php echo (@$_POST['status']=="alle")?'selected':'' ?> >alle</option>                                   <?/*hier wird der status abgefragt */?>
+				<h5>Anzeigen:
+				<select name="status" size="1">
+				<option value="alle" <?php ($first || @$_POST['status']=="alle")?'selected':'' ?> >alle</option>                                   <?/*hier wird der status abgefragt */?>
 				<option value="freigegeben" <?php echo (@$_POST['status']=="freigegeben")?'selected':'' ?> >Nicht abgeschlossen</option>     <?/*hier wird der status abgefragt */?>
 				<option value="geschlossen" <?php echo (@$_POST['status']=="geschlossen")?'selected':'' ?> >abgeschlossen</option>				 <?/*hier wird der status abgefragt */?>
 				</select>
-				
-		
-				<td><h5>Anzahl Der Taten:</td>
-				<td><select name="adt" size="1">
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+
+				Anzahl Der Taten:
+				<select name="adt" size="1">
 				<option value="5" <?php echo (@$_POST['adt']==5)?'selected':'' ?> >5</option>        <?/*hier wird der status abgefragt */?>
 				<option value="10" <?php echo (@$_POST['adt']==10)?'selected':'' ?> >10</option>     <?/*hier wird der status abgefragt */?>
 				<option value="15" <?php echo (@$_POST['adt']==15)?'selected':'' ?> >15</option>	 <?/*hier wird der status abgefragt */?>
 				</select>
-				<input type="submit" name="button" value="Anzahl"/>
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+				<input type="submit" name="button" value="Anzahl"/></h5>
 		</form>
 			<?php
 				
