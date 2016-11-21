@@ -231,7 +231,7 @@
 		$blTaten = '<h3>Taten von ' . $thisuser['username'] . '</h3><table style="border:none">';
 		$blTaten .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Karma:</td><td style="border:none">';
 		$blTaten .= $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')';
-			//Hier können noch weitere Informationen wie z.B. die letzten Guten Taten des Nutzers, die von ihm ausgeschriebenen Taten, etc. aufgeführt werden
+
 		$blTaten .= "</table>";
 
 		//Block 4: Adresse 
@@ -337,10 +337,39 @@
 
 			// Nutzerdaten überschreiben:
 			$thisuser['birthday'] = $_POST['txtYearOfBirth'] . '-' . $_POST['txtMonthOfBirth'] . '-' . $_POST['txtDayOfBirth'];
+			
+			//Speichern des Profilbildes
 			if ($_FILES['neuerAvatar']['name'] != '') {
-				move_uploaded_file($_FILES['neuerAvatar']['tmp_name'],'./img/tmp/avatar_' . $thisuser['idUser']);
-				$thisuser['avatar'] = 'data: ' . mime_content_type('./img/tmp/avatar_' . $thisuser['idUser']) . ';base64,' . base64_encode(file_get_contents('./img/tmp/avatar_' . $thisuser['idUser']));
-				unlink('./img/tmp/avatar_' . $thisuser['idUser']); //Später kann diese Zeile ggf. gelöscht werden
+				$uploadDir = './img/profiles/'.$thisuser['idUser'].'/';
+				if (!is_dir($uploadDir)) mkdir($uploadDir);
+				imagepng(imagecreatefromstring(file_get_contents($_FILES['neuerAvatar']['tmp_name'])), $uploadDir . 'converted.png');
+				$size = getimagesize($uploadDir . 'converted.png');
+				
+				//Anlegen der Dateien
+				$uploaded = imagecreatefrompng($uploadDir . 'converted.png');
+				$avatar_256 = imagecreatetruecolor(256,256);
+				$avatar_128 = imagecreatetruecolor(128,128);
+				$avatar_64 = imagecreatetruecolor(64,64);
+				$avatar_32 = imagecreatetruecolor(32,32);
+				$avatar_16 = imagecreatetruecolor(16,16);
+
+				//Resizing
+				imagecopyresized($avatar_256, $uploaded, 0, 0, 0, 0, 256, 256 , $size[0], $size[1]);
+				imagecopyresized($avatar_128, $uploaded, 0, 0, 0, 0, 128, 128 , $size[0], $size[1]);
+				imagecopyresized($avatar_64, $uploaded, 0, 0, 0, 0, 64, 64 , $size[0], $size[1]);
+				imagecopyresized($avatar_32, $uploaded, 0, 0, 0, 0, 32, 32 , $size[0], $size[1]);
+				imagecopyresized($avatar_16, $uploaded, 0, 0, 0, 0, 16, 16 , $size[0], $size[1]);
+
+				imagepng($avatar_256, $uploadDir . 'avatar_256.png');
+				imagepng($avatar_128, $uploadDir . 'avatar_128.png');
+				imagepng($avatar_64, $uploadDir . 'avatar_64.png');
+				imagepng($avatar_32, $uploadDir . 'avatar_32.png');
+				imagepng($avatar_16, $uploadDir . 'avatar_16.png');
+
+				unlink($uploadDir . 'converted.png');
+
+				//Speichern des neuen Avatars im Nutzerprofil
+				$thisuser['avatar'] = $uploadDir.'avatar_256.png';
 			}
 			$thisuser['street'] = $_POST['txtStrasse'];
 			$thisuser['housenumber'] = $_POST['txtHausnummer'];
@@ -354,7 +383,7 @@
 
 			//Änderungen speichern
 			DBFunctions::db_update_user($thisuser);
-			header("Refresh:0");
+			//header("Refresh:0");
 		}
 
 		//Anzeige des eigentlichen Nutzerprofils
@@ -412,10 +441,29 @@
 
 		//Block 3: Taten
 		$blTaten = '<h3>Taten von ' . $thisuser['username'] . '</h3><table style="border:none">';
-		$blTaten .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Karma:</td><td style="border:none">';
-		$blTaten .= $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')';
-			//Hier können noch weitere Informationen wie z.B. die letzten Guten Taten des Nutzers, die von ihm ausgeschriebenen Taten, etc. aufgeführt werden
-		$blTaten .= "</table>";
+		$blTaten .= 'Karma: ' . $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')';
+
+
+		//Die letzten Taten des Nutzers
+		$arr = DBFunctions::db_getGuteTatenForUser(0,3,'alle',$thisuser['idUser']);
+		if (sizeof($arr)==0) {
+			$blTaten .= '<br>' . $thisuser['username'] . ' hat noch keine guten Taten...' . ((($thisuser['username']==$_USER->getUsername()) && !(@$_GET['view']!='public'))?'<br><a href="./deeds">Jetzt gute Taten finden</a>':'');
+		} else {
+			$maxZeichenFürDieKurzbeschreibung = 150;
+			$blTaten .= '<br><br><h5>Aktuelle Taten:</h5>';
+			for($i = 0; $i < sizeof($arr); $i++){
+					$blTaten .= '<br>';
+					$blTaten .=  "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+					$blTaten .=  "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
+					$blTaten .=  "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
+					$blTaten .=  "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";
+					$blTaten .=  "<div>" . (is_numeric($arr[$i]->countHelper) ? "Anzahl der Helfer: " . $arr[$i]->countHelper : '') ."</div><div class='trustLevel'>Minimaler Vertrauenslevel: " . $arr[$i]->idTrust . " (" . $arr[$i]->trustleveldescription . ")</div>";
+					$blTaten .=  "<div>" . $arr[$i]->organization . "</div>";
+					$blTaten .=  "</div></a>";
+					$blTaten .=  "<br>";
+				}
+			$blTaten .= ((($thisuser['username']==$_USER->getUsername()) && !(@$_GET['view']!='public'))?'<br><a href="./deeds?user=' . $thisuser['idUser'] . '">Alle deine guten Taten</a>':'<br><a href="./deeds?user=' . $thisuser['idUser'] . '">Alle guten Taten des Nutzers</a>');
+		}
 
 		//Block 4: Adresse 
 		$blAdresse = "";
