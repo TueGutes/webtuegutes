@@ -26,7 +26,7 @@ if (!isset($_POST['status'])) {
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
 
 <div>
-<form action="guteTatErstellenHTML" method="post">
+<form action="deeds_create" method="post">
 	<input type="hidden" name="opened">
 	<input type="submit" value="Gute Tat erstellen" target="_self">
 	<br><hr>

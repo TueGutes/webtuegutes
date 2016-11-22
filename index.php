@@ -10,6 +10,8 @@
 require './includes/DEF.php';
 
 require './includes/_top.php';
+
+include './includes/db_connector.php';
 ?>
 
 <h2><?php echo $wlang['welcome']; ?></h2>
@@ -33,22 +35,24 @@ if(!$_USER->loggedIn())
 	";
 else
 {
-	echo "<a href='./guteTatErstellenHTML'><input type='button' value='Gute Tat erstellen' /></a><br>";
+	echo "<a href='./deeds_create'><input type='button' value='Gute Tat erstellen' /></a><br>";
 
 	echo "
 		<div class='module'>
 			<h3>Meine letzten Taten</h3><a href='./deeds?user=" . $_USER->getUsername() . "'><input type='button' value='Mehr' /></a>
 			<div class='output'>";
-			for($i = 0; $i < 5; $i++)
-			{
-				echo "<a href='./deeds_details?id=x' class='deedAnchor'><div class='deed'>";
-					echo "<div class='name'><h4>Test " . $i . "</h4></div><div class='category'>Test</div>";
-					echo "<br><br><br><br><div class='description'>Dies ist eine Testbeschreibung, yo...</div>";
-					echo "<div class='address'>Staße 42<br>1234 / Stadtteil</div>";
-					echo "<div>Anzahl der Helfer: 2</div><div class='trustLevel'>Minimaler Vertrauenslevel: 42 (krasser Typ)</div>";
-					echo "<div>Organisation</div>";
+			$id = $_USER->getID();
+			$arr = DBFunctions::db_getGuteTatenForUser(0, 5, 'alle', $id);
+			$maxZeichenFürDieKurzbeschreibung = 150;
+			for($i = 0; $i < sizeof($arr); $i++){
+				echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+					echo "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
+					echo "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
+					echo "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";
+					echo "<div>" . (is_numeric($arr[$i]->countHelper) ? "Anzahl der Helfer: " . $arr[$i]->countHelper : '') ."</div><div class='trustLevel'>Minimaler Vertrauenslevel: " . $arr[$i]->idTrust . " (" . $arr[$i]->trustleveldescription . ")</div>";
+					echo "<div>" . $arr[$i]->organization . "</div>";
 				echo "</div></a>";
-				echo "<br><br>";
+				echo "<br><br><hr><br>";
 			}
 	echo "
 			</div>
@@ -59,16 +63,17 @@ else
 		<div class='module'>
 			<h3>Die neusten Taten</h3><a href='./deeds'><input type='button' value='Mehr' /></a>
 			<div class='output'>";
-			for($i = 0; $i < 5; $i++)
-			{
-				echo "<a href='./deeds_details?id=x' class='deedAnchor'><div class='deed'>";
-					echo "<div class='name'><h4>Test " . $i . "</h4></div><div class='category'>Test</div>";
-					echo "<br><br><br><br><div class='description'>Dies ist eine Testbeschreibung, yo...</div>";
-					echo "<div class='address'>Staße 42<br>1234 / Stadtteil</div>";
-					echo "<div>Anzahl der Helfer: 2</div><div class='trustLevel'>Minimaler Vertrauenslevel: 42 (krasser Typ)</div>";
-					echo "<div>Organisation</div>";
+			$arr = DBFunctions::db_getGuteTatenForList(0, 5, 'freigegeben');
+			$maxZeichenFürDieKurzbeschreibung = 150;
+			for($i = 0; $i < sizeof($arr); $i++){
+				echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+					echo "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
+					echo "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
+					echo "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";
+					echo "<div>" . (is_numeric($arr[$i]->countHelper) ? "Anzahl der Helfer: " . $arr[$i]->countHelper : '') ."</div><div class='trustLevel'>Minimaler Vertrauenslevel: " . $arr[$i]->idTrust . " (" . $arr[$i]->trustleveldescription . ")</div>";
+					echo "<div>" . $arr[$i]->organization . "</div>";
 				echo "</div></a>";
-				echo "<br><br>";
+				echo "<br><br><hr><br>";
 			}
 	echo "
 			</div>
