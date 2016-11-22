@@ -1,6 +1,6 @@
 <?php
 /*
-*@author Christian Hock, Nick Nolting (refactored Henrik Huckauf)
+*@author Christian Hock, Klaus Sobotta, Nick Nolting (refactored Henrik Huckauf)
 *Verlinkung zu Orten fehlt
 *Kategorie soll editierbar sein
 *

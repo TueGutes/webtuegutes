@@ -14,11 +14,13 @@ class User
 		//$_SESSION['username'] = '';
 		//$_SESSION['email'] = '';
 	}
-	function login($id, $username, $email)
+	function login($id, $username, $email, $firstname, $lastname)
 	{
 		$_SESSION['id'] = $id;
 		$_SESSION['username'] = $username;
 		$_SESSION['email'] = $email;
+		$_SESSION['firstname'] = $firstname;
+		$_SESSION['lastname'] = $lastname;
 		$_SESSION['loggedIn'] = true;
 	}
 	function logout()
@@ -44,6 +46,14 @@ class User
 	function getEmail()
 	{
 		return $this->loggedIn() ? $_SESSION['email'] : false;
+	}
+	function getFirstname()
+	{
+		return $this->loggedIn() ? $_SESSION['firstname'] : false;
+	}
+	function getLastname()
+	{
+		return $this->loggedIn() ? $_SESSION['lastname'] : false;
 	}
 	function sendEmail($subject, $message)
 	{

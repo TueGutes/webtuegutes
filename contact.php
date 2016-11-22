@@ -16,8 +16,8 @@ $email = isset($_POST['email']) ? $_POST['email'] : '';
 $message = isset($_POST['message']) ? $_POST['message'] : '';
 if($_USER->loggedIn())
 {
-	$vorname = /*$_USER->*/'';
-	$nachname = /*$_USER->*/'';
+	$vorname = $_USER->getFirstname();
+	$nachname = $_USER->getLastname();
 	$email = $_USER->getEmail();
 }
 
@@ -94,7 +94,7 @@ Nachricht: " . $message . "
 		$count = count($array);
 		for($i = 0; $i < $count; $i++)
 			mail($array[$i], $subject, $mailMessage, $mailFrom);*/
-		sendEmail("irgendeine-admin@mail.de", $subject, $mailMessage);
+		sendEmail("testmailgutetaten@gmail.com", $subject, $mailMessage);
 
 		$output .= "<green>" . $wlang['contact_suc_sent'] . "</green><br>";
 		
