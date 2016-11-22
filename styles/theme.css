@@ -115,7 +115,7 @@ input[type=button]:active, input[type=submit]:active
 	color: #ffffff;
 }
 
-input[type=text], input[type=password], input[type=email], select, textarea
+input[type=text], input[type=password], input[type=email], input[type=number], select, textarea
 {
 	border: 2px inset #eeeeee; 
 	outline: 0;
@@ -609,3 +609,49 @@ red
 	text-align: left;
 }
 /*====/deeds====*/
+
+/*====deeds_create====*/
+.deeds_create input[name=name],
+.deeds_create input[name=place],
+.deeds_create input[name=place],
+.deeds_create input[name=starttime],
+.deeds_create input[name=endtime],
+.deeds_create input[name=organization]
+{
+	width: 80%;
+	margin-bottom: 5px;
+}
+.deeds_create input[name=street]
+{
+	width: 50%;
+}
+.deeds_create input[name=housenumber]
+{
+	width: 29%;
+}
+.deeds_create input[name=postalcode]
+{
+	width: 80%;
+}
+.deeds_create textarea[name=description]
+{
+	width: 100%;
+}
+.deeds_create select[name=category],
+.deeds_create input[name=countHelper]
+{
+	width: 40%;
+}
+.deeds_create select[name=tat_verantwortungslevel]
+{
+	width: 20%;
+}
+.deeds_create input[form=suggestCategory]
+{
+	font-size: 12px;
+	padding: 8px 21px 8px 21px;
+}
+/*====/deeds_create====*/
+
+
+
