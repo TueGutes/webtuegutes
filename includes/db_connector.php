@@ -2127,13 +2127,25 @@ class DBFunctions
 
 	public function db_deleteDeed($idGuteTat) {
 		$db = self::db_connect();
-		$sql ="DELETE From deeds
-			WHERE deeds.idGuteTat = ?";
+
+		$sql ="DELETE From DeedTexts
+			WHERE idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
-		}
+		$stmt->execute();
+
+		$sql ="DELETE From Application
+			WHERE idGuteTat = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idGuteTat);
+		$stmt->execute();
+
+		$sql ="DELETE From Deeds
+			WHERE idGuteTat = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idGuteTat);
+		$stmt->execute();
+
 		self::db_close($db);
 	}
 }

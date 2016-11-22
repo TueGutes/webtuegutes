@@ -132,7 +132,7 @@ if (!isset($_POST['status'])) {
 			</style>
 			<div id="mapid"></div>
 			<?php
-				createDeedsMap($tatenProSeite, $placeholder);
+				createDeedsMap($tatenProSeite, $placeholder, (isset($_GET['user'])?$_GET['user']:-1));
 			?>
 			
 	<br><br><hr>

@@ -20,9 +20,10 @@ $tat = DBFunctions::db_getGuteTat($idTat);
 
 if (isset($_POST['delete'])) {
 	if ($_POST['delete']=='false') {
-		die ('<h3>Gute Tat löschen</h3>Damit wird die gute Tat unwiderruflich gelöscht! Bist du sicher?<form><input type="submit" value="Entgültig löschen"><input type="hidden" name="delete" value="true"></form>');
+		die ('<h3>Gute Tat löschen</h3>Damit wird die gute Tat unwiderruflich gelöscht! Bist du sicher?<form method="POST" action=""><input type="submit" value="Entgültig löschen"><input type="hidden" name="delete" value="true"></form>');
 	} else {
 		DBFunctions::db_deleteDeed($idTat);
+		$_USER->redirect("./deeds");
 	}
 }
 
