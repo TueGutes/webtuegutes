@@ -106,9 +106,9 @@ if (isset($_POST['allow'])) {
 	$blMap = '<h3>Adresse der Guten Tat:</h3>';
 
 	$shPlzOrt = isset($tat["postalcode"]) && $tat['postalcode'] != '';
-	$shStrasse = isset($tat["street"]) && $tat['street'] != '';
-	$shHausnummer = isset($tat["housenumber"]) && $tat['housenumber'] != '';
-	$showMap = ($shPlzOrt && $shStrasse && $shHausnummer);
+	//$shStrasse = isset($tat["street"]) && $tat['street'] != '';
+	//$shHausnummer = isset($tat["housenumber"]) && $tat['housenumber'] != '';
+	$showMap = ($shPlzOrt);
 
 
 	// --------------- Ausgabe der Blöcke, eingepackt in div boxen ----------
