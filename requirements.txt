@@ -1,5 +1,0 @@
-Requirements for TueGutes
-- mysql
-- msqlnd
-- PHP 5.5.9
-- local smtp server
