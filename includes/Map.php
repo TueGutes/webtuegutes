@@ -23,7 +23,7 @@ class Map {
         ?>
         <style>
             #mapid{ 
-				position:relative; left:<?php echo $left ?>; z-index: -1;
+				position:relative; left:<?php echo $left ?>; z-index: 0;
                 height:<?php echo $height ?>; width:<?php echo $width ?>;
             }
         </style>
@@ -89,7 +89,6 @@ class Map {
 		}else{
 			$arr = DBFunctions::db_getGuteTatenForUser($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder, $userID);
 		}
-        $arr = DBFunctions::db_getGuteTatenForList($tatenProSeite * ($_GET['page'] - 1), $tatenProSeite, $placeholder);
         // Gehe alle Taten durch und erstelle für jeden Eintrag ein Marker.
         foreach ($arr as $oneDeed) {
             $latLon = $this->getLatLonFromAddress($oneDeed->postalcode . ',' . $oneDeed->street . ',' . $oneDeed->housenumber);
