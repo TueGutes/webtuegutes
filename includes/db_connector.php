@@ -1744,7 +1744,7 @@ class DBFunctions
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
 			SET
-			deeds.postalcode = ?
+			deeds.idPostal = ?
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('ii',$data,$idGuteTat);
