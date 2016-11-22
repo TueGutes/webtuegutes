@@ -557,7 +557,7 @@
 					$blTaten .=  "</div></a>";
 					$blTaten .=  "<br>";
 				}
-			$blTaten .= ((($thisuser['username']==$_USER->getUsername()) && !(@$_GET['view']!='public'))?'<br><a href="./deeds?user=' . $thisuser['idUser'] . '">Alle deine guten Taten</a>':'<br><a href="./deeds?user=' . $thisuser['idUser'] . '">Alle guten Taten des Nutzers</a>');
+			$blTaten .= ((($thisuser['username']==$_USER->getUsername()) && !(@$_GET['view']!='public'))?'<br><a href="./deeds?user=' . $thisuser['username'] . '">Alle deine guten Taten</a>':'<br><a href="./deeds?user=' . $thisuser['username'] . '">Alle guten Taten des Nutzers</a>');
 		}
 
 
