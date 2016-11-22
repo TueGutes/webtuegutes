@@ -23,7 +23,7 @@ class Map {
         ?>
         <style>
             #mapid{ 
-                position; left:<?php echo $left ?>; z-index: -1;
+				position:relative; left:<?php echo $left ?>; z-index: -1;
                 height:<?php echo $height ?>; width:<?php echo $width ?>;
             }
         </style>
@@ -40,18 +40,18 @@ class Map {
         ?>
         <div id="mapid"></div>
         <script type="text/javascript">
-            var lat = "<?php echo $latLon["lat"] ?>";
-            var lon = "<?php echo $latLon["lon"] ?>";
+		// latlng repräsentiert einen geographischen Punkt mit den atitude und longitude Werten.
+		var latlng = L.latLng(<?php echo $latLon["lat"] ?>, <?php echo $latLon["lon"] ?>);
 
-            // Generieren der Karte
-            var mymap = L.map('mapid').setView([lat, lon], 14);
-            L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
-                maxZoom: 18
-            }).addTo(mymap);
+		// Generieren der Karte
+		var mymap = L.map('mapid').setView(latlng, 14);
+		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+			maxZoom: 18
+		}).addTo(mymap);
 
-            // Marker setzen
-            var marker = L.marker([lat, lon]).addTo(mymap);
+		// Marker setzen
+		var marker = L.marker(latlng).addTo(mymap);
         </script>
         <?php
     }
@@ -72,25 +72,32 @@ class Map {
      * @param type $tatenProSeite Anzahl der aufzulistenden guten Taten
      * @param type $placeholder Filter: 'freigegeben','geschlossen','alle'
      */
-    public function createDeedsMap($tatenProSeite, $placeholder) {
+    public function createDeedsMap($tatenProSeite, $placeholder, $userID) {
         ?>
         <div id="mapid"></div>
         <script type="text/javascript">
-            // Generieren der Karte. Karte wird auf Hannover zentriert.
-            var mymap = L.map('mapid').setView([52.375892, 9.73201], 12);
-			L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
-				maxZoom: 18
-			}).addTo(mymap);
-            var markers = L.markerClusterGroup();
+		// Generieren der Karte. Karte wird auf Hannover zentriert.
+		var mymap = L.map('mapid').setView([52.375892, 9.73201], 12);
+		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+			maxZoom: 18
+		}).addTo(mymap);
+		var markers = L.markerClusterGroup();
         <?php
+		if($userID == -1){
+			 $arr = DBFunctions::db_getGuteTatenForList($tatenProSeite * ($_GET['page'] - 1), $tatenProSeite, $placeholder);
+		}else{
+			$arr = DBFunctions::db_getGuteTatenForUser($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder, $userID);
+		}
         $arr = DBFunctions::db_getGuteTatenForList($tatenProSeite * ($_GET['page'] - 1), $tatenProSeite, $placeholder);
         // Gehe alle Taten durch und erstelle für jeden Eintrag ein Marker.
         foreach ($arr as $oneDeed) {
             $latLon = $this->getLatLonFromAddress($oneDeed->postalcode . ',' . $oneDeed->street . ',' . $oneDeed->housenumber);
             ?>
-                // Erstellen den Marker mit einem Popup.
-                markers.addLayer(L.marker([<?php echo $latLon["lat"] ?>, <?php echo $latLon["lon"] ?>]).bindPopup('<a href="<?php echo 'deeds_details?id=' . $oneDeed->idGuteTat ?>"><?php echo $oneDeed->name ?></a>'));
+			// latlng repräsentiert einen geographischen Punkt mit den atitude und longitude Werten.
+			var latlng = L.latLng(<?php echo $latLon["lat"] ?>, <?php echo $latLon["lon"] ?>);
+			// Erstellen den Marker mit einem Popup.
+			markers.addLayer(L.marker(latlng).bindPopup('<a href="<?php echo 'deeds_details?id=' . $oneDeed->idGuteTat ?>"><?php echo $oneDeed->name ?></a>'));
             <?php
         }
 	?>

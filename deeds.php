@@ -119,7 +119,7 @@ if (!isset($_POST['status'])) {
 			<?php
 			$map = new Map();
 			$map->createSpace('10%','500px','80%');
-			$map->createDeedsMap($tatenProSeite, $placeholder);
+			$map->createDeedsMap($tatenProSeite, $placeholder, -1);
 			?>
 	<br><br><hr>
 </form>
