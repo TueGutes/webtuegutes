@@ -1,3 +1,9 @@
+<!--Formular zum Vorschlagen einer neuen Adresse-->
+<form id="suggestAddress" action="./contact" method="post">
+	<input type='hidden' name='suggestCategory' value='1' />
+	<input type='hidden' name='message' value='Ich vermisse folgende Adresse: ' />
+</form>
+
 <?php
 /*
 * @author: Nick Nolting, Alexander Gauggel
@@ -318,12 +324,14 @@
 		$blAdresse .= '<input type="search" list="lstStreets" name="txtStrasse" onchange="updatePLZPlace();" placeholder="Strasse" value="' . $thisuser['street'] . '"><br>';
 		$blAdresse .= $streetList;
 		$blAdresse .= '</td>';
+
 		/*$blAdresse .= '<input type="text" name="txtStrasse" placeholder="Strasse" value="' . $thisuser['street'] . '">';*/
 		
 		// ALEX: Hausnummer einfügen.
 		$blAdresse .= '<td style="border:none"><input type="text" size="5%" name="txtHausnummer" placeholder="Nr." value="' 
 			. $thisuser['housenumber'] . '">';
 		$blAdresse .= "</td></tr>";
+		$blAdresse .= '<tr><td></td><td colspan=2><input type="submit" value="meine Adresse fehlt..." form="suggestAddress" /></td></tr>';
 
 		// ALEX: Auskommentiert.
 		//PLZ/Ort bearbeiten:
