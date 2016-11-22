@@ -1744,11 +1744,7 @@ class DBFunctions
 		$db = self::db_connect();
 		$sql ="UPDATE deeds
 			SET
-<<<<<<< HEAD
 			deeds.postalcode = ?
-=======
-			deeds.idPostal = ?
->>>>>>> Task3011
 			WHERE deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('ii',$data,$idGuteTat);
