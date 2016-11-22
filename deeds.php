@@ -116,17 +116,11 @@ if (!isset($_POST['status'])) {
 
 			<!--Einbinden der Map-->
 			<br><br>
-			<style>
-				#mapid{ 
-					left: 10%;
-					height: 500px; width: 80%;
-				}
-			</style>
-			<div id="mapid"></div>
 			<?php
-				createDeedsMap($tatenProSeite, $placeholder);
+			$map = new Map();
+			$map->createSpace('10%','500px','80%');
+			$map->createDeedsMap($tatenProSeite, $placeholder);
 			?>
-			
 	<br><br><hr>
 </form>
 
