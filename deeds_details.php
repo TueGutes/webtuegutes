@@ -132,7 +132,8 @@ if (isset($_POST['allow'])) {
 
 	if ($showMap) {
 			echo '<div id="mapid">';
-			createMap($tat['postalcode'] . ',' . $tat['street'] . ',' . $tat['housenumber']);
+			$map = new Map();
+			$map->createMap($tat['postalcode'] . ',' . $tat['street'] . ',' . $tat['housenumber']);
 			echo '</div>';
 		}
 	else{

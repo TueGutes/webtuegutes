@@ -644,7 +644,8 @@
 	
 	if ($showMap) {
 		echo '<center><div id="mapid"></div>';
-		createMap($thisuser['postalcode'] . ',' . $thisuser['street'] . ',' . $thisuser['housenumber']);
+		$map = new Map();
+		$map->createMap($thisuser['postalcode'] . ',' . $thisuser['street'] . ',' . $thisuser['housenumber']);
 		echo '</center>';
 	}
 	
