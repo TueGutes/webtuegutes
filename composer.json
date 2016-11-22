@@ -1,0 +1,6 @@
+{
+    "require": {
+        "phpdocumentor/phpdocumentor": "2.*",
+        "robmorgan/phinx": "^0.6.5"
+    }
+}
