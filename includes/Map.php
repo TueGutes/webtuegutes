@@ -23,7 +23,7 @@ class Map {
         ?>
         <style>
             #mapid{ 
-                position; left:<?php echo $left ?>;
+                position; left:<?php echo $left ?>; z-index: -1;
                 height:<?php echo $height ?>; width:<?php echo $width ?>;
             }
         </style>
