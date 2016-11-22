@@ -155,7 +155,7 @@ if (isset($_POST['allow'])) {
 		$form .= '<br>';
 
 		$form2 = '<form method="post" action="'.$link2.'">';
-		//$form2 .= '<input type="hidden" name="close" value="true">';
+		$form2 .= '<input type="hidden" name="close" value="true">';
 		$form2 .= '<input type="submit" value="Schließen">';
 		$form2 .= '</form>';
 

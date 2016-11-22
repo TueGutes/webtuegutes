@@ -56,8 +56,12 @@ if (!isset($_POST['status'])) {
 				
 				$placeholder = $_POST['status'];
 				$tatenProSeite=$_POST['adt'];
+				$all = !(isset($_GET['user']) && DBFunctions::db_getIdUserByUsername($_GET['user']!=-1));
 
-				$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder);
+				if ($all) 
+					$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder);
+				else
+					$arr = DBFunctions::db_getGuteTatenForUser($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder, DBFunctions::db_getIdUserByUsername($_GET['user']));
 
 				$maxZeichenFürDieKurzbeschreibung = 150;
 
@@ -72,7 +76,11 @@ if (!isset($_POST['status'])) {
 					echo "<br><br><hr><br>";
 				}
 
-			$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder);
+			if ($all)
+				$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder);
+			else
+				$anzahlAllerTaten=DBFunctions::db_countGuteTatenForUser($placeholder, DBFunctions::db_getIdUserByUsername($_GET['user']));
+
 			$aktuelleSeite=$_GET['page'];
 			$letzteseite=intval($anzahlAllerTaten / $tatenProSeite);
 			if ($letzteseite * $tatenProSeite < $anzahlAllerTaten) $letzteseite++;
@@ -84,33 +92,33 @@ if (!isset($_POST['status'])) {
 			}
 			$maxSeitenLinks=7 ; // die menge der gleichzeitig angezeigten seiten zB bei 7 -> 3 4 5 6 7 8 9 wir befinden uns auf seite 6
 						
-						function zahlenausgabe($von,$bis, $letzteseite){//schreibt die seiten zahlen
+						function zahlenausgabe($von,$bis, $letzteseite, $all){//schreibt die seiten zahlen
 							for($i=$von;$i<=$bis;$i++){
 								//der link get auf eine falsche seite er muss diese seite nochmal aufgerufen werden nur mit der pasenden seiten nummer
-								if ($i>0 && $i<=$letzteseite) echo '<a href="./deeds?page=' . $i . '">&nbsp'. $i .'&nbsp</a>';
+								if ($i>0 && $i<=$letzteseite) echo '<a href="./deeds?page=' . $i . (!$all?'&user='.$_GET['user']:'') . '">&nbsp'. $i .'&nbsp</a>';
 							}
 						}
 						
 						if($seitenanzahl>$maxSeitenLinks){
 							if($aktuelleSeite<($maxSeitenLinks/2)+1){
-								zahlenausgabe(1,$aktuelleSeite-1, $letzteseite);
+								zahlenausgabe(1,$aktuelleSeite-1, $letzteseite, $all);
 								echo '&nbsp' . $aktuelleSeite . '&nbsp';
-								zahlenausgabe($aktuelleSeite+1,$maxSeitenLinks, $letzteseite);
-								if ($letzteseite > $maxSeitenLinks) printf ('<a href="./deeds?page=' . $letzteseite . '"> ... ' . $letzteseite . '</a>');
+								zahlenausgabe($aktuelleSeite+1,$maxSeitenLinks, $letzteseite, $all);
+								if ($letzteseite > $maxSeitenLinks) printf ('<a href="./deeds?page=' . $letzteseite . (!$all?'&user='.$_GET['user']:'') . '"> ... ' . $letzteseite . '</a>');
 							} else if ($aktuelleSeite > $letzteseite- ($maxSeitenLinks/2)-1) {
-								if ($letzteseite > $maxSeitenLinks) printf ("<a href='./deeds'>". '1 ... ' ."</a>");// der link geht jetzt
-								zahlenausgabe($letzteseite-$maxSeitenLinks,$aktuelleSeite-1, $letzteseite);
+								if ($letzteseite > $maxSeitenLinks) printf ("<a href='./deeds" . (!$all?'?user='.$_GET['user']:'') . "'>". '1 ... ' ."</a>");// der link geht jetzt
+								zahlenausgabe($letzteseite-$maxSeitenLinks,$aktuelleSeite-1, $letzteseite, $all);
 								echo '&nbsp' . $aktuelleSeite . '&nbsp';
-								zahlenausgabe($aktuelleSeite+1,$letzteseite, $letzteseite);
+								zahlenausgabe($aktuelleSeite+1,$letzteseite, $letzteseite, $all);
 							}else{
-								printf ("<a href='./deeds'>". '1 ... ' ."</a>");// der link geht jetzt
-								zahlenausgabe($aktuelleSeite-intval($maxSeitenLinks/2),$aktuelleSeite-1,$letzteseite);
+								printf ("<a href='./deeds" . (!$all?'?user='.$_GET['user']:'') . "'>". '1 ... ' ."</a>");// der link geht jetzt
+								zahlenausgabe($aktuelleSeite-intval($maxSeitenLinks/2),$aktuelleSeite-1,$letzteseite, $all);
 								echo '&nbsp' . $aktuelleSeite . '&nbsp';
-								zahlenausgabe($aktuelleSeite+1,$aktuelleSeite+intval($maxSeitenLinks/2),$letzteseite);
-								printf ('<a href="./deeds?page=' . $letzteseite . '"> ... ' . $letzteseite . '</a>');
+								zahlenausgabe($aktuelleSeite+1,$aktuelleSeite+intval($maxSeitenLinks/2),$letzteseite, $all);
+								printf ('<a href="./deeds?page=' . $letzteseite . (!$all?'&user='.$_GET['user']:'') . '"> ... ' . $letzteseite . '</a>');
 							}
 						}else{
-							zahlenausgabe(1,$seitenanzahl, $letzteseite);
+							zahlenausgabe(1,$seitenanzahl, $letzteseite, $all);
 						}
 			?>
 

@@ -25,7 +25,7 @@ for ($i = 0; $i < $durchlauf; $i++) {
 		$form .= '<center> <table> <tr> <td> <b>'.$username.'<b> </td>'; 
 		$form .= '<td>  <select name="'.$username.'" size="1">';
 		$form .= '<option value="1">1</option> <option value="2">2</option> <option value="3">3</option>';
-		$form .= '<option value="4">4</option> <option value="5">5</option> <option value="6">6</option>';
+		$form .= '<option value="4">4</option> <option value="5">5</option> <option value="0">Keine Bewertung</option>';
 		$form .= '</select> </td> <tr> </table> </center>';
 	}
 }

@@ -2019,7 +2019,7 @@ class DBFunctions
 			$stmt->bind_param('i',$idUser);
 			$stmt->execute();
 			$result = $stmt->get_result();
-			db_close($db);
+			self::db_close($db);
 			$arr = array();
 			$dbentry = $result->fetch_assoc();
 			return $dbentry['Anzahl'];
@@ -2109,6 +2109,21 @@ class DBFunctions
 		}
 		return $arr;
 		*/
+	}
+
+	/**
+	* Gibt die NutzerID zu einem Nutzernamen zurück.
+	*
+	*@param string $username Der Nutzername des Nutzers
+	*
+	*@return int ID des Nutzers
+	*/
+	public function db_getIdUserByUsername($username) {
+		$tmp = self::db_get_user($username);
+		if (isset($tmp['idUser']))
+			return $tmp['idUser'];
+		else
+			return -1;
 	}
 }
 
