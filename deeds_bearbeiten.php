@@ -1,8 +1,11 @@
 <?php
 /*
 *@Autor Christian Hock
+<<<<<<< HEAD
 * das Bild und den Zeitrahmen zu ändern wurde ausgelassen, da man diese momentan nicht erstellen kann.
 * Es wird die Funktion db_fix_plz($plz) genutzt...
+=======
+>>>>>>> Task3011
 */
 
 require './includes/UTILS.php';
@@ -12,10 +15,12 @@ require './includes/db_connector.php';
 require './includes/_top.php';
 
 //Fehlerüberprüfung auf den Getparameter und prüfung ob die Seite ein zweites mal aufgerufen wurde
-if (!isset($_GET['idGuteTat'])){
+if (!isset($_GET['idGuteTat'])&&!isset($_GET['id'])){
 echo '<h3>Es ist ein Aufruffehler aufgetreten.<br>Vermutlich haben Sie den Link für diese Seite manuell eingegeben, bzw. herauskopiert und dabei einen Fehler gemacht.<br>Oder die Tat gibt es nicht mehr.<br>Sollte weder noch zutreffen kontaktieren Sie uns bitte.</h3><br>';	
+	die();
 	}else{
-$idGuteTat = $_GET['idGuteTat'];
+if(isset($_GET['idGuteTat']))$idGuteTat = $_GET['idGuteTat'];
+if(isset($_GET['id']))$idGuteTat = $_GET['id'];
 	}
 //Tat-Objekt holen	für Nutzerüberprüfung
 	$tat = DBFunctions::db_getGuteTat($idGuteTat);
@@ -34,20 +39,21 @@ $idGuteTat = $_GET['idGuteTat'];
 	}else{
 	DBFunctions::db_update_deeds_description($data,$idGuteTat);}}
 //Name
- else if (isset($_POST['name'])) {
+   if (isset($_POST['name'])) {
 	$data=$_POST['name'];
-	if(DBFunctions::db_doesGuteTatNameExists($data)){
+	if($data==$tat['name']){		
+	}else if(DBFunctions::db_doesGuteTatNameExists($data)){
 		echo '<h3>Eine andere Tat ist bereits unter diesem Namen veröffentlicht.</h3>';
 	}else if ($data === ''){
 		echo '<h3>Bitte einen neuen Namen eingeben.</h3><br>';
 	}else{
 	DBFunctions::db_update_deeds_name($data,$idGuteTat);}}
 //Kategorie
-else if(isset($_POST['category'])) {
+    if(isset($_POST['category'])) {
 	$data=$_POST['category'];
 	DBFunctions::db_update_deeds_category($data,$idGuteTat);}
 //Straße
-	else if(isset($_POST['street'])) {
+	if(isset($_POST['street'])) {
 	$data=$_POST['street'];
 	if ($data === ''){
 	echo '<h3>Bitte eine neue Straße eingeben.</h3><br>';	
@@ -55,26 +61,32 @@ else if(isset($_POST['category'])) {
 	DBFunctions::db_update_deeds_street($data,$idGuteTat);}
 	}
 //Hausnummer
-else if(isset($_POST['housenumber'])) {
+    if(isset($_POST['housenumber'])) {
 	$data=$_POST['housenumber'];
 	if ($data === ''){
 	echo '<h3>Bitte eine neue Hausnummer eingeben.</h3><br>';	
 	}else{
 	DBFunctions::db_update_deeds_housenumber($data,$idGuteTat);}
 	}		
-//Postleitzahl
-	else if(isset($_POST['postalcode'])) {
-	$data=$_POST['postalcode'];
-	if ($data === ''){
-	echo '<h3>Bitte eine neue Postleitzahl eingeben.</h3><br>';	
-	}else if (!is_numeric($data)){
+//Postleitzahl und Ort
+	if(isset($_POST['postalcode'])&&(isset($_POST['place']))) {
+	$postal=$_POST['postalcode'];
+	$place=$_POST['place'];
+	if ($postal === ''||$place === ''){
+	echo '<h3>Bitte Ort und Plz neu ausfüllen.</h3><br>';	
+	}else if (!is_numeric($postal)){
 		echo '<h3>Die Postleitzahl bitte als Zahl eingeben.</h3><br>';	
 	}else{
-	DBFunctions::db_fix_plz($data);
-	DBFunctions::db_update_deeds_postalcode($data,$idGuteTat);}
+	if(DBFunctions::db_getIdPostalbyPostalcodePlace($postal,$place)!=false){
+		$data=DBFunctions::db_getIdPostalbyPostalcodePlace($postal,$place);
+	DBFunctions::db_update_deeds_postalcode($data,$idGuteTat);
+	}else{
+		echo '<h3>Bitte eine Adresse in Hannover nehmen.</h3>';
+	}
+	}
 	}
 //Organisation
-else if(isset($_POST['organization'])) {
+    if(isset($_POST['organization'])) {
 	$data=$_POST['organization'];
 	if ($data === ''){
 	echo '<h3>Bitte eine neue Organisation eingeben.</h3><br>';	
@@ -82,7 +94,7 @@ else if(isset($_POST['organization'])) {
 	DBFunctions::db_update_deeds_organization($data,$idGuteTat);}	
 	}
 //Anzahl Helfer
-else if(isset($_POST['countHelper'])) {
+    if(isset($_POST['countHelper'])) {
 	$data=$_POST['countHelper'];
 	if ($data === ''){
 	echo '<h3>Bitte eine neue Anzahl an Helfern eingeben.</h3><br>';	
@@ -92,11 +104,11 @@ else if(isset($_POST['countHelper'])) {
 	DBFunctions::db_update_deeds_countHelper($data,$idGuteTat);}
 	}
 //Verantwortungslevel
-else if(isset($_POST['idTrust'])) {
+  	if(isset($_POST['idTrust'])) {
 	$data=$_POST['idTrust'];
 	DBFunctions::db_update_deeds_IdTrust($data,$idGuteTat);}
 //Zeitrahmen
-else if(isset($_POST['von'])) {
+    if(isset($_POST['von'])) {
 		$data=$_POST['von'];
 		$data2=$_POST['bis'];
 	if (!DateHandler::isValid($data)){
@@ -115,16 +127,21 @@ else if(isset($_POST['bis'])) {
 	echo 'bitte Start und Endzeit neu eingeben.';
 	}
 //Bild
-else if(isset($_FILES['picture'])){
-//Bei Bedarf aendern
-$bildgroesze = 600*1024; 
-$kb = $bildgroesze/1024;
+if(isset($_FILES['picture'])){
+	
+	$data=$_FILES['picture'];
+	if($data==NULL){
+	}else{
+		//Bei Bedarf aendern
+		$bildgroesze = 600*1024; 
+		$kb = $bildgroesze/1024;
 //falls es mehr Bildformate geben sollte, bitte ergänzen
 $bildformate = array('jpeg','jpg', 'gif','png');
 $dateiendung = strtolower(pathinfo($_FILES['picture']['name'], PATHINFO_EXTENSION));
 // Fehler überprüfen
 if(!in_array($dateiendung, $bildformate)) {
- echo'<h2>Bitte ein Bild hochladen.';
+//zünded auch wenn kein Bild angegeben wurde...wird noch gefixt
+ //echo'<h2>Bitte ein Bild hochladen.</h2>';
 }else if($_FILES['picture']['size'] > $bildgroesze) {
  echo("Die Maximalgröße beträgt $kb kb.");
 }else{																		     
@@ -132,118 +149,88 @@ $gleichcodiert='data: ' . mime_content_type($_FILES['picture']['tmp_name']) . ';
 DBFunctions::db_update_deeds_picture($gleichcodiert,$idGuteTat);	
 }
 }
+}
 //Tat-Objekt holen -> jetzt damit es akutell ist
 	$tat = DBFunctions::db_getGuteTat($idGuteTat);	
 //Stringbuilder für den Link und die angezeigen Zeit.
 $link = './deeds_bearbeiten?idGuteTat=' . $idGuteTat;
 $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
+
 ?> 
+
 		<center>
 		<br>
 		<br>
+		<form method="post" action="<?php echo $link; ?>" enctype="multipart/form-data">
 		<table>
 			<tr>
-				<form method="post" action="<?php echo $link; ?>">
+				
 				<td><h3>Name der Tat: </td>
-				<td><h3><?php echo $tat['name']; ?></td>	
-				<td><input type="text" name="name" placeholder="neuer Name"/></td>	
-				<td><input type="submit" name="button" value="ändern"/></td>
-				</form>
-			</tr>				
-			<tr>
-			
-				<form method="post" action="<?php echo $link; ?>" enctype="multipart/form-data">
-				<td><h3>Bild: </td>
-				<td></td>
-				<td><input type="file" name="picture" accept="image/*"></td>
-				<td><input type="submit" name="button" value="ändern"/></td>
-				</form>
-			</tr>	
-			<tr>
-			<td></td><td><?php echo '<img src="'.$tat["pictures"] .'" >'?></td>	
-			</tr>	
-			<tr>
-				<form method="post" action="<?php echo $link; ?>">
-				<td><h3>Beschreibung: </td>
-				<td><h3><?php echo $tat['description']; ?></td>	
-				<td><input type="text" name="description" placeholder="neue Beschreibung"/></td>
-				<td><input type="submit" name="button" value="ändern"/></td>
-				</form>
+				<td><h3><?php echo '<input type="text" name="name" placeholder="Neuer Name" value="'.$tat['name'].'">'?></td>	
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link; ?>">
+			<td><h3>Bild:</h3></td>
+			<td></td>	
+			</tr>	
+			<tr>
+			<td colspan="2"><?php echo '<img src="'.$tat["pictures"] .'" >'?><br><input type="file" name="picture" accept="image/*"></td>
+			<td></td>	
+			</tr>	
+			<tr>			
+				<td><h3>Beschreibung: </td>
+				<td><h3></td>	
+			</tr>
+			<tr>			
+				<td colspan="2"><h3><?php echo '<textarea id="text" type="textarea" cols="65" rows="6" name="description" placeholder="neue Beschreibung">'.$tat['description'].'</textarea>'?></td>	
+			</tr>
+			<tr>
 				<td><h3>Kategorie: </td>
-				<td><h3><?php echo $tat['category']; ?></td>	
 				<td>
 				<select name="category" size="1">
-				<option value="Altenheim">Altenheim</option>
-				<option value="Busbahnhof">Busbahnhof</option>
-				<option value="Müll einsammeln">Müll einsammeln</option>
+				<?php echo'<option ';if($tat['category']==='Altenheim'){echo'selected ';} echo'value="Altenheim">Altenheim</option>';
+					  echo'<option ';if($tat['category']==='Busbahnhof'){echo'selected ';} echo'value="Busbahnhof">Busbahnhof</option>';
+					  echo'<option ';if($tat['category']==='Müll einsammeln'){echo'selected ';} echo'value="Müll einsammeln">Müll einsammeln</option>';
+					?>
 				</select></td>
-				<td><input type="submit" name="button" value="ändern"/></td>
-				</form>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Straße: </td>
-				<td><h3><?php echo $tat['street']; ?></td>	
-				<td><input type="text" name="street" placeholder="neue Straße"/></td>
-				<td><input type="submit" name="button" value="ändern"/></td>
-				</form>
+				<td><h3><?php echo '<input type="text" name="street" placeholder="Neue Straße" value="'.$tat['street'].'">'?></td>	
 			</tr>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Hausnummer: </td>
-				<td><h3><?php echo $tat['housenumber']; ?></td>	
-				<td><input type="text" name="housenumber" placeholder="neue Straße"/></td>
-				<td><input type="submit" name="button" value="ändern"/></td>
-				</form>
+				<td><?php echo '<input type="text" name="housenumber" placeholder="Neue Hausnummer" value="'.$tat['housenumber'].'">'?></td>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Postleitzahl: </td>
-				<td><h3><?php echo $tat['postalcode']; ?></td>	
-				<td><input type="text" name="postalcode" placeholder="neue PLZ"/></td>
-				<td><input type="submit" name="button" value="ändern"/></td>
-				</form>
-			</tr>	
+				<td><?php echo '<input type="text" name="postalcode" placeholder="Neue Postleitzahl" value="'.$tat['postalcode'].'">'?></td>
+			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link; ?>">
+				<td><h3>Ort:</td>
+				<td><?php echo '<input type="text" name="place" placeholder="Neuer Ort" value="'.$tat['place'].'">'?></td>
+			</tr>				
+			<tr>
 				<td><br><h3>Zeitrahmen:</td>
-				<td><h3><?php echo $zeit; ?></td>	
-				<td><input type="text" name="von" placeholder="Von"/><br><br><input type="text" name="bis" placeholder="bis"/></td>
-				<td><br><br><br><input type="submit" name="button" value="ändern"/></td>
-				</form>
+				<td><?php echo '<input type="text" name="von" placeholder="Neue Startzeit" value="'.$tat['starttime'].'"><br>bis<br><input type="text" name="bis" placeholder="neue Endzeit" value="'.$tat['endtime'].'">';?>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Organisation: </td>
-				<td><h3><?php echo $tat['organization']; ?></td>	
-				<td><input type="text" name="organization" placeholder="Neue Organisation"/></td>
-				<td><input type="submit" name="button" value="ändern"/></td>
-				</form>
+				<td><?php echo '<input type="text" name="organization" placeholder="Neue Organisation" value="'.$tat['organization'].'">'?></td>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Anzahl Helfer: </td>
-				<td><h3><?php echo $tat['countHelper']; ?></td>	
-				<td><input type="text" name="countHelper" placeholder="Neue Anzahl Helfer"/></td>
-				<td><input type="submit" name="button" value="ändern"/></td>
-				</form>
+				<td><?php echo '<input type="text" name="countHelper" placeholder="Neue Anzahl von Helfern" value="'.$tat['countHelper'].'">'?></td>
 			</tr>
 			<tr>
-				<form method="post" action="<?php echo $link; ?>">
 				<td><h3>Erforderlicher Verantwortungslevel: </td>
-				<td><h3><?php echo $tat['idTrust']; ?></td>	
 				<td>
 				<select name="idTrust" size="1">
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
+				<?php echo'<option ';if($tat['idTrust']=='1'){echo'selected ';} echo'value="1">1</option>';
+					  echo'<option ';if($tat['idTrust']=='2'){echo'selected ';} echo'value="2">2</option>';
+					  echo'<option ';if($tat['idTrust']=='3'){echo'selected ';} echo'value="3">3</option>';
+					?>
 				</select></td>
-				<td><input type="submit" name="button" value="ändern"/></td>
-				</form>
 			</tr>
 		</table>
 		<br>
@@ -251,13 +238,9 @@ $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 		<br>
 		<br>
 		<br>
-		<a href="./deeds.php"><input type="button" name="button" value="Fertig" /></a>
+		<td><a href="./deeds.php"><input type="button" name="button" value="Abbrechen" /></a></td>
+		<td><input type="submit" name="button" value="Änderungen übernehmen"/></td>
+		</form>
 		</center>
 		</form>
-<?php require "./includes/_bottom.php"; 
-//Autor dieser Funktionen : Christian Hock
-//Es folgt eine lange Liste an anrufen einzelner Bestandteile von Deeds
-//kommt bitte wieder zurück nach connector
-
-//TIMM: Hab ich rauskopiert und in db_connector eingefügt
-?>
+<?php require "./includes/_bottom.php";?>
