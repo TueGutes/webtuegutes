@@ -12,8 +12,19 @@ include './includes/db_connector.php';
 
 require './includes/_top.php';
 
+if (!isset($_GET['id']))
+	$_USER->redirect("./deeds");
+
 $idTat = $_GET["id"];
 $tat = DBFunctions::db_getGuteTat($idTat);
+
+if (isset($_POST['delete'])) {
+	if ($_POST['delete']=='false') {
+		die ('<h3>Gute Tat löschen</h3>Damit wird die gute Tat unwiderruflich gelöscht! Bist du sicher?<form><input type="submit" value="Entgültig löschen"><input type="hidden" name="delete" value="true"></form>');
+	} else {
+		DBFunctions::db_deleteDeed($idTat);
+	}
+}
 
 if (!isset($tat['name']))
 	die ('Ungültiger Parameter: Page=' . $_GET['page'] . '<p />Zu dieser ID konnte keine gute Tat gefunden werden.<p />Du meinst das ist ein Fehler? <a href="'.$HOST.'contact">Kontaktiere uns!</a>');
@@ -159,7 +170,14 @@ if (isset($_POST['allow'])) {
 		$form2 .= '<input type="submit" value="Schließen">';
 		$form2 .= '</form>';
 
-		echo $form . $form2 . '<br>';
+		$form2 .= '<br>';
+
+		$form3 = '<form method="post" action="">';
+		$form3 .= '<input type="hidden" name="delete" value="false">';
+		$form3 .= '<input type="submit" value="   Löschen   ">';
+		$form3 .= '</form>';
+
+		echo $form . $form2 . $form3 . '<br>';
 	} else {
 
 		$link = 'deeds_bewerbung?idGuteTat='.$idTat; 

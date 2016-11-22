@@ -2124,6 +2124,18 @@ class DBFunctions
 		else
 			return -1;
 	}
+
+	public function db_deleteDeed($idGuteTat) {
+		$db = self::db_connect();
+		$sql ="DELETE From deeds
+			WHERE deeds.idGuteTat = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$idGuteTat);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+		}
+		self::db_close($db);
+	}
 }
 
 ?>
