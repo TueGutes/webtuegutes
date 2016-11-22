@@ -240,10 +240,12 @@
 			{
 				$errorMessage .= 'Bitte Strasse und Hausnummer zusammen angeben oder keins von beidem.';
 			}
+			/*
 			else if (!is_numeric($_POST['txtHausnummer']))
 			{
 				$errorMessage .= 'Hausnummer ist ungueltig.';
 			}
+			*/
 		}
 		
 		echo $errorMessage;
