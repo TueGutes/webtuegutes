@@ -436,7 +436,7 @@
 			//Speichern des Profilbildes
 			if ($_FILES['neuerAvatar']['name'] != '') {
 				$uploadDir = './img/profiles/'.$thisuser['idUser'].'/';
-				if (!is_dir($uploadDir)) mkdir($uploadDir);
+				if (!is_dir($uploadDir)) mkdir($uploadDir, TRUE);
 				imagepng(imagecreatefromstring(file_get_contents($_FILES['neuerAvatar']['tmp_name'])), $uploadDir . 'converted.png');
 				$size = getimagesize($uploadDir . 'converted.png');
 				
