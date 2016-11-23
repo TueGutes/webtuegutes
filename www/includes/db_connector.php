@@ -1863,7 +1863,13 @@ class DBFunctions
 		}
 	}
 
-	//Lukas
+	/**
+	 * Schließt eine gute Tat.
+	 *
+	 * Bekommt eine Gute Tat ID bekommen und setzt den status dieser Tat auf 'geschlossen'.
+	 *
+	 * @param integer $idGuteTat die ID der guten Tat gefunden wurde
+	 */
 	public function db_guteTatClose($idGuteTat) {
 		$db = self::db_connect();
 		$sql = 'UPDATE Deeds SET Status = "geschlossen" WHERE idGuteTat = ?';
@@ -1874,6 +1880,15 @@ class DBFunctions
 	}
 
 	//Lukas
+	/**
+	 * Fragt ab, ob eine Gute Tat geschlossen ist.
+	 *
+	 * Bekommt eine Gute Tat ID übergeben und überprüft ob dessen Status auf "geschlossen" gesetzt ist.
+	 *
+	 * @param integer $idGuteTat die ID der guten Tat
+	 *
+	 * @return boolean true wenn der status geschlossen ist, sonst false
+	 */
 	public function db_istGeschlossen($idGuteTat) {
 		$db = self::db_connect();
 		$sql = "
@@ -1898,10 +1913,10 @@ class DBFunctions
 	* aufgelistet werden sollen. Zudem kann über einen Filter angegeben werden ob auch bzw.
 	* nur geschlossene Taten angezeigt werden sollen.
 	*
-	*@param Int Ab der ID werden die guten Taten aufgelistet
-	*@param Int Anzahl der aufzulistenden guten Taten
-	*@param String Filter: 'freigegeben','geschlossen','alle'
-	*@param int idUser: ID des Nutzers, der für die Tat angenommen sein soll
+	*@param int $startrow Ab der ID werden die guten Taten aufgelistet
+	*@param int $numberofrows Anzahl der aufzulistenden guten Taten
+	*@param string $stat Filter: 'freigegeben','geschlossen','alle'
+	*@param int $idUser idUser: ID des Nutzers, der für die Tat angenommen sein soll
 	*
 	*@return mixed[] Array der gefundenen Taten
 	*/
@@ -1992,8 +2007,8 @@ class DBFunctions
 	/**
 	*Gibt die Anzahl der Gute Taten eines Users mit einer Auswahlmöglichkeit auf.
 	*
-	*@param String Filter: 'freigegeben','geschlossen','alle'
-	*@param int idUser: ID des Nutzers, der für die Tat angenommen sein soll
+	*@param string $stat Filter: 'freigegeben','geschlossen','alle'
+	*@param int $idUser idUser: ID des Nutzers, der für die Tat angenommen sein soll
 	*
 	*@return int Anzahl der gefundenen Taten
 	*/
@@ -2019,26 +2034,12 @@ class DBFunctions
 			$stmt->execute();
 			$result = $stmt->get_result();
 			self::db_close($db);
-			$arr = array();
 			$dbentry = $result->fetch_assoc();
 			return $dbentry['Anzahl'];
 		}
 		else{
 			$sql = "SELECT
-				Deeds.idGuteTat,
-				Deeds.name,
-				Deeds.category,
-				Deeds.street,
-				Deeds.housenumber,
-				Deeds.idPostal,
-				Deeds.organization,
-				Deeds.countHelper,
-				Deeds.status,
-				Trust.idTrust,
-				Trust.trustleveldescription,
-				DeedTexts.description,
-				Postalcode.postalcode,
-				Postalcode.place
+				COUNT(*) AS Anzahl
 			FROM Deeds
 				Join DeedTexts
 					On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
@@ -2050,22 +2051,25 @@ class DBFunctions
 					On (Deeds.idGuteTat = Application.idGuteTat)
 			WHERE Deeds.status = ?
 			AND Application.status = 'angenommen'
-			AND Application.idUser = ?
-			LIMIT ? , ?";
+			AND Application.idUser = ?";
 			$stmt = $db->prepare($sql);
-			$stmt->bind_param('sii',$stat,$idUser,$startrow,$numberofrows);
+			$stmt->bind_param('si',$stat,$idUser);
 			$stmt->execute();
 			$result = $stmt->get_result();
 			self::db_close($db);
-			$arr = array();
-			while($dbentry =$result->fetch_object()){
-				$arr[]= $dbentry;
-			}
-			return $arr;
+			$dbentry = $result->fetch_assoc();
+			return $dbentry['Anzahl'];
 		}
 	}
 
-	//Lukas
+	/**
+	*Setzt die Punktzahl eines Users.
+	*
+	*Bekommt eine Punktzahl und den Benutzernamen übergeben und setzt die Punktzahl des Nutzers neu.
+	*
+	*@param int $points neue Punktzahl
+	*@param string $user Benutzername eines Users
+	*/
 	public function db_userBewertung($points,$user) {
 		$db = self::db_connect();
 		$sql = 'UPDATE User SET points = ? WHERE username = ?';
@@ -2075,7 +2079,14 @@ class DBFunctions
 		self::db_close($db);	
 	}
 
-	//Lukas
+	/**
+	*Setzt das Vertrauenslevel eines Users.
+	*
+	*Bekommt eine Vertrauens ID und den Benutzernamen übergeben und setzt das Vertrauenslevel des Nutzers neu.
+	*
+	*@param int $trust neues Vertrauenslevel
+	*@param string $user Benutzername eines Users
+	*/
 	public function db_userAnsehen($trust,$user) {
 		$db = self::db_connect();
 		$sql = 'UPDATE User SET idTrust = ? WHERE username = ?';
@@ -2085,7 +2096,14 @@ class DBFunctions
 		self::db_close($db);	
 	}
 
-	//Lukas
+	/**
+	*Setzt die Punktzahl eines Users.
+	*
+	*Bekommt eine Punktzahl und den Benutzernamen übergeben und setzt die Punktzahl des Nutzers neu.
+	*
+	*@param int $points neue Punktzahl
+	*@param string $user Benutzername eines Users
+	*/
 	function db_getBewerb($idGuteTat) 
 	{
 		$db = self::db_connect();
@@ -2113,6 +2131,8 @@ class DBFunctions
 	/**
 	* Gibt die NutzerID zu einem Nutzernamen zurück.
 	*
+	*@deprecated falsche Funktion, Verweis auf die API
+	*
 	*@param string $username Der Nutzername des Nutzers
 	*
 	*@return int ID des Nutzers
@@ -2125,6 +2145,13 @@ class DBFunctions
 			return -1;
 	}
 
+	/**
+	*Löscht eine Gute Tat komplett aus dem System.
+	*
+	*Bekommt die ID einer Guten tat übergeben und löscht die dazugehörige Gute Tat und deren kompletten Abhängigkeiten.
+	*
+	*@param int $idGuteTat ID einer Guten Tat
+	*/
 	public function db_deleteDeed($idGuteTat) {
 		$db = self::db_connect();
 
