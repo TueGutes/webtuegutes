@@ -437,10 +437,12 @@
 			if ($_FILES['neuerAvatar']['name'] != '') {
 				$uploadDir = './img/profiles/'.$thisuser['idUser'].'/';
 				if (!is_dir('./img/profiles/')) {
-					mkdir('./img/profiles', 0775);
+					mkdir('./img/profiles/');
+					chmod('./img/profiles/', 0775);
 				}
 				if (!is_dir($uploadDir)) {
-					mkdir($uploadDir, 0775);
+					mkdir($uploadDir);
+					chmod($uploadDir, 0775);
 				}
 				imagepng(imagecreatefromstring(file_get_contents($_FILES['neuerAvatar']['tmp_name'])), $uploadDir . 'converted.png');
 				$size = getimagesize($uploadDir . 'converted.png');
