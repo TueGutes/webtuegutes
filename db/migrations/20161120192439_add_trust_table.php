@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class MyNewMigration extends AbstractMigration
+class AddTrustTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -27,9 +27,9 @@ class MyNewMigration extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('user_logins');
-        $table->addColumn('user_id', 'integer')
-              ->addColumn('created', 'datetime')
-              ->create();
+        $trust = $this->table('Trust', array('id'=> false,'primary_key' => array('idTrust')));
+        $trust->addColumn('idTrust','integer')
+             ->addColumn('trustleveldescription','string',array('limit' => 45))
+             ->create();
     }
 }
