@@ -2175,6 +2175,213 @@ class DBFunctions
 
 		self::db_close($db);
 	}
+
+	//shanghui
+	/**
+	 * Die Suche durch category oder TatName
+	 * Gibt das Ergebnis durch $result = $stmt->get_result() zurück.
+	 * @param string $keyword eingenommene Stichworte (category oder TatName)
+	 * @param string $sort die Etikett aus search.php, kann 'starttime','endtime' und 'status' sein
+	 * @return Object das Resultobject von sql-codes
+	 */
+	public function db_searchDuringGutes($keyword,$sort)
+	{
+		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
+		$sort_bedingung = self::set_sortBedingung($sort);
+		$db = self::db_connect();
+		$sql = "SELECT DISTINCT 
+			`Deeds`.`idGuteTat`,
+			`Deeds`.`name`,
+			`Deeds`.`category`,
+			`Deeds`.`street`,
+			`Deeds`.`housenumber`,
+			`Deeds`.`idPostal`,
+			`Deeds`.`organization`,
+			`Deeds`.`countHelper`,
+			`Deeds`.`status`,
+			`Deeds`.`starttime`,
+			`Deeds`.`endtime`,
+			`Trust`.`idTrust`,
+			`Trust`.`trustleveldescription`,
+			`DeedTexts`.`description`,
+			`Postalcode`.`postalcode`,
+			`Postalcode`.`place` 
+		FROM `User` JOIN `Deeds`
+        ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
+        ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
+        ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
+		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
+        WHERE `Deeds`.`name` like ? 
+        OR `Deeds`.`category` like ?
+        AND `Deeds`.`status` != 'nichtFreigegeben'
+        ORDER BY $sort_bedingung";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('ss', $bedingung, $bedingung);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		self::db_close($db);
+		return $result;
+	}
+
+	/**
+	 * Die Suche durch Benutzername
+	 * Gibt das Ergebnis durch $result = $stmt->get_result() zurück.
+	 * @param string $keyword eingenommene Stichworte
+	 * @param string $sort die Etikett aus search.php, kann 'starttime','endtime' und 'status' sein
+	 * @return Object das Resultobject von sql-codes
+	 */
+	public function db_searchDruingUsername($keyword,$sort)
+	{
+		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
+		$sort_bedingung = self::set_sortBedingung($sort);
+		$db = self::db_connect();
+		$sql = "SELECT DISTINCT 
+			`Deeds`.`idGuteTat`,
+			`Deeds`.`name`,
+			`Deeds`.`category`,
+			`Deeds`.`street`,
+			`Deeds`.`housenumber`,
+			`Deeds`.`idPostal`,
+			`Deeds`.`organization`,
+			`Deeds`.`countHelper`,
+			`Deeds`.`status`,
+			`Deeds`.`starttime`
+			`Deeds`.`endtime`
+			`Trust`.`idTrust`,
+			`Trust`.`trustleveldescription`,
+			`DeedTexts`.`description`,
+			`Postalcode`.`postalcode`,
+			`Postalcode`.`place ` 
+		FROM `User` JOIN `Deeds`
+        ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
+        ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
+        ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
+		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
+        WHERE `User`.`username` like ?
+        AND `Deeds`.`status` != 'nichtFreigegeben'
+        ORDER BY $sort_bedingung";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('s', $bedingung);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		self::db_close($db);
+		return $result;
+	}
+
+	/**
+	 * Die Suche durch Ortname (kann place(Stadtteil) oder street(Straßenname) sein)
+	 * Gibt das Ergebnis durch $result = $stmt->get_result() zurück.
+	 * @param string $keyword eingenommene Stichworte
+	 * @param string $sort die Etikett aus search.php, kann 'starttime','endtime' und 'status' sein
+	 * @return Object das Resultobject von sql-codes
+	 */
+	public function db_searchDuringOrt($keyword,$sort)
+	{
+		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
+		$sort_bedingung = self::set_sortBedingung($sort);
+		$db = self::db_connect();
+		$sql = "SELECT DISTINCT 
+			`Deeds`.`idGuteTat`,
+			`Deeds`.`name`,
+			`Deeds`.`category`,
+			`Deeds`.`street`,
+			`Deeds`.`housenumber`,
+			`Deeds`.`idPostal`,
+			`Deeds`.`organization`,
+			`Deeds`.`countHelper`,
+			`Deeds`.`status`,
+			`Deeds`.`starttime`
+			`Deeds`.`endtime`
+			`Trust`.`idTrust`,
+			`Trust`.`trustleveldescription`,
+			`DeedTexts`.`description`,
+			`Postalcode`.`postalcode`,
+			`Postalcode`.`place `
+		FROM `User` JOIN `Deeds`
+        ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
+        ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
+        ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
+		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
+        WHERE `Deeds`.`street` like ?
+        OR `Postalcode`.`place` like ?
+        AND `Deeds`.`status` != 'nichtFreigegeben'
+        ORDER BY $sort_bedingung";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('ss', $bedingung, $bedingung);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		self::db_close($db);
+		return $result;
+	}
+
+	/**
+	 * Die Suche durch Zeit (starttime< dieser zeitpunkt <endzeit)
+	 * Gibt das Ergebnis durch $result = $stmt->get_result() zurück.
+	 * @param string $keyword eingenommene Stichworte, in Form OOOO-OO-OOTXX:XX:XX
+	 * @param string $sort die Etikett aus search.php, kann 'starttime','endtime' und 'status' sein
+	 * @return Object das Resultobject von sql-codes
+	 */
+	public function db_searchDuringZeit($keyword,$sort)
+	{
+		$db = self::db_connect();
+		$sort_bedingung = self::set_sortBedingung($sort);
+		$sql = " SELECT DISTINCT 
+ 			`Deeds`.`idGuteTat`,
+			`Deeds`.`name`,
+			`Deeds`.`category`,
+			`Deeds`.`street`,
+			`Deeds`.`housenumber`,
+			`Deeds`.`idPostal`,
+			`Deeds`.`organization`,
+			`Deeds`.`countHelper`,
+			`Deeds`.`status`,
+			`Deeds`.`starttime`
+			`Deeds`.`endtime`
+			`Trust`.`idTrust`,
+			`Trust`.`trustleveldescription`,
+			`DeedTexts`.`description`,
+			`Postalcode`.`postalcode`,
+			`Postalcode`.`place `
+ 		FROM `User` JOIN `Deeds`
+        ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
+        ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
+        ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
+		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
+        WHERE `Deeds`.`starttime` < ?
+        AND `Deeds`.`endtime` > ?
+        AND `Deeds`.`status` != 'nichtFreigegeben'
+        ORDER BY $sort_bedingung";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('ss', $keyword, $keyword);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		self::db_close($db);
+		return $result;
+	}
+
+
+	/**
+	 * Gibt die sortBedingung in einer Aussage 'ORDER BY ?' zurück.
+	 * @param string $sort die Etikett aus search.php, kann 'starttime','endtime' und 'status' sein
+	 * @return string die sortBedingung
+	 */
+	public function set_sortBedingung($sort){
+		switch ($sort) {
+			case 'starttime':
+				$sort_bedingung = " `Deeds`.`starttime`";
+				break;
+			case 'endtime':
+				$sort_bedingung = " `Deeds`.`endtime`";
+				break;
+			default:
+				$sort_bedingung = " `Deeds`.`status`";
+		}
+		return $sort_bedingung;
+	}
+
+
+
+
 }
 
 ?>

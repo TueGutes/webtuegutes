@@ -100,7 +100,7 @@ date_default_timezone_set("Europe/Berlin");
 
 <?php
 //$db = db_connect();
-$db = DBFunctions::db_connect();
+//$db = DBFunctions::db_connect();
 
 // $db = mysqli_connect('localhost', 'tueGutes', 'Sadi23n2os', 'tueGutes');
 // -------------------  Fuzzy Matching, die Ergebnisse in Form der Tabelle zu zeigen  --------------------
@@ -114,51 +114,28 @@ if ($_GET['stichwort']) {
     } else {
         $keyword = explode(' ', $_GET['stichwort']);
     }
-    if ($_GET['selector'] == 'gutes') {
-        $sql = "SELECT DISTINCT * FROM `User` JOIN `Deeds`
-        ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
-        ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
-        ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`)
-        WHERE `Deeds`.`name` like '%$keyword[0]%$keyword[1]%'
-        OR `Deeds`.`category` like '%$keyword[0]%$keyword[1]%'
-        ORDER BY `Deeds`.`category`, `Deeds`.`starttime`";
-    } elseif ($_GET['selector'] == 'user_name') {
-        $sql = "SELECT DISTINCT * FROM `User` JOIN `Deeds`
-        ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
-        ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
-        ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`)
-        WHERE `User`.`username` like '%$keyword[0]%$keyword[1]%'
-        ORDER BY `Deeds`.`category`, `Deeds`.`starttime`";
-    } else if ($_GET['selector'] == 'ort') {
-        $sql = "SELECT DISTINCT * FROM `User` JOIN `Deeds`
-        ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
-        ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
-        ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`)
-        WHERE `Deeds`.`street` like '%$keyword[0]%$keyword[1]%'
-        OR `Postalcode`.`place` like '%$keyword[0]%$keyword[1]%'
-        ORDER BY `Deeds`.`category`, `Deeds`.`starttime`";
-    } else {
-        $sql = " SELECT DISTINCT * FROM `User` JOIN `Deeds`
-        ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
-        ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
-        ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`)
-        WHERE `Deeds`.`starttime` < '$keyword'
-        AND `Deeds`.`endtime` > '$keyword'
-        ORDER BY  `Deeds`.`starttime`,`Deeds`.`category`";
+    if($_GET['sort_selector']){
+    $sort = $_GET['sort_selector'];
+    }else{
+        $_GET['sort_selector'] = 'status';
+        $sort = 'status';
     }
-    $result = mysqli_query($db, $sql);
+    switch ($_GET['selector']){
+        case 'gutes':
+            $result = DBFunctions::db_searchDuringGutes($keyword,$sort);
+            break;
+        case 'user_name':
+            $result = DBFunctions::db_searchDruingUsername($keyword,$sort);
+            break;
+        case 'ort':
+            $result = DBFunctions::db_searchDuringOrt($keyword,$sort);
+            break;
+        case 'zeit':
+            $result = DBFunctions::db_searchDuringZeit($keyword,$sort);
+            break;
+    }
     $num = mysqli_num_rows($result);
-
-
-
-
-    // -------------  5 is now a very small number but it's easy to see changes  -----------
-
-    $pagesize = 5;
-
-    //--------------  calculate how many pages we need  ----------------
-
-
+    $pagesize = 10;
     $maxpage = ceil($num / $pagesize);
     $page = isset($_GET['page']) ? $_GET['page'] : 1;
     if ($page < 1) {
@@ -171,16 +148,11 @@ if ($_GET['stichwort']) {
 
     //-------------- get one page ----------------
 
-
-    $limit = ' limit ' .(($page-1)*$pagesize).','.$pagesize;
-    $sql2 = $sql . " {$limit}";
-    $res = mysqli_query($db, $sql2);
-    if ($res == null) {
-        echo "<br><br><br><br>No Result";
-        mysqli_free_result($result);
-        mysqli_free_result($res);
-    } else {
-
+//
+//    $limit = ' limit ' .(($page-1)*$pagesize).','.$pagesize;
+//    $sql2 = $sql . " {$limit}";
+//    $res = mysqli_query($db, $sql2);
+//    $res = DBFunctions::db_searchSubresultGutes($keyword,$page,$pagesize);
 
 
 //---------------  show results in table form  ----------------
@@ -225,16 +197,33 @@ if ($_GET['stichwort']) {
 
 // ------------------ show results in Deeds_list form  -----------------
 
-        $result_str = "<br><br><br><br>";
-        while ($row = mysqli_fetch_array($res)) {
-            $result_str .= "<a href='./deeds_details?id={$row['idGuteTat']}' class='deedAnchor'><div class='deed'>";
-            $result_str .= "<div class='name'><h4>" . $row['name'] . "</h4></div><div class='category'>" . $row['category'] . "</div>";
-            $result_str .= "<br><br><br><br><div class='description'>" . $row['description'] . "</div>";
-            $result_str .= "<div class='address'>" . $row['street'] . "<br>" . $row['postalcode'] . " / " . $row['place'] . "</div>";
-            $result_str .= "<div>Anzahl der Helfer: " . $row['countHelper'] . "</div><div class='trustLevel'>Minimaler Vertrauenslevel: " . $row['idTrust'] . "</div>";
-            $result_str .= "<div>Organisation: " . $row['organization'] . "</div>";
-            $result_str .= "</div></a>";
-            $result_str .= "<br><br>";
+    echo "<br><br><br><br><span style='margin-right:50%;font-size: large'>Suchergebnis:</span>";
+    if ($num == 0) {
+        echo "<br><br><hr><br><br><br><br>No Result";
+    } else {
+        echo "<span>Sortieren nach </span>";
+        echo "<select id='sort_selector' onchange='goto(this)'>";
+        echo "<option value='status' ";if($sort=='status'){echo 'selected';}echo ">Status</option>";
+        echo "<option value='starttime' ";if($sort=='starttime'){echo 'selected';}echo ">Starttime</option>";
+        echo "<option value='endtime' ";if($sort=='endtime'){echo 'selected';}echo ">Endtime</option>";
+        echo "</select>";
+        $result_str = "<br><br><hr><br><br>";
+        for($i=1;$i<=$num;$i++){
+            $row = mysqli_fetch_array($result);
+            if(!$row) {
+                break;
+            }
+//<div class='deed ({$row['status']}->status == 'geschlossen' ? ' closed' : ')>
+            if($i>($page-1)*$pagesize && $i<=$page*$pagesize){
+                $result_str .= "<a href='./deeds_details?id={$row['idGuteTat']}' class='deedAnchor'><div class='deed".($row['status'] == 'geschlossen' ? ' closed' : '')."'>";
+                $result_str .= "<div class='name'><h4>" . $row['name'] . "</h4></div><div class='category'>" . $row['category'] . "</div>";
+                $result_str .= "<br><br><br><br><div class='description'>" . $row['description'] . "</div>";
+                $result_str .= "<div class='address'>" . $row['street'] . "<br>" . $row['postalcode'] . " / " . $row['place'] . "</div>";
+                $result_str .= "<div>Anzahl der Helfer: " . $row['countHelper'] . "</div><div class='trustLevel'>Minimaler Vertrauenslevel: " . $row['idTrust'] . "</div>";
+                $result_str .= "<div>Organisation: " . $row['organization'] . "</div>";
+                $result_str .= "</div></a>";
+                $result_str .= "<br><br>";
+            }
         }
         echo $result_str;
 
@@ -243,7 +232,6 @@ if ($_GET['stichwort']) {
 
 
         mysqli_free_result($result);
-        mysqli_free_result($res);
 
 
 //pages
@@ -256,17 +244,16 @@ if ($_GET['stichwort']) {
         echo setPageUrl(1, 'first');
         echo setPageUrl($page - 1, 'previous'); ?>
 
-        <select id="page_selector" style="margin-left: 30px;" onchange="goto(this)">
+        <select id="page_selector" style="margin-left: 30px;" onchange="goto()">
             <option></option>
         </select>
-
-
 
 <!--------------  create options  ---------------->
 
 
         <script type="text/javascript">
             var page_selector = document.getElementById('page_selector');
+            var sort_selector = document.getElementById('sort_selector');
             for (var i = 1; i <=<?=$maxpage?>; i++) {
                 var obj = document.createElement("option");
                 obj.innerHTML = i;
@@ -276,8 +263,8 @@ if ($_GET['stichwort']) {
                 page_selector.appendChild(obj);
             }
 
-            function goto(event) {
-                var url="search.php?page="+event.value+"&stichwort=<?=$_GET['stichwort']?>&selector=<?=$_GET['selector']?>";
+            function goto() {
+                var url="search.php?page="+page_selector.value+"&stichwort=<?=$_GET['stichwort']?>&selector=<?=$_GET['selector']?>&sort_selector="+sort_selector.value;
                 window.open(url,'_self');
             }
         </script>
@@ -285,8 +272,8 @@ if ($_GET['stichwort']) {
 
         <?php echo setPageUrl($page + 1, 'next');
         echo setPageUrl($maxpage, 'last');
-        echo '<span style="position:relative;left:18%;font-size: 15px ">current:' . $page . ' of ' . $maxpage . '</span>';
-        DBFunctions::db_close($db);
+        echo '<br>';
+        echo '<span style="margin-left:70%;font-size: 15px ">current:' . $page . ' of ' . $maxpage . '</span>';
 //        db_close($db);
 //$js_selector = '<script type="text/javascript">';
 //$js_selector .= 'var selector= document.getElementsByName("selector");';
@@ -295,11 +282,7 @@ if ($_GET['stichwort']) {
 //echo $js_selector;
     }
 }
-
-
 //this function will be moved to file includes/ after all job been done
-
-
 /**
  * set URL
  *
@@ -307,14 +290,11 @@ if ($_GET['stichwort']) {
  * @param String $sort the type of the search results
  * @return string $str return url in string form
  */
-
-function setPageUrl($page, $sort)
+function setPageUrl($page, $name)
 {
-    $str = "<a href='search.php?page=".$page.'&stichwort='.$_GET['stichwort'].'&selector='.$_GET['selector'].
-        "' style='margin-left:30px;font-size:20px'>".$sort.'</a>';
+    $str = "<a href='search.php?page=".$page.'&stichwort='.$_GET['stichwort'].'&selector='.$_GET['selector'].'&sort_selector='.$_GET['sort_selector'].
+        "' style='margin-left:30px;font-size:20px'>".$name.'</a>';
     return $str;
 }
-
 ?>
-
 <?php require './includes/_bottom.php'; ?>
