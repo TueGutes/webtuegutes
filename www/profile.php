@@ -270,7 +270,7 @@
 		$blPersoenlich .= '</td></tr>';
 
 		//Geschlecht bearbeiten:
-		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none"><select name="txtGender" size=1><option' . (($thisuser['gender']==='w')?'':' selected') . '>Männlich</option><option' . (($thisuser['gender']==='w')?' select':'') . '>Weiblich</option></td></tr>';
+		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none"><select name="txtGender" size=1><option' . (($thisuser['gender']!='w' && $thisuser['gender']!='m' && $thisuser['gender']!='a')?' select':'') . '>keine Angabe</option><option' . (($thisuser['gender']==='w')?' select':'') . '>weiblich</option><option' . (($thisuser['gender']==='m')?' selected':'') . '>männlich</option><option' . (($thisuser['gender']==='a')?' selected':'') . '>anderes</option></td></tr>';
 
 		// ALEX2: Leaves text boxes empty if value is 0. Added $tempValue.
 		$tempValue = getDayOfBirth($thisuser['birthday']);
