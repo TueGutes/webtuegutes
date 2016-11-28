@@ -461,6 +461,7 @@ class DBFunctions
 	* * regDate,
 	* * firstname,
 	* * lastname,
+	* * gender, 
 	* * birthday,
 	* * street,
 	* * housenumber,
@@ -487,6 +488,7 @@ class DBFunctions
 			User.regDate = ?,
 			PersData.firstname = ?,
 			PersData.lastname = ?,
+			PersData.gender = ?
 			PersData.birthday = ?,
 			PersData.street = ?,
 			PersData.housenumber = ?,
@@ -503,12 +505,13 @@ class DBFunctions
 			AND User.idUser = Privacy.idPrivacy
 			AND User.idUserGroup = UserGroup.idUserGroup";
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('ssssssssssissssi',
+		$stmt->bind_param('sssssssssssissssi',
 			$savedata['username'],
 			$savedata['email'],
 			$savedata['regDate'],
 			$savedata['firstname'],
 			$savedata['lastname'],
+			$savedata['gender'],
 			$savedata['birthday'],
 			$savedata['street'],
 			$savedata['housenumber'],
