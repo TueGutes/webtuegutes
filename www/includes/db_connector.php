@@ -488,7 +488,7 @@ class DBFunctions
 			User.regDate = ?,
 			PersData.firstname = ?,
 			PersData.lastname = ?,
-			PersData.gender = ?
+			PersData.gender = ?,
 			PersData.birthday = ?,
 			PersData.street = ?,
 			PersData.housenumber = ?,
