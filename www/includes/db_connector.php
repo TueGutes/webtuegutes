@@ -193,7 +193,7 @@ class DBFunctions
 		$stmt = $db->prepare($sql);
 
 		$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
-		$privacykey = "111111111111111";
+		$privacykey = "011111011111111";
 		mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
 		$stmt->execute();
 		$affected_rows = mysqli_stmt_affected_rows($stmt);
@@ -1876,7 +1876,7 @@ class DBFunctions
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$idGuteTat);
 		$stmt->execute();
-		self::db_close($db);	
+		self::db_close($db);
 	}
 
 	//Lukas
@@ -2076,7 +2076,7 @@ class DBFunctions
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('is',$points,$user);
 		$stmt->execute();
-		self::db_close($db);	
+		self::db_close($db);
 	}
 
 	/**
@@ -2093,7 +2093,7 @@ class DBFunctions
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('is',$trust,$user);
 		$stmt->execute();
-		self::db_close($db);	
+		self::db_close($db);
 	}
 
 	/**
@@ -2104,7 +2104,7 @@ class DBFunctions
 	*@param int $points neue Punktzahl
 	*@param string $user Benutzername eines Users
 	*/
-	function db_getBewerb($idGuteTat) 
+	function db_getBewerb($idGuteTat)
 	{
 		$db = self::db_connect();
 		$sql = "SELECT idUser
@@ -2119,7 +2119,7 @@ class DBFunctions
 		self::db_close($db);
 		return $dbentry;
 		/*$arr = array();
-		$i=0; 
+		$i=0;
 		while($dbentry =$result->fetch_assoc()){
 			$arr[$i]= $dbentry;
 			$i++;
@@ -2189,7 +2189,7 @@ class DBFunctions
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
 		$sort_bedingung = self::set_sortBedingung($sort);
 		$db = self::db_connect();
-		$sql = "SELECT DISTINCT 
+		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,
 			`Deeds`.`category`,
@@ -2205,13 +2205,13 @@ class DBFunctions
 			`Trust`.`trustleveldescription`,
 			`DeedTexts`.`description`,
 			`Postalcode`.`postalcode`,
-			`Postalcode`.`place` 
+			`Postalcode`.`place`
 		FROM `User` JOIN `Deeds`
         ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
 		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
-        WHERE `Deeds`.`name` like ? 
+        WHERE `Deeds`.`name` like ?
         OR `Deeds`.`category` like ?
         AND `Deeds`.`status` != 'nichtFreigegeben'
         ORDER BY $sort_bedingung";
@@ -2235,7 +2235,7 @@ class DBFunctions
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
 		$sort_bedingung = self::set_sortBedingung($sort);
 		$db = self::db_connect();
-		$sql = "SELECT DISTINCT 
+		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,
 			`Deeds`.`category`,
@@ -2251,7 +2251,7 @@ class DBFunctions
 			`Trust`.`trustleveldescription`,
 			`DeedTexts`.`description`,
 			`Postalcode`.`postalcode`,
-			`Postalcode`.`place ` 
+			`Postalcode`.`place `
 		FROM `User` JOIN `Deeds`
         ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
@@ -2280,7 +2280,7 @@ class DBFunctions
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
 		$sort_bedingung = self::set_sortBedingung($sort);
 		$db = self::db_connect();
-		$sql = "SELECT DISTINCT 
+		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,
 			`Deeds`.`category`,
@@ -2325,7 +2325,7 @@ class DBFunctions
 	{
 		$db = self::db_connect();
 		$sort_bedingung = self::set_sortBedingung($sort);
-		$sql = " SELECT DISTINCT 
+		$sql = " SELECT DISTINCT
  			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,
 			`Deeds`.`category`,
