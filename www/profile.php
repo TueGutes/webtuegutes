@@ -270,7 +270,7 @@
 		$blPersoenlich .= '</td></tr>';
 
 		//Geschlecht bearbeiten:
-		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none"><select name="txtGender" size=1><option' . (($thisuser['gender']!='w' && $thisuser['gender']!='m' && $thisuser['gender']!='a')?' select':'') . '>keine Angabe</option><option' . (($thisuser['gender']==='w')?' select':'') . '>weiblich</option><option' . (($thisuser['gender']==='m')?' selected':'') . '>männlich</option><option' . (($thisuser['gender']==='a')?' selected':'') . '>anderes</option></td></tr>';
+		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none"><select name="txtGender" size=1><option value="kA"' . (($thisuser['gender']!='w' && $thisuser['gender']!='m' && $thisuser['gender']!='a')?' select':'') . '>keine Angabe</option><option value="w"' . (($thisuser['gender']==='w')?' select':'') . '>weiblich</option><option value="m"' . (($thisuser['gender']==='m')?' selected':'') . '>männlich</option><option value="a"' . (($thisuser['gender']==='a')?' selected':'') . '>anderes</option></td></tr>';
 
 		// ALEX2: Leaves text boxes empty if value is 0. Added $tempValue.
 		$tempValue = getDayOfBirth($thisuser['birthday']);
@@ -475,6 +475,7 @@
 			}
 			$thisuser['street'] = $_POST['txtStrasse'];
 			$thisuser['housenumber'] = $_POST['txtHausnummer'];
+			$thisuser['gender'] = ($_POST['txtGender']!='kA')?$_POST['txtGender']:'';
 			$thisuser['messengernumber'] = $_POST['txtMsgNr'];
 			$thisuser['telefonnumber'] = $_POST['txtTelNr'];
 			$thisuser['hobbys'] = $_POST['txtHobbys'];
@@ -511,7 +512,7 @@
 			}
 
 			//Geschlecht anzeigen:
-			if ($shGeschlecht) $blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none">' . (($thisuser['gender']==='w')?'weiblich':'männlich') . '</td></tr>';
+			if ($shGeschlecht) $blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none">' . (($thisuser['gender']==='w')?'weiblich':(($thisuser['gender']==='m')?'männlich':'anderes')) . '</td></tr>';
 
 			//Geburtstag anzeigen:
 			if ($shGeburtstag || $shJahrgang) {
