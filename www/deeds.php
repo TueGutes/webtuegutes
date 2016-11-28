@@ -35,22 +35,26 @@ if (!isset($_POST['status'])) {
 	</form>
 	
 		<form method="post" action="deeds">
-				<h5>Anzeigen:
-				<select name="status" size="1">
-				<option value="alle" <?php ($first || @$_POST['status']=="alle")?'selected':'' ?> >alle</option>                                   <?/*hier wird der status abgefragt */?>
-				<option value="freigegeben" <?php echo (@$_POST['status']=="freigegeben")?'selected':'' ?> >Nicht abgeschlossen</option>     <?/*hier wird der status abgefragt */?>
-				<option value="geschlossen" <?php echo (@$_POST['status']=="geschlossen")?'selected':'' ?> >abgeschlossen</option>				 <?/*hier wird der status abgefragt */?>
+			<h5>
+				Anzeigen:
+				<select name="status" size="1" onchange="this.form.submit()">
+					<option value="alle" <?php ($first || @$_POST['status']=="alle")?'selected':'' ?> >alle</option>                                   <?/*hier wird der status abgefragt */?>
+					<option value="freigegeben" <?php echo (@$_POST['status']=="freigegeben")?'selected':'' ?> >Nicht abgeschlossen</option>     <?/*hier wird der status abgefragt */?>
+					<option value="geschlossen" <?php echo (@$_POST['status']=="geschlossen")?'selected':'' ?> >abgeschlossen</option>				 <?/*hier wird der status abgefragt */?>
 				</select>
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-
-				Anzahl Der Taten:
-				<select name="adt" size="1">
-				<option value="5" <?php echo (@$_POST['adt']==5)?'selected':'' ?> >5</option>        <?/*hier wird der status abgefragt */?>
-				<option value="10" <?php echo (@$_POST['adt']==10)?'selected':'' ?> >10</option>     <?/*hier wird der status abgefragt */?>
-				<option value="15" <?php echo (@$_POST['adt']==15)?'selected':'' ?> >15</option>	 <?/*hier wird der status abgefragt */?>
+				<noscript><input type="submit" name="button" value="Aktualisieren"/></noscript>
+				&nbsp;
+				Taten pro Seite:
+				<select name="adt" size="1" onchange="this.form.submit()">
+					<option value="5" <?php echo (@$_POST['adt']==5)?'selected':'' ?> >5</option>        <?/*hier wird der status abgefragt */?>
+					<option value="10" <?php echo (@$_POST['adt']==10)?'selected':'' ?> >10</option>     <?/*hier wird der status abgefragt */?>
+					<option value="15" <?php echo (@$_POST['adt']==15)?'selected':'' ?> >15</option>	 <?/*hier wird der status abgefragt */?>
+					<option value="20" <?php echo (@$_POST['adt']==20)?'selected':'' ?> >20</option>      <?/*hier wird der status abgefragt */?>
+					<option value="50" <?php echo (@$_POST['adt']==50)?'selected':'' ?> >50</option>     <?/*hier wird der status abgefragt */?>
+					<option value="100" <?php echo (@$_POST['adt']==100)?'selected':'' ?> >100</option>	 <?/*hier wird der status abgefragt */?>
 				</select>
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-				<input type="submit" name="button" value="Anzahl"/></h5>
+				<noscript><input type="submit" name="button" value="Aktualisieren"/></noscript>
+			</h5>
 		</form>
 			<?php
 				

@@ -13,7 +13,7 @@
 DEFINE('DB_USER','tueGutes');
 DEFINE('DB_PASSWORD','Sadi23n2os');
 DEFINE('DB_HOST','localhost');
-DEFINE('DB_NAME','testing_db');
+DEFINE('DB_NAME','tueGutes');
 
 
 /**
