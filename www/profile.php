@@ -504,20 +504,20 @@
 			$thisuser['place'] = getPostalPlaceToAddress($thisuser['street'], $thisuser['housenumber'])['retPlace'];
 
 			$thisuser['privacykey'] = isset($_POST['vsMail'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsRegDate'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsAvatar'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsHobbys'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsDescription'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsFirstname'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsLastname'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsGender'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsStreet'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsHousenumber'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsPlzOrt'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsTelNr'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsMsgNr'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsBirthday'])?'1':'0';
-			$thisuser['privacykey'] = isset($_POST['vsBirthyear'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsRegDate'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsAvatar'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsHobbys'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsDescription'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsFirstname'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsLastname'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsGender'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsStreet'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsHousenumber'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsPlzOrt'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsTelNr'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsMsgNr'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsBirthday'])?'1':'0';
+			$thisuser['privacykey'] .= isset($_POST['vsBirthyear'])?'1':'0';
 
 
 		//	$thisuser['privacykey'] = $_POST['vsMail'] . $_POST['vsRegDate'] .$_POST['vsAvatar'] . $_POST['vsHobbys'] . $_POST['vsDescription'] . $_POST['vsFirstname'] . $_POST['vsLastname'] . 	$_POST['vsGender'] . 		$_POST['vsStreet'] . 	$_POST['vsHousenumber'] . 	$_POST['vsPlzOrt'] . 	$_POST['vsTelNr'] . 	$_POST['vsMsgNr'] . 	$_POST['vsBirthday'] . 		$_POST['vsBirthyear'];
