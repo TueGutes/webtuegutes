@@ -381,21 +381,21 @@
 		*/
 
 		$blPrivacy = '<h3>Sichtbarkeitseinstellungen</h3>Welche Einstellungen sollen Besuchern deines Profils angezeigt werden?<table>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsMail" value="1" '.(substr($thisuser['privacykey'],0,1)?'checked="checked"':'').' ><label> Meine E-Mail Adresse</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsRegDate" value="1" '.(substr($thisuser['privacykey'],1,1)?'checked="checked"':'').' ><label> Datum meiner Registrierung</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsAvatar" value="1" '.(substr($thisuser['privacykey'],2,1)?'checked="checked"':'').' ><label> Mein Profilbild</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsHobbys" value="1" '.(substr($thisuser['privacykey'],3,1)?'checked="checked"':'').' ><label> Meine Hobbys</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsDescription" value="1" '.(substr($thisuser['privacykey'],4,1)?'checked="checked"':'').' ><label> Meine Beschreibung von mir selbst</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsFirstname" value="1" '.(substr($thisuser['privacykey'],5,1)?'checked="checked"':'').' ><label> Meinen Vornamen</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsLastname" value="1" '.(substr($thisuser['privacykey'],6,1)?'checked="checked"':'').' ><label> Meinen Nachnamen</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsGender" value="1" '.(substr($thisuser['privacykey'],7,1)?'checked="checked"':'').' ><label> Mein Geschlecht</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsStreet" value="1" '.(substr($thisuser['privacykey'],8,1)?'checked="checked"':'').' ><label> Meine Straße</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsHousenumber" value="1" '.(substr($thisuser['privacykey'],9,1)?'checked="checked"':'').' ><label> Meine Hausnummer</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsPlzOrt" value="1" '.(substr($thisuser['privacykey'],10,1)?'checked="checked"':'').' ><label> Meinen Wohnort</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsTelNr" value="1" '.(substr($thisuser['privacykey'],11,1)?'checked="checked"':'').' ><label> Meine Telefonnummer</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsMsgNr" value="1" '.(substr($thisuser['privacykey'],12,1)?'checked="checked"':'').' ><label> Meine Messengernummer</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsBirthday" value="1" '.(substr($thisuser['privacykey'],13,1)?'checked="checked"':'').' ><label> Meinen Geburtstag</label></td></tr>';
-		$blPrivacy .= '<tr><td><input type="checkbox" name="vsBirthyear" value="1" '.(substr($thisuser['privacykey'],14,1)?'checked="checked"':'').' ><label> Mein Geburtsjahr</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c1" type="checkbox" name="vsMail" value="1" '.(substr($thisuser['privacykey'],0,1)?'checked="checked"':'').' ><label for="c1"> Meine E-Mail Adresse</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c2" type="checkbox" name="vsRegDate" value="1" '.(substr($thisuser['privacykey'],1,1)?'checked="checked"':'').' ><label for="c2"> Datum meiner Registrierung</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c3" type="checkbox" name="vsAvatar" value="1" '.(substr($thisuser['privacykey'],2,1)?'checked="checked"':'').' ><label for="c3"> Mein Profilbild</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c4" type="checkbox" name="vsHobbys" value="1" '.(substr($thisuser['privacykey'],3,1)?'checked="checked"':'').' ><label for="c4"> Meine Hobbys</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c5" type="checkbox" name="vsDescription" value="1" '.(substr($thisuser['privacykey'],4,1)?'checked="checked"':'').' ><label for="c5"> Meine Beschreibung von mir selbst</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c6" type="checkbox" name="vsFirstname" value="1" '.(substr($thisuser['privacykey'],5,1)?'checked="checked"':'').' ><label for="c6"> Meinen Vornamen</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c7" type="checkbox" name="vsLastname" value="1" '.(substr($thisuser['privacykey'],6,1)?'checked="checked"':'').' ><label for="c7"> Meinen Nachnamen</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c8" type="checkbox" name="vsGender" value="1" '.(substr($thisuser['privacykey'],7,1)?'checked="checked"':'').' ><label for="c8"> Mein Geschlecht</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c9" type="checkbox" name="vsStreet" value="1" '.(substr($thisuser['privacykey'],8,1)?'checked="checked"':'').' ><label for="c9"> Meine Straße</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c10" type="checkbox" name="vsHousenumber" value="1" '.(substr($thisuser['privacykey'],9,1)?'checked="checked"':'').' ><label for="c10"> Meine Hausnummer</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c11" type="checkbox" name="vsPlzOrt" value="1" '.(substr($thisuser['privacykey'],10,1)?'checked="checked"':'').' ><label for="c11"> Meinen Wohnort</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c12" type="checkbox" name="vsTelNr" value="1" '.(substr($thisuser['privacykey'],11,1)?'checked="checked"':'').' ><label for="c12"> Meine Telefonnummer</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c13" type="checkbox" name="vsMsgNr" value="1" '.(substr($thisuser['privacykey'],12,1)?'checked="checked"':'').' ><label for="c13"> Meine Messengernummer</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c14" type="checkbox" name="vsBirthday" value="1" '.(substr($thisuser['privacykey'],13,1)?'checked="checked"':'').' ><label for="c14"> Meinen Geburtstag</label></td></tr>';
+		$blPrivacy .= '<tr><td><input id="c15" type="checkbox" name="vsBirthyear" value="1" '.(substr($thisuser['privacykey'],14,1)?'checked="checked"':'').' ><label for="c15"> Mein Geburtsjahr</label></td></tr>';
 
 
 		$blPrivacy .= '</table>';
