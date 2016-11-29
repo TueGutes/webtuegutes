@@ -158,7 +158,7 @@
 	//Festlegen der Sichtbarkeitseinstellungen
 	if (strtoupper($_USER->getUsername())===strtoupper($thisuser['username']) && !(@$_GET['view']==="public")) {
 		$headline = 'Dein Profil';
-		$link = '<a href="./profile?view=public">Wie sehen andere Nutzer mein Profil?</a><br>';
+		$link = '<a href="./profile?view=public">Wie sehen andere Nutzer mein Profil?</a><br><br><br>';
 		$shEmail = ($thisuser['email']!="");
 		$shRegDate = ($thisuser['regDate']!="");
 		$shAvatar = ($thisuser['avatar']!="");
@@ -166,7 +166,7 @@
 		$shFreitext = ($thisuser['description']!="");
 		$shVorname = ($thisuser['firstname']!="");
 		$shNachname = ($thisuser['lastname']!="");
-		$shGeschlecht = ($thisuser['gender']!="");
+		$shGeschlecht = ($thisuser['gender']!="" && $thisuser['gender']!="0");
 		$shStrasse = ($thisuser['street']!="");
 		$shHausnummer = ($thisuser['housenumber']!="");
 		$shPlzOrt = ($thisuser['postalcode']!="");
@@ -256,11 +256,14 @@
 		//Zeige die Seite mit Eingabefeldern zum Bearbeiten der Daten an
 
 		$form_head = '<form action="" method="post" enctype="multipart/form-data">';
-		//Block 0: Avatar
-		$blAvatar = 'Pfad zum neuen Profilbild eingeben:<br>';
-		$blAvatar .= '<input type="file" name="neuerAvatar" accept="image/*">';
 
-		$blPersoenlich = "";
+		//Block 0: Avatar
+		$blAvatar = 'Hier kannst du ein neues Profilbild hochladen: <br><br>';
+		$blAvatar .= '<input type="file" name="neuerAvatar" accept="image/*"><br><br>';
+		$blAvatar .= '<input type="checkbox" name="delAvatar" value="1"><label> Meinen Avatar löschen</label><br>';
+		$blAvatar .= "<br><br><hr><br>";		
+
+		$blPersoenlich = "<br>";
 		$blPersoenlich .= '<h3>Persönliche Daten</h3><table style="border:none">';
 
 		//Namen anzeigen:
@@ -270,70 +273,62 @@
 		$blPersoenlich .= '</td></tr>';
 
 		//Geschlecht bearbeiten:
-		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none"><select name="txtGender" size=1><option' . (($thisuser['gender']==='w')?'':' selected') . '>Männlich</option><option' . (($thisuser['gender']==='w')?' select':'') . '>Weiblich</option></td></tr>';
+		$blPersoenlich .= '<tr><td colspan="1" style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none"><select style="-webkit-appearance:none;width:100%" name="txtGender" size=1><option value="0"' . (($thisuser['gender']!='w' && $thisuser['gender']!='m' && $thisuser['gender']!='a')?' select':'') . '>keine Angabe</option><option value="w"' . (($thisuser['gender']==='w')?' selected':'') . '>weiblich</option><option value="m"' . (($thisuser['gender']==='m')?' selected':'') . '>männlich</option><option value="a"' . (($thisuser['gender']==='a')?' selected':'') . '>anderes</option></td></tr>';
 
 		// ALEX2: Leaves text boxes empty if value is 0. Added $tempValue.
 		$tempValue = getDayOfBirth($thisuser['birthday']);
 		$tempValue = ($tempValue == 0) ? "" : $tempValue;
+
 		// Text box for day of birth.
 		$blPersoenlich .= '<tr><td>Geboren:</td><td><input type="text" size="2px"
 		name="txtDayOfBirth" placeholder="TT" value="' . $tempValue . '">';
+
 		// Text box for month of birth.
 		$tempValue = getMonthOfBirth($thisuser['birthday']);
 		$tempValue = ($tempValue == 0) ? "" : $tempValue;
 		$blPersoenlich .= '.<input type="text" size="2px" name="txtMonthOfBirth" placeholder="MM" value="' . $tempValue . '">';
+
 		// Text box for year of birth.
 		$tempValue = getYearOfBirth($thisuser['birthday']);
 		$tempValue = ($tempValue == 0) ? "" : $tempValue;
 		$blPersoenlich .= '.<input type="text" size="4px" name="txtYearOfBirth" placeholder="JJJJ" value="' . $tempValue . '"></td></tr>';
 
 		//RegDate anzeigen
-		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Tut Gutes seit:</td><td style="border:none">' . substr($thisuser['regDate'],8,2) . '. ' . substr($thisuser['regDate'],5,2) . '. ' . substr($thisuser['regDate'],0,4) . '</td></tr>';
-		$blPersoenlich .= "</table>";
-
-		//RegDate anzeigen
-		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Tut Gutes seit:</td><td style="border:none">' . substr($thisuser['regDate'],8,2) . '. ' . substr($thisuser['regDate'],5,2) . '. ' . substr($thisuser['regDate'],0,4) . '</td></tr>';
-		$blPersoenlich .= "</table>";
+		$blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px"><br>Tut Gutes seit:</td><td style="border:none"><br>' . substr($thisuser['regDate'],8,2) . '. ' . substr($thisuser['regDate'],5,2) . '. ' . substr($thisuser['regDate'],0,4) . '</td></tr>';
+		$blPersoenlich .= "</table><br><br><hr><br>";
 
 		//Block 2: Über USER
 		$blUeber = "";
-		$blUeber .= '<h3>Über ' . $thisuser['username'] . '</h3><table style="border:none;width:45%">';
+		$blUeber .= '<h3>Über mich</h3><table style="border:none;width:45%">';
 
 		//Hobbys anzeigen:
 		$blUeber .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Hobbys:</td><td style="border:none"><input type="text" name="txtHobbys" placeholder="z.B. Kochen, Fahrrad fahren, ..." value="' . $thisuser['hobbys'] . '" style="width:100%"></td></tr>';
 
 		//Freitext anzeigen:
-		$blUeber .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Über mich:</td><td style="border:none"><textarea rows=20 cols=100 placeholder="beschreibe dich selbst mit wenigen Worten..." name="txtBeschreibung">' . $thisuser['description'] . '</textarea></td></tr>';
+		$blUeber .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px;vertical-align:top">Über mich:</td><td style="border:none"><textarea rows=20 cols=80 placeholder="beschreibe dich selbst mit wenigen Worten..." name="txtBeschreibung">' . $thisuser['description'] . '</textarea></td></tr>';
+		$blUeber .= "</table><br><br><hr><br>";
 
-		$blUeber .= "</table>";
-
-		//Block 3: Taten
-		$blTaten = '<h3>Taten von ' . $thisuser['username'] . '</h3><table style="border:none">';
-		$blTaten .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Karma:</td><td style="border:none">';
-		$blTaten .= $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')';
-
-		$blTaten .= "</table>";
+		//Block 3: Gute Taten
+		$blTaten = '';
 
 		//Block 4: Adresse
 		$blAdresse = "";
-		$blAdresse .= '<h3>Wo findet man ' . $thisuser['username'] . '?</h3><table style="border:none">';
+		$blAdresse .= '<h3>Wo findet man dich?</h3><table style="border:none">';
 		$showMap = false;
 
 		//Adresse eingeben:
 		$blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Adresse:</td><td style="border:none">';
 
 		// ALEX: Strassenliste einfügen.
-		$blAdresse .= '<input type="search" list="lstStreets" name="txtStrasse" onchange="updatePLZPlace();" placeholder="Strasse" value="' . $thisuser['street'] . '"><br>';
+		$blAdresse .= '<input type="search" list="lstStreets" name="txtStrasse" onchange="updatePLZPlace();" placeholder="Strasse" value="' . $thisuser['street'] . '" style="width:95%;height:100%;-webkit-appearance:none">';
 		$blAdresse .= $streetList;
 		$blAdresse .= '</td>';
-
-		/*$blAdresse .= '<input type="text" name="txtStrasse" placeholder="Strasse" value="' . $thisuser['street'] . '">';*/
 
 		// ALEX: Hausnummer einfügen.
 		$blAdresse .= '<td style="border:none"><input type="text" size="5%" name="txtHausnummer" placeholder="Nr." value="'
 			. $thisuser['housenumber'] . '">';
 		$blAdresse .= "</td></tr>";
-		$blAdresse .= '<tr><td></td><td colspan=2><input type="submit" value="meine Adresse fehlt..." form="suggestAddress" /></td></tr>';
+		$blAdresse .= '<tr><td></td><td colspan=2><br><input type="submit" value="meine Adresse fehlt..." form="suggestAddress"/></td></tr>';
 
 		// ALEX: Auskommentiert.
 		//PLZ/Ort bearbeiten:
@@ -344,7 +339,7 @@
 		//PLZ/Ort bearbeiten:
 //		$blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">PLZ:</td><td style="border:none"><input type="text" name="txtPostleitzahl" placeholder="PLZ" value="' . (($thisuser['postalcode']!=0)?$thisuser['postalcode']:'') . '"></td>';
 //		$blAdresse .= '<td style="border:none"><input type="text" name="txtOrt" placeholder="Ort" value="' . (($thisuser['postalcode']!=0)?$thisuser['place']:'') . '"></td></tr>';
-		$blAdresse .= "</table>";
+		$blAdresse .= "</table><br><br><hr><br>";
 
 		//Block 5: Kontakt
 		$blKontakt = '<h3>Kontakt</h3><table style="border:none">';
@@ -358,51 +353,49 @@
 		//Messengernummer bearbeiten:
 		$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Messenger:</td><td style="border:none"><input type="text" name="txtMsgNr" value="' . $thisuser['messengernumber'] . '"></td></tr>';
 
-		$blKontakt .= "</table>";
+		$blKontakt .= "</table><br><br><hr><br>";
 
 		//Block 6: Sichtbarkeit
-		/* Alte Version mit Dropdown Listen
-		$blPrivacy = '<h3>Sichtbarkeitseinstellungen</h3>Welche Einstellungen sollen Besuchern deines Profils angezeigt werden?<br><br><table>';
-		$blPrivacy .= '<tr><td><select name="vsMail"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],0,1)?'':'selected') . '>Verbergen</option></select> Meine E-Mail Adresse</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsRegDate"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],1,1)?'':'selected') . '>Verbergen</option></select> Datum meiner Registrierung</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsAvatar"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],2,1)?'':'selected') . '>Verbergen</option></select> Mein Profilbild</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsHobbys"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],3,1)?'':'selected') . '>Verbergen</option></select> Meine Hobbys</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsDescription"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],4,1)?'':'selected') . '>Verbergen</option></select> Meine Beschreibung von mir selbst</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsFirstname"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],5,1)?'':'selected') . '>Verbergen</option></select> Meinen Vornamen</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsLastname"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],6,1)?'':'selected') . '>Verbergen</option></select> Meinen Nachnamen</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsGender"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],7,1)?'':'selected') . '>Verbergen</option></select> Mein Geschlecht</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsStreet"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],8,1)?'':'selected') . '>Verbergen</option></select> Meine Straße</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsHousenumber"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],9,1)?'':'selected') . '>Verbergen</option></select> Meine Hausnummer</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsPlzOrt"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],10,1)?'':'selected') . '>Verbergen</option></select> Meinen Wohnort</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsTelNr"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],11,1)?'':'selected') . '>Verbergen</option></select> Meine Telefonnummer</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsMsgNr"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],12,1)?'':'selected') . '>Verbergen</option></select> Meine Messengernummer</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsBirthday"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],13,1)?'':'selected') . '>Verbergen</option></select> Meinen Geburtstag</td></tr>';
-		$blPrivacy .= '<tr><td><select name="vsBirthyear"/><option value="1">Anzeigen</option><option value="0" ' . (substr($thisuser['privacykey'],14,1)?'':'selected') . '>Verbergen</option></select> Mein Geburtsjahr</td></tr>';
-		*/
+		$blPrivacy = '<h3>Sichtbarkeitseinstellungen</h3>Welche Einstellungen sollen Besuchern deines Profils angezeigt werden?<br><br><br><table>';
+		
+		$blPrivacy .= '<tr><th colspan="3" style="border:none;text-align:center"><b>Persönliches</b></th></tr>';
+		$blPrivacy .= '<tr>';
+		$blPrivacy .= '<td><input id="c6" type="checkbox" name="vsFirstname" value="1" '.(substr($thisuser['privacykey'],5,1)?'checked="checked"':'').' ><label for="c6"> Meinen Vornamen</label></td>';
+		$blPrivacy .= '<td><input id="c7" type="checkbox" name="vsLastname" value="1" '.(substr($thisuser['privacykey'],6,1)?'checked="checked"':'').' ><label for="c7"> Meinen Nachnamen</label></td>';
+		$blPrivacy .= '<td><input id="c8" type="checkbox" name="vsGender" value="1" '.(substr($thisuser['privacykey'],7,1)?'checked="checked"':'').' ><label for="c8"> Mein Geschlecht</label></td>';
+		$blPrivacy .= '</tr><tr>';
+		$blPrivacy .= '<td><input id="c14" type="checkbox" name="vsBirthday" value="1" '.(substr($thisuser['privacykey'],13,1)?'checked="checked"':'').' ><label for="c14"> Meinen Geburtstag</label></td>';
+		$blPrivacy .= '<td><input id="c15" type="checkbox" name="vsBirthyear" value="1" '.(substr($thisuser['privacykey'],14,1)?'checked="checked"':'').' ><label for="c15"> Mein Geburtsjahr</label></td>';
+		$blPrivacy .= '<td><input id="c1" type="checkbox" name="vsMail" value="1" '.(substr($thisuser['privacykey'],0,1)?'checked="checked"':'').' ><label for="c1"> Meine E-Mail Adresse</label></td>';
+		$blPrivacy .= '</tr>';
 
-		$blPrivacy = '<h3>Sichtbarkeitseinstellungen</h3>Welche Einstellungen sollen Besuchern deines Profils angezeigt werden?<table>';
-		$blPrivacy .= '<tr><td><input id="c1" type="checkbox" name="vsMail" value="1" '.(substr($thisuser['privacykey'],0,1)?'checked="checked"':'').' ><label for="c1"> Meine E-Mail Adresse</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c2" type="checkbox" name="vsRegDate" value="1" '.(substr($thisuser['privacykey'],1,1)?'checked="checked"':'').' ><label for="c2"> Datum meiner Registrierung</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c3" type="checkbox" name="vsAvatar" value="1" '.(substr($thisuser['privacykey'],2,1)?'checked="checked"':'').' ><label for="c3"> Mein Profilbild</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c4" type="checkbox" name="vsHobbys" value="1" '.(substr($thisuser['privacykey'],3,1)?'checked="checked"':'').' ><label for="c4"> Meine Hobbys</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c5" type="checkbox" name="vsDescription" value="1" '.(substr($thisuser['privacykey'],4,1)?'checked="checked"':'').' ><label for="c5"> Meine Beschreibung von mir selbst</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c6" type="checkbox" name="vsFirstname" value="1" '.(substr($thisuser['privacykey'],5,1)?'checked="checked"':'').' ><label for="c6"> Meinen Vornamen</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c7" type="checkbox" name="vsLastname" value="1" '.(substr($thisuser['privacykey'],6,1)?'checked="checked"':'').' ><label for="c7"> Meinen Nachnamen</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c8" type="checkbox" name="vsGender" value="1" '.(substr($thisuser['privacykey'],7,1)?'checked="checked"':'').' ><label for="c8"> Mein Geschlecht</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c9" type="checkbox" name="vsStreet" value="1" '.(substr($thisuser['privacykey'],8,1)?'checked="checked"':'').' ><label for="c9"> Meine Straße</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c10" type="checkbox" name="vsHousenumber" value="1" '.(substr($thisuser['privacykey'],9,1)?'checked="checked"':'').' ><label for="c10"> Meine Hausnummer</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c11" type="checkbox" name="vsPlzOrt" value="1" '.(substr($thisuser['privacykey'],10,1)?'checked="checked"':'').' ><label for="c11"> Meinen Wohnort</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c12" type="checkbox" name="vsTelNr" value="1" '.(substr($thisuser['privacykey'],11,1)?'checked="checked"':'').' ><label for="c12"> Meine Telefonnummer</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c13" type="checkbox" name="vsMsgNr" value="1" '.(substr($thisuser['privacykey'],12,1)?'checked="checked"':'').' ><label for="c13"> Meine Messengernummer</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c14" type="checkbox" name="vsBirthday" value="1" '.(substr($thisuser['privacykey'],13,1)?'checked="checked"':'').' ><label for="c14"> Meinen Geburtstag</label></td></tr>';
-		$blPrivacy .= '<tr><td><input id="c15" type="checkbox" name="vsBirthyear" value="1" '.(substr($thisuser['privacykey'],14,1)?'checked="checked"':'').' ><label for="c15"> Mein Geburtsjahr</label></td></tr>';
+		$blPrivacy .= '<tr><th colspan="3" style="border:none;text-align:center"><b>Adresse</b></th></tr>';
+		$blPrivacy .= '<tr>';
+		$blPrivacy .= '<td><input id="c9" type="checkbox" name="vsStreet" value="1" '.(substr($thisuser['privacykey'],8,1)?'checked="checked"':'').' ><label for="c9"> Meine Straße</label></td>';
+		$blPrivacy .= '<td><input id="c10" type="checkbox" name="vsHousenumber" value="1" '.(substr($thisuser['privacykey'],9,1)?'checked="checked"':'').' ><label for="c10"> Meine Hausnummer</label></td><';
+		$blPrivacy .= '<td><input id="c11" type="checkbox" name="vsPlzOrt" value="1" '.(substr($thisuser['privacykey'],10,1)?'checked="checked"':'').' ><label for="c11"> Meinen Wohnort</label></td>';
+		$blPrivacy .= '</tr>';
 
+		$blPrivacy .= '<tr><th colspan="3" style="border:none;text-align:center"><b>Über Dich</b></th></tr>';
+		$blPrivacy .= '<tr>';
+		$blPrivacy .= '<td><input id="c3" type="checkbox" name="vsAvatar" value="1" '.(substr($thisuser['privacykey'],2,1)?'checked="checked"':'').' ><label for="c3"> Mein Profilbild</label></td>';
+		$blPrivacy .= '<td><input id="c4" type="checkbox" name="vsHobbys" value="1" '.(substr($thisuser['privacykey'],3,1)?'checked="checked"':'').' ><label for="c4"> Meine Hobbys</label></td>';
+		$blPrivacy .= '<td><input id="c5" type="checkbox" name="vsDescription" value="1" '.(substr($thisuser['privacykey'],4,1)?'checked="checked"':'').' ><label for="c5"> Meine Beschreibung von mir selbst</label></td>';
+		$blPrivacy .= '</tr>';
 
-		$blPrivacy .= '</table>';
+		$blPrivacy .= '<tr><th colspan="3" style="border:none;text-align:center"><b>Über Dich</b></th></tr>';
+		$blPrivacy .= '<tr>';		
+		$blPrivacy .= '<td><input id="c2" type="checkbox" name="vsRegDate" value="1" '.(substr($thisuser['privacykey'],1,1)?'checked="checked"':'').' ><label for="c2"> Datum meiner Registrierung</label></td>';
+		$blPrivacy .= '<td><input id="c12" type="checkbox" name="vsTelNr" value="1" '.(substr($thisuser['privacykey'],11,1)?'checked="checked"':'').' ><label for="c12"> Meine Telefonnummer</label></td>';
+		$blPrivacy .= '<td><input id="c13" type="checkbox" name="vsMsgNr" value="1" '.(substr($thisuser['privacykey'],12,1)?'checked="checked"':'').' ><label for="c13"> Meine Messengernummer</label></td>';
+		$blPrivacy .= '</tr>';
+
+		$blPrivacy .= "</table><br><br><hr><br>";
 
 		$form_bottom = '<p /><p /><input type=submit value="Änderungen speichern"><input type="hidden" name="action" value="save"><br><br><br><br><br></form>';
+
 		// ALEX2: Increased text box size.
-		$form_bottom .= '<form action="" method="post"><input type="password" size="50px" name="save_pw" placeholder="Passwort zur Sicherheit erneut eingeben..."><br><br><input type=submit value="Profil entgültig löschen"></form>';
+		$form_bottom .= '<h3>Profil unwiderruflich löschen</h3><p style="width:50%;margin-left:25%">Hier kannst du dein Nutzerprofil bei TueGutes löschen. Beachte aber, dass wir ein einmal gelöschtes Nutzerprofil nicht mehr wiederherstellen können. Du verlierst damit alle deine Einstellungen, Profilinhalte, Karma und gute Taten. Wenn du dir sicher bist, dass du dein Profil löschen willst, gib dein Passwort zur Sicherheit nochmal ein und klicke auf "PROFIL ENTGÜLTIG LÖSCHEN"</p><form action="" method="post"><input type="password" size="50px" name="save_pw" placeholder="Passwort zur Sicherheit erneut eingeben..."><br><br><input type=submit value="Profil entgültig löschen"></form>';
 
 	} else {
 		//Zeige das Profil ohne Änderungsmöglichkeit an
@@ -454,6 +447,17 @@
 			$tempValue = ($_POST['txtDayOfBirth'] == "") ? 0 : $_POST['txtDayOfBirth'];
 			$thisuser['birthday'] .= $tempValue;
 
+			//Daten überschreiben
+			$thisuser['street'] = $_POST['txtStrasse'];
+			$thisuser['housenumber'] = $_POST['txtHausnummer'];
+			$thisuser['gender'] = $_POST['txtGender'];
+			$thisuser['messengernumber'] = $_POST['txtMsgNr'];
+			$thisuser['telefonnumber'] = $_POST['txtTelNr'];
+			$thisuser['hobbys'] = $_POST['txtHobbys'];
+			$thisuser['description'] = $_POST['txtBeschreibung'];
+			$thisuser['postalcode'] = getPostalPlaceToAddress($thisuser['street'], $thisuser['housenumber'])['retPostal'];
+			$thisuser['place'] = getPostalPlaceToAddress($thisuser['street'], $thisuser['housenumber'])['retPlace'];
+
 			//Speichern des Profilbildes
 			if ($_FILES['neuerAvatar']['name'] != '') {
 				$uploadDir = './img/profiles/'.$thisuser['idUser'].'/';
@@ -491,18 +495,14 @@
 
 				unlink($uploadDir . 'converted.png');
 
-				//Speichern des neuen Avatars im Nutzerprofil
 				$thisuser['avatar'] = $uploadDir.'512x512.png';
-			}
-			$thisuser['street'] = $_POST['txtStrasse'];
-			$thisuser['housenumber'] = $_POST['txtHausnummer'];
-			$thisuser['messengernumber'] = $_POST['txtMsgNr'];
-			$thisuser['telefonnumber'] = $_POST['txtTelNr'];
-			$thisuser['hobbys'] = $_POST['txtHobbys'];
-			$thisuser['description'] = $_POST['txtBeschreibung'];
-			$thisuser['postalcode'] = getPostalPlaceToAddress($thisuser['street'], $thisuser['housenumber'])['retPostal'];
-			$thisuser['place'] = getPostalPlaceToAddress($thisuser['street'], $thisuser['housenumber'])['retPlace'];
 
+			} else if (@$_POST['delAvatar']=="1") {
+				//Avatar durch Standard ersetzen falls das Bild gelöscht UND kein neues hochgeladen wurde
+				$thisuser['avatar'] = $isset($_POST['vsGender'])?($thisuser['gender']=='m'?'./img/profiles/standard_male.png':$thisuser['gender']=='w'?'./img/profiles/standard_female.png':'./img/profiles/standard_other.png'):'./img/profiles/standard_other.png';
+			}
+
+			//Überschreiben der Sichtbarkeitseinstellungen
 			$thisuser['privacykey'] = isset($_POST['vsMail'])?'1':'0';
 			$thisuser['privacykey'] .= isset($_POST['vsRegDate'])?'1':'0';
 			$thisuser['privacykey'] .= isset($_POST['vsAvatar'])?'1':'0';
@@ -518,9 +518,6 @@
 			$thisuser['privacykey'] .= isset($_POST['vsMsgNr'])?'1':'0';
 			$thisuser['privacykey'] .= isset($_POST['vsBirthday'])?'1':'0';
 			$thisuser['privacykey'] .= isset($_POST['vsBirthyear'])?'1':'0';
-
-
-		//	$thisuser['privacykey'] = $_POST['vsMail'] . $_POST['vsRegDate'] .$_POST['vsAvatar'] . $_POST['vsHobbys'] . $_POST['vsDescription'] . $_POST['vsFirstname'] . $_POST['vsLastname'] . 	$_POST['vsGender'] . 		$_POST['vsStreet'] . 	$_POST['vsHousenumber'] . 	$_POST['vsPlzOrt'] . 	$_POST['vsTelNr'] . 	$_POST['vsMsgNr'] . 	$_POST['vsBirthday'] . 		$_POST['vsBirthyear'];
 
 			//Änderungen speichern
 			DBFunctions::db_update_user($thisuser);
@@ -550,7 +547,7 @@
 			}
 
 			//Geschlecht anzeigen:
-			if ($shGeschlecht) $blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none">' . (($thisuser['gender']==='w')?'weiblich':'männlich') . '</td></tr>';
+			if ($shGeschlecht) $blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none">' . (($thisuser['gender']==='w')?'weiblich':(($thisuser['gender']==='m')?'männlich':'anderes')) . '</td></tr>';
 
 			//Geburtstag anzeigen:
 			if ($shGeburtstag || $shJahrgang) {
@@ -563,7 +560,7 @@
 			//RegDate anzeigen
 			if ($shRegDate) $blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Tut Gutes seit:</td><td style="border:none">' . substr($thisuser['regDate'],8,2) . '. ' . substr($thisuser['regDate'],5,2) . '. ' . substr($thisuser['regDate'],0,4) . '</td></tr>';
 
-			$blPersoenlich .= "</table>";
+			$blPersoenlich .= "</table><br><br><hr><br>";
 		}
 
 		//Block 2: Über User
@@ -577,12 +574,12 @@
 			//Freitext anzeigen:
 			if ($shFreitext) $blUeber .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Über mich:</td><td style="border:none">' . $thisuser['description'] . '</td></tr>';
 
-			$blUeber .= "</table>";
+			$blUeber .= "</table><br><br><hr><br>";
 		}
 
 		//Block 3: Taten
 		$blTaten = '<h3>Taten von ' . $thisuser['username'] . '</h3><table style="border:none">';
-		$blTaten .= 'Karma: ' . $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')';
+		$blTaten .= 'Karma: ' . $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')<br>';
 
 
 		//Die letzten Taten des Nutzers
@@ -605,7 +602,7 @@
 				}
 			$blTaten .= ((($thisuser['username']==$_USER->getUsername()) && !(@$_GET['view']!='public'))?'<br><a href="./deeds?user=' . $thisuser['username'] . '">Alle deine guten Taten</a>':'<br><a href="./deeds?user=' . $thisuser['username'] . '">Alle guten Taten des Nutzers</a>');
 		}
-
+		$blTaten .= "<br><br><hr><br>";
 
 		//Block 4: Adresse
 		$blAdresse = "";
@@ -628,7 +625,7 @@
 			//PLZ/Ort anzeigen:
 			if ($shPlzOrt) $blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">PLZ/Ort:</td><td style="border:none">' . $thisuser['postalcode'] . ' / ' . $thisuser['place'] . '</td></tr>';
 
-			$blAdresse .= '</table>';
+			$blAdresse .= "</table><br><br><hr><br>";
 		}
 		$showMap = ($shPlzOrt && $shStrasse && $shHausnummer);
 
@@ -653,7 +650,7 @@
 
 		$blPrivacy = '';
 
-		$form_bottom = (((strtoupper($_USER->getUsername())===strtoupper($thisuser['username'])) && (!isset($_GET['view']) || $_GET['view'] != "public") )?'<p /><p /><input type="submit" value="Profil bearbeiten"><input type="hidden" name="action" value="edit"></form>':'</form>');
+		$form_bottom = (((strtoupper($_USER->getUsername())===strtoupper($thisuser['username'])) && (!isset($_GET['view']) || @$_GET['view'] != "public") )?'<input type="submit" value="Profil bearbeiten"><input type="hidden" name="action" value="edit"></form>':'</form>');
 	}
 
 ?>
@@ -669,7 +666,10 @@
 <h2 id="profileheader"><?php echo $headline; ?></h2>
 
 <!--Ggf. ausgeben des Links zur öffentlichen Ansicht-->
-<?php echo $link; ?>
+
+<div class="profile">
+
+<?php if (!(@$_POST['action'] == 'edit')) echo $link; ?>
 
 <!--Beginn des Formulars zum Ändern der Profileinstellungen:-->
 <?php echo $form_head; ?>
@@ -677,32 +677,24 @@
 <!--Ausgabe der einzelnen Blöcke-->
 <?php
 	echo $blAvatar;
-	echo '<p />';
 	echo '<div align="center">' . $blPersoenlich . '</div>';
-	echo '<p />';
 	echo '<div align="center">' . $blUeber . '</div>';
-	echo '<p />';
 	echo '<div align="center">' . $blTaten . '</div>';
-	echo '<p />';
 	echo '<div align="center">' . $blAdresse . '</div>';
-	echo '<p />';
 	echo '<div align="center">' . $blKontakt . '</div>';
 
 	if ($showMap) {
-		echo '<center><div id="mapid"></div>';
 		$map = new Map();
+		$map->createSpace('30%','50%','40%');
 		$map->createMap($thisuser['postalcode'] . ',' . $thisuser['street'] . ',' . $thisuser['housenumber']);
-		echo '</center>';
+		echo '<br><br><hr><br><br>';
 	}
 
-	echo '<p />';
 	echo '<div align="center">' . $blPrivacy . '</div>';
-	//echo '<p />';
-	//echo '<div align="center">' . $blPrivacy . '</div>';
-?>
+	
+	echo $form_bottom;
 
-<!--Ende des Formulars zum Ändern der Profileinstellungen:-->
-<?php
-echo $form_bottom; ?>
+?>
+</div>
 
 <?php require "./includes/_bottom.php"; ?>
