@@ -161,7 +161,7 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 	}else if(!isset($_GET['endtime'] )){
 		//|| !DateHandler::isValid($_GET['endtime'])
 		$stop=7;
-	}else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode,$place)!=false)){
+	}else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode,$place)==false)){
 		$stop=8;
 	}
 	}	
