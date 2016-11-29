@@ -2248,15 +2248,15 @@ class DBFunctions
 			`Deeds`.`organization`,
 			`Deeds`.`countHelper`,
 			`Deeds`.`status`,
-			`Deeds`.`starttime`
-			`Deeds`.`endtime`
+			`Deeds`.`starttime`,
+			`Deeds`.`endtime`,
 			`Trust`.`idTrust`,
 			`Trust`.`trustleveldescription`,
 			`DeedTexts`.`description`,
 			`Postalcode`.`postalcode`,
-			`Postalcode`.`place `
+			`Postalcode`.`place`
 		FROM `User` JOIN `Deeds`
-        ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
+        ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
 		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
@@ -2293,15 +2293,15 @@ class DBFunctions
 			`Deeds`.`organization`,
 			`Deeds`.`countHelper`,
 			`Deeds`.`status`,
-			`Deeds`.`starttime`
-			`Deeds`.`endtime`
+			`Deeds`.`starttime`,
+			`Deeds`.`endtime`,
 			`Trust`.`idTrust`,
 			`Trust`.`trustleveldescription`,
 			`DeedTexts`.`description`,
 			`Postalcode`.`postalcode`,
-			`Postalcode`.`place `
+			`Postalcode`.`place`
 		FROM `User` JOIN `Deeds`
-        ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
+        ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
 		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
@@ -2329,7 +2329,7 @@ class DBFunctions
 		$db = self::db_connect();
 		$sort_bedingung = self::set_sortBedingung($sort);
 		$sql = " SELECT DISTINCT
- 			`Deeds`.`idGuteTat`,
+			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,
 			`Deeds`.`category`,
 			`Deeds`.`street`,
@@ -2338,15 +2338,15 @@ class DBFunctions
 			`Deeds`.`organization`,
 			`Deeds`.`countHelper`,
 			`Deeds`.`status`,
-			`Deeds`.`starttime`
-			`Deeds`.`endtime`
+			`Deeds`.`starttime`,
+			`Deeds`.`endtime`,
 			`Trust`.`idTrust`,
 			`Trust`.`trustleveldescription`,
 			`DeedTexts`.`description`,
 			`Postalcode`.`postalcode`,
-			`Postalcode`.`place `
- 		FROM `User` JOIN `Deeds`
-        ON (`User`.`idUser` = `Deeds`.contactPerson) JOIN `Postalcode`
+			`Postalcode`.`place`
+		FROM `User` JOIN `Deeds`
+        ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
 		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
