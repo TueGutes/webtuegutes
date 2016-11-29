@@ -276,9 +276,9 @@ if($Seite==5&&($button!='zurück')){
 		$admins = DBFunctions::db_getAllAdministrators();
 
 		//Festlegen des Mail-Inhalts
-		$mailSubject = 'Gute Tat ' . "'" . $_POST['name'] . "'" . ' wurde erstellt!';
+		$mailSubject = 'Gute Tat ' . "'" . $_GET['name'] . "'" . ' wurde erstellt!';
 		$mailContent1 = '<div style="margin-left:10%;margin-right:10%;background-color:#757575"><img src="img/wLogo.png" alt="TueGutes" title="TueGutes" style="width:25%"/></div><h2>Hallo!';
-		$mailContent2 = '</h2><br>' . $_USER->getUsername() . ' hat gerade eine neue gute Tat erstellt. <br>Um die gute Tat zu bestätigen oder abzulehnen, klicke auf den folgenden Link: <br><a href="' . $HOST . '/deeds_details?id=' . DBFunctions::db_getIDOfGuteTatByName($_POST['name']) . '">Zur guten Tat</a>';
+		$mailContent2 = '</h2><br>' . $_USER->getUsername() . ' hat gerade eine neue gute Tat erstellt. <br>Um die gute Tat zu bestätigen oder abzulehnen, klicke auf den folgenden Link: <br><a href="' . $HOST . '/deeds_details?id=' . DBFunctions::db_getIDOfGuteTatByName($_GET['name']) . '">Zur guten Tat</a>';
 
 		//Versenden der Emails an Moderatoren
 		for ($i = 0; $i < sizeof($mods); $i++) {
