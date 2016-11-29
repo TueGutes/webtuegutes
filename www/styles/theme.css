@@ -781,6 +781,32 @@ red
 }
 /*====/deeds_create====*/
 
+/*====search====*/
+.keyword_text
+{
+	font-size: 20px
+}
+.resultSpan
+{
+	margin-right: 50%;
+	font-size: large;
+}
+.pageSelect
+{
+	margin-left: 30px;
+}
+.pageInfo
+{
+	margin-left: 70%;
+	font-size: 15px;
+}
+.setPageAnchor
+{
+	margin-left: 30px;
+	font-size: 20px
+}
+/*====/search====*/
+
 
 
 

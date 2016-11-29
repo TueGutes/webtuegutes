@@ -17,7 +17,7 @@ date_default_timezone_set("Europe/Berlin");
 
 
 <form action="" method="get" id="form">
-    <span style="font-size:20px" name="keyword_text">
+    <span class="keyword_text" name="keyword_text">
         <?php if ($_GET['selector'] == 'zeit')
             {echo('Zeitpunkt:');}
             else{echo('Stichwort:');}?>
@@ -197,7 +197,7 @@ if ($_GET['stichwort']) {
 
 // ------------------ show results in Deeds_list form  -----------------
 
-    echo "<br><br><br><br><span style='margin-right:50%;font-size: large'>Suchergebnis:</span>";
+    echo "<br><br><br><br><span class='resultSpan'>Suchergebnis:</span>";
     if ($num == 0) {
         echo "<br><br><hr><br><br><br><br>No Result";
     } else {
@@ -244,7 +244,7 @@ if ($_GET['stichwort']) {
         echo setPageUrl(1, 'first');
         echo setPageUrl($page - 1, 'previous'); ?>
 
-        <select id="page_selector" style="margin-left: 30px;" onchange="goto()">
+        <select id="page_selector" class="pageSelect" onchange="goto()">
             <option></option>
         </select>
 
@@ -273,7 +273,7 @@ if ($_GET['stichwort']) {
         <?php echo setPageUrl($page + 1, 'next');
         echo setPageUrl($maxpage, 'last');
         echo '<br>';
-        echo '<span style="margin-left:70%;font-size: 15px ">current:' . $page . ' of ' . $maxpage . '</span>';
+        echo '<span class="pageInfo">current:' . $page . ' of ' . $maxpage . '</span>';
 //        db_close($db);
 //$js_selector = '<script type="text/javascript">';
 //$js_selector .= 'var selector= document.getElementsByName("selector");';
@@ -293,7 +293,7 @@ if ($_GET['stichwort']) {
 function setPageUrl($page, $name)
 {
     $str = "<a href='search.php?page=".$page.'&stichwort='.$_GET['stichwort'].'&selector='.$_GET['selector'].'&sort_selector='.$_GET['sort_selector'].
-        "' style='margin-left:30px;font-size:20px'>".$name.'</a>';
+        "' class='setPageAnchor'>".$name.'</a>';
     return $str;
 }
 ?>
