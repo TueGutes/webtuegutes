@@ -560,7 +560,7 @@
 			//RegDate anzeigen
 			if ($shRegDate) $blPersoenlich .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Tut Gutes seit:</td><td style="border:none">' . substr($thisuser['regDate'],8,2) . '. ' . substr($thisuser['regDate'],5,2) . '. ' . substr($thisuser['regDate'],0,4) . '</td></tr>';
 
-			$blPersoenlich .= "</table>";
+			$blPersoenlich .= "</table><br><br><hr><br>";
 		}
 
 		//Block 2: Über User
@@ -574,12 +574,12 @@
 			//Freitext anzeigen:
 			if ($shFreitext) $blUeber .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Über mich:</td><td style="border:none">' . $thisuser['description'] . '</td></tr>';
 
-			$blUeber .= "</table>";
+			$blUeber .= "</table><br><br><hr><br>";
 		}
 
 		//Block 3: Taten
 		$blTaten = '<h3>Taten von ' . $thisuser['username'] . '</h3><table style="border:none">';
-		$blTaten .= 'Karma: ' . $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')';
+		$blTaten .= 'Karma: ' . $thisuser['points'] . ' (' . $thisuser['trustleveldescription'] . ')<br>';
 
 
 		//Die letzten Taten des Nutzers
@@ -602,7 +602,7 @@
 				}
 			$blTaten .= ((($thisuser['username']==$_USER->getUsername()) && !(@$_GET['view']!='public'))?'<br><a href="./deeds?user=' . $thisuser['username'] . '">Alle deine guten Taten</a>':'<br><a href="./deeds?user=' . $thisuser['username'] . '">Alle guten Taten des Nutzers</a>');
 		}
-
+		$blTaten .= "<br><br><hr><br>";
 
 		//Block 4: Adresse
 		$blAdresse = "";
@@ -625,7 +625,7 @@
 			//PLZ/Ort anzeigen:
 			if ($shPlzOrt) $blAdresse .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">PLZ/Ort:</td><td style="border:none">' . $thisuser['postalcode'] . ' / ' . $thisuser['place'] . '</td></tr>';
 
-			$blAdresse .= '</table>';
+			$blAdresse .= "</table><br><br><hr><br>";
 		}
 		$showMap = ($shPlzOrt && $shStrasse && $shHausnummer);
 
@@ -650,7 +650,7 @@
 
 		$blPrivacy = '';
 
-		$form_bottom = (((strtoupper($_USER->getUsername())===strtoupper($thisuser['username'])) && (!isset($_GET['view']) || $_GET['view'] != "public") )?'<p /><p /><input type="submit" value="Profil bearbeiten"><input type="hidden" name="action" value="edit"></form>':'</form>');
+		$form_bottom = (((strtoupper($_USER->getUsername())===strtoupper($thisuser['username'])) && (!isset($_GET['view']) || @$_GET['view'] != "public") )?'<input type="submit" value="Profil bearbeiten"><input type="hidden" name="action" value="edit"></form>':'</form>');
 	}
 
 ?>
@@ -681,20 +681,16 @@
 	echo '<div align="center">' . $blKontakt . '</div>';
 
 	if ($showMap) {
-		echo '<center><div id="mapid"></div>';
 		$map = new Map();
+		$map->createSpace('30%','50%','40%');
 		$map->createMap($thisuser['postalcode'] . ',' . $thisuser['street'] . ',' . $thisuser['housenumber']);
-		echo '</center>';
+		echo '<br><br><hr><br><br>';
 	}
 
-	echo '<p />';
 	echo '<div align="center">' . $blPrivacy . '</div>';
-	//echo '<p />';
-	//echo '<div align="center">' . $blPrivacy . '</div>';
-?>
+	
+	echo $form_bottom;
 
-<!--Ende des Formulars zum Ändern der Profileinstellungen:-->
-<?php
-echo $form_bottom; ?>
+?>
 
 <?php require "./includes/_bottom.php"; ?>
