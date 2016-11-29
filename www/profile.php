@@ -521,6 +521,8 @@
 
 			//Änderungen speichern
 			DBFunctions::db_update_user($thisuser);
+			$_USER->set('privacykey', $thisuser['privacykey']);
+			$_USER->set('gender', $thisuser['gender']);
 			header("Refresh:0");
 		}
 
