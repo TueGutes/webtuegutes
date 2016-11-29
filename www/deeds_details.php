@@ -131,11 +131,9 @@ if (isset($_POST['allow'])) {
 	echo '<div align="center">' .$blMap;
 
 	if ($showMap) {
-			echo '<div id="mapid">';
 			$map = new Map();
-			$map->createSpace('0%','500px','80%');
+			$map->createSpace('0%','350px','350px');
 			$map->createMap($tat['postalcode'] . ',' . $tat['street'] . ',' . $tat['housenumber']);
-			echo '</div>';
 		}
 	else{
 		echo '<div align="center" style="font-size:200%;">'.'Adresse wurde gar nicht oder <br> nur unvollständig angegeben! ';
@@ -194,13 +192,6 @@ if (isset($_POST['allow'])) {
 
 
 ?>
-
-<style>
-	#mapid {
-		height:350px;
-		width:350px;
-	}
-</style>
 
 
 <?php
