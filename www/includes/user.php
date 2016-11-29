@@ -55,6 +55,15 @@ class User
 	{
 		return $this->loggedIn() ? $_SESSION['lastname'] : false;
 	}
+	function get($key)
+	{
+		return $this->loggedIn() ? $_SESSION[$key] : false;
+	}
+	function set($key, $value)
+	{
+		if($this->loggedIn())
+			$_SESSION[$key] = $value;
+	}
 	function sendEmail($subject, $message)
 	{
 		if($this->loggedIn())
@@ -71,7 +80,20 @@ class User
 		$path = "img/profiles/" . $this->getID() . "/" . $size . "x" . $size . ".png";
 		if($this->loggedIn() && file_exists($path))
 			return $path;
-		return "img/profiles/profile.png";
+		
+		$addition = 'other';
+		$gender = $this->get('gender');
+		if($gender !== false && substr($this->get('privacykey'), 7, 1) === "1")
+			switch($gender)
+			{
+				case 'm':
+					$addition = 'male';
+					break;
+				case 'w':
+					$addition = 'female';
+					break;
+			}
+		return "img/profiles/standard_" . $addition . ".png";
 	}
 }	
 ?>

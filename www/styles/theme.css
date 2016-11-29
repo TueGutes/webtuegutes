@@ -765,11 +765,11 @@ red
 {
 	width: 100%;
 }
-.deeds_create select[name=category],
-.deeds_create input[name=countHelper]
+.deeds_create select[name=category]
 {
 	width: 40%;
 }
+.deeds_create input[name=countHelper],
 .deeds_create select[name=tat_verantwortungslevel]
 {
 	width: 20%;
