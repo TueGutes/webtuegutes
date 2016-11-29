@@ -65,5 +65,16 @@ class User
 	{
 		header('Location: ' . $to);
 	}
+	
+	function getProfileImagePath($size = 512)
+	{
+		$path = "img/profiles/" . $this->getID() . "/" . $size . "x" . $size . ".png";
+		if($this->loggedIn() && file_exists($path))
+			return $path;
+		return "img/profiles/profile.png";
+	}
 }	
 ?>
+
+
+

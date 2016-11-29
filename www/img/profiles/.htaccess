@@ -1,0 +1,5 @@
+# Author
+# Henrik Huckauf
+RewriteEngine On
+
+ErrorDocument 404 /img/profiles/profile.png

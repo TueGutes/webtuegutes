@@ -15,23 +15,70 @@ include './includes/db_connector.php';
 ?>
 
 <h2><?php echo $wlang['welcome']; ?></h2>
+<?php
+	$messages = array( // später aus Datenbank
+		'TueGutes: Soziale Hilfe aus der Nachbarschaft.',
+		'TueGutes: Das soziale Netzwerk für Gutes.',
+		'Verbessere deine Stadt und TueGutes.',
+		'Hier wird dir geholfen: TueGutes.',
+		'TueGutes: Wir verbinden Menschen.',
+		'Deine Stadt, deine Taten!',
+		'Mit jeder Tat ein Schritt zum Glück.',
+		'You are Hannover!',
+		'Make Hannover great again!'
+	);
+	$moveCount = mt_rand(0, sizeof($messages)-1);
+	for($i = 0; $i < $moveCount; $i++)
+		array_push($messages, array_shift($messages));
+	
+	$hideInlineCSS = ' class="hide"';
+	echo '<div id="msg">';
+	for($i = 0; $i < sizeof($messages); $i++)
+		echo '<h3' . ($i != 0 ? $hideInlineCSS : '') . '><div>' . $messages[$i] . '</div></h3>';
+	echo '</div>';
+	
+	echo "<script>
+		var domEl = 'h3';
+		$('#msg ' + domEl + ':gt(0)').hide(); // .not(':eq(randomNumber)')
+		setInterval(function() {
+			$('#msg ' + domEl + ':first-child').fadeOut(1000).next(domEl).fadeIn(1000).end().appendTo('#msg');
+		}, 4800);
+	</script>";
+?>
 <br>
 
 <?php
 if(!$_USER->loggedIn())
 	echo "
-		<form action='./login' method='post'>
-			<input type='text' value='' name='username' placeholder='" . $wlang['login_placeholder_username'] . "' required />
+		<div class='module transparent'>
 			<br><br>
-			<input type='password' name='password' value='' placeholder='" . $wlang['login_placeholder_password'] . "' required />
+			<form action='./login' method='post'>
+				<input type='text' value='' name='username' placeholder='" . $wlang['login_placeholder_username'] . "' required autofocus />
+				<br><br>
+				<input type='password' name='password' value='' placeholder='" . $wlang['login_placeholder_password'] . "' required />
+				<br><br>
+				<input type='submit' value='" . $wlang['login_button_submit'] . "' />
+			</form>
 			<br><br>
-			<input type='submit' value='" . $wlang['login_button_submit'] . "' />
-		</form>
-		<br><br>
-		<a href='./PasswortUpdate'>Ich habe mein Passwort vergessen!</a>
-		<br><br><br><br>
-		Ich bin noch nicht registriert:<br>
-		<a href='./registration'>Zur Registrierung</a>
+			<a href='./PasswortUpdate'>Ich habe mein Passwort vergessen!</a>
+			<br><br>
+			Ich bin noch nicht registriert:<br>
+			<a href='./registration'>Zur Registrierung</a>
+		</div>
+		<div class='module'>
+			<br>
+			Willkommen auf der Plattform für gute Taten im Raum Hannover.<br>
+			<br>
+			Hier kannst Du nach Deiner Anmeldung eine Liste von ausgeschriebenen guten Taten in Deiner Stadt einsehen 
+			und Dich mit anderen guten Menschen darum bewerben, sie auszuführen.<br>
+			<br>
+			Dabei geht es nicht um Spenden, sondern um direkte Hilfe von Mensch zu Mensch oder Mensch zu Umwelt.
+			<br>
+			Viel Spaß!
+			<br><br><br><br>
+			<a href='./about'>Weitere Informationen</a>
+			<br><br>
+		</div>
 	";
 else
 {
@@ -94,9 +141,7 @@ else
 			</form>
 		</div>
 		<br><br><br><br>
-		<br><br><br><br>
 		<a href='./profile'><input type='button' value='Mein Profil' /></a><br>
-		<br><br><br><br>
 		<br><br><br><br>
 		<a href='./contact'><input type='button' value='Kontakt zu uns' /></a>
 	";

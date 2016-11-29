@@ -39,15 +39,32 @@ $activeTab = 'class="active"';
 					<h1><a href="./"><img src="./img/wLogo.png<?php /*https://www.google.de/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png*/ ?>" /><!--TueGutes--></a></h1>
 				</div>
 				<div id="profileSection">
-				<?php
-				if($_USER->loggedIn())
-					echo '<a href="./profile">' . $_USER->getUsername() . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./logout">' . 'Logout' . '</a>';
-				else
-					echo '<a href="./registration">' . $wlang['register_head'] . '</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a href="./login">' . $wlang['login_head'] . '</a>';
-				?>
+					<?php
+					$profileMenuLinks = '
+						<a href="./profile">Mein Profil</a>
+						<a href="./deeds_create">Tat erstellen</a>
+						<a href="./logout">Logout</a>
+					';
+					if($_USER->loggedIn())
+						echo '<div class="profile"><img src="' . $_USER->getProfileImagePath(64) . '" class="block" /><br>' . $_USER->getUsername() . '</div>
+						<div class="profileContent">
+							' . $profileMenuLinks . '
+						</div>';
+					else
+						echo '<div class="profile guest"><a href="./login">' . $wlang['login_head'] . '</a><br><a href="./registration">' . $wlang['register_head'] . '</a></div>';
+					?>
 				</div>
 				<div id="mobileSection">
-					<div class="mobile"><?php echo !$_USER->loggedIn() ? '<a href="./login"><i class="fa fa-sign-in"></i></a>' : '<a href="./logout"><i class="fa fa-sign-out"></i></a>'; ?><i class="fa fa-bars mobileMenuButton"></i><i class="fa fa-times mobileMenuButton"></i></div>
+					<div class="mobile">
+						<?php
+						echo !$_USER->loggedIn() ? '<a href="./login"><i class="fa fa-sign-in"></i></a>' : '
+						<i class="profile"><img src="' . $_USER->getProfileImagePath(64) . '" class="block" /></i>
+						<div class="mobileProfileContent closed">
+							' . $profileMenuLinks . '
+						</div>';
+						?>
+						<i class="fa fa-bars mobileMenuButton"></i><i class="fa fa-times mobileMenuButton"></i>
+					</div>
 					<div class="mobileMenu">
 						<nav class="navigation">
 							<ul>
