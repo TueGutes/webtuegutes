@@ -5,6 +5,29 @@
 </form>
 
 <?php
+	//Zum Ausblenden von Features, die Safari nicht kann (oder eben ggf. andere Browser)
+	//Clever wäre, das hier in die DEF auszulagern!
+	//Und ja, ich weiß dass man den HTTP_USER_AGENT manipulieren kann - dann ist man aber selber Schuld
+
+	if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== FALSE)
+	   $browser = 'Internet explorer';
+	 elseif(strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') !== FALSE) //IE 11
+	    $browser = 'Internet explorer';
+	 elseif(strpos($_SERVER['HTTP_USER_AGENT'], 'Firefox') !== FALSE)
+	   $browser = 'Mozilla Firefox';
+	 elseif(strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== FALSE)
+	   $browser = 'Google Chrome';
+	 elseif(strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mini') !== FALSE)
+	   $browser = "Opera Mini";
+	 elseif(strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== FALSE)
+	   $browser = "Opera";
+	 elseif(strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') !== FALSE)
+	   $browser = "Safari";
+	 else
+	   echo 'Something else';
+?>
+
+<?php
 /*
 * @author: Nick Nolting, Alexander Gauggel
 */
@@ -321,7 +344,7 @@
 
 		// ALEX: Strassenliste einfügen.
 		$blAdresse .= '<input type="search" list="lstStreets" name="txtStrasse" onchange="updatePLZPlace();" placeholder="Strasse" value="' . $thisuser['street'] . '" style="width:95%;height:100%;-webkit-appearance:none">';
-		$blAdresse .= $streetList;
+		if ($browser != "Safari") $blAdresse .= $streetList;
 		$blAdresse .= '</td>';
 
 		// ALEX: Hausnummer einfügen.
