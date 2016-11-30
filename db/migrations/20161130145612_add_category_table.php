@@ -27,7 +27,7 @@ class AddCategoryTable extends AbstractMigration
      */
     public function change()
     {
-    	$category = $this->table('table');
+    	$category = $this->table('Categories');
     	$category->addColumn('categorytext','string',array('limit' => 128))
     			 ->create();
     }
