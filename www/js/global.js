@@ -77,6 +77,10 @@ $(document).ready(function()
 				$('header').removeClass('smaller');
 		}
 	});
+	window.addEventListener('resize', function(e)
+	{
+		checkForMobileSize();
+	});
 }); 
 
 function checkForMobileSize()
