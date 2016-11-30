@@ -283,7 +283,7 @@
 		//Block 0: Avatar
 		$blAvatar = 'Hier kannst du ein neues Profilbild hochladen: <br><br>';
 		$blAvatar .= '<input type="file" name="neuerAvatar" accept="image/*"><br><br>';
-		$blAvatar .= '<input type="checkbox" name="delAvatar" value="1"><label> Meinen Avatar löschen</label><br>';
+		$blAvatar .= '<input id="delAvatarCheckbox" type="checkbox" name="delAvatar" value="1"><label for="delAvatarCheckbox"> Meinen Avatar löschen</label><br>';
 		$blAvatar .= "<br><br><hr><br>";		
 
 		$blPersoenlich = "<br>";
@@ -296,7 +296,7 @@
 		$blPersoenlich .= '</td></tr>';
 
 		//Geschlecht bearbeiten:
-		$blPersoenlich .= '<tr><td colspan="1" style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none"><select style="-webkit-appearance:none;width:100%" name="txtGender" size=1><option value="0"' . (($thisuser['gender']!='w' && $thisuser['gender']!='m' && $thisuser['gender']!='a')?' select':'') . '>keine Angabe</option><option value="w"' . (($thisuser['gender']==='w')?' selected':'') . '>weiblich</option><option value="m"' . (($thisuser['gender']==='m')?' selected':'') . '>männlich</option><option value="a"' . (($thisuser['gender']==='a')?' selected':'') . '>anderes</option></td></tr>';
+		$blPersoenlich .= '<tr><td colspan="1" style="border:none;padding-right:10px;padding-bottom:15px">Geschlecht:</td><td style="border:none"><select style="-webkit-appearance:none;width:100%" name="txtGender" size=1><option value="0"' . (($thisuser['gender']!='w' && $thisuser['gender']!='m' && $thisuser['gender']!='a')?' select':'') . '>keine Angabe</option><option value="w"' . (($thisuser['gender']==='w')?' selected':'') . '>weiblich</option><option value="m"' . (($thisuser['gender']==='m')?' selected':'') . '>männlich</option><option value="a"' . (($thisuser['gender']==='a')?' selected':'') . '>anderes</option></select></td></tr>';
 
 		// ALEX2: Leaves text boxes empty if value is 0. Added $tempValue.
 		$tempValue = getDayOfBirth($thisuser['birthday']);
@@ -371,7 +371,7 @@
 		$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Email:</td><td style="border:none"><a href="mailto:' . $thisuser['email'] . '">' . $thisuser['email'] . '</a></td></tr>';
 
 		//Telefonnummer bearbeiten:
-		$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Telefon:</td><td style="border:none"> <input type="text" name="txtTelNr" placeholder="z.B. 051112345678" value="' . $thisuser['telefonnumber'] . '"></td></tr>';
+		$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Telefon:</td><td style="border:none"><input type="text" name="txtTelNr" placeholder="z.B. 051112345678" value="' . $thisuser['telefonnumber'] . '"></td></tr>';
 
 		//Messengernummer bearbeiten:
 		$blKontakt .= '<tr><td style="border:none;padding-right:10px;padding-bottom:15px">Messenger:</td><td style="border:none"><input type="text" name="txtMsgNr" value="' . $thisuser['messengernumber'] . '"></td></tr>';
@@ -395,7 +395,7 @@
 		$blPrivacy .= '<tr><th colspan="3" style="border:none;text-align:center"><b>Adresse</b></th></tr>';
 		$blPrivacy .= '<tr>';
 		$blPrivacy .= '<td><input id="c9" type="checkbox" name="vsStreet" value="1" '.(substr($thisuser['privacykey'],8,1)?'checked="checked"':'').' ><label for="c9"> Meine Straße</label></td>';
-		$blPrivacy .= '<td><input id="c10" type="checkbox" name="vsHousenumber" value="1" '.(substr($thisuser['privacykey'],9,1)?'checked="checked"':'').' ><label for="c10"> Meine Hausnummer</label></td><';
+		$blPrivacy .= '<td><input id="c10" type="checkbox" name="vsHousenumber" value="1" '.(substr($thisuser['privacykey'],9,1)?'checked="checked"':'').' ><label for="c10"> Meine Hausnummer</label></td>';
 		$blPrivacy .= '<td><input id="c11" type="checkbox" name="vsPlzOrt" value="1" '.(substr($thisuser['privacykey'],10,1)?'checked="checked"':'').' ><label for="c11"> Meinen Wohnort</label></td>';
 		$blPrivacy .= '</tr>';
 
