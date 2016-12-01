@@ -576,7 +576,7 @@ class DBFunctions
 	* * Deeds.name,
 	* * User.username,
 	* * UserTexts.avatar,
-	* * Deeds.category,
+	* * Deeds.category (ID einer Kategorie),
 	* * Deeds.street,
 	* * Deeds.housenumber,
 	* * Deeds.idPostal,
@@ -591,6 +591,7 @@ class DBFunctions
 	* * DeedTexts.pictures,
 	* * Postalcode.postalcode,
 	* * Postalcode.place
+	* * Categories.categoryname
 	*
 	*@param int $idGuteTat Id einer Guten Tat
 	*
@@ -616,7 +617,8 @@ class DBFunctions
 			DeedTexts.description,
 			DeedTexts.pictures,
 			Postalcode.postalcode,
-			Postalcode.place
+			Postalcode.place,
+			Categories.categoryname
 		FROM Deeds
 			Join User
 				On (Deeds.contactPerson = User.idUser)
@@ -628,6 +630,8 @@ class DBFunctions
 				On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
 			Join Postalcode
 				On (Deeds.idPostal = Postalcode.idPostal)
+			Join Categories
+				On (Deeds.category = Categories.id)
 		WHERE idGuteTat = ?';
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$idGuteTat);
@@ -698,33 +702,36 @@ class DBFunctions
 	*@param string $pictures Bilder zu einer guten Tat
 	*/
 	public function db_createGuteTat($name,$user_id,$category,$street,$housenumber,$pid,$starttime,$endtime,$organization,$countHelper,$idTrust,$description,$pictures){
-		$db = self::db_connect();
-		//Datensatz in Deeds einfügen
-		//$plz = db_getIdPostalbyPostalcodePlace($postalcode,$place);
-		$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,idPostal,starttime,endtime,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('sisssisssii', $name, $user_id, $category, $street,
-			$housenumber, $pid, $starttime,$endtime, $organization, $countHelper,
-			$idTrust);
-		$stmt->execute();
+		if(self::db_doesCategoryNameExist($category)){
+			$catid = self::db_getCategoryidbyCategoryText($category);
+			$db = self::db_connect();
+			//Datensatz in Deeds einfügen
+			//$plz = db_getIdPostalbyPostalcodePlace($postalcode,$place);
+			$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,idPostal,starttime,endtime,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('siississsii', $name, $user_id, $catid, $street,
+				$housenumber, $pid, $starttime,$endtime, $organization, $countHelper,
+				$idTrust);
+			$stmt->execute();
 
-		//Herausfinden der größten ID von Guten taten
-		$sql = 'SELECT MAX(idGuteTat) AS "index" FROM Deeds';
-		$stmt = $db->prepare($sql);
-		$stmt->execute();
-		$result = $stmt->get_result()->fetch_assoc();
-		if (isset($result['index'])) {
-			$index = $result['index'];
-		} else {
-			$index = 0;
+			//Herausfinden der größten ID von Guten taten
+			$sql = 'SELECT MAX(idGuteTat) AS "index" FROM Deeds';
+			$stmt = $db->prepare($sql);
+			$stmt->execute();
+			$result = $stmt->get_result()->fetch_assoc();
+			if (isset($result['index'])) {
+				$index = $result['index'];
+			} else {
+				$index = 0;
+			}
+
+			//Einfügen der DeedsTexts mit der passenden ID zu der neuen Guten Tat
+			$sql='INSERT INTO DeedTexts (idDeedTexts, description, pictures) VALUES (?,?,?)';
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('iss' , $index, $description, $pictures);
+			$stmt->execute();
+			self::db_close($db);
 		}
-
-		//Einfügen der DeedsTexts mit der passenden ID zu der neuen Guten Tat
-		$sql='INSERT INTO DeedTexts (idDeedTexts, description, pictures) VALUES (?,?,?)';
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('iss' , $index, $description, $pictures);
-		$stmt->execute();
-		self::db_close($db);
 	}
 
 	/**
@@ -745,6 +752,7 @@ class DBFunctions
 	* * DeedTexts.description,
 	* * Postalcode.postalcode,
 	* * Postalcode.place
+	* * Categories.categoryname
 	*
 	*@param int $startrow Ab der ID werden die guten Taten aufgelistet
 	*@param int $numberofrows Anzahl der aufzulistenden guten Taten
@@ -769,7 +777,8 @@ class DBFunctions
 				Trust.trustleveldescription,
 				DeedTexts.description,
 				Postalcode.postalcode,
-				Postalcode.place
+				Postalcode.place,
+				Categories.categoryname
 			FROM Deeds
 				Join DeedTexts
 					On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
@@ -777,6 +786,8 @@ class DBFunctions
 					On (Deeds.idPostal = Postalcode.idPostal)
 				Join Trust
 					On (Deeds.idTrust =	Trust.idTrust)
+				Join Categories
+					On (Deeds.category = Categories.id)
 			WHERE NOT Deeds.status = 'nichtFreigegeben'
 			LIMIT ? , ?";
 			$stmt = $db->prepare($sql);
@@ -806,6 +817,7 @@ class DBFunctions
 				DeedTexts.description,
 				Postalcode.postalcode,
 				Postalcode.place
+				Categories.categoryname
 			FROM Deeds
 				Join DeedTexts
 					On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
@@ -813,6 +825,8 @@ class DBFunctions
 					On (Deeds.idPostal = Postalcode.idPostal)
 				Join Trust
 					On (Deeds.idTrust =	Trust.idTrust)
+				Join Categories
+					On (Deeds.category = Categories.id)
 			WHERE Deeds.status = ?
 			LIMIT ? , ?";
 			$stmt = $db->prepare($sql);
@@ -1677,17 +1691,21 @@ class DBFunctions
 	*@param int $idGutetat Die ID einer Guten Tat
 	*/
 	public function db_update_deeds_category($data,$idGuteTat){
-		$db = self::db_connect();
-		$sql ="UPDATE deeds
-			SET
-			deeds.category = ?
-			WHERE deeds.idGuteTat = ?";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('si',$data,$idGuteTat);
-		if (!$stmt->execute()) {
-			die('Fehler: ' . mysqli_error($db));
+		if(self::db_doesCategoryNameExist($data)){
+			$catid = self::db_getCategoryidbyCategoryText($data);
+			$db = self::db_connect()
+			$sql ="UPDATE deeds
+				SET
+				deeds.category = ?
+				WHERE deeds.idGuteTat = ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('ii',$catid,$idGuteTat);
+			if (!$stmt->execute()) {
+				die('Fehler: ' . mysqli_error($db));
+			}
+			self::db_close($db);
 		}
-		self::db_close($db);
+		
 	}
 
 	/**
@@ -1939,7 +1957,8 @@ class DBFunctions
 				Trust.trustleveldescription,
 				DeedTexts.description,
 				Postalcode.postalcode,
-				Postalcode.place
+				Postalcode.place,
+				Categories.categoryname
 			FROM Deeds
 				Join DeedTexts
 					On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
@@ -1949,6 +1968,8 @@ class DBFunctions
 					On (Deeds.idTrust =	Trust.idTrust)
 				JOIN Application
 					On (Deeds.idGuteTat = Application.idGuteTat)
+				JOIN Categories
+					On (Deeds.category = Categories.id)
 			WHERE NOT Deeds.status = 'nichtFreigegeben'
 			AND Application.status = 'angenommen'
 			AND Application.idUser = ?
@@ -1979,7 +2000,8 @@ class DBFunctions
 				Trust.trustleveldescription,
 				DeedTexts.description,
 				Postalcode.postalcode,
-				Postalcode.place
+				Postalcode.place,
+				Categories.categoryname
 			FROM Deeds
 				Join DeedTexts
 					On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
@@ -1989,6 +2011,8 @@ class DBFunctions
 					On (Deeds.idTrust =	Trust.idTrust)
 				JOIN Application
 					On (Deeds.idGuteTat = Application.idGuteTat)
+				JOIN Categories
+					On (Deeds.category = Categories.id)
 			WHERE Deeds.status = ?
 			AND Application.status = 'angenommen'
 			AND Application.idUser = ?
@@ -2207,7 +2231,7 @@ class DBFunctions
 			`Trust`.`trustleveldescription`,
 			`DeedTexts`.`description`,
 			`Postalcode`.`postalcode`,
-			`Postalcode`.`place`
+			`Postalcode`.`place`,
 		FROM `User` JOIN `Deeds`
         ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
