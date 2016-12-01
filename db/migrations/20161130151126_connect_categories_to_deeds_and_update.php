@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class AddCategoryTable extends AbstractMigration
+class ConnectCategoriesToDeedsAndUpdate extends AbstractMigration
 {
     /**
      * Change Method.
@@ -27,8 +27,10 @@ class AddCategoryTable extends AbstractMigration
      */
     public function change()
     {
-    	$category = $this->table('Categories');
-    	$category->addColumn('categoryname','string',array('limit' => 128))
-    			 ->create();
+        $deeds = $this->table('Deeds');
+        $deeds->renameColumn('category','notinuse')
+              ->addColumn('category','integer',array('after' => 'notinuse'))
+              ->addForeignKey('category','Categories','id',array('delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'))
+              ->update();
     }
 }

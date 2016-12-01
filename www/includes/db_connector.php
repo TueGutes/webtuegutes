@@ -971,7 +971,6 @@ class DBFunctions
 		else {
 			return false;
 		}
-
 	}
 
 	/**
@@ -2368,7 +2367,7 @@ class DBFunctions
 	 * @param string $sort die Etikett aus search.php, kann 'starttime','endtime' und 'status' sein
 	 * @return string die sortBedingung
 	 */
-	public function set_sortBedingung($sort){
+	public function db_set_sortBedingung($sort){
 		switch ($sort) {
 			case 'starttime':
 				$sort_bedingung = " `Deeds`.`starttime`";
@@ -2382,9 +2381,158 @@ class DBFunctions
 		return $sort_bedingung;
 	}
 
+	/**
+	* Liefert den Namen einer Kategorie.
+	*
+	*Die Funktion kriegt die ID einer Kategorie Übergeben und gibt den Namen der Kategorie die zu der ID gehört zurück. Wenn es die ID nicht gibt bisher, so wird die Funktion ein false liefern.
+	*
+	*@param int $id Die Kategorien ID
+	*
+	*@return string|false den Namen der Kategorie oder sonst false
+	*/
+	public function db_getCategorytextbyCategoryid($id){
+		$db = self::db_connect();
+		$sql = "SELECT categoryname
+			FROM Categories
+			WHERE id = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['categorytext'])){
+			return $dbentry['categorytext'];
+		}
+		else {
+			return false;
+		}
+	}
 
+	/**
+	* Liefert die ID einer Kategorie.
+	*
+	*Die Funktion kriegt den Name einer Kategorie Übergeben und gibt die ID der Kategorie die zu dem Namen gehört zurück. Wenn es die ID nicht gibt bisher, so wird die Funktion ein false liefern.
+	*
+	*@param string $name Der Kategorie Name
+	*
+	*@return int|false die ID der Kategorie oder sonst false
+	*/
+	public function db_getCategoryidbyCategoryText($name){
+		$db = self::db_connect();
+		$sql = "SELECT id
+			FROM Categories
+			WHERE categoryname = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('s',$name);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['id'])){
+			return $dbentry['id'];
+		}
+		else {
+			return false;
+		}
+	}
 
+	/**
+	*Liefert alle Kategorien aus.
+	*
+	*Die Funktion gibt alle Kategorien mit allen ihren dazugehörigen Attributen  in einem Array als Objekte aus:
+	* * id
+	* * categorytext
+	*
+	*@return mixed[] Array der gefundenen Taten
+	*/
+	public function db_getAllCategories(){
+		$db = self::db_connect();
+		$sql = "SELECT * FROM Categories";
+		$stmt = $db->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		self::db_close($db);
+		$arr = array();
+		while($dbentry =$result->fetch_object()){
+			$arr[]= $dbentry;
+		}
+		return $arr;
+	}
 
+	/**
+	*Fügt eine neue Kategorie in die Datenbank ein
+	*
+	*Die Funktion kriegt den Namen einer neuen Kategorie übergeben und fügt einen Datensatz in die Kategorientabelle mit dem Namen einen. Wenn es erfolgreich war, gibt die Funktion true zurück, wenn nicht false.
+	*
+	*@param string $newcategory Der Name einer Kategorie
+	*
+	*@return boolean 
+	*/
+	public function db_insertNewCategory($newcategory){
+		$db = self::db_connect();
+		$sql = "INSERT INTO Categories (categoryname) VALUES (?);";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('s',$newcategory);
+		if($stmt->execute()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	/**
+	*Überprüft ob es eine Kategorie(Namen) schon gibt.
+	*
+	*Die Funktion kriegt den Namen einer neuen Kategorie übergeben und überprüft ob es den Namen in der Tabelle schon gibt. Gibt true zurück wenn es sie gibt und false wenn nicht
+	*
+	*@param string $newcategory Der Name einer möglichen Kategorie
+	*
+	*@return boolean 
+	*/
+	public function db_doesCategoryNameExist($newcategory){
+		$db = self::db_connect();
+		$sql = "SELECT id FROM Categories WHERE categoryname = ? ";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('s',$newcategory);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['id'])){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
+	*Überprüft ob es eine Kategorie(ID) schon gibt.
+	*
+	*Die Funktion kriegt die ID einer  Kategorie übergeben und überprüft ob es die in der Tabelle schon gibt. Gibt true zurück wenn es sie gibt und false wenn nicht
+	*
+	*@param int $categoryid ID einer möglichen Kategori
+	*
+	*@return boolean 
+	*/
+	public function db_doesCategoryIDExist($categoryid){
+		$db = self::db_connect();
+		$sql = "SELECT categoryname FROM Categories WHERE id = ? ";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$categoryid);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['categoryname'])){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }
 
 ?>
