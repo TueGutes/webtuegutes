@@ -190,7 +190,11 @@ if (isset($_POST['allow'])) {
 		echo $form . '<br>';
 	}
 
+	
+	echo "<br><br>";
+	include './includes/comment.php';
 
+	
 ?>
 
 

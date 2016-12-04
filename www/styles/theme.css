@@ -807,6 +807,80 @@ red
 }
 /*====/search====*/
 
+/*====comment====*/
+#comments
+{
+}
+.comment
+{
+	display: inline-block;
+	position: relative;
+	background: rgba(255, 255, 255, .2);
+	width: 100%;
+	max-width: 500px;
+	padding: 10px;
+	margin: 15px;
+	border: 1px solid #424242;
+	border-radius: 20px;
+}
+.comment .author
+{
+	position: absolute;
+}
+.comment .createDate
+{
+	position: absolute;
+	width: 95%;
+	text-align: right;
+}
+.comment .text
+{
+	margin-top: 20px;
+	text-align: left;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+.commentPageSelection form
+{
+	display: inline-block;
+}
+.commentPageSelection form input
+{
+	margin: 5px;
+	padding: 0 8px;
+}
+.commentPageSelection form input.selected
+{
+	background: #848484;
+	background-image: -webkit-linear-gradient(top, #848484, #424242);
+	background-image: -moz-linear-gradient(top, #848484, #424242);
+	background-image: -ms-linear-gradient(top, #848484, #424242);
+	background-image: -o-linear-gradient(top, #848484, #424242);
+	background-image: linear-gradient(to bottom, #848484, #424242);
+}
+/*====/comment====*/
+
+/*====profile====*/
+.profile table tr td
+{
+	boder: none;
+	padding-bottom: 15px;
+}
+.profile table tr th
+{
+	text-align: center;
+}
+.profile .deleteMessage
+{
+	width: 50%;
+	margin-left: 25%;
+}
+.profile input[name='txtHobbys']
+{
+	width: 100%;
+}
+/*====/profile====*/
+
 
 
 
