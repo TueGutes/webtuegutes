@@ -306,7 +306,7 @@
 		// Henrik
 		$dh = (new DateHandler())->set($thisuser['birthday']);
 		$blPersoenlich .= "<tr><td>Geboren:</td><td>
-		<input type='hidden' name='birthday' class='dateSelector' value='set' /><input type='text' name='date' class='dateSelector' value='" . $dh->get('d.m.Y') . "' size='7' placeholder='DD.MM.YYYY' /></td></tr>";
+		<input type='hidden' name='birthday' class='dateSelector' value='set' /><input type='text' name='date' class='dateSelector' value='" . /*$dh->get('d.m.Y')*/$thisuser['birthday'] . "' size='7' placeholder='DD.MM.YYYY' /></td></tr>";
 		
 		
 		// ALEX2: Leaves text boxes empty if value is 0. Added $tempValue.
