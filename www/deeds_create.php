@@ -267,7 +267,7 @@ if($Seite==5&&($button!='zurück')){
 		$plz = DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode, $place);
 
 		// TIMM HIER: Temporäre Fix damit amn gute Taten erstellen kann.
-		$category = 1;
+		$category = 'keine Angabe';
 		//Bugfix zu ende
 		DBFunctions::db_createGuteTat($name, $uid, $category, $street, $housenumber, 
 									  $plz, $start_dh->get(),$end_dh->get(), $organization, $countHelper,
