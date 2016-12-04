@@ -2495,7 +2495,7 @@ class DBFunctions
 	*/
 	public function db_insertNewCategory($newcategory){
 		$db = self::db_connect();
-		$sql = "INSERT INTO Categories (categoryname) VALUES (?);";
+		$sql = "INSERT INTO Categories (categoryname) VALUES (?)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('s',$newcategory);
 		if($stmt->execute()){
@@ -2557,6 +2557,129 @@ class DBFunctions
 			return false;
 		}
 	}
+
+	/**
+	*Überprüft ob es ein GuteTat Kommentar mit einer bestimmten ID schon gibt schon gibt.
+	*
+	*Die Funktion kriegt die ID eines Möglichen Kommentars zu einer Guten tat  übergeben und überprüft ob es den Kommentar mit der ID schon gibt. Gibt true zurück wenn es sie gibt und false wenn nicht
+	*
+	*@param int $commentid ID einer möglichen Kategori
+	*
+	*@return boolean 
+	*/
+	public function db_doesCommentwithIDExist($commentid){
+		$db = self::db_connect();
+		$sql = "SELECT id FROM DeedComments WHERE id = ? ";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$commentid);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['id'])){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	/**
+	*Erstellt ein Kommentar zu einer Guten Tat.
+	*
+	*Die Funktion kriegt die nötigen Parameter für die Erstellung eines Kommentars zu einer Guten Tat übergeben. Wenn die Erstellung erfolgreich ist, so liefert sie true zurück, sonst false.
+	*
+	*@param int $idofdeeds Die ID der Guten Tat zu der der Kommentar gehört
+	*@param int $creatorid Die ID des Users der den Kommentar erstellt
+	*@param string $commenttext Der Kommentarinhalt
+	*@param int $parentid Die ID des Vorgängerkommentars oder NULL wenn es der erste Kommentar ist
+	*
+	*@return boolean
+	*/
+	public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentid){
+		$db = self::db_connect();
+		$sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentcomment) VALUES (?,?,?,?,?)";
+		$date = new datetime();
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('iissi',$idofdeeds,$creatorid,$date->format('Y-m-d H:i:s'),$commenttext,$parentcomment);
+		if($stmt->execute()){
+			self::db_close($db);
+			return true;
+		}
+		else{
+			self::db_close($db);
+			return false;
+		}
+
+	}
+
+	/**
+	*Erstellt eine Liste von Kommentaren.
+	*
+	*Die Funktion kriegt eine ID einer Guten tat, startdatensatz(int) und Anzahl der Reihen übergeben und gibt ein Array aus Objekte von Kommentaren einer Guten Tat zurück, die aufsteigend nach Erstelldatum sortiert sind. Die Folgenden Attribute sind in den Objekten enthalten:
+	* * DeedComments.id,
+	* * DeedComments.deeds_id,
+	* * DeedComments.user_id_creator,
+	* * DeedComments.date_created,
+	* * DeedComments.commenttext,
+	* * DeedComments.parentcomment,
+	* * User.username 
+	*
+	*@param int $iddeed ID einer Guten Tat
+	*@param int $startrow Ab der ID werden die Kommentare aufgelistet
+	*@param int $numberofrows Anzahl der aufzulistenden guten Taten
+	*
+	*@return (int|string)[] Array aus den ausgewählten Attributen mit den Datentypen String ung Int
+	*/
+	public function db_createDeedCommentsToList($iddeed,$startrow,$numberofrows){
+		$db = self::db_connect();
+		$sql = "SELECT 
+			DeedComments.id,
+			DeedComments.deeds_id,
+			DeedComments.user_id_creator,
+			DeedComments.date_created,
+			DeedComments.commenttext,
+			DeedComments.parentcomment,
+			User.username 
+			FROM DeedComments 
+			JOIN User 
+				ON (DeedComments.user_id_creator=User.idUser) 
+			WHERE deeds_id = ? 
+			ORDER BY date_created ASC 
+			LIMIT  ?,?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('iii',$iddeed,$startrow,$numberofrows);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		self::db_close($db);
+		$arr = array();
+		while($dbentry =$result->fetch_object()){
+			$arr[]= $dbentry;
+		}
+		return $arr;
+	}
+
+	/**
+	*Gibt die Anzahl von Kommentaren zu einer Guten Tat zurück
+	*
+	*Die Funktion kriegt die ID einer Guten Tat übergeben und gibt die Anzahl aller Kommentare zu dieser Guten Tat zurück
+	*
+	*@param int $iddeed ID einer Guten Tat
+	*
+	*@return int Anzahl der Kommentare
+	*/
+	public function countDeedComments($iddeed){
+		$db = selff::db_connect();
+		$sql = "SELECT COUNT(*) AS numberComments FROM DeedComments WHERE DeedComments.deeds_id = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$iddeed);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		self::db_close($db);
+		$dbentry = $result->fetch_assoc();
+		return $dbentry['numberComments'];
+	}
 }
+
+
 
 ?>

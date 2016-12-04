@@ -15,13 +15,13 @@ class FillCategoriesv1 extends AbstractSeed
     public function run()
     {
         $data=array(
-            array('categorytext' => 'keine Angabe'),
-            array('categorytext' => 'Öffentliches'),
-            array('categorytext' => 'Mensch zu Mensch'),
-            array('categorytext' => 'Bildung'),
-            array('categorytext' => 'Längerfristig'),
-            array('categorytext' => 'Social Event'),
-            array('categorytext' => 'Haushalt')
+            array('categoryname' => 'keine Angabe'),
+            array('categoryname' => 'Öffentliches'),
+            array('categoryname' => 'Mensch zu Mensch'),
+            array('categoryname' => 'Bildung'),
+            array('categoryname' => 'Längerfristig'),
+            array('categoryname' => 'Social Event'),
+            array('categoryname' => 'Haushalt')
             );
         $cate = $this->table('Categories');
         $cate->insert($data)
