@@ -85,8 +85,8 @@ $comments = '';
 for($i = 0; $i < sizeof($commentsArray); $i++)
 {
 	$entry = $commentsArray[$i];
-	$username = $entry['username'];
-	$comments .= '<div class="comment"><div class="createDate">' . $entry['date_created'] . '</div><div class="author"><a href="' . $HOST . '/profile?user=' . $username . '">' . $username . '</a></div><div class="text">' . $entry['commenttext'] . '</div></div><br>';
+	$username = $entry->username;
+	$comments .= '<div class="comment"><div class="createDate">' . $entry->date_created . '</div><div class="author"><a href="' . $HOST . '/profile?user=' . $username . '">' . $username . '</a></div><div class="text">' . $entry->commenttext . '</div></div><br>';
 }
 ?>
 
