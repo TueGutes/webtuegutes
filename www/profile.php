@@ -307,7 +307,7 @@
 		$dh = (new DateHandler())->set($thisuser['birthday']);
 		$currentBirthday = $dh ? $dh->get('d.m.Y') : '';
 		$blPersoenlich .= "<tr><td>Geboren:</td><td>
-		<input type='text' name='date' class='dateSelector' value='" . $currentBirthday . "' size='8' placeholder='DD.MM.YYYY' /></td></tr>";
+		<input type='text' name='birthday' class='dateSelector' value='" . $currentBirthday . "' size='10' placeholder='DD.MM.YYYY' /></td></tr>";
 		
 		
 		// ALEX2: Leaves text boxes empty if value is 0. Added $tempValue.
@@ -474,13 +474,18 @@
 
 			// Nutzerdaten überschreiben:
 
+			// Henrik
+			$dh = (new DateHandler())->set($_POST['birthday']);
+			if($dh)
+				$thisuser['birthday'] = $dh->get();
+			
 			// ALEX2: Replace empty values with 0. Created $tempValue.
-			$tempValue = ($_POST['txtYearOfBirth'] == "") ? 0 : $_POST['txtYearOfBirth'];
+			/*$tempValue = ($_POST['txtYearOfBirth'] == "") ? 0 : $_POST['txtYearOfBirth'];
 			$thisuser['birthday'] = $tempValue . '-';
 			$tempValue = ($_POST['txtMonthOfBirth'] == "") ? 0 : $_POST['txtMonthOfBirth'];
 			$thisuser['birthday'] .= $tempValue . '-';
 			$tempValue = ($_POST['txtDayOfBirth'] == "") ? 0 : $_POST['txtDayOfBirth'];
-			$thisuser['birthday'] .= $tempValue;
+			$thisuser['birthday'] .= $tempValue;*/
 
 			//Daten überschreiben
 			$thisuser['street'] = $_POST['txtStrasse'];
