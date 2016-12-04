@@ -2684,7 +2684,7 @@ class DBFunctions
 	*@return int Anzahl der Kommentare
 	*/
 	public function countDeedComments($iddeed){
-		$db = selff::db_connect();
+		$db = self::db_connect();
 		$sql = "SELECT COUNT(*) AS numberComments FROM DeedComments WHERE DeedComments.deeds_id = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$iddeed);
