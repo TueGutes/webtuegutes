@@ -734,7 +734,7 @@ class DBFunctions
 		}
 		else{
 			echo 'KAtegorie:'.$category.'::';
-			echo 'Beim Erstellen der GutenTat ist etwas schief belaufen '.mysqli_error($db);
+			echo 'Beim Erstellen der GutenTat ist etwas schief belaufen ';
 		}
 	}
 
