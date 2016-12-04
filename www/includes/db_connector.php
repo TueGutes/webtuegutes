@@ -2611,7 +2611,7 @@ class DBFunctions
 	*
 	*@return boolean
 	*/
-	public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentid){
+	public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentid = 'null'){
 		$db = self::db_connect();
 		$sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentcomment) VALUES (?,?,?,?,?)";
 		$date = new datetime();
