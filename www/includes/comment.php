@@ -80,7 +80,7 @@ if($neededPages > 1)
 }
 
 
-$commentsArray = DBFunctions::db_createDeedCommentsToList($deedID, $currentPage*$commentsPerPage, $commentsPerPage);
+$commentsArray = DBFunctions::db_createDeedCommentsToList($deedID, ($currentPage-1)*$commentsPerPage, $commentsPerPage);
 $comments = '';
 for($i = 0; $i < sizeof($commentsArray); $i++)
 {
