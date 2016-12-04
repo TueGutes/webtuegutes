@@ -591,7 +591,7 @@ class DBFunctions
 	* * DeedTexts.pictures,
 	* * Postalcode.postalcode,
 	* * Postalcode.place
-	* * Categories.categoryname
+	* * Categories.categoryname (Kategoriename  (alter "Category"))
 	*
 	*@param int $idGuteTat Id einer Guten Tat
 	*
@@ -740,7 +740,7 @@ class DBFunctions
 	*Auflistung von guten Taten. Bei der Auflistung kann mit angegeben werden, aber welcher ID und wie viele Gute Taten aufgelistet werden sollen. Zudem kann über einen Filter angegeben werden ob freigegebene, geschlossene oder nur beides angezeigt werden soll. Es werden folgendene Attribute ausgegeben:
 	* * Deeds.idGuteTat,
 	* * Deeds.name,
-	* * Deeds.category,
+	* * Deeds.category( ID einer Kategorie),
 	* * Deeds.street,
 	* * Deeds.housenumber,
 	* * Deeds.idPostal,
@@ -752,7 +752,7 @@ class DBFunctions
 	* * DeedTexts.description,
 	* * Postalcode.postalcode,
 	* * Postalcode.place
-	* * Categories.categoryname
+	* * Categories.categoryname(alte "category")
 	*
 	*@param int $startrow Ab der ID werden die guten Taten aufgelistet
 	*@param int $numberofrows Anzahl der aufzulistenden guten Taten
@@ -1932,6 +1932,22 @@ class DBFunctions
 	* Bei der Auflistung kann mit angegeben werden, ab welcher ID und wie viele Gute Taten
 	* aufgelistet werden sollen. Zudem kann über einen Filter angegeben werden ob auch bzw.
 	* nur geschlossene Taten angezeigt werden sollen.
+	* Liste der Attribute:
+	* * Deeds.idGuteTat,
+	* * Deeds.name,
+	* * Deeds.category (ID einer Kategorie),
+	* * Deeds.street,
+	* * Deeds.housenumber,
+	* * Deeds.idPostal,
+	* * Deeds.organization,
+	* * Deeds.countHelper,
+	* * Deeds.status,
+	* * Trust.idTrust,
+	* * Trust.trustleveldescription,
+	* * DeedTexts.description,
+	* * Postalcode.postalcode,
+	* * Postalcode.place,
+	* * Categories.categoryname (alte "category")
 	*
 	*@param int $startrow Ab der ID werden die guten Taten aufgelistet
 	*@param int $numberofrows Anzahl der aufzulistenden guten Taten
