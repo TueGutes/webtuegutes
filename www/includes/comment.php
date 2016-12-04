@@ -92,7 +92,7 @@ for($i = 0; $i < sizeof($commentsArray); $i++)
 	$entry = $commentsArray[$i];
 	$username = $entry->username;
 	$dh = (new DateHandler())->set($entry->date_created);
-	$comments .= '<div class="comment"><div class="createDate">' . $dh->get('d.m.Y H:i:s'); . '</div><div class="author"><a href="' . $HOST . '/profile?user=' . $username . '">' . $username . '</a></div><div class="text">' . $entry->commenttext . '</div></div><br>';
+	$comments .= '<div class="comment"><div class="createDate">' . $dh->get('d.m.Y H:i:s') . '</div><div class="author"><a href="' . $HOST . '/profile?user=' . $username . '">' . $username . '</a></div><div class="text">' . $entry->commenttext . '</div></div><br>';
 }
 ?>
 
