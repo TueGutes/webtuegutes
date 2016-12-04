@@ -2664,7 +2664,7 @@ class DBFunctions
 			JOIN User 
 				ON (DeedComments.user_id_creator=User.idUser) 
 			WHERE deeds_id = ? 
-			ORDER BY date_created ASC 
+			ORDER BY date_created DESC 
 			LIMIT  ?,?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('iii',$iddeed,$startrow,$numberofrows);
