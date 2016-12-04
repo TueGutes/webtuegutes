@@ -80,11 +80,14 @@ if($neededPages > 1)
 }
 
 
-$comments = DBFunctions::db_createDeedCommentsToList($deedID, $currentPage*$commentsPerPage, $commentsPerPage);
-
-$username = $_USER->getUsername();
-$comments = '<div class="comment"><div class="createDate">10.10.2016 10:12:42</div><div class="author"><a href="' . $HOST . '/profile?user=' . $username . '">' . $username . '</a></div><div class="text">dies ist  srgnk jsdf ajdhqw uxnyc djv awudbjsqj svawhhohl fhjwed ajwewh vdbkh ein kommentar</div></div><br>';
-$comments .= $comments;
+$commentsArray = DBFunctions::db_createDeedCommentsToList($deedID, $currentPage*$commentsPerPage, $commentsPerPage);
+$comments = '';
+for($i = 0; $i < sizeof($commentsArray); $i++)
+{
+	$entry = $commentsArray[$i];
+	$username = $entry['username'];
+	$comments .= '<div class="comment"><div class="createDate">' . $entry['date_created'] . '</div><div class="author"><a href="' . $HOST . '/profile?user=' . $username . '">' . $username . '</a></div><div class="text">' . $entry['commenttext'] . '</div></div><br>';
+}
 ?>
 
 <div id='commentWrap'>
