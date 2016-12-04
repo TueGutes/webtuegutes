@@ -6,7 +6,9 @@
  *
  * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
  */
- 
+
+require './includes/UTILS.php';
+
 $deedID = $_GET['id'];
 $message = isset($_POST['comment']) ? $_POST['comment'] : '';
 
@@ -31,21 +33,24 @@ if(isset($_POST['set']) && $_POST['set'] == '1')
 	{ 
 		if(DBFunctions::db_createDeedComment($deedID, $_USER->getID(), $message))
 		{
-			$deedName = $tat["name"];
 			$username = $_USER->getUsername();
-			$infos = "<a href='" . $HOST . "/profile?user=" . $username . "'>" . $username . "</a> hat ein Kommentar unter deiner Guten Tat <a href='" . $HOST . "/deeds_details?id=" . $deedID . "'>" . $deedName . "</a> verfasst.";
-		
-			$subject = "Nachicht TueGutes";
-			$mailMessage = $infos;
-			//$mailFrom = "From: TueGutes";
+			if(DBFunctions::db_getUsernameOfContactPersonByGuteTatID($deedID) != $username)
+			{
+				$deedName = $tat["name"];
+				$infos = "<a href='" . $HOST . "/profile?user=" . $username . "'>" . $username . "</a> hat ein Kommentar unter deiner Guten Tat <a href='" . $HOST . "/deeds_details?id=" . $deedID . "'>" . $deedName . "</a> verfasst.";
 			
-			/*$array = array(); // admin mails
-			$count = count($array);
-			for($i = 0; $i < $count; $i++)
-				mail($array[$i], $subject, $mailMessage, $mailFrom);*/
+				$subject = "Nachicht TueGutes";
+				$mailMessage = $infos;
+				//$mailFrom = "From: TueGutes";
+				
+				/*$array = array(); // admin mails
+				$count = count($array);
+				for($i = 0; $i < $count; $i++)
+					mail($array[$i], $subject, $mailMessage, $mailFrom);*/
 
-			sendEmail(DBFunctions::db_getEmailOfContactPersonByGuteTatID($deedID), $subject, $mailMessage);
-
+				sendEmail(DBFunctions::db_getEmailOfContactPersonByGuteTatID($deedID), $subject, $mailMessage);
+			}
+			
 			$output .= "<green>" . $wlang['comment_suc_sent'] . "</green><br>";
 			
 			// Felder resetten
@@ -86,7 +91,8 @@ for($i = 0; $i < sizeof($commentsArray); $i++)
 {
 	$entry = $commentsArray[$i];
 	$username = $entry->username;
-	$comments .= '<div class="comment"><div class="createDate">' . $entry->date_created . '</div><div class="author"><a href="' . $HOST . '/profile?user=' . $username . '">' . $username . '</a></div><div class="text">' . $entry->commenttext . '</div></div><br>';
+	$dh = (new DateHandler())->set($entry->date_created);
+	$comments .= '<div class="comment"><div class="createDate">' . $dh->get('d.m.Y H:i:s'); . '</div><div class="author"><a href="' . $HOST . '/profile?user=' . $username . '">' . $username . '</a></div><div class="text">' . $entry->commenttext . '</div></div><br>';
 }
 ?>
 
