@@ -1693,7 +1693,7 @@ class DBFunctions
 	public function db_update_deeds_category($data,$idGuteTat){
 		if(self::db_doesCategoryNameExist($data)){
 			$catid = self::db_getCategoryidbyCategoryText($data);
-			$db = self::db_connect()
+			$db = self::db_connect();
 			$sql ="UPDATE deeds
 				SET
 				deeds.category = ?
