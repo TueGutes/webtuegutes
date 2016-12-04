@@ -35,7 +35,7 @@
 	// Funktionen
 	// ALEX
 	// Returns the day of birth of a given date in format "YYYY-MM-DD".
-	function getDayOfBirth($pBirthValues)
+	/*function getDayOfBirth($pBirthValues)
 	{
 		return substr($pBirthValues, 8, 2);
 	}
@@ -48,7 +48,7 @@
 	function getYearOfBirth($pBirthValues)
 	{
 		return substr($pBirthValues, 0, 4);
-	}
+	}*/
 
 	// ALEX: Inserts a new postal code.
 	// TIMM: Ausgelagert in db_connector.
@@ -156,10 +156,15 @@
 
 	//Includes
 	require "./includes/DEF.php";
+	require './includes/UTILS.php';
 
 	include "./includes/db_connector.php";
 	include "./includes/Map.php";
 	require "./includes/_top.php";
+	
+	echo '
+	<script type="text/javascript" src="./includes/dateSelector/dateSelector.js"></script>
+	<link rel="stylesheet" type="text/css" href="./includes/dateSelector/dateSelector.css" />';
 
 	// ALEX
 	include "./includes/streets.php";
@@ -298,8 +303,14 @@
 		//Geschlecht bearbeiten:
 		$blPersoenlich .= '<tr><td colspan="1">Geschlecht:</td><td><select name="txtGender" size=1><option value="0"' . (($thisuser['gender']!='w' && $thisuser['gender']!='m' && $thisuser['gender']!='a')?' select':'') . '>keine Angabe</option><option value="w"' . (($thisuser['gender']==='w')?' selected':'') . '>weiblich</option><option value="m"' . (($thisuser['gender']==='m')?' selected':'') . '>männlich</option><option value="a"' . (($thisuser['gender']==='a')?' selected':'') . '>anderes</option></select></td></tr>';
 
+		// Henrik
+		$dh = (new DateHandler())->set($thisuser['birthday']);
+		$blPersoenlich .= "<tr><td>Geboren:</td><td>
+		<input type='hidden' name='birthday' class='dateSelector' value='set' /><input type='text' name='date' class='dateSelector' value='" . $dh->get('d.m.Y') . "' size='7' placeholder='DD.MM.YYYY' /></td></tr>";
+		
+		
 		// ALEX2: Leaves text boxes empty if value is 0. Added $tempValue.
-		$tempValue = getDayOfBirth($thisuser['birthday']);
+		/*$tempValue = getDayOfBirth($thisuser['birthday']);
 		$tempValue = ($tempValue == 0) ? "" : $tempValue;
 
 		// Text box for day of birth.
@@ -314,7 +325,7 @@
 		// Text box for year of birth.
 		$tempValue = getYearOfBirth($thisuser['birthday']);
 		$tempValue = ($tempValue == 0) ? "" : $tempValue;
-		$blPersoenlich .= '.<input type="text" size="4px" name="txtYearOfBirth" placeholder="JJJJ" value="' . $tempValue . '"></td></tr>';
+		$blPersoenlich .= '.<input type="text" size="4px" name="txtYearOfBirth" placeholder="JJJJ" value="' . $tempValue . '"></td></tr>';*/
 
 		//RegDate anzeigen
 		$blPersoenlich .= '<tr><td><br>Tut Gutes seit:</td><td><br>' . substr($thisuser['regDate'],8,2) . '. ' . substr($thisuser['regDate'],5,2) . '. ' . substr($thisuser['regDate'],0,4) . '</td></tr>';
