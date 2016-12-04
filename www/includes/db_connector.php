@@ -765,8 +765,8 @@ class DBFunctions
 	*@return (int|string)[] Array aus den ausgewählten Attributen mit den Datentypen String ung Int
 	*/
 	public function db_getGuteTatenForList($startrow,$numberofrows,$stat){
-		$db = self::db_connect();
 		if ($stat == 'alle'){
+			$db = self::db_connect();
 			$sql = "SELECT
 				Deeds.idGuteTat,
 				Deeds.name,
@@ -782,6 +782,7 @@ class DBFunctions
 				DeedTexts.description,
 				Postalcode.postalcode,
 				Postalcode.place,
+				Categories.id,
 				Categories.categoryname
 			FROM Deeds
 				Join DeedTexts
@@ -806,6 +807,7 @@ class DBFunctions
 			return $arr;
 		}
 		else{
+			$db = self::db_connect();
 			$sql = "SELECT
 				Deeds.idGuteTat,
 				Deeds.name,
@@ -820,7 +822,8 @@ class DBFunctions
 				Trust.trustleveldescription,
 				DeedTexts.description,
 				Postalcode.postalcode,
-				Postalcode.place
+				Postalcode.place,
+				Categories.id,
 				Categories.categoryname
 			FROM Deeds
 				Join DeedTexts
@@ -1978,6 +1981,7 @@ class DBFunctions
 				DeedTexts.description,
 				Postalcode.postalcode,
 				Postalcode.place,
+				Categories.id,
 				Categories.categoryname
 			FROM Deeds
 				Join DeedTexts
