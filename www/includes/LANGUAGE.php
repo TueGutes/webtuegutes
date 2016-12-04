@@ -85,4 +85,16 @@ $wlang['deeds_head'] = 'Gute Taten';
 
 //====home====
 $wlang['welcome'] = 'Willkommen' . ($_USER->loggedIn() ? ', ' . $_USER->getUsername() : '') . '!';
+
+//====comment====
+$wlang['comment_head'] = 'Kommentare';
+
+$wlang['comment_form_head'] = 'Neues Kommentar:';
+$wlang['comment_form_message'] = 'Kommentar';
+$wlang['comment_form_submit'] = 'Absenden';
+
+$wlang['comment_suc_sent'] = 'Kommentar wurde veröffentlicht!';
+$wlang['comment_err_messageEmpty'] = 'Bitte geben Sie ein Kommentar ein!';
+$wlang['comment_err_messageLength'] = 'Kommentare dürfen nicht länger sein als 8000 Zeichen!';
+
 ?>
