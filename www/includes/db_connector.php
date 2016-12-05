@@ -1290,11 +1290,12 @@ class DBFunctions
 		$stmt->bind_param('iis',$idUser, $idGuteTat, $Bewerbungstext);
 		$stmt->execute();
 		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		self::db_close($db);
 		if($affected_rows == 1) {
+			self::db_close($db);
 			return true;
 		} else {
 			echo 'Beim Erstellen der Bewerbung in der Datenbank ist etwas schief belaufen '.mysqli_error($db);
+			self::db_close($db);
 			return false;
 		}
 	}
@@ -1327,11 +1328,12 @@ class DBFunctions
 			$stmt->bind_param('ii',$candidateID, $idGuteTat);
 			$stmt->execute();
 			$affected_rows = mysqli_stmt_affected_rows($stmt);
-			self::db_close($db);
 			if($affected_rows == 1) {
+				self::db_close($db);
 				return true;
 			} else {
 				echo 'Beim Hinzufügen des Benutzers in der Datenbank zu den Helfern der guten Tat ist etwas schief gegangen '.mysqli_error($db);
+				self::db_close($db);
 				return false;
 			}
 			return true;
@@ -1360,11 +1362,12 @@ class DBFunctions
 		$stmt->bind_param('sii',$explanation, $candidateID, $idGuteTat);
 		$stmt->execute();
 		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		self::db_close($db);
 		if($affected_rows == 1) {
+			self::db_close($db);
 			return true;
 		} else {
 			echo 'Beim Aktualisieren der Bewerbungsinformation in der Datenbank ist etwas schief gegangen '.mysqli_error($db);
+			self::db_close($db);
 			return false;
 		}
 
