@@ -8,14 +8,16 @@
 *@author Timm Romanik <timm.romanik@stud.hs-hannover.de
 */
 
+include "./includes/accesdbdata.php";
 
 //Definition der Datenbankverbindung
-DEFINE('DB_USER','tueGutes');
-DEFINE('DB_PASSWORD','Sadi23n2os');
-DEFINE('DB_HOST','localhost');
-DEFINE('DB_NAME','tueGutes');
+DEFINE('DB_USER',$DB_USER);
+DEFINE('DB_PASSWORD',$DB_PASSWORD);
+DEFINE('DB_HOST',$DB_HOST);
+DEFINE('DB_NAME',$DB_NAME);
 
-
+echo $DB_USER;
+echo $DB_HOST;
 /**
 *Klasse um die Funktionen zu sammeln
 *
@@ -33,7 +35,7 @@ class DBFunctions
 	*@return object Datenbankverbindungsobjekt auf dem gearbeitet werden kann
 	*/
 	public function db_connect() {
-		return mysqli_connect(DB_HOST,DB_USER, DB_PASSWORD, DB_NAME);
+		return mysqli_connect('www.tue-gutes-in-hannover.de',DB_USER, DB_PASSWORD, DB_NAME,3306,'/var/run/mysqld/mysqld.sock');
 	}
 
 	/**
