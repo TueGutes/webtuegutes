@@ -18,8 +18,7 @@ require './fb/fbConfig.php';
 	    $output = '<a href="'.$loginURL.'"><img src="./fb/images/fblogin-btn.png"></a>';     
 	}else{
 		$output = '<br/>Logged in with : Facebook';
-	    $output .= '<br/><a href="'.$userData['link'].'" target="_blank">Click to Visit Facebook Page</a>';
-	    $output .= '<br/>Logout from <a href="./fb/logout.php">Facebook</a>';
+	    $output .= '<br/>Logout from <a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';
 	}
 
 ?>

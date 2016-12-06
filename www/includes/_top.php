@@ -1,3 +1,4 @@
+
 <?php
 /**
  * Oberer Teil der Website
@@ -10,6 +11,7 @@
 $currentPath = $_SERVER['PHP_SELF'];
 $extension = '.php';
 $activeTab = 'class="active"';
+$str = "http://tue-gutes-in-hannover.de/tueGutes/www/";
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,6 +30,8 @@ $activeTab = 'class="active"';
 	
 	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
 	<script type="text/javascript" src="js/global.js"></script>
+	<script src="js/fb.js"> </script>
+
 </head>
 
 <body>
@@ -43,6 +47,10 @@ $activeTab = 'class="active"';
 					$profileMenuLinks = '
 						<a href="./profile">Mein Profil</a>
 						<a href="./deeds_create">Tat erstellen</a>
+						<div class="fb-share-button" 
+							data-href="https://www.facebook.com/tueGutesinHannover/"
+							data-layout="button"> 
+						</div>
 						<a href="./logout">Logout</a>
 					';
 					if($_USER->loggedIn())
