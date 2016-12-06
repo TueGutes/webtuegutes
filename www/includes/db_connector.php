@@ -238,6 +238,96 @@ class DBFunctions
 	}
 
 	/**
+	*Erstellt einen Benutzer über den Facebooklogin.
+	*
+	*Erstellt einen Benutzeraccount  über den Facebooklogin mit den angegeben Parametern und gibt eine USERID und den Privacykey zurück, falls das Erstellen erfolgreich war, false falls nicht. Zudem werden alle nötigen Abhängigkeiten erstellt, wie die nötigen Einträge in "Privacy","PersData" und "Usertexts".
+	*
+	*@param string $benutzername Der Benutzername des Benutzers
+	*@param int $fb_id ID des Facebooknutzers
+	*@param string $vorname Der Vorname des Benutzers
+	*@param string $nachname Der Nachname des Benutzers
+	*@param string $email Die Emailadresse ders Benutzers
+	*@param string $passwort Das Passwort des Benutzers
+	*
+	*@return string|false Gibt den Verschlüsselungskey zurück oder "false" wenn etwas bei der Erstellung schief geht.
+	*/
+	public function db_createOverFBBenutzerAccount($username,$fb_id, $vorname, $nachname, $email, $gender,$picture) {
+		$db = self::db_connect();
+		$sql = "INSERT INTO User (username, password, email, regDate, points, status, idUserGroup, idTrust) VALUES(?,'registriertUeberFB',LOWER(?),?,0,'Verifiziert',1,1)";
+		$stmt = $db->prepare($sql);
+		$date = date("Y-m-d");
+		$fulldate = new DateTime();
+		mysqli_stmt_bind_param($stmt, "sss", $benutzername,$email,$fulldate->format('Y-m-d H:i:s'));
+		$stmt->execute();
+		$affected_rows = mysqli_stmt_affected_rows($stmt);
+		if($affected_rows == 1) {
+			//return true;
+		} else {
+			echo 'beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db);
+			//return false;
+		}
+
+		$sql = "INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) VALUES ((SELECT MAX(idUser) FROM User),?,?)";
+		$stmt = $db->prepare($sql);
+
+		$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
+		$privacykey = "011111011111111";
+		mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
+		$stmt->execute();
+		$affected_rows = mysqli_stmt_affected_rows($stmt);
+		if($affected_rows == 1) {
+			//return true;
+		}
+		else {
+			echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
+			return false;
+		}
+
+		$sql = "INSERT INTO UserTexts (idUserTexts,avater) VALUES ((SELECT MAX(idUser) FROM User),?)";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('s',$picture);
+		$stmt->execute();
+		$affected_rows = mysqli_stmt_affected_rows($stmt);
+		if($affected_rows == 1) {
+			//return true;
+		}
+		else {
+			echo 'beim erstellen des UsexTexts ist was schief gegangen: '.mysqli_error($db);
+			return false;
+		}
+		$placeholderidpostal = -1;
+		$sql = "INSERT INTO PersData (idPersData, firstname, lastname,gender) VALUES((SELECT MAX(idUser) FROM User),?,?,?,?)";
+		$stmt = $db->prepare($sql);
+		mysqli_stmt_bind_param($stmt, "sss", $vorname, $nachname,$gender);
+		$stmt->execute();
+		$affected_rows = mysqli_stmt_affected_rows($stmt);
+		if($affected_rows == 1) {
+			//return true;
+		}
+		else {
+			echo 'beim erstellen von PersData Eintrag ist was schief gegangen '.mysqli_error($db);
+			return false;
+		}
+
+		$sql = "SELECT MAX(idUser) AS idUser FROM USER";
+		$stmt = $db->prepare($sql);
+		$stmt->execute();
+		$result->$stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+
+		$sql = "INSERT INTO FacebookUser VALUES ((SELECT MAX(idUser) FROM User),?)";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$fb_id);
+		$stmt->execute();
+
+		self::db_close($db);
+		$arr = array('idUser' => $dbentry['idUser'],'privacykey' => $privacykey);
+		return $arr;
+
+		//return "asdfjklö"; //Für Testzwecke
+	}
+
+	/**
 	*Aktiviert einen Benutzeraccount.
 	*
 	*Aktiviert einen Benutzeraccount unter Verwendung des "cryptkeys" der übergeben werden muss. Setzt den Status auf "verifiziert". Gibt "true" zurück.
@@ -765,8 +855,8 @@ class DBFunctions
 	*@return (int|string)[] Array aus den ausgewählten Attributen mit den Datentypen String ung Int
 	*/
 	public function db_getGuteTatenForList($startrow,$numberofrows,$stat){
-		$db = self::db_connect();
 		if ($stat == 'alle'){
+			$db = self::db_connect();
 			$sql = "SELECT
 				Deeds.idGuteTat,
 				Deeds.name,
@@ -782,6 +872,7 @@ class DBFunctions
 				DeedTexts.description,
 				Postalcode.postalcode,
 				Postalcode.place,
+				Categories.id,
 				Categories.categoryname
 			FROM Deeds
 				Join DeedTexts
@@ -806,6 +897,7 @@ class DBFunctions
 			return $arr;
 		}
 		else{
+			$db = self::db_connect();
 			$sql = "SELECT
 				Deeds.idGuteTat,
 				Deeds.name,
@@ -820,7 +912,8 @@ class DBFunctions
 				Trust.trustleveldescription,
 				DeedTexts.description,
 				Postalcode.postalcode,
-				Postalcode.place
+				Postalcode.place,
+				Categories.id,
 				Categories.categoryname
 			FROM Deeds
 				Join DeedTexts
@@ -1287,11 +1380,12 @@ class DBFunctions
 		$stmt->bind_param('iis',$idUser, $idGuteTat, $Bewerbungstext);
 		$stmt->execute();
 		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		self::db_close($db);
 		if($affected_rows == 1) {
+			self::db_close($db);
 			return true;
 		} else {
 			echo 'Beim Erstellen der Bewerbung in der Datenbank ist etwas schief belaufen '.mysqli_error($db);
+			self::db_close($db);
 			return false;
 		}
 	}
@@ -1324,11 +1418,12 @@ class DBFunctions
 			$stmt->bind_param('ii',$candidateID, $idGuteTat);
 			$stmt->execute();
 			$affected_rows = mysqli_stmt_affected_rows($stmt);
-			self::db_close($db);
 			if($affected_rows == 1) {
+				self::db_close($db);
 				return true;
 			} else {
 				echo 'Beim Hinzufügen des Benutzers in der Datenbank zu den Helfern der guten Tat ist etwas schief gegangen '.mysqli_error($db);
+				self::db_close($db);
 				return false;
 			}
 			return true;
@@ -1357,11 +1452,12 @@ class DBFunctions
 		$stmt->bind_param('sii',$explanation, $candidateID, $idGuteTat);
 		$stmt->execute();
 		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		self::db_close($db);
 		if($affected_rows == 1) {
+			self::db_close($db);
 			return true;
 		} else {
 			echo 'Beim Aktualisieren der Bewerbungsinformation in der Datenbank ist etwas schief gegangen '.mysqli_error($db);
+			self::db_close($db);
 			return false;
 		}
 
@@ -1978,6 +2074,7 @@ class DBFunctions
 				DeedTexts.description,
 				Postalcode.postalcode,
 				Postalcode.place,
+				Categories.id,
 				Categories.categoryname
 			FROM Deeds
 				Join DeedTexts
