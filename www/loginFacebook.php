@@ -8,7 +8,6 @@ require './includes/db_connector.php';
 function getUserByFacebook($fb_id){
     
 }
-
     //Get user profile data from facebook
     $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');
     
