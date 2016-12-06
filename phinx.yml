@@ -32,7 +32,7 @@ environments:
         port: 3306
         charset: utf8
 	
-	 testing:
+	 presentation:
         adapter: mysql
         host: localhost
         name: presentation_db
