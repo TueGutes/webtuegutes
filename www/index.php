@@ -74,7 +74,7 @@ if(!$_USER->loggedIn())
 			Ich bin noch nicht registriert:<br>
 			<a href='./registration'>Zur Registrierung</a>
 
-			<div class='block'> <h4> oder mit Facebook einloggen: </h> <br> ".$output." </div>
+			<div class='block'> <h4> <br> oder mit Facebook einloggen: </h> <br> ".$output." </div>
 
 		</div>
 		<div class='module'>
