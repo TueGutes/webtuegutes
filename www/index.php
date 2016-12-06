@@ -12,14 +12,16 @@ include './includes/db_connector.php';
 //Include FB config file
 require './fb/fbConfig.php';
 
-if(!$fbUser){
-    $fbUser = NULL;
-    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
-    $output = '<a href="'.$loginURL.'"><img src="./fb/images/fblogin-btn.png"></a>';     
-}else{
-	$output = '<br/>Logged in with : Facebook';
-    $output .= '<br/><a href="'.$userData['link'].'" target="_blank">Click to Visit Facebook Page</a>';
-    $output .= '<br/>Logout from <a href="./fb/logout.php">Facebook</a>'; 
+	if(!$fbUser){
+	    $fbUser = NULL;
+	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
+	    $output = '<a href="'.$loginURL.'"><img src="./fb/images/fblogin-btn.png"></a>';     
+	}else{
+		$output = '<br/>Logged in with : Facebook';
+	    $output .= '<br/><a href="'.$userData['link'].'" target="_blank">Click to Visit Facebook Page</a>';
+	    $output .= '<br/>Logout from <a href="./fb/logout.php">Facebook</a>';
+	}
+
 ?>
 
 <h2><?php echo $wlang['welcome']; ?></h2>
