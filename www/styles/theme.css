@@ -826,6 +826,18 @@ red
 .comment .author
 {
 	position: absolute;
+	cursor: pointer;
+}
+.comment .author a img
+{
+	border-radius: 50%;
+	
+	-webkit-transition: .2s ease-in-out;
+	transition: .2s ease-in-out;
+}
+.comment .author:hover a img
+{
+	border-radius: 0%;
 }
 .comment .createDate
 {

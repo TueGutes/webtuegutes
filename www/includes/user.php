@@ -75,9 +75,9 @@ class User
 		header('Location: ' . $to);
 	}
 	
-	function getProfileImagePath($size = 512)
+	function getProfileImagePathOf($id, $size = 512)
 	{
-		$path = "img/profiles/" . $this->getID() . "/" . $size . "x" . $size . ".png";
+		$path = "img/profiles/" . $id . "/" . $size . "x" . $size . ".png";
 		if($this->loggedIn() && file_exists($path))
 			return $path;
 		
@@ -94,6 +94,10 @@ class User
 					break;
 			}
 		return "img/profiles/standard_" . $addition . ".png";
+	}
+	function getProfileImagePath($size = 512)
+	{
+		return $this->getProfileImagePathOf($this->getID(), $size);
 	}
 }	
 ?>

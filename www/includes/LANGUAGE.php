@@ -89,7 +89,7 @@ $wlang['welcome'] = 'Willkommen' . ($_USER->loggedIn() ? ', ' . $_USER->getUsern
 //====comment====
 $wlang['comment_head'] = 'Kommentare';
 
-$wlang['comment_form_head'] = 'Neues Kommentar:';
+$wlang['comment_form_head'] = 'Neuer Kommentar:';
 $wlang['comment_form_message'] = 'Kommentar';
 $wlang['comment_form_submit'] = 'Absenden';
 
