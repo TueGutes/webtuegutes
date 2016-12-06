@@ -9,6 +9,7 @@
 require './includes/DEF.php';
 require './includes/_top.php';
 include './includes/db_connector.php';
+
 //Include FB config file
 require './fb/fbConfig.php';
 
@@ -17,7 +18,35 @@ require './fb/fbConfig.php';
 	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
 	    $output = '<a href="'.$loginURL.'"><img src="./fb/images/fblogin-btn.png"></a>';     
 	}else{
+
+		/*
+		$fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');
+
+		//Insert or update user data to the database
+		$userData = array(
+			'oauth_provider'=> 'facebook',
+			'oauth_uid' 	=> $fbUserProfile['id'],
+			'first_name' 	=> $fbUserProfile['first_name'],
+			'last_name' 	=> $fbUserProfile['last_name'],
+			'email' 		=> $fbUserProfile['email'],
+			'gender' 		=> $fbUserProfile['gender'],
+			'locale' 		=> $fbUserProfile['locale'],
+			'picture' 		=> $fbUserProfile['picture']['data']['url'],
+			'link' 			=> $fbUserProfile['link']
+		);	
+		//Put user data into session
+		$_SESSION['userData'] = $userData;
+
+		$getUser = DBFunctions::getUserIDbyFacebookID($userData['oauth_uid']);
+
+		// User Einloggen
+		$_USER->login($loginData['idUser'], $_POST['username'], $userData['email'], $userData['first_name'], $userData['last_name']);
+        $_USER->set('privacykey', $loginData['privacykey']);
+        $_USER->set('gender', $userData['gender']);
+        */
+
 		$output = '<a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';
+		$_USER->redirect($HOST); //Weiterleiten auf URL in $continue
 	}
 
 ?>
