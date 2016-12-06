@@ -17,8 +17,7 @@ require './fb/fbConfig.php';
 	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
 	    $output = '<a href="'.$loginURL.'"><img src="./fb/images/fblogin-btn.png"></a>';     
 	}else{
-		$output = '<br/>Logged in with : Facebook';
-	    $output .= '<br/>Logout from <a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';
+		$output = '<a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';
 	}
 
 ?>
