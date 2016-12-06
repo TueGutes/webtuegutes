@@ -1,17 +1,25 @@
 <?php
 /**
  * Index
- *
  * Startseite, die für eingeloggte Nutzer einen Schnellzugriff zu wichtigen Funktionen bietet
  *
- * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
+ * @author Lukas Buttke FTW
  */
 
 require './includes/DEF.php';
-
 require './includes/_top.php';
-
 include './includes/db_connector.php';
+//Include FB config file
+require './fb/fbConfig.php';
+
+if(!$fbUser){
+    $fbUser = NULL;
+    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
+    $output = '<a href="'.$loginURL.'"><img src="./fb/images/fblogin-btn.png"></a>';     
+}else{
+	$output = '<br/>Logged in with : Facebook';
+    $output .= '<br/><a href="'.$userData['link'].'" target="_blank">Click to Visit Facebook Page</a>';
+    $output .= '<br/>Logout from <a href="./fb/logout.php">Facebook</a>'; 
 ?>
 
 <h2><?php echo $wlang['welcome']; ?></h2>
@@ -64,6 +72,9 @@ if(!$_USER->loggedIn())
 			<br><br>
 			Ich bin noch nicht registriert:<br>
 			<a href='./registration'>Zur Registrierung</a>
+
+			<div> <h4> oder mit Facebook einloggen: </h4> <br> ".$output." </div>
+
 		</div>
 		<div class='module'>
 			<br>
