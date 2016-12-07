@@ -314,7 +314,10 @@
 		if($browser === 'Firefox' || $browser === 'Internet Explorer')
 			$blPersoenlich .= "type='text' class='dateSelector'";
 		else
+		{
+			$currentBirthday = $dh ? $dh->get('Y-m-d') : '';
 			$blPersoenlich .= "type='date'";
+		}
 		$blPersoenlich .= " name='birthday' value='" . $currentBirthday . "' size='10' placeholder='DD.MM.YYYY' /></td></tr>";
 		
 		
