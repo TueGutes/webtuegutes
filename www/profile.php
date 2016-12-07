@@ -164,11 +164,6 @@
 	include "./includes/db_connector.php";
 	include "./includes/Map.php";
 	require "./includes/_top.php";
-	
-	// Henrik
-	echo '
-	<script type="text/javascript" src="./includes/dateSelector/dateSelector.js"></script>
-	<link rel="stylesheet" type="text/css" href="./includes/dateSelector/dateSelector.css" />';
 
 	// ALEX
 	include "./includes/streets.php";
@@ -310,15 +305,10 @@
 		// Henrik
 		$dh = (new DateHandler())->set($thisuser['birthday']);
 		$currentBirthday = $dh ? $dh->get('d.m.Y') : '';
-		$blPersoenlich .= "<tr><td>Geboren:</td><td><input ";
-		if($browser === 'Firefox' || $browser === 'Internet Explorer')
-			$blPersoenlich .= "type='text' class='dateSelector'";
-		else
-		{
+		$blPersoenlich .= "<tr><td>Geboren:</td><td>";
+		if($browser !== 'Firefox' && $browser !== 'Internet Explorer')
 			$currentBirthday = $dh ? $dh->get('Y-m-d') : '';
-			$blPersoenlich .= "type='date'";
-		}
-		$blPersoenlich .= " name='birthday' value='" . $currentBirthday . "' size='10' placeholder='DD.MM.YYYY' /></td></tr>";
+		$blPersoenlich .= "<input type='date' name='birthday' value='" . $currentBirthday . "' size='10' placeholder='DD.MM.YYYY' /></td></tr>";
 		
 		
 		// ALEX2: Leaves text boxes empty if value is 0. Added $tempValue.
