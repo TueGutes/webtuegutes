@@ -9,7 +9,7 @@
 	//Clever wäre, das hier in die DEF auszulagern!
 	//Und ja, ich weiß dass man den HTTP_USER_AGENT manipulieren kann - dann ist man aber selber Schuld
 
-	if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== FALSE)
+	/*if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== FALSE)
 	   $browser = 'Internet explorer';
 	 elseif(strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') !== FALSE) //IE 11
 	    $browser = 'Internet explorer';
@@ -24,7 +24,8 @@
 	 elseif(strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') !== FALSE)
 	   $browser = "Safari";
 	 else
-	   echo 'Something else';
+	   echo 'Something else';*/
+	
 ?>
 
 <?php
@@ -157,11 +158,14 @@
 	//Includes
 	require "./includes/DEF.php";
 	require './includes/UTILS.php';
+	
+	$browser = $BROWSER_NAME;
 
 	include "./includes/db_connector.php";
 	include "./includes/Map.php";
 	require "./includes/_top.php";
 	
+	// Henrik
 	echo '
 	<script type="text/javascript" src="./includes/dateSelector/dateSelector.js"></script>
 	<link rel="stylesheet" type="text/css" href="./includes/dateSelector/dateSelector.css" />';
@@ -306,8 +310,12 @@
 		// Henrik
 		$dh = (new DateHandler())->set($thisuser['birthday']);
 		$currentBirthday = $dh ? $dh->get('d.m.Y') : '';
-		$blPersoenlich .= "<tr><td>Geboren:</td><td>
-		<input type='text' name='birthday' class='dateSelector' value='" . $currentBirthday . "' size='10' placeholder='DD.MM.YYYY' /></td></tr>";
+		$blPersoenlich .= "<tr><td>Geboren:</td><td><input ";
+		if($browser === 'Firefox' || $browser === 'Internet Explorer')
+			$blPersoenlich .= "type='text' class='dateSelector'";
+		else
+			$blPersoenlich .= "type='date'";
+		$blPersoenlich .= " name='birthday' value='" . $currentBirthday . "' size='10' placeholder='DD.MM.YYYY' /></td></tr>";
 		
 		
 		// ALEX2: Leaves text boxes empty if value is 0. Added $tempValue.
