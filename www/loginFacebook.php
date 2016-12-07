@@ -5,6 +5,7 @@ require_once './includes/fb/fbConfig.php';
 require './includes/_top.php';
 require './includes/db_connector.php';
 
+echo "test"
     //Get user profile data from facebook
     $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');
     
@@ -99,6 +100,8 @@ require './includes/db_connector.php';
 
         }
     }
+
+   echo $getUser; 
    echo $out;
 
 require './includes/_bottom.php';
