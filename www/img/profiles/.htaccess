@@ -2,4 +2,4 @@
 # Henrik Huckauf
 RewriteEngine On
 
-ErrorDocument 404 /img/profiles/standard_other.png
+ErrorDocument 404 /www/img/profiles/standard_other.png
