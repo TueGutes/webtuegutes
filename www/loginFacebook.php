@@ -25,7 +25,7 @@ echo $tmp;
   $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
     if($getUser == false){
 
-        $tmp = "kein Facebook"
+        $tmp = "kein Facebook";
 
     //Put user data into session
     $SESSION["userdata"] = $userData;
@@ -59,11 +59,11 @@ echo $tmp;
         }
     else{
 
-        $tmp = "schleifenfehler"
+        $tmp = "schleifenfehler";
 
         if(isset($_POST['username'])){
                     
-                            $tmp = "Facebook"
+                            $tmp = "Facebook";
 
 
             $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
