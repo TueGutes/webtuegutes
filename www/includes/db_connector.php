@@ -266,7 +266,7 @@ class DBFunctions
 		$sql = "INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) VALUES ((SELECT MAX(idUser) FROM User),?,?)";
 		$stmt = $db->prepare($sql);
 
-		$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
+		$cryptkey = md5($username.$date); //Der Cryptkey wird erstellt
 		$privacykey = "011111011111111";
 		mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
 		if(!$stmt->execute()){

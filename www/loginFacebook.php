@@ -1,7 +1,7 @@
 <?php
 //Include FB config file && User class
-require_once './fb/fbConfig.php';
 require './includes/DEF.php';
+require_once './fb/fbConfig.php';
 require './includes/_top.php';
 require './includes/db_connector.php';
 
