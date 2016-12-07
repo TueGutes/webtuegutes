@@ -258,13 +258,9 @@ class DBFunctions
 		$date = date("Y-m-d");
 		$fulldate = new DateTime();
 		mysqli_stmt_bind_param($stmt, "sss", $benutzername,$email,$fulldate->format('Y-m-d H:i:s'));
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		} else {
-			echo 'beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db);
-			//return false;
+		if(!$stmt->execute()){
+			die('beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db));
+			return false;
 		}
 
 		$sql = "INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) VALUES ((SELECT MAX(idUser) FROM User),?,?)";
@@ -273,39 +269,25 @@ class DBFunctions
 		$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
 		$privacykey = "011111011111111";
 		mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		}
-		else {
-			echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
+		if(!$stmt->execute()){
+			die('beim erstellen des Privacys ist was schief gegangen '.mysqli_error($db));
 			return false;
 		}
 
 		$sql = "INSERT INTO UserTexts (idUserTexts,avater) VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('s',$picture);
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		}
-		else {
-			echo 'beim erstellen des UsexTexts ist was schief gegangen: '.mysqli_error($db);
+		if(!$stmt->execute()){
+			die('beim erstellen des Usertexts ist was schief gegangen '.mysqli_error($db));
 			return false;
 		}
+
 		$placeholderidpostal = -1;
-		$sql = "INSERT INTO PersData (idPersData, firstname, lastname,gender) VALUES((SELECT MAX(idUser) FROM User),?,?,?,?)";
+		$sql = "INSERT INTO PersData (idPersData, firstname, lastname,gender, idPostal) VALUES((SELECT MAX(idUser) FROM User),?,?,?,?)";
 		$stmt = $db->prepare($sql);
-		mysqli_stmt_bind_param($stmt, "sss", $vorname, $nachname,$gender);
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		}
-		else {
-			echo 'beim erstellen von PersData Eintrag ist was schief gegangen '.mysqli_error($db);
+		mysqli_stmt_bind_param($stmt, "sss", $vorname, $nachname,$gender, $placeholderidpostal);
+		if(!$stmt->execute()){
+			die('beim erstellen des PersDate ist was schief gegangen '.mysqli_error($db));
 			return false;
 		}
 
@@ -318,7 +300,10 @@ class DBFunctions
 		$sql = "INSERT INTO FacebookUser VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$fb_id);
-		$stmt->execute();
+		if(!$stmt->execute()){
+			die('beim erstellen des FacebooKUser Eintrags ist was schief gegangen '.mysqli_error($db));
+			return false;
+		}
 
 		self::db_close($db);
 		$arr = array('idUser' => $dbentry['idUser'],'privacykey' => $privacykey);
