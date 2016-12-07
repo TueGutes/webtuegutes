@@ -19,7 +19,7 @@ require './fb/fbConfig.php';
 	    $output = '<a href="'.$loginURL.'"><img src="./fb/images/fblogin-btn.png"></a>';     
 	}else{
 
-		/*
+		
 		$fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');
 
 		//Insert or update user data to the database
@@ -43,10 +43,12 @@ require './fb/fbConfig.php';
 		$_USER->login($loginData['idUser'], $_POST['username'], $userData['email'], $userData['first_name'], $userData['last_name']);
         $_USER->set('privacykey', $loginData['privacykey']);
         $_USER->set('gender', $userData['gender']);
-        */
-
+        /*
 		$output = '<a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';
-		$_USER->redirect($HOST); //Weiterleiten auf URL in $continue
+		$_USER->redirect($HOST); //Weiterleiten auf URL in $continue */
+
+		//Redirect to homepage
+		header("Location:../");
 	}
 
 ?>

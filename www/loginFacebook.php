@@ -5,9 +5,6 @@ require_once './fb/fbConfig.php';
 require './includes/_top.php';
 require './includes/db_connector.php';
 
-function getUserByFacebook($fb_id){
-    
-}
     //Get user profile data from facebook
     $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');
     
@@ -81,8 +78,17 @@ if(!isset($_POST['username'])){
 }
 
 else{
-	$out = '<h2> Dann noch viel Spaß beim gutes Tun !!!';
-	$_USER->redirect($HOST); //Weiterleiten auf URL in $continue
+	$out = '<h3> Registration über Facebook hat geklappt !!! <br>';
+    $out .= 'Dann noch viel Spaß auf unserer Seite ... <br> ';
+    $out .= 'Über den Button gelangst du zu deiner Startseite: ';
+    $out .= '<div class="eingeloggt"> 
+        <form action="index.php" method="post">
+            <input type="submit" value="Ab Gehts! "> <br> 
+        </form>
+    </div>';
+
+    //Redirect to homepage
+    header("Location:../");
 }
 
 echo $out;
