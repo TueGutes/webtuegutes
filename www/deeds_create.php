@@ -204,7 +204,7 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 					echo '<input type="time" name="starttime" placeholder="HH:MM">';
 					
 					echo '<input type="text" name="enddate" value="' . ($end_dh !== false ? $end_dh->get('d.m.Y') : '') . '" placeholder="Endzeitpunkt (dd.mm.yyyy HH:MM)" required />';
-					echo '<input type="time" name="starttime" placeholder="HH:MM">';
+					echo '<input type="time" name="endtime" placeholder="HH:MM">';
 				}
 				else
 				{
@@ -212,7 +212,7 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 					echo '<input type="time" name="starttime" placeholder="HH:MM">';
 					
 					echo '<input type="date" class="dateSelector" name="enddate" value="' . ($end_dh !== false ? $end_dh->get('Y-m-d') : '') . '" placeholder="Endzeitpunkt (dd.mm.yyyy HH:MM)" required />';
-					echo '<input type="time" name="starttime" placeholder="HH:MM">';
+					echo '<input type="time" name="endtime" placeholder="HH:MM">';
 				}
 
 				echo '<input type="text" name="organization" value="'; echo $organization; echo'" placeholder="Organisation" />
