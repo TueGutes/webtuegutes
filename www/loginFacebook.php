@@ -5,7 +5,7 @@ require_once './includes/fb/fbConfig.php';
 require './includes/_top.php';
 require './includes/db_connector.php';
 
-echo "test";
+echo $tmp;
     //Get user profile data from facebook
     $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');
     
@@ -24,6 +24,8 @@ echo "test";
 
   $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
     if($getUser == false){
+
+        $tmp = "kein Facebook"
 
     //Put user data into session
     $SESSION["userdata"] = $userData;
@@ -56,8 +58,14 @@ echo "test";
 
         }
     else{
+
+        $tmp = "schleifenfehler"
+
         if(isset($_POST['username'])){
                     
+                            $tmp = "Facebook"
+
+
             $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
 
             $login = array(
