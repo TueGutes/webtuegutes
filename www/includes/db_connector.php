@@ -350,7 +350,7 @@ class DBFunctions
 		if(isset($dbentry['user_id'])){
 			$arr['user_id'] = $dbentry['user_id'];
 			$arr['privacys'] = $dbentry['privacykey'];
-			return $arr[];
+			return $arr;
 		}
 		else {
 			return false;
