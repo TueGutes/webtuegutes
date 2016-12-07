@@ -13,9 +13,17 @@ include './includes/db_connector.php';
 //Include FB config file
 require './includes/fb/fbConfig.php';
 
+foreach($_COOKIE as $cookieName => $cookieValue)
+{
+     echo "Cookie <b>$cookieName</b>: $cookieValue<br />\n";
+}
+
 	if(isset($_COOKIE['fblogin'])){
 
-	   	isset($_COOKIE['fbUserData'] ? $userData = $_COOKIE['fbUserData'] : die("keine Facebook-daten in Cookies"))
+	   	if(isset($_COOKIE['fbUserData'])
+	   		$userData = $_COOKIE['fbUserData'] 
+	   	else 
+	   		die("keine Facebook-daten in Cookies"))
 	  
 	   	$getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 	   	
