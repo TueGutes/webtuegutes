@@ -28,7 +28,7 @@ require './includes/db_connector.php';
         $_USER->set('privacykey', $getUser['privacys']);
         $_USER->set('gender', $userData['gender']);
 
-        header("Location:../");
+        header("Location:./");
     }
 /*
 if(getUserByFacebook($userData['oauth_uid']) != false){
@@ -99,7 +99,7 @@ else{
     </div>';
 
     //Redirect to homepage
-    header("Location:../");
+    header("Location:./");
 }
 
 echo $out;

@@ -49,7 +49,7 @@ require './fb/fbConfig.php';
 		$_USER->redirect($HOST); //Weiterleiten auf URL in $continue */
 
 		//Redirect to homepage
-		header("Location:../");
+		header("Location:./");
 	}
 
 ?>
