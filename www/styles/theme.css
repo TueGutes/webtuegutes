@@ -783,7 +783,7 @@ red
 .deeds_create input[name=startdate],
 .deeds_create input[name=enddate]
 {
-	width: 50%;
+	width: 40%;
 }
 .deeds_create input[name=starttime],
 .deeds_create input[name=endtime]
