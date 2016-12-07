@@ -260,6 +260,7 @@ class DBFunctions
 		mysqli_stmt_bind_param($stmt, "sss", $username,$email,$fulldate->format('Y-m-d H:i:s'));
 		if(!$stmt->execute()){
 			die('beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
 			return false;
 		}
 
@@ -271,6 +272,7 @@ class DBFunctions
 		mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
 		if(!$stmt->execute()){
 			die('beim erstellen des Privacys ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
 			return false;
 		}
 
@@ -279,6 +281,7 @@ class DBFunctions
 		$stmt->bind_param('s',$picture);
 		if(!$stmt->execute()){
 			die('beim erstellen des Usertexts ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
 			return false;
 		}
 
@@ -288,6 +291,7 @@ class DBFunctions
 		mysqli_stmt_bind_param($stmt, "sssi", $vorname, $nachname,$gender, $placeholderidpostal);
 		if(!$stmt->execute()){
 			die('beim erstellen des PersData ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
 			return false;
 		}
 
@@ -302,6 +306,7 @@ class DBFunctions
 		$stmt->bind_param('i',$fb_id);
 		if(!$stmt->execute()){
 			die('beim erstellen des FacebooKUser Eintrags ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
 			return false;
 		}
 
@@ -310,6 +315,47 @@ class DBFunctions
 		return $arr;
 
 		//return "asdfjklö"; //Für Testzwecke
+	}
+
+
+	/**
+	* Funktion gibt userid und privacykey zu einer funktion zurück.
+	*
+	* Die Funktion kriegt eine Facebook_id übergeben und gibt die dazugehörige Userid und Privacykey aus wenn es die Datensötze in verbindung mit der fbid schon gibt. Wenn dies nicht der Fall ist, gibt die Funktion false zurück.
+	*
+	*@param int $fb_id Facebook_id
+	*
+	*@return (int|string)[]|false gibt einen Array mit userid und privacykey zurück oder false
+	*/
+	public function getUserIDbyFacebookID($fb_id){
+		$db = self::db_connect();
+		$sql="SELECT
+			user_id,
+			privacykey
+			FROM FacebookUser
+			JOIN Privacy
+				ON (FacebookUser.user_id = Privacy.idPrivacy)
+			WHERE facebook_id = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$fb_id);
+		if(!$stmt->execute()){
+			die('bei der Funktion getUserIDbyFacebookID ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		$arr = array();
+		if(isset($dbentry['user_id']){
+			$arr['user_id'] = $dbentry['user_id'];
+			$arr['privacys'] = $dbentry['privacykey'];
+			return $arr;
+		}
+		else{
+			return false;
+		}
+
 	}
 
 	/**
