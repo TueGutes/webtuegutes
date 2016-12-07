@@ -291,7 +291,7 @@ class DBFunctions
 			return false;
 		}
 
-		$sql = "SELECT MAX(idUser) AS idUser FROM USER";
+		$sql = "SELECT MAX(idUser) AS idUser FROM User";
 		$stmt = $db->prepare($sql);
 		$stmt->execute();
 		$result->$stmt->get_result();
