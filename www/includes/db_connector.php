@@ -327,7 +327,7 @@ class DBFunctions
 	*
 	*@return (int|string)[]|false gibt einen Array mit userid und privacykey zurück oder false
 	*/
-	public function getUserIDbyFacebookID($fb_id){
+	public function db_getUserIDbyFacebookID($fb_id){
 		$db = self::db_connect();
 		$sql="SELECT
 			user_id,
