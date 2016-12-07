@@ -23,7 +23,7 @@ echo "test";
     );
 
   $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-    if($getUser === false){
+    if($getUser == false){
 
     //Put user data into session
     $SESSION["userdata"] = $userData;
