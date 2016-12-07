@@ -257,7 +257,7 @@ class DBFunctions
 		$stmt = $db->prepare($sql);
 		$date = date("Y-m-d");
 		$fulldate = new DateTime();
-		mysqli_stmt_bind_param($stmt, "sss", $benutzername,$email,$fulldate->format('Y-m-d H:i:s'));
+		mysqli_stmt_bind_param($stmt, "sss", $username,$email,$fulldate->format('Y-m-d H:i:s'));
 		if(!$stmt->execute()){
 			die('beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db));
 			return false;
