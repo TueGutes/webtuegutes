@@ -115,7 +115,15 @@ input[type=button]:active, input[type=submit]:active
 	color: #ffffff;
 }
 
-input[type=text], input[type=password], input[type=email], input[type=number], input[type=date], input[type=time], input[type=search], select, textarea
+input[type=text], input[type=password], input[type=email], input[type=number], input[type=date], input[type=time], input[type=search], select, textarea,
+::-webkit-datetime-edit
+/*::-webkit-datetime-edit-fields-wrapper
+::-webkit-datetime-edit-text
+::-webkit-datetime-edit-month-field
+::-webkit-datetime-edit-day-field
+::-webkit-datetime-edit-year-field
+::-webkit-inner-spin-button
+::-webkit-calendar-picker-indicator*/
 {
 	border: 2px inset #eeeeee; 
 	outline: 0;
