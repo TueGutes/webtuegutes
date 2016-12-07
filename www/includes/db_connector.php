@@ -319,9 +319,9 @@ class DBFunctions
 
 
 	/**
-	* Funktion gibt userid und privacykey zu einer funktion zurück.
+	*Funktion gibt userid und privacykey zu einer funktion zurück.
 	*
-	* Die Funktion kriegt eine Facebook_id übergeben und gibt die dazugehörige Userid und Privacykey aus wenn es die Datensötze in verbindung mit der fbid schon gibt. Wenn dies nicht der Fall ist, gibt die Funktion false zurück.
+	*Die Funktion kriegt eine Facebook_id übergeben und gibt die dazugehörige Userid und Privacykey aus wenn es die Datensötze in verbindung mit der fbid schon gibt. Wenn dies nicht der Fall ist, gibt die Funktion false zurück.
 	*
 	*@param int $fb_id Facebook_id
 	*
@@ -347,16 +347,16 @@ class DBFunctions
 		$dbentry = $result->fetch_assoc();
 		self::db_close($db);
 		$arr = array();
-		if(isset($dbentry['user_id']){
+		if(isset($dbentry['user_id'])){
 			$arr['user_id'] = $dbentry['user_id'];
 			$arr['privacys'] = $dbentry['privacykey'];
-			return $arr;
+			return $arr[];
 		}
-		else{
+		else {
 			return false;
 		}
-
 	}
+	
 
 	/**
 	*Aktiviert einen Benutzeraccount.
