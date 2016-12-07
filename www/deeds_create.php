@@ -196,24 +196,25 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 				<input type="text" name="place" value="'; echo $place ; echo'" placeholder="Stadtteil" required />
 				<br>';
 				
+				/*
+				var o = '<select>';
+				for(var i = 0; i < 60; i++)
+				{
+					var p = i < 10 ? '0' + i : i;
+					o += '<option name="' + p + '" value="' + p + '">' + p + '</option>';
+				}
+				o += '</select>';
+				document.getElementById('out').innerHTML = o;
+				*/
 				$start_dh = (new DateHandler())->set($startdate);
 				$end_dh = (new DateHandler())->set($enddate);
-				/*if($BROWSER_NAME === 'Firefox' || $BROWSER_NAME === 'Internet Explorer')
-				{*/
-				/*	echo '<input type="text" class="dateSelector" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('d.m.Y') : '') . '" placeholder="Startdatum" required />';
-					echo '<input type="time" name="starttime" placeholder="HH:MM" required />';
-					
-					echo '<input type="text" class="dateSelector" name="enddate" value="' . ($end_dh !== false ? $end_dh->get('d.m.Y') : '') . '" placeholder="Enddatum" required />';
-					echo '<input type="time" name="endtime" placeholder="HH:MM" required />';
-				}
-				else
-				{*/
-					echo '<input type="date" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('Y-m-d') : '') . '" placeholder="Startzeitpunkt (dd.mm.yyyy HH:MM)" required />';
-					echo '<input type="time" name="starttime" placeholder="HH:MM" required />';
-					
-					echo '<input type="date" name="enddate" value="' . ($end_dh !== false ? $end_dh->get('Y-m-d') : '') . '" placeholder="Endzeitpunkt (dd.mm.yyyy HH:MM)" required />';
-					echo '<input type="time" name="endtime" placeholder="HH:MM" required />';
-				/*}*/
+				echo '<input type="date" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('Y-m-d') : '') . '" placeholder="Startzeitpunkt (dd.mm.yyyy HH:MM)" required />';
+				//echo '<input type="time" name="starttime" placeholder="HH:MM" required />';
+				echo '<select><option name="00" value="00">00</option><option name="01" value="01">01</option><option name="02" value="02">02</option><option name="03" value="03">03</option><option name="04" value="04">04</option><option name="05" value="05">05</option><option name="06" value="06">06</option><option name="07" value="07">07</option><option name="08" value="08">08</option><option name="09" value="09">09</option><option name="10" value="10">10</option><option name="11" value="11">11</option><option name="12" value="12">12</option><option name="13" value="13">13</option><option name="14" value="14">14</option><option name="15" value="15">15</option><option name="16" value="16">16</option><option name="17" value="17">17</option><option name="18" value="18">18</option><option name="19" value="19">19</option><option name="20" value="20">20</option><option name="21" value="21">21</option><option name="22" value="22">22</option><option name="23" value="23">23</option><option name="24" value="24">24</option><option name="25" value="25">25</option><option name="26" value="26">26</option><option name="27" value="27">27</option><option name="28" value="28">28</option><option name="29" value="29">29</option><option name="30" value="30">30</option><option name="31" value="31">31</option><option name="32" value="32">32</option><option name="33" value="33">33</option><option name="34" value="34">34</option><option name="35" value="35">35</option><option name="36" value="36">36</option><option name="37" value="37">37</option><option name="38" value="38">38</option><option name="39" value="39">39</option><option name="40" value="40">40</option><option name="41" value="41">41</option><option name="42" value="42">42</option><option name="43" value="43">43</option><option name="44" value="44">44</option><option name="45" value="45">45</option><option name="46" value="46">46</option><option name="47" value="47">47</option><option name="48" value="48">48</option><option name="49" value="49">49</option><option name="50" value="50">50</option><option name="51" value="51">51</option><option name="52" value="52">52</option><option name="53" value="53">53</option><option name="54" value="54">54</option><option name="55" value="55">55</option><option name="56" value="56">56</option><option name="57" value="57">57</option><option name="58" value="58">58</option><option name="59" value="59">59</option></select>';
+				echo '<select><option name="00" value="00">00</option><option name="01" value="01">01</option><option name="02" value="02">02</option><option name="03" value="03">03</option><option name="04" value="04">04</option><option name="05" value="05">05</option><option name="06" value="06">06</option><option name="07" value="07">07</option><option name="08" value="08">08</option><option name="09" value="09">09</option><option name="10" value="10">10</option><option name="11" value="11">11</option><option name="12" value="12">12</option><option name="13" value="13">13</option><option name="14" value="14">14</option><option name="15" value="15">15</option><option name="16" value="16">16</option><option name="17" value="17">17</option><option name="18" value="18">18</option><option name="19" value="19">19</option><option name="20" value="20">20</option><option name="21" value="21">21</option><option name="22" value="22">22</option></select>';
+				
+				echo '<input type="date" name="enddate" value="' . ($end_dh !== false ? $end_dh->get('Y-m-d') : '') . '" placeholder="Endzeitpunkt (dd.mm.yyyy HH:MM)" required />';
+				echo '<input type="time" name="endtime" placeholder="HH:MM" required />';
 
 				echo '<input type="text" name="organization" value="'; echo $organization; echo'" placeholder="Organisation" />
 				<br>
