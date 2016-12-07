@@ -20,11 +20,13 @@ foreach($_COOKIE as $cookieName => $cookieValue)
 
 	if(isset($_COOKIE['fblogin'])){
 
-	   	if(isset($_COOKIE['fbUserData'])
-	   		$userData = $_COOKIE['fbUserData'] 
-	   	else 
-	   		die("keine Facebook-daten in Cookies"))
-	  
+	   	if(isset($_COOKIE['fbUserData']){
+	   		$userData = $_COOKIE['fbUserData'];
+	   	}
+	   	else {
+	   		die("keine Facebook-daten in Cookies");
+	  	}
+	  	
 	   	$getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 	   	
 	   	$login = $_COOKIE['fblogin'];
