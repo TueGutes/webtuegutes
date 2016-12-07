@@ -1,7 +1,7 @@
 <?php
 //Include FB config file && User class
 require './includes/DEF.php';
-require_once './fb/fbConfig.php';
+require_once './includes/fb/fbConfig.php';
 require './includes/_top.php';
 require './includes/db_connector.php';
 
@@ -20,91 +20,73 @@ require './includes/db_connector.php';
         'picture'         => $fbUserProfile['picture']['data']['url'],
         'link'             => $fbUserProfile['link']
     );
-    
-    $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-    if($getUser != false){
-        // User Einloggen
-        $_USER->login($getUser['user_id'], $_POST['username'], $userData['email'], $userData['first_name'], $userData['last_name']);
-        $_USER->set('privacykey', $getUser['privacys']);
-        $_USER->set('gender', $userData['gender']);
 
-        header("Location:../");
-    }
-/*
-if(getUserByFacebook($userData['oauth_uid']) != false){
-    $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
-
-    $_USER->login($loginData['idUser'], $_POST['username'], $userData['email'], $userData['first_name'], $userData['last_name']);
-    $_USER->set('privacykey', $loginData['privacykey']);
-    $_USER->set('gender', $userData['gender']);
-}
-else{
-*/
     if(isset($_POST['username'])){
+                
         $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
 
-        $_USER->login($loginData['idUser'], $_POST['username'], $userData['email'], $userData['first_name'], $userData['last_name']);
-        $_USER->set('privacykey', $loginData['privacykey']);
-        $_USER->set('gender', $userData['gender']);
-    }
+        $login = array(
+            'idUser'    => $loginData['idUser'],
+            'username'     => $_POST['username'],
+            'email'     => $$userData['email'],
+            'firs_name'     => $userData['first_name'],
+            'last_name'         => $userData['last_name'],
+            'privacykey'         => $loginData['privacykey'],
+            'gender'         => $userData['gender']
+        );
+        setcookie("fblogin",$login,(time()+86400*730),"/");
+
+        $_USER->login($login['idUser'], $login['username'], $login['email'], $login['first_name'], $login['last_name']);
+        $_USER->set('privacykey', $login['privacykey']);
+        $_USER->set('gender', $login['gender']);
+        }
+
+        $out = '<h3> Registration über Facebook hat geklappt !!! <br>';
+        $out .= 'Dann noch viel Spaß auf unserer Seite ... <br> ';
+        $out .= 'Über den Button gelangst du zu deiner Startseite: ';
+        $out .= '<div class="eingeloggt"> 
+            <form action="index.php" method="post">
+                <input type="submit" value="Ab Gehts! "> <br> 
+            </form>
+        </div>';
+
+        header("Location:./");
+
+
     else{
 
-         //Put user data into session
-        $_SESSION['userData'] = $userData;
+    //Put user data into session
+    setcookie("fbUserData",$userData,(time()+86400*730),"/");
         
-        //Render facebook profile data
-        if(!empty($userData)){
-            $output = '<h3> Ihre Facebook Profile Details: </h1>';
-            $output .= '<img src="'.$userData['picture'].'">';
-            $output .= '<br/>Facebook ID : ' . $userData['oauth_uid'];
-            $output .= '<br/>Name : ' . $userData['first_name'].' '.$userData['last_name'];
-            $output .= '<br/>Email : ' . $userData['email'];
-            $output .= '<br/>Gender : ' . $userData['gender'];
-            $output .= '<br/>Locale : ' . $userData['locale'];
-            $output .= '<br/>Logged in with : Facebook';
-            $output .= '<br/><a href="'.$userData['link'].'" target="_blank">Click to Visit Facebook Page</a>';
-            $output .= '<br/>Logout from <a href="logout.php">Facebook</a>'; 
-        }else{
-            $output = '<h3 style="color:red">Some problem occurred, please try again.</h3>';
+     //Render facebook profile data
+            if(!empty($userData)){
+                $output = '<h3> Ihre Facebook Profile Details: </h1>';
+                $output .= '<img src="'.$userData['picture'].'">';
+                $output .= '<br/>Facebook ID : ' . $userData['oauth_uid'];
+                $output .= '<br/>Name : ' . $userData['first_name'].' '.$userData['last_name'];
+                $output .= '<br/>Email : ' . $userData['email'];
+                $output .= '<br/>Gender : ' . $userData['gender'];
+                $output .= '<br/>Locale : ' . $userData['locale'];
+                $output .= '<br/>Logged in with : Facebook';
+                $output .= '<br/><a href="'.$userData['link'].'" target="_blank">Click to Visit Facebook Page</a>';
+            }else{
+                $output = '<h3 style="color:red">Some problem occurred, please try again.</h3>';
+            }
+
+            $out = '
+                <div> '.$output.'</div>
+                <hr> 
+                <div class="username"> 
+                   <form action="" method="post">
+                       <b> Bitte einen Benutzernamen eingeben: </b> <br> 
+                       <input type="text" name="username" placeholder="Username eingeben"> <br>
+                      <input type="submit" value="Eintragen"> <br> 
+                    </form>
+                </div> ';
+
         }
-    }
-/*    
-} */
-?>
+   
+   echo $out;
 
-<?php 
-if(!isset($_POST['username'])){
-	$out = '
-	<div> '.$output.'</div>
-	<hr> 
-	<div class="username"> 
-		<form action="" method="post">
-			<b> Bitte einen Benutzernamen eingeben: </b> <br> 
-			<input type="text" name="username" placeholder="Username eingeben"> <br>
-			<input type="submit" value="Eintragen"> <br> 
-		</form>
-	</div>
-	';
-}
-
-else{
-
-	$out = '<h3> Registration über Facebook hat geklappt !!! <br>';
-    $out .= 'Dann noch viel Spaß auf unserer Seite ... <br> ';
-    $out .= 'Über den Button gelangst du zu deiner Startseite: ';
-    $out .= '<div class="eingeloggt"> 
-        <form action="index.php" method="post">
-            <input type="submit" value="Ab Gehts! "> <br> 
-        </form>
-    </div>';
-
-    //Redirect to homepage
-    header("Location:../");
-}
-
-echo $out;
-?>
-
-<?php
 require './includes/_bottom.php';
 ?>
