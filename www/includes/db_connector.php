@@ -285,9 +285,9 @@ class DBFunctions
 		$placeholderidpostal = -1;
 		$sql = "INSERT INTO PersData (idPersData, firstname, lastname,gender, idPostal) VALUES((SELECT MAX(idUser) FROM User),?,?,?,?)";
 		$stmt = $db->prepare($sql);
-		mysqli_stmt_bind_param($stmt, "sss", $vorname, $nachname,$gender, $placeholderidpostal);
+		mysqli_stmt_bind_param($stmt, "sssi", $vorname, $nachname,$gender, $placeholderidpostal);
 		if(!$stmt->execute()){
-			die('beim erstellen des PersDate ist was schief gegangen '.mysqli_error($db));
+			die('beim erstellen des PersData ist was schief gegangen '.mysqli_error($db));
 			return false;
 		}
 
