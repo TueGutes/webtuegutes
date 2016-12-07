@@ -37,12 +37,13 @@ require './fb/fbConfig.php';
 		//Put user data into session
 		$_SESSION['userData'] = $userData;
 
-		$getUser = DBFunctions::getUserIDbyFacebookID($userData['oauth_uid']);
+		$getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
 		// User Einloggen
-		$_USER->login($loginData['idUser'], $_POST['username'], $userData['email'], $userData['first_name'], $userData['last_name']);
-        $_USER->set('privacykey', $loginData['privacykey']);
+		$_USER->login($getUser['user_id'], $_POST['username'], $userData['email'], $userData['first_name'], $userData['last_name']);
+        $_USER->set('privacykey', $getUser['privacys']);
         $_USER->set('gender', $userData['gender']);
+        
         /*
 		$output = '<a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';
 		$_USER->redirect($HOST); //Weiterleiten auf URL in $continue */

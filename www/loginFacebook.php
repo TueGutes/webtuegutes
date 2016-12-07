@@ -20,6 +20,16 @@ require './includes/db_connector.php';
         'picture'         => $fbUserProfile['picture']['data']['url'],
         'link'             => $fbUserProfile['link']
     );
+    
+    $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+    if($getUser != false){
+        // User Einloggen
+        $_USER->login($getUser['user_id'], $_POST['username'], $userData['email'], $userData['first_name'], $userData['last_name']);
+        $_USER->set('privacykey', $getUser['privacys']);
+        $_USER->set('gender', $userData['gender']);
+
+        header("Location:../");
+    }
 /*
 if(getUserByFacebook($userData['oauth_uid']) != false){
     $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
@@ -78,6 +88,7 @@ if(!isset($_POST['username'])){
 }
 
 else{
+
 	$out = '<h3> Registration über Facebook hat geklappt !!! <br>';
     $out .= 'Dann noch viel Spaß auf unserer Seite ... <br> ';
     $out .= 'Über den Button gelangst du zu deiner Startseite: ';
