@@ -18,22 +18,15 @@ foreach($_COOKIE as $cookieName => $cookieValue)
      echo "Cookie <b>$cookieName</b>: $cookieValue<br />\n";
 }
 
-	if(isset($_COOKIE['fblogin'])){
+	if(isset($_COOKIE['fb_iduser'])){
 
-	   	if(isset($_COOKIE['fbUserData']){
-	   		$userData = $_COOKIE['fbUserData'];
-	   	}
-	   	else {
-	   		die("keine Facebook-daten in Cookies");
-	  	}
-	  	
-	   	$getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+	   	$getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
 	   	
-	   	$login = $_COOKIE['fblogin'];
+	   	//$login = $_COOKIE['fblogin'];
 		// User Einloggen
-		$_USER->login($login['user_id'], $login['username'], $login['email'], $login['first_name'], $login['last_name']);
-        $_USER->set('privacykey', $login['privacys']);
-        $_USER->set('gender', $login['gender']);
+		$_USER->login($_COOKIE['fb_iduser'], $_COOKIE['fb_username'], $_COOKIE['fb_email'], $_COOKIE['fb_first_name'], $_COOKIE['fb_last_name']);
+        $_USER->set('privacykey', $_COOKIE['fb_privacykey']);
+        $_USER->set('gender', $_COOKIE['fb_gender']);
         
         /*
 		$output = '<a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';

@@ -21,43 +21,12 @@ require './includes/db_connector.php';
         'link'             => $fbUserProfile['link']
     );
 
-    if(isset($_POST['username'])){
-                
-        $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
-
-        $login = array(
-            'idUser'    => $loginData['idUser'],
-            'username'     => $_POST['username'],
-            'email'     => $$userData['email'],
-            'firs_name'     => $userData['first_name'],
-            'last_name'         => $userData['last_name'],
-            'privacykey'         => $loginData['privacykey'],
-            'gender'         => $userData['gender']
-        );
-        setcookie("fblogin",$login,(time()+86400*730),"/");
-
-        $_USER->login($login['idUser'], $login['username'], $login['email'], $login['first_name'], $login['last_name']);
-        $_USER->set('privacykey', $login['privacykey']);
-        $_USER->set('gender', $login['gender']);
-        }
-
-        $out = '<h3> Registration über Facebook hat geklappt !!! <br>';
-        $out .= 'Dann noch viel Spaß auf unserer Seite ... <br> ';
-        $out .= 'Über den Button gelangst du zu deiner Startseite: ';
-        $out .= '<div class="eingeloggt"> 
-            <form action="index.php" method="post">
-                <input type="submit" value="Ab Gehts! "> <br> 
-            </form>
-        </div>';
-
-        header("Location:./");
-
-
-    else{
+  $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+    if($getUser === false){
 
     //Put user data into session
-    setcookie("fbUserData",$userData,(time()+86400*730),"/");
-        
+    $SESSION["userdata"] = $userData;
+           
      //Render facebook profile data
             if(!empty($userData)){
                 $output = '<h3> Ihre Facebook Profile Details: </h1>';
@@ -85,7 +54,51 @@ require './includes/db_connector.php';
                 </div> ';
 
         }
-   
+    else{
+        if(isset($_POST['username'])){
+                    
+            $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
+
+            $login = array(
+                'idUser'    => $loginData['idUser'],
+                'username'     => $_POST['username'],
+                'email'     => $$userData['email'],
+                'first_name'     => $userData['first_name'],
+                'last_name'         => $userData['last_name'],
+                'privacykey'         => $loginData['privacykey'],
+                'gender'         => $userData['gender']
+            );
+
+            $_USER->login($login['idUser'], $login['username'], $login['email'], $login['first_name'], $login['last_name']);
+            $_USER->set('privacykey', $login['privacykey']);
+            $_USER->set('gender', $login['gender']);
+
+            setcookie("fb_iduser",$login['idUser'],(time()+86400*730),"/");
+            setcookie("fb_id",$userData['oauth_uid'],(time()+86400*730),"/");
+            setcookie("fb_username",$login['username'],(time()+86400*730),"/");
+            setcookie("fb_email",$login['email'],(time()+86400*730),"/");
+            setcookie("fb_first_name",$login['first_name'],(time()+86400*730),"/");
+            setcookie("fb_last_name",$login['last_name'],(time()+86400*730),"/");
+            setcookie("fb_privacykey",$login['privacykey'],(time()+86400*730),"/");
+            setcookie("fb_gender",$login['gender'],(time()+86400*730),"/");
+            setcookie("fb_picture",$userData['picture'],(time()+86400*730),"/");
+            setcookie("fb_link",$userData['link'],(time()+86400*730),"/");
+
+            //setcookie("fblogin",$login,(time()+86400*730),"/")            
+
+            $out = '<h3> Registration über Facebook hat geklappt !!! <br>';
+            $out .= 'Dann noch viel Spaß auf unserer Seite ... <br> ';
+            $out .= 'Über den Button gelangst du zu deiner Startseite: ';
+            $out .= '<div class="eingeloggt"> 
+                <form action="index.php" method="post">
+                    <input type="submit" value="Ab Gehts! "> <br> 
+                </form>
+            </div>';
+
+            header("Location:./");
+
+        }
+    }
    echo $out;
 
 require './includes/_bottom.php';
