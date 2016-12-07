@@ -788,8 +788,7 @@ red
 .deeds_create input[name=starttime],
 .deeds_create input[name=endtime]
 {
-	width: 20%;
-	margin-bottom: 5px;
+	width: 29%;
 }
 .deeds_create input[name=street]
 {
