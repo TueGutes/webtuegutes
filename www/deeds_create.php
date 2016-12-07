@@ -198,22 +198,22 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 				
 				$start_dh = (new DateHandler())->set($startdate);
 				$end_dh = (new DateHandler())->set($enddate);
-				if($BROWSER_NAME === 'Firefox' || $BROWSER_NAME === 'Internet Explorer')
-				{
-					echo '<input type="text" class="dateSelector" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('d.m.Y') : '') . '" placeholder="Startdatum" required />';
+				/*if($BROWSER_NAME === 'Firefox' || $BROWSER_NAME === 'Internet Explorer')
+				{*/
+				/*	echo '<input type="text" class="dateSelector" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('d.m.Y') : '') . '" placeholder="Startdatum" required />';
 					echo '<input type="time" name="starttime" placeholder="HH:MM" required />';
 					
 					echo '<input type="text" class="dateSelector" name="enddate" value="' . ($end_dh !== false ? $end_dh->get('d.m.Y') : '') . '" placeholder="Enddatum" required />';
 					echo '<input type="time" name="endtime" placeholder="HH:MM" required />';
 				}
 				else
-				{
+				{*/
 					echo '<input type="date" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('Y-m-d') : '') . '" placeholder="Startzeitpunkt (dd.mm.yyyy HH:MM)" required />';
 					echo '<input type="time" name="starttime" placeholder="HH:MM" required />';
 					
 					echo '<input type="date" name="enddate" value="' . ($end_dh !== false ? $end_dh->get('Y-m-d') : '') . '" placeholder="Endzeitpunkt (dd.mm.yyyy HH:MM)" required />';
 					echo '<input type="time" name="endtime" placeholder="HH:MM" required />';
-				}
+				/*}*/
 
 				echo '<input type="text" name="organization" value="'; echo $organization; echo'" placeholder="Organisation" />
 				<br>
