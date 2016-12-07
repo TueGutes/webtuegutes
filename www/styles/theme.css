@@ -284,7 +284,7 @@ header .center { margin: auto; }
 header .siteLogo { padding: 10px/*(105-88)/2*/ 0px 0px 0px; width: 220px; float: left; text-align: center; -webkit-transition: all .3s; transition: all .3s; }
 header .siteLogo h1 { margin: 0px; }
 header .siteLogo h1 a { font-size: 36px; color: #fff; font-family: 'Open Sans', sans-serif; font-weight: 800; text-decoration: none; text-transform: uppercase; text-shadow: rgb(3, 3, 3) 0px 2px 5px; -webkit-transition: all .7s ease; transition: all .7s ease; }
-header .siteLogo h1 a img { height: 88px; -webkit-transition: all .3s; transition: all .3s; }
+header .siteLogo h1 a img { padding-left: 5px; height: 88px; -webkit-transition: all .3s; transition: all .3s; }
 header.smaller { padding: 0px 0px 0px 0px; height: 60px; background: rgba(0, 0, 0, 0.75); -webkit-transition: all .3s; transition: all .3s; }
 header.smaller .siteLogo {padding: 5px 0px 0px 0px; }
 header.smaller .siteLogo h1 { line-height: 30px; }
@@ -775,17 +775,20 @@ red
 .deeds_create input[name=name],
 .deeds_create input[name=place],
 .deeds_create input[name=place],
-.deeds_create input[name=startdate],
-.deeds_create input[name=enddate],
 .deeds_create input[name=organization]
 {
 	width: 80%;
 	margin-bottom: 5px;
 }
+.deeds_create input[name=startdate],
+.deeds_create input[name=enddate]
+{
+	width: 50%;
+}
 .deeds_create input[name=starttime],
 .deeds_create input[name=endtime]
 {
-	width: 40%;
+	width: 20%;
 	margin-bottom: 5px;
 }
 .deeds_create input[name=street]
