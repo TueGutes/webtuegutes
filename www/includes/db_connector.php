@@ -274,7 +274,7 @@ class DBFunctions
 			return false;
 		}
 
-		$sql = "INSERT INTO UserTexts (idUserTexts,avater) VALUES ((SELECT MAX(idUser) FROM User),?)";
+		$sql = "INSERT INTO UserTexts (idUserTexts,avatar) VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('s',$picture);
 		if(!$stmt->execute()){
