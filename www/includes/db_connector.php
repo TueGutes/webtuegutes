@@ -294,7 +294,7 @@ class DBFunctions
 		$sql = "SELECT MAX(idUser) AS idUser FROM User";
 		$stmt = $db->prepare($sql);
 		$stmt->execute();
-		$result->$stmt->get_result();
+		$result=$stmt->get_result();
 		$dbentry = $result->fetch_assoc();
 
 		$sql = "INSERT INTO FacebookUser VALUES ((SELECT MAX(idUser) FROM User),?)";
