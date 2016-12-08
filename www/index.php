@@ -16,7 +16,7 @@ require './includes/fb/fbConfig.php';
 // --------------- Automatischer Login durch Cookies ------------------------------------
 	if(!empty($_COOKIE['fb_iduser'])){
 
-//>>>>>> Datenbanken Abfrage, ob fb existiert 
+//>>>>>> Datenbank abfrage, ob Fb Account schon existiert 
 $getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
 
 		// User Einloggen
