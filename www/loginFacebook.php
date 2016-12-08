@@ -34,6 +34,7 @@ require './includes/db_connector.php';
 
     // -------------------------- Unsere Datenbank ----------------------------------------
     $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+    echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
 //-------------------------- Kontroll Block unregistriert -------------------------------------------
     if(!isset($_POST['username'])){
@@ -76,7 +77,10 @@ require './includes/db_connector.php';
 
                     
             //------------------- User Anlegen, fals nicht existiert ------------------------
-            if(!isset($getuser['user_id'])){
+            echo $getuser;
+            echo $getuser['user_id'];
+            echo $getuser['privacys'];
+            if(!$getuser){
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
             }
             else{
