@@ -78,7 +78,12 @@ echo $tmp;
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
             }
             else{
-                $loginData = $getUser;
+                $loginData = array(
+                    'idUser'    => $getUser['user_id'],
+                    'privacykey'    => $getUser['privacys']
+                );
+
+                echo 'loginData: <'.$getUser['user_id'].', '.$getUser['privacys'].'>';
             }
 
             $login = array(

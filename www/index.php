@@ -12,7 +12,10 @@ include './includes/db_connector.php';
 
 //Include FB config file
 require './includes/fb/fbConfig.php';
+
 setcookie("PHPSESSID", "", time() - 600);
+unset($_CCOOKIE['PHPSESSID']);
+
 foreach($_COOKIE as $cookieName => $cookieValue)
 {
      echo "Cookie <b>$cookieName</b>: $cookieValue<br />\n";
