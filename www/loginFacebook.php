@@ -5,13 +5,11 @@ require_once './includes/fb/fbConfig.php';
 require './includes/_top.php';
 require './includes/db_connector.php';
 
-$tmp = "";
-$out = "";
-echo $tmp;
-
+//------------------------------ INITIALISIERUNGEN -----------------------------------------------------
+    //----------------- Facebook --------------------------
+    $out="";
     //Get user profile data from facebook
-    $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');
-    
+    $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');    
     //Insert or update user data to the database
     $userData = array(
         'oauth_provider'=> 'facebook',
@@ -24,7 +22,7 @@ echo $tmp;
         'picture'         => $fbUserProfile['picture']['data']['url'],
         'link'             => $fbUserProfile['link']
     );
-
+    //--------------------- Cookies -----------------------------------
     setcookie("fb_id",$userData['oauth_uid'],(time()+86400*730),"/");
     setcookie("fb_email",$userData['email'],(time()+86400*730),"/");
     setcookie("fb_first_name",$userData['first_name'],(time()+86400*730),"/");
@@ -34,12 +32,11 @@ echo $tmp;
     setcookie("fb_link",$userData['link'],(time()+86400*730),"/");
 
 
+    // -------------------------- Unsere Datenbank ----------------------------------------
     $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
+//-------------------------- Kontroll Block unregistriert -------------------------------------------
     if(!isset($_POST['username'])){
-
-        $tmp = "kein Facebook";
-
     //Put user data into session
     $SESSION["userdata"] = $userData;
            
@@ -70,11 +67,16 @@ echo $tmp;
                 </div> ';
 
         }
-    else{
 
-        $tmp = "Facebook";
-            $tmp = true;
-            if(!$tmp){
+//-------------------------- Kontroll Block einloggen -------------------------------------------
+    else{
+            unset($_COOKIE['fb_iduser']);
+            unset($_COOKIE['fb_username']);
+            unset($_COOKIE['fb_privacykey']);
+
+                    
+            //------------------- User Anlegen, fals nicht existiert ------------------------
+            if(!$getUser){
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
             }
             else{
@@ -83,9 +85,10 @@ echo $tmp;
                     'privacykey'    => $getUser['privacys']
                 );
 
+// >>>>>>>>>>>>>>>>>>> Ausgabe von Datenbanken zeug, welche aber nicht funktioniert                
                 echo 'Ausgabe der Datenbank-Facebook Daten: < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacys'].'>';
             }
-
+            // ------------------------------- LoginDaten sammeln -------------------------------------
             $login = array(
                 'idUser'    => $loginData['idUser'],
                 'username'     => $_POST['username'],
@@ -96,6 +99,8 @@ echo $tmp;
                 'gender'         => $userData['gender']
             );
 
+            //------------------------------- Einloggen und Setzen der LoginCookies ---------------------
+
             $_USER->login($login['idUser'], $login['username'], $login['email'], $login['first_name'], $login['last_name']);
             $_USER->set('privacykey', $login['privacykey']);
             $_USER->set('gender', $login['gender']);
@@ -104,8 +109,7 @@ echo $tmp;
             setcookie("fb_username",$login['username'],(time()+86400*730),"/");
             setcookie("fb_privacykey",$login['privacykey'],(time()+86400*730),"/");
 
-            //setcookie("fblogin",$login,(time()+86400*730),"/")            
-
+            // ----------------------------- Ausgabe -----------------------------------
             $out = '<h3> Registration über Facebook hat geklappt !!! <br>';
             $out .= 'Dann noch viel Spaß auf unserer Seite ... <br> ';
             $out .= 'Über den Button gelangst du zu deiner Startseite: ';
@@ -115,6 +119,7 @@ echo $tmp;
                 </form>
             </div>';
 
+            // Automatische Weiterleitung - derzeit deaktiviert 
             // header("Location:./");
 
         }

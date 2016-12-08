@@ -13,27 +13,16 @@ include './includes/db_connector.php';
 //Include FB config file
 require './includes/fb/fbConfig.php';
 
-setcookie("PHPSESSID", "", time() - 600);
-unset($_COOKIE['PHPSESSID']);
-
-foreach($_COOKIE as $cookieName => $cookieValue)
-{
-     echo "Cookie <b>$cookieName</b>: $cookieValue<br />\n";
-}
-
+// --------------- Automatischer Login durch Cookies ------------------------------------
 	if(!empty($_COOKIE['fb_iduser'])){
 
-	   	$getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
-	   	
-	   	//$login = $_COOKIE['fblogin'];
+//>>>>>> Datenbanken Abfrage, ob fb existiert 
+$getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
+
 		// User Einloggen
 		$_USER->login($_COOKIE['fb_iduser'], $_COOKIE['fb_username'], $_COOKIE['fb_email'], $_COOKIE['fb_first_name'], $_COOKIE['fb_last_name']);
         $_USER->set('privacykey', $_COOKIE['fb_privacykey']);
         $_USER->set('gender', $_COOKIE['fb_gender']);
-        
-        /*
-		$output = '<a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';
-		$_USER->redirect($HOST); //Weiterleiten auf URL in $continue */
 
 		//Redirect to homepage
 		header("Location:./");
@@ -224,52 +213,8 @@ echo "
 </script>
 ";
 
-
-
-
-
-
-
-
 ?>
 
-
-<!--
-<div class='center'>
-	<a href='/login'>(Link) zum Login</a>
-	<br><br>
-	<input type="submit" value="submit">
-	<br><br>
-	<input type="button" value="button">
-	<br><br>
-	<input type="text" value="" placeholder="NAME">
-	<br><br>
-	<input type="email" value="" placeholder="EMAIL">
-	<br><br>
-	<input type="password" value="" placeholder="PASSWORT">
-	<br><br>
-	<textarea cols="16"  rows="2" placeholder="TEXT"></textarea>
-	<br><br>
-	<select>
-		<option value="none">Bitte wählen</option>
-		<option value="1">Option 1</option>
-		<option value="2">Option 2</option>
-		<option value="3">Option 3</option>
-	</select>
-	<br><br>
-	<input id="radio1" name="radio" type="radio" checked="checked"><label for="radio1">Option 1</label>
-	<br><br>
-	<input id="radio2" name="radio" type="radio"><label for="radio2">Option 2</label>
-	<br><br>
-	<input id="radio3" name="radio" type="radio"><label for="radio3">Option 3</label>
-	<br><br>
-	<input id="checkbox1" type="checkbox" checked="checked"><label for="checkbox1">Check 1</label>
-	&nbsp;
-	<input id="checkbox2" type="checkbox"><label for="checkbox2">Check 2</label>
-	&nbsp;
-	<input id="checkbox3" type="checkbox"><label for="checkbox3">Check 3</label>
-</div>
--->
 <?php
 require './includes/_bottom.php';
 ?>
