@@ -76,7 +76,7 @@ require './includes/db_connector.php';
 
                     
             //------------------- User Anlegen, fals nicht existiert ------------------------
-            if(!$getUser){
+            if(array_filter($getUser)){
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
             }
             else{
