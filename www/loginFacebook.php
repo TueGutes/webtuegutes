@@ -34,6 +34,8 @@ echo $tmp;
     setcookie("fb_link",$userData['link'],(time()+86400*730),"/");
 
 
+    $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+
     if(!isset($_POST['username'])){
 
         $tmp = "kein Facebook";
@@ -71,9 +73,8 @@ echo $tmp;
     else{
 
         $tmp = "Facebook";
-            
-            $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-            if(!$getUser){
+            $tmp = true;
+            if(!$tmp){
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
             }
             else{
