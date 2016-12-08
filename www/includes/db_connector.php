@@ -346,11 +346,8 @@ class DBFunctions
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
 		self::db_close($db);
-		$arr = array();
 		if(isset($dbentry['user_id'])){
-			$arr['user_id'] = $dbentry['user_id'];
-			$arr['privacys'] = $dbentry['privacykey'];
-			return $arr;
+			return $dbentry;
 		}
 		else {
 			return false;
