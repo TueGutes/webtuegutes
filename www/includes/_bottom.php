@@ -14,11 +14,6 @@
 					<div>
 						<br><br>
 						
-						<!-- Your share button code -->
-						<div class="fb-share-button" 
-							data-href="https://www.facebook.com/tueGutesinHannover/"
-							data-layout="button_count"> 
-						</div>
 						<br>
 						<a href="./privacy"><?php echo $wlang['privacy']; ?></a><br>
 						<a href="./imprint"><?php echo $wlang['imprint']; ?></a><br>
