@@ -8,6 +8,7 @@ require './includes/db_connector.php';
 $tmp = "";
 $out = "";
 echo $tmp;
+
     //Get user profile data from facebook
     $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');
     
@@ -33,7 +34,6 @@ echo $tmp;
     setcookie("fb_link",$userData['link'],(time()+86400*730),"/");
 
 
-  $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
     if(!isset($_POST['username'])){
 
         $tmp = "kein Facebook";
@@ -71,9 +71,13 @@ echo $tmp;
     else{
 
         $tmp = "Facebook";
-
+            
 
             $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
+
+            $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+
+
 
             $login = array(
                 'idUser'    => $loginData['idUser'],
