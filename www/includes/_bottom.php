@@ -13,7 +13,7 @@
 				<footer>
 					<div>
 						<br><br>
-					
+						
 						<br>
 						<a href="./privacy"><?php echo $wlang['privacy']; ?></a><br>
 						<a href="./imprint"><?php echo $wlang['imprint']; ?></a><br>

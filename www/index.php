@@ -11,38 +11,22 @@ require './includes/_top.php';
 include './includes/db_connector.php';
 
 //Include FB config file
-require './fb/fbConfig.php';
+require './includes/fb/fbConfig.php';
 
-	if(!$fbUser){
-	    $fbUser = NULL;
-	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
-	    $output = '<a href="'.$loginURL.'"><img src="./fb/images/fblogin-btn.png"></a>';     
-	}else{
+foreach($_COOKIE as $cookieName => $cookieValue)
+{
+     echo "Cookie <b>$cookieName</b>: $cookieValue<br />\n";
+}
 
-		
-		$fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');
+	if(isset($_COOKIE['fb_iduser'])){
 
-		//Insert or update user data to the database
-		$userData = array(
-			'oauth_provider'=> 'facebook',
-			'oauth_uid' 	=> $fbUserProfile['id'],
-			'first_name' 	=> $fbUserProfile['first_name'],
-			'last_name' 	=> $fbUserProfile['last_name'],
-			'email' 		=> $fbUserProfile['email'],
-			'gender' 		=> $fbUserProfile['gender'],
-			'locale' 		=> $fbUserProfile['locale'],
-			'picture' 		=> $fbUserProfile['picture']['data']['url'],
-			'link' 			=> $fbUserProfile['link']
-		);	
-		//Put user data into session
-		$_SESSION['userData'] = $userData;
-
-		$getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-
+	   	$getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
+	   	
+	   	//$login = $_COOKIE['fblogin'];
 		// User Einloggen
-		$_USER->login($getUser['user_id'], $_POST['username'], $userData['email'], $userData['first_name'], $userData['last_name']);
-        $_USER->set('privacykey', $getUser['privacys']);
-        $_USER->set('gender', $userData['gender']);
+		$_USER->login($_COOKIE['fb_iduser'], $_COOKIE['fb_username'], $_COOKIE['fb_email'], $_COOKIE['fb_first_name'], $_COOKIE['fb_last_name']);
+        $_USER->set('privacykey', $_COOKIE['fb_privacykey']);
+        $_USER->set('gender', $_COOKIE['fb_gender']);
         
         /*
 		$output = '<a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';
@@ -50,6 +34,12 @@ require './fb/fbConfig.php';
 
 		//Redirect to homepage
 		header("Location:./");
+		   
+	}else{
+
+		$fbUser = NULL;
+	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
+	    $output = '<a href="'.$loginURL.'"><img src="./includes/fb/images/fblogin-btn.png"></a>'; 
 	}
 
 ?>
