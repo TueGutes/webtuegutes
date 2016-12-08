@@ -2357,10 +2357,10 @@ class DBFunctions
 	 */
 	public function db_searchDuringGutes($keyword,$sort)
 	{
-		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
-		$sort_bedingung = self::set_sortBedingung($sort);
-		$db = self::db_connect();
-		$sql = "SELECT DISTINCT
+        $bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
+        $sort_bedingung = self::db_set_sortBedingung($sort);
+        $db = self::db_connect();
+        $sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,
 			`Deeds`.`category`,
@@ -2376,7 +2376,7 @@ class DBFunctions
 			`Trust`.`trustleveldescription`,
 			`DeedTexts`.`description`,
 			`Postalcode`.`postalcode`,
-			`Postalcode`.`place`,
+			`Postalcode`.`place`
 		FROM `User` JOIN `Deeds`
         ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
@@ -2386,12 +2386,12 @@ class DBFunctions
         OR `Deeds`.`category` like ?
         AND `Deeds`.`status` != 'nichtFreigegeben'
         ORDER BY $sort_bedingung";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('ss', $bedingung, $bedingung);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		self::db_close($db);
-		return $result;
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('ss', $bedingung, $bedingung);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        self::db_close($db);
+        return $result;
 	}
 
 	/**
@@ -2404,7 +2404,7 @@ class DBFunctions
 	public function db_searchDruingUsername($keyword,$sort)
 	{
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
-		$sort_bedingung = self::set_sortBedingung($sort);
+		$sort_bedingung = self::db_set_sortBedingung($sort);
 		$db = self::db_connect();
 		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
@@ -2449,7 +2449,7 @@ class DBFunctions
 	public function db_searchDuringOrt($keyword,$sort)
 	{
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
-		$sort_bedingung = self::set_sortBedingung($sort);
+		$sort_bedingung = self::db_set_sortBedingung($sort);
 		$db = self::db_connect();
 		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
@@ -2495,7 +2495,7 @@ class DBFunctions
 	public function db_searchDuringZeit($keyword,$sort)
 	{
 		$db = self::db_connect();
-		$sort_bedingung = self::set_sortBedingung($sort);
+		$sort_bedingung = self::db_set_sortBedingung($sort);
 		$sql = " SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,
