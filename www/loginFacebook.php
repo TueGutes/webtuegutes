@@ -83,7 +83,7 @@ echo $tmp;
                     'privacykey'    => $getUser['privacys']
                 );
 
-                echo 'loginData: <'.$getUser['user_id'].', '.$getUser['privacys'].'>';
+                echo 'Ausgabe der Datenbank-Facebook Daten: < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacys'].'>';
             }
 
             $login = array(
