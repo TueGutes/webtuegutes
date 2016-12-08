@@ -72,12 +72,13 @@ echo $tmp;
 
         $tmp = "Facebook";
             
-
-            $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
-
             $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-
-
+            if(!$getUser){
+                $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
+            }
+            else{
+                $loginData = $getUser;
+            }
 
             $login = array(
                 'idUser'    => $loginData['idUser'],
