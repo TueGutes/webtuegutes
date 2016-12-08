@@ -87,10 +87,11 @@ require './includes/db_connector.php';
             $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
     		echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
-            echo $getUser;
+            echo $getUser."hallo";
             echo $getUser['user_id'];
             echo $getUser['privacykey'];
             if(!$getUser){
+                echo $userData['oauth_uid'];
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
             }
             else{
