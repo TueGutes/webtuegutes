@@ -334,7 +334,7 @@ class DBFunctions
 			privacykey
 			FROM FacebookUser
 			JOIN Privacy
-				ON (FacebookUser.user_id = Privacy.idPrivacy)
+				ON FacebookUser.user_id = Privacy.idPrivacy
 			WHERE facebook_id = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$fb_id);
