@@ -89,7 +89,7 @@ echo $tmp;
             $login = array(
                 'idUser'    => $loginData['idUser'],
                 'username'     => $_POST['username'],
-                'email'     => $$userData['email'],
+                'email'     => $userData['email'],
                 'first_name'     => $userData['first_name'],
                 'last_name'         => $userData['last_name'],
                 'privacykey'         => $loginData['privacykey'],
