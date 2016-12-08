@@ -115,7 +115,7 @@ echo $tmp;
                 </form>
             </div>';
 
-            header("Location:./");
+            // header("Location:./");
 
         }
 
