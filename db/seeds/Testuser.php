@@ -37,7 +37,7 @@ class Testuser extends AbstractSeed
         $datausertexts=array(
             array(
                 'idUserTexts' =>1,
-                'avater' => './img/profiles/standard_male.png'
+                'avatar' => './img/profiles/standard_male.png'
                 )
             );
         $datapersdata=array(
