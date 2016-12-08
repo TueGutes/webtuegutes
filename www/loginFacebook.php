@@ -82,18 +82,18 @@ require './includes/db_connector.php';
 
             echo $getuser;
             echo $getuser['user_id'];
-            echo $getuser['privacys'];
+            echo $getuser['privacykey'];
             if(!$getuser){
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
             }
             else{
                 $loginData = array(
                     'idUser'    => $getUser['user_id'],
-                    'privacykey'    => $getUser['privacys']
+                    'privacykey'    => $getUser['privacykey']
                 );
 
 // >>>>>>>>>>>>>>>>>>> Ausgabe von Datenbanken zeug, welche aber nicht funktioniert                
-                echo 'Ausgabe der Datenbank-Facebook Daten: < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacys'].'>';
+                echo 'Ausgabe der Datenbank-Facebook Daten: < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacykey'].'>';
             }
             // ------------------------------- LoginDaten sammeln -------------------------------------
             $login = array(
