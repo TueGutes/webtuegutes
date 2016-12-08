@@ -77,6 +77,9 @@ require './includes/db_connector.php';
 
                     
             //------------------- User Anlegen, fals nicht existiert ------------------------
+                $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+    			echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+
             echo $getuser;
             echo $getuser['user_id'];
             echo $getuser['privacys'];
