@@ -14,7 +14,7 @@ include './includes/db_connector.php';
 require './includes/fb/fbConfig.php';
 
 setcookie("PHPSESSID", "", time() - 600);
-unset($_CCOOKIE['PHPSESSID']);
+unset($_COOKIE['PHPSESSID']);
 
 foreach($_COOKIE as $cookieName => $cookieValue)
 {
