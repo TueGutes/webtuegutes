@@ -21,7 +21,7 @@ foreach($_COOKIE as $cookieName => $cookieValue)
      echo "Cookie <b>$cookieName</b>: $cookieValue<br />\n";
 }
 
-	if(isset($_COOKIE['fb_iduser'])){
+	if(!empty($_COOKIE['fb_iduser'])){
 
 	   	$getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
 	   	
