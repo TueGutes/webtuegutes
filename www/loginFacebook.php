@@ -41,6 +41,13 @@ require './includes/db_connector.php';
     //Put user data into session
     $SESSION["userdata"] = $userData;
            
+
+            $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+            echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+
+            echo $getUser;
+            echo $getUser['user_id'];
+            echo $getUser['privacykey'];
      //Render facebook profile data
             if(!empty($userData)){
                 $output = '<h3> Ihre Facebook Profile Details: </h1>';
@@ -77,8 +84,8 @@ require './includes/db_connector.php';
 
                     
             //------------------- User Anlegen, fals nicht existiert ------------------------
-                $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-    			echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+            $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+    		echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
             echo $getUser;
             echo $getUser['user_id'];
