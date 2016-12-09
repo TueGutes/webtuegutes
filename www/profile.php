@@ -719,11 +719,6 @@
 
 <!--Ausgabe der einzelnen Blöcke-->
 <?php
-	
-		foreach($_COOKIE as $cookieName => $cookieValue)
-		{
-     		echo "Cookie <b>$cookieName</b>: $cookieValue<br />\n";
-		}
 
 	echo $blAvatar;
 	echo '<div align="center">' . $blPersoenlich . '</div>';

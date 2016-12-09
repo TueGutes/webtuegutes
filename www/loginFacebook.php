@@ -80,18 +80,16 @@ if(!isset($getUser['user_id'])){
     else{
                    
             //------------------- User Anlegen, fals nicht existiert ------------------------
-            /*echo $getUser['user_id'];
-            echo $getUser['privacykey'];*/
+
             if(!empty($getUser['user_id'])){
-                //echo $userData['oauth_uid'];
                 $loginData = array(
                     'idUser'    => $getUser['user_id'],
                     'privacykey'    => $getUser['privacykey']
                 );
-                 echo   'Ausgabe der Datenbank-Facebook Daten: 
-                        < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacykey'].'>';                
+                /* echo   'Ausgabe der Datenbank-Facebook Daten: 
+                        < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacykey'].'>'; */               
             }
-            else{ echo "bereits registriert"; }            
+            else{ echo "<h2> Gut ! Account bereits vorhanden. Weiter zum Login. </h2> "; }            
             // ------------------------------- LoginDaten sammeln -------------------------------------
 
         if(!empty($_POST['username'])){
@@ -126,7 +124,7 @@ if(!isset($getUser['user_id'])){
             setcookie("fb_username",$login['username'],(time()+86400*730),"/");
             setcookie("fb_privacykey",$login['privacykey'],(time()+86400*730),"/");
 
-            // ----------------------------- Ausgabe -----------------------------------
+            // ----------------------------- Ausgabe, falls Weiterleitung versagt -----------------------------------
             $out = '<h3> Registration über Facebook hat geklappt !!! <br>';
             $out .= 'Dann noch viel Spaß auf unserer Seite ... <br> ';
             $out .= 'Über den Button gelangst du zu deiner Startseite: ';
@@ -141,7 +139,6 @@ if(!isset($getUser['user_id'])){
 
         }
 
-   //echo $getUser; 
    echo $out;
 
 require './includes/_bottom.php';
