@@ -2410,8 +2410,6 @@ class DBFunctions
 	{
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
 		$sort_bedingung = self::db_set_sortBedingung($sort);
-		echo $bedingung;
-		echo $sort_bedingung;
 		$db = self::db_connect();
 		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
@@ -2442,7 +2440,6 @@ class DBFunctions
 		$stmt->bind_param('s', $bedingung);
 		$stmt->execute();
 		$result = $stmt->get_result();
-		echo $sql;
 		self::db_close($db);
 		return $result;
 	}
