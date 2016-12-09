@@ -257,68 +257,58 @@ class DBFunctions
 		$stmt = $db->prepare($sql);
 		$date = date("Y-m-d");
 		$fulldate = new DateTime();
-		mysqli_stmt_bind_param($stmt, "sss", $benutzername,$email,$fulldate->format('Y-m-d H:i:s'));
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		} else {
-			echo 'beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db);
-			//return false;
+		mysqli_stmt_bind_param($stmt, "sss", $username,$email,$fulldate->format('Y-m-d H:i:s'));
+		if(!$stmt->execute()){
+			die('beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
+			return false;
 		}
 
 		$sql = "INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) VALUES ((SELECT MAX(idUser) FROM User),?,?)";
 		$stmt = $db->prepare($sql);
 
-		$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
+		$cryptkey = md5($username.$date); //Der Cryptkey wird erstellt
 		$privacykey = "011111011111111";
 		mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		}
-		else {
-			echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
+		if(!$stmt->execute()){
+			die('beim erstellen des Privacys ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
 			return false;
 		}
 
-		$sql = "INSERT INTO UserTexts (idUserTexts,avater) VALUES ((SELECT MAX(idUser) FROM User),?)";
+		$sql = "INSERT INTO UserTexts (idUserTexts,avatar) VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('s',$picture);
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		}
-		else {
-			echo 'beim erstellen des UsexTexts ist was schief gegangen: '.mysqli_error($db);
-			return false;
-		}
-		$placeholderidpostal = -1;
-		$sql = "INSERT INTO PersData (idPersData, firstname, lastname,gender) VALUES((SELECT MAX(idUser) FROM User),?,?,?,?)";
-		$stmt = $db->prepare($sql);
-		mysqli_stmt_bind_param($stmt, "sss", $vorname, $nachname,$gender);
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		}
-		else {
-			echo 'beim erstellen von PersData Eintrag ist was schief gegangen '.mysqli_error($db);
+		if(!$stmt->execute()){
+			die('beim erstellen des Usertexts ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
 			return false;
 		}
 
-		$sql = "SELECT MAX(idUser) AS idUser FROM USER";
+		$placeholderidpostal = -1;
+		$sql = "INSERT INTO PersData (idPersData, firstname, lastname,gender, idPostal) VALUES((SELECT MAX(idUser) FROM User),?,?,?,?)";
+		$stmt = $db->prepare($sql);
+		mysqli_stmt_bind_param($stmt, "sssi", $vorname, $nachname,$gender, $placeholderidpostal);
+		if(!$stmt->execute()){
+			die('beim erstellen des PersData ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+
+		$sql = "SELECT MAX(idUser) AS idUser FROM User";
 		$stmt = $db->prepare($sql);
 		$stmt->execute();
-		$result->$stmt->get_result();
+		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
 
-		$sql = "INSERT INTO FacebookUser VALUES ((SELECT MAX(idUser) FROM User),?)";
+		$sql = "INSERT INTO FacebookUser(user_id,facebook_id) VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$fb_id);
-		$stmt->execute();
+		if(!$stmt->execute()){
+			die('beim erstellen des FacebooKUser Eintrags ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
 
 		self::db_close($db);
 		$arr = array('idUser' => $dbentry['idUser'],'privacykey' => $privacykey);
@@ -326,6 +316,44 @@ class DBFunctions
 
 		//return "asdfjklö"; //Für Testzwecke
 	}
+
+
+	/**
+	*Funktion gibt userid und privacykey zu einer funktion zurück.
+	*
+	*Die Funktion kriegt eine Facebook_id übergeben und gibt die dazugehörige Userid und Privacykey aus wenn es die Datensötze in verbindung mit der fbid schon gibt. Wenn dies nicht der Fall ist, gibt die Funktion false zurück.
+	*
+	*@param int $fb_id Facebook_id
+	*
+	*@return (int|string)[]|false gibt einen Array mit userid und privacykey zurück oder false
+	*/
+	public function db_getUserIDbyFacebookID($fb_id){
+		$db = self::db_connect();
+		$sql="SELECT
+			user_id,
+			privacykey
+			FROM FacebookUser
+			JOIN Privacy
+				ON FacebookUser.user_id = Privacy.idPrivacy
+			WHERE facebook_id = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$fb_id);
+		if(!$stmt->execute()){
+			die('bei der Funktion getUserIDbyFacebookID ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['user_id'])){
+			return $dbentry;
+		}
+		else {
+			return false;
+		}
+	}
+	
 
 	/**
 	*Aktiviert einen Benutzeraccount.
@@ -2329,10 +2357,10 @@ class DBFunctions
 	 */
 	public function db_searchDuringGutes($keyword,$sort)
 	{
-		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
-		$sort_bedingung = self::set_sortBedingung($sort);
-		$db = self::db_connect();
-		$sql = "SELECT DISTINCT
+        $bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
+        $sort_bedingung = self::db_set_sortBedingung($sort);
+        $db = self::db_connect();
+        $sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,
 			`Deeds`.`category`,
@@ -2348,7 +2376,7 @@ class DBFunctions
 			`Trust`.`trustleveldescription`,
 			`DeedTexts`.`description`,
 			`Postalcode`.`postalcode`,
-			`Postalcode`.`place`,
+			`Postalcode`.`place`
 		FROM `User` JOIN `Deeds`
         ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
@@ -2358,12 +2386,12 @@ class DBFunctions
         OR `Deeds`.`category` like ?
         AND `Deeds`.`status` != 'nichtFreigegeben'
         ORDER BY $sort_bedingung";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('ss', $bedingung, $bedingung);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		self::db_close($db);
-		return $result;
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('ss', $bedingung, $bedingung);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        self::db_close($db);
+        return $result;
 	}
 
 	/**
@@ -2376,7 +2404,7 @@ class DBFunctions
 	public function db_searchDruingUsername($keyword,$sort)
 	{
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
-		$sort_bedingung = self::set_sortBedingung($sort);
+		$sort_bedingung = self::db_set_sortBedingung($sort);
 		$db = self::db_connect();
 		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
@@ -2421,7 +2449,7 @@ class DBFunctions
 	public function db_searchDuringOrt($keyword,$sort)
 	{
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
-		$sort_bedingung = self::set_sortBedingung($sort);
+		$sort_bedingung = self::db_set_sortBedingung($sort);
 		$db = self::db_connect();
 		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
@@ -2467,7 +2495,7 @@ class DBFunctions
 	public function db_searchDuringZeit($keyword,$sort)
 	{
 		$db = self::db_connect();
-		$sort_bedingung = self::set_sortBedingung($sort);
+		$sort_bedingung = self::db_set_sortBedingung($sort);
 		$sql = " SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,

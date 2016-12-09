@@ -11,42 +11,27 @@ require './includes/_top.php';
 include './includes/db_connector.php';
 
 //Include FB config file
-require './fb/fbConfig.php';
+require './includes/fb/fbConfig.php';
 
-	if(!$fbUser){
-	    $fbUser = NULL;
-	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
-	    $output = '<a href="'.$loginURL.'"><img src="./fb/images/fblogin-btn.png"></a>';     
-	}else{
+// --------------- Automatischer Login durch Cookies ------------------------------------
+	if(!empty($_COOKIE['fb_iduser'])){
 
-		/*
-		$fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');
-
-		//Insert or update user data to the database
-		$userData = array(
-			'oauth_provider'=> 'facebook',
-			'oauth_uid' 	=> $fbUserProfile['id'],
-			'first_name' 	=> $fbUserProfile['first_name'],
-			'last_name' 	=> $fbUserProfile['last_name'],
-			'email' 		=> $fbUserProfile['email'],
-			'gender' 		=> $fbUserProfile['gender'],
-			'locale' 		=> $fbUserProfile['locale'],
-			'picture' 		=> $fbUserProfile['picture']['data']['url'],
-			'link' 			=> $fbUserProfile['link']
-		);	
-		//Put user data into session
-		$_SESSION['userData'] = $userData;
-
-		$getUser = DBFunctions::getUserIDbyFacebookID($userData['oauth_uid']);
+//>>>>>> Datenbank abfrage, ob Fb Account schon existiert 
+$getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
 
 		// User Einloggen
-		$_USER->login($loginData['idUser'], $_POST['username'], $userData['email'], $userData['first_name'], $userData['last_name']);
-        $_USER->set('privacykey', $loginData['privacykey']);
-        $_USER->set('gender', $userData['gender']);
-        */
+		$_USER->login($_COOKIE['fb_iduser'], $_COOKIE['fb_username'], $_COOKIE['fb_email'], $_COOKIE['fb_first_name'], $_COOKIE['fb_last_name']);
+        $_USER->set('privacykey', $_COOKIE['fb_privacykey']);
+        $_USER->set('gender', $_COOKIE['fb_gender']);
 
-		$output = '<a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';
-		$_USER->redirect($HOST); //Weiterleiten auf URL in $continue
+		//Redirect to homepage
+		header("Location:./");
+		   
+	}else{
+
+		$fbUser = NULL;
+	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
+	    $output = '<a href="'.$loginURL.'"><img src="./includes/fb/images/fblogin-btn.png"></a>'; 
 	}
 
 ?>
@@ -228,52 +213,8 @@ echo "
 </script>
 ";
 
-
-
-
-
-
-
-
 ?>
 
-
-<!--
-<div class='center'>
-	<a href='/login'>(Link) zum Login</a>
-	<br><br>
-	<input type="submit" value="submit">
-	<br><br>
-	<input type="button" value="button">
-	<br><br>
-	<input type="text" value="" placeholder="NAME">
-	<br><br>
-	<input type="email" value="" placeholder="EMAIL">
-	<br><br>
-	<input type="password" value="" placeholder="PASSWORT">
-	<br><br>
-	<textarea cols="16"  rows="2" placeholder="TEXT"></textarea>
-	<br><br>
-	<select>
-		<option value="none">Bitte wählen</option>
-		<option value="1">Option 1</option>
-		<option value="2">Option 2</option>
-		<option value="3">Option 3</option>
-	</select>
-	<br><br>
-	<input id="radio1" name="radio" type="radio" checked="checked"><label for="radio1">Option 1</label>
-	<br><br>
-	<input id="radio2" name="radio" type="radio"><label for="radio2">Option 2</label>
-	<br><br>
-	<input id="radio3" name="radio" type="radio"><label for="radio3">Option 3</label>
-	<br><br>
-	<input id="checkbox1" type="checkbox" checked="checked"><label for="checkbox1">Check 1</label>
-	&nbsp;
-	<input id="checkbox2" type="checkbox"><label for="checkbox2">Check 2</label>
-	&nbsp;
-	<input id="checkbox3" type="checkbox"><label for="checkbox3">Check 3</label>
-</div>
--->
 <?php
 require './includes/_bottom.php';
 ?>
