@@ -34,18 +34,13 @@ require './includes/db_connector.php';
 
     // -------------------------- Unsere Datenbank ----------------------------------------
     $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-    echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
 //-------------------------- Kontroll Block unregistriert -------------------------------------------
     if(!isset($_POST['username'])){
     //Put user data into session
     $SESSION["userdata"] = $userData;
            
-
             $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-            echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-
-            echo $getUser;
             echo $getUser['user_id'];
             echo $getUser['privacykey'];
      //Render facebook profile data
@@ -85,11 +80,10 @@ require './includes/db_connector.php';
                     
             //------------------- User Anlegen, fals nicht existiert ------------------------
             $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-    		echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
-            echo $getUser."hallo";
             echo $getUser['user_id'];
             echo $getUser['privacykey'];
+            echo !$getUser;
             if(!$getUser){
                 echo $userData['oauth_uid'];
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
@@ -139,7 +133,7 @@ require './includes/db_connector.php';
 
         }
 
-   echo $getUser; 
+   //echo $getUser; 
    echo $out;
 
 require './includes/_bottom.php';

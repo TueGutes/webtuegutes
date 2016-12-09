@@ -344,6 +344,7 @@ class DBFunctions
 			return false;
 		}
 		else{
+			echo 'DIese FUnktion solle jetzt funktionieren';
 			$result = $stmt->get_result();
 			$dbentry = $result->fetch_assoc();
 			self::db_close($db);
