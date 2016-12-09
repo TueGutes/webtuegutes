@@ -36,7 +36,7 @@ require './includes/db_connector.php';
     $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
 //-------------------------- Kontroll Block unregistriert -------------------------------------------
-if(!empty($getUser['user_id'])){
+if(!isset($getUser['user_id'])){
     if(!isset($_POST['username'])){
     //Put user data into session
     $SESSION["userdata"] = $userData;
