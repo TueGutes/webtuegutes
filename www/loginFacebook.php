@@ -40,6 +40,8 @@ require './includes/db_connector.php';
     //Put user data into session
     $SESSION["userdata"] = $userData;
            
+
+
      //Render facebook profile data
             if(!empty($userData)){
                 $output = '<h3> Ihre Facebook Profile Details: </h1>';
@@ -76,8 +78,10 @@ require './includes/db_connector.php';
 
                     
             //------------------- User Anlegen, fals nicht existiert ------------------------
-
-            if(array_filter($getUser)){
+            $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
+            echo $getUser['user_id'];
+            echo $getUser['facebook_id'];
+            if(!array_filter($getUser)){
                 echo $userData['oauth_uid'];
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
             }
