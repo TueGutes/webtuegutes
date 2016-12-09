@@ -36,11 +36,10 @@ require './includes/db_connector.php';
     $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
 //-------------------------- Kontroll Block unregistriert -------------------------------------------
+if(!empty($getUser['user_id']){
     if(!isset($_POST['username'])){
     //Put user data into session
     $SESSION["userdata"] = $userData;
-           
-
 
      //Render facebook profile data
             if(!empty($userData)){
@@ -69,23 +68,19 @@ require './includes/db_connector.php';
                 </div> ';
 
         }
-
+}
 //-------------------------- Kontroll Block einloggen -------------------------------------------
     else{
-            unset($_COOKIE['fb_iduser']);
-            unset($_COOKIE['fb_username']);
-            unset($_COOKIE['fb_privacykey']);
-
-                    
+                   
             //------------------- User Anlegen, fals nicht existiert ------------------------
-            $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-            echo $getUser['user_id'];
-            echo $getUser['privacykey'];
-            if(!array_filter($getUser)){
-                echo $userData['oauth_uid'];
+            /*echo $getUser['user_id'];
+            echo $getUser['privacykey'];*/
+            if(!empty($getUser['user_id']){
+                //echo $userData['oauth_uid'];
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
             }
             else{
+
                 $loginData = array(
                     'idUser'    => $getUser['user_id'],
                     'privacykey'    => $getUser['privacykey']
@@ -120,13 +115,13 @@ require './includes/db_connector.php';
             $out .= 'Dann noch viel Spaß auf unserer Seite ... <br> ';
             $out .= 'Über den Button gelangst du zu deiner Startseite: ';
             $out .= '<div class="eingeloggt"> 
-                <form action="index.php" method="post">
+                <form action="profile.php" method="post">
                     <input type="submit" value="Ab Gehts! "> <br> 
                 </form>
             </div>';
 
-            // Automatische Weiterleitung - derzeit deaktiviert 
-            // header("Location:./");
+            // Automatische Weiterleitung - derzeit aktiviert 
+             header("Location:./profile");
 
         }
 
