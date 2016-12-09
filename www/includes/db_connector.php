@@ -2387,9 +2387,9 @@ class DBFunctions
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
 		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
-        WHERE `Deeds`.`name` like ?
-        OR `Deeds`.`category` like ?
-        AND `Deeds`.`status` != 'nichtFreigegeben'
+        WHERE `Deeds`.`status` != 'nichtFreigegeben'
+        AND (`Deeds`.`name` like ?
+        OR `Deeds`.`category` like ?)
         ORDER BY $sort_bedingung";
         $stmt = $db->prepare($sql);
         $stmt->bind_param('ss', $bedingung, $bedingung);
@@ -2410,6 +2410,8 @@ class DBFunctions
 	{
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
 		$sort_bedingung = self::db_set_sortBedingung($sort);
+		echo $bedingung;
+		echo $sort_bedingung;
 		$db = self::db_connect();
 		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
@@ -2440,6 +2442,7 @@ class DBFunctions
 		$stmt->bind_param('s', $bedingung);
 		$stmt->execute();
 		$result = $stmt->get_result();
+		echo $sql;
 		self::db_close($db);
 		return $result;
 	}
@@ -2478,8 +2481,8 @@ class DBFunctions
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
 		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
-        WHERE `Deeds`.`street` like ?
-        OR `Postalcode`.`place` like ?
+        WHERE (`Deeds`.`street` like ?
+        OR `Postalcode`.`place` like ?)
         AND `Deeds`.`status` != 'nichtFreigegeben'
         ORDER BY $sort_bedingung";
 		$stmt = $db->prepare($sql);
