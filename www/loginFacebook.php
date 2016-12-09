@@ -93,6 +93,8 @@ if(!isset($getUser['user_id'])){
             }
             else{ echo "bereits registriert"; }            
             // ------------------------------- LoginDaten sammeln -------------------------------------
+
+        if(!empty($_POST['username'])){
             $login = array(
                 'idUser'    => $loginData['idUser'],
                 'username'     => $_POST['username'],
@@ -102,7 +104,18 @@ if(!isset($getUser['user_id'])){
                 'privacykey'         => $loginData['privacykey'],
                 'gender'         => $userData['gender']
             );
-
+        }else{
+            $username = DBFunctions::db_getUsernameOfBenutzerByID($loginData['idUser']);
+            $login = array(
+                'idUser'    => $loginData['idUser'],
+                'username'     => $username,
+                'email'     => $userData['email'],
+                'first_name'     => $userData['first_name'],
+                'last_name'         => $userData['last_name'],
+                'privacykey'         => $loginData['privacykey'],
+                'gender'         => $userData['gender']
+            );
+        }
             //------------------------------- Einloggen und Setzen der LoginCookies ---------------------
 
             $_USER->login($login['idUser'], $login['username'], $login['email'], $login['first_name'], $login['last_name']);
