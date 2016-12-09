@@ -36,7 +36,7 @@ require './includes/db_connector.php';
     $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
 //-------------------------- Kontroll Block unregistriert -------------------------------------------
-if(!empty($getUser['user_id']){
+if(!empty($getUser['user_id'])){
     if(!isset($_POST['username'])){
     //Put user data into session
     $SESSION["userdata"] = $userData;
@@ -75,20 +75,19 @@ if(!empty($getUser['user_id']){
             //------------------- User Anlegen, fals nicht existiert ------------------------
             /*echo $getUser['user_id'];
             echo $getUser['privacykey'];*/
-            if(!empty($getUser['user_id']){
+            if(!empty($getUser['user_id'])){
                 //echo $userData['oauth_uid'];
-                $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
-            }
-            else{
-
                 $loginData = array(
                     'idUser'    => $getUser['user_id'],
                     'privacykey'    => $getUser['privacykey']
                 );
-
-// >>>>>>>>>>>>>>>>>>> Ausgabe von Datenbanken zeug, welche aber nicht funktioniert                
-                echo 'Ausgabe der Datenbank-Facebook Daten: < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacykey'].'>';
+                 echo   'Ausgabe der Datenbank-Facebook Daten: 
+                        < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacykey'].'>';                
             }
+            else{
+                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);   
+            }
+            
             // ------------------------------- LoginDaten sammeln -------------------------------------
             $login = array(
                 'idUser'    => $loginData['idUser'],

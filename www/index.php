@@ -17,7 +17,7 @@ require './includes/fb/fbConfig.php';
 
 //>>>>>> Datenbank abfrage, ob Fb Account schon existiert 
 $getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
-	if(!empty($getUser['user_id']){
+	if(!empty($getUser['user_id'])){
 
 		// User Einloggen
 		$_USER->login($_COOKIE['fb_iduser'], $_COOKIE['fb_username'], $_COOKIE['fb_email'], $_COOKIE['fb_first_name'], $_COOKIE['fb_last_name']);
