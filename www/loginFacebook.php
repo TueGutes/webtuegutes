@@ -71,7 +71,7 @@ if(!isset($getUser['user_id'])){
         else{
             $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
 
-            header("Location:./´loginFacebook.php");
+            header("Location:./loginFacebook.php");
 
 
         }
