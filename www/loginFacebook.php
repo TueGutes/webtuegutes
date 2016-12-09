@@ -68,6 +68,9 @@ if(!isset($getUser['user_id'])){
                 </div> ';
 
         }
+        else{
+            $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
+        }
 }
 //-------------------------- Kontroll Block einloggen -------------------------------------------
     else{
@@ -84,10 +87,7 @@ if(!isset($getUser['user_id'])){
                  echo   'Ausgabe der Datenbank-Facebook Daten: 
                         < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacykey'].'>';                
             }
-            else{
-                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);   
-            }
-            
+            else{ echo "bereits registriert"; }            
             // ------------------------------- LoginDaten sammeln -------------------------------------
             $login = array(
                 'idUser'    => $loginData['idUser'],
