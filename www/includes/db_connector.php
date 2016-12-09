@@ -343,18 +343,20 @@ class DBFunctions
 			self::db_close($db);
 			return false;
 		}
-		else{
-			echo 'DIese FUnktion solle jetzt funktionieren';
-			$result = $stmt->get_result();
-			$dbentry = $result->fetch_assoc();
-			self::db_close($db);
-			if(isset($dbentry['user_id'])){
-				return $dbentry;
-			}
-			else {
-				return false;
-			}
+		
+		echo 'DIese FUnktion solle jetzt funktionieren';
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['user_id'])){
+			echo 'Ich habe das Array zurückgegeben';
+			return $dbentry;
 		}
+		else {
+			echo ' Ich habe false zurückgeben';
+			return false;
+		}
+		
 	}
 	
 
