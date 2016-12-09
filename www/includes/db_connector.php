@@ -343,14 +343,16 @@ class DBFunctions
 			self::db_close($db);
 			return false;
 		}
-		$result = $stmt->get_result();
-		$dbentry = $result->fetch_assoc();
-		self::db_close($db);
-		if(isset($dbentry['user_id'])){
-			return $dbentry;
-		}
-		else {
-			return false;
+		else{
+			$result = $stmt->get_result();
+			$dbentry = $result->fetch_assoc();
+			self::db_close($db);
+			if(isset($dbentry['user_id'])){
+				return $dbentry;
+			}
+			else {
+				return false;
+			}
 		}
 	}
 	
