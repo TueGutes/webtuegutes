@@ -16,13 +16,14 @@ require './includes/fb/fbConfig.php';
 // --------------- Automatischer Login durch Cookies ------------------------------------
 
 //>>>>>> Datenbank abfrage, ob Fb Account schon existiert 
+/* 
 	if(isset($_COOKIE['fb_id'])){
 		$getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
 	}
 	else{
 		$getUser = "nix";
 	}
-	
+
 	if(!empty($getUser['user_id'])){
 
 		// User Einloggen
@@ -35,11 +36,10 @@ require './includes/fb/fbConfig.php';
 		header("Location:./profile");
 		   
 	}else{
-
-		$fbUser = NULL;
+*/
 	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
 	    $output = '<a href="'.$loginURL.'"><img src="./includes/fb/images/fblogin-btn.png"></a>'; 
-	}
+	//}
 
 ?>
 
