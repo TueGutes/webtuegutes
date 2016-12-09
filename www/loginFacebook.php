@@ -80,7 +80,7 @@ require './includes/db_connector.php';
             //------------------- User Anlegen, fals nicht existiert ------------------------
             $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
             echo $getUser['user_id'];
-            echo $getUser['facebook_id'];
+            echo $getUser['privacykey'];
             if(!array_filter($getUser)){
                 echo $userData['oauth_uid'];
                 $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
