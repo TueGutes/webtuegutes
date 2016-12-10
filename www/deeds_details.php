@@ -99,10 +99,22 @@ if (isset($_POST['allow'])) {
 		sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde abgelehnt', $mailText);
 		die ('Die gute Tat wurde abgelehnt. Der Ersteller der guten Tat wird per Email darüber informiert.<br><a href="'.$HOST.'/deeds">Zurück zur Übersicht</a>');
 	}
+?>
+<script url="js/facebook.js"> </script>
 
+<?php
 	// --------Erstellen von Blöcken zur Formatierten ausgabe
-	$blAbout = '<h2>'.$tat["name"] .'</h2>';
-	//$blAbout .= ' Gute Tat #'.$idTat.' </h>';
+	$blAbout = '<h2>'.$tat["name"] .'</h>';
+	$blAbout .= '&nbsp
+		<div class="fb-like" 
+			data-href="https://www.facebook.com/tueGutesinHannover/" 
+			data-width="700" 
+			data-layout="button_count" 
+			data-action="like" 
+			data-size="small" 
+			data-show-faces="true" 
+			data-share="false">
+		</div>';
 
 	// -----------Gute Taten Details - genauer
 	$blTaten = '<table width="65%"> <tr> <td width="25%"> Kategorie: </td> <td style="padding:10px">'.$tat["category"].'</td> </tr>';
@@ -124,11 +136,11 @@ if (isset($_POST['allow'])) {
 
 
 	// --------------- Ausgabe der Blöcke, eingepackt in div boxen ----------
-	echo '<div align="center">' . $blAbout . '</div>';
+	echo '<div class="block">' . $blAbout . '</div>';
 	echo '<p />';
-	echo '<div align="center">' . $blTaten . '</div>';
+	echo '<div class="block">' . $blTaten . '</div>';
 	echo '<p />';
-	echo '<div align="center">' .$blMap;
+	echo '<div class="block">' .$blMap;
 
 	if ($showMap) {
 			$map = new Map();
@@ -136,7 +148,7 @@ if (isset($_POST['allow'])) {
 			$map->createMap($tat['postalcode'] . ',' . $tat['street'] . ',' . $tat['housenumber']);
 		}
 	else{
-		echo '<div align="center" style="font-size:200%;">'.'Adresse wurde gar nicht oder <br> nur unvollständig angegeben! ';
+		echo '<div class="block" style="font-size:200%;">'.'Adresse wurde gar nicht oder <br> nur unvollständig angegeben! ';
 	}
 
 	echo '</div>';
