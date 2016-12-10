@@ -28,9 +28,9 @@ class AddGenerateKey extends AbstractMigration
     public function change()
     {
         $table= $this->table('KeyReg');
-        $table->addColumn('key','string',array('limit' => 255))
+        $table->addColumn('keyreg','string',array('limit' => 255))
               ->addColumn('timecounter','biginteger')
-              ->addIndex(array('key'), array('unique' => true))
+              ->addIndex(array('keyreg'), array('unique' => true))
               ->create();
     }
 }

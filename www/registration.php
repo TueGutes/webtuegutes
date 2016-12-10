@@ -80,8 +80,8 @@ else
 				$error = true;
 			}
 			// key test
-			if(neuerAcount($sjdnjghbeid)){
-				$output .= "<red> Bitte Aktualisiren sie ihr seite !</red><br>";
+			if(neuerAcount($sjdnjghbeid) == false){
+				$output .= "<red> Sie waren zu lange inaktiv, bitte laden sie die Seite neu, um sich registrieren zu können !</red><br>";
 				$error = true;
 			}
 			if(empty($pass))

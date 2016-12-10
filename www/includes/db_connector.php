@@ -2958,7 +2958,7 @@ class DBFunctions
 		$key= substr(str_shuffle(str_repeat($chrList, mt_rand($chrRepeatMin,$chrRepeatMax))),1,$chrRandomLength);
 		$timer = time();
 		$db = self::db_connect();
-		$sql = "INSERT INTO KeyReg(key,timecounter) VALUES (?,?)";
+		$sql = "INSERT INTO KeyReg(keyreg,timecounter) VALUES (?,?)";
 		$stmt =$db->prepare($sql);
 		$stmt->bind_param('si',$key,$timer);
 		if (!$stmt->execute()) {
@@ -2968,13 +2968,14 @@ class DBFunctions
 		}
 		else{
 			self::db_close($db);
-			return true;
+			return $key;
 		}
 	}
 
 	public function db_getKey($key){
+		self::db_deleteKey();
 		$db = self::db_connect();
-		$sql = "SELECT key FROM KeyReg WHERE key = ?";
+		$sql = "SELECT keyreg FROM KeyReg WHERE keyreg = ?";
 		$stmt =$db->prepare($sql);
 		$stmt->bind_param('s',$key);
 		if (!$stmt->execute()) {
@@ -2983,16 +2984,20 @@ class DBFunctions
 		}
 		$result = $stmt->get_result();
 		$dbentry=$result->fetch_assoc();
-		if(isset($dbentry['key'])){
+		if(isset($dbentry['keyreg'])){
+			echo $dbentry['keyreg'];
 			$sql ="DELETE From KeyReg
-				WHERE key = ?";
+				WHERE keyreg = ?";
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('s',$key);
 			$stmt->execute();
 			self::db_close($db);
+			echo "ich hab true";
 			return true;
 		}
 		else {
+			echo $key;
+			echo "Ich hab false ";
 			self::db_close($db);
 			return false;
 		}
