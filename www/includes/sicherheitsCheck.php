@@ -23,8 +23,8 @@ function isUserExist($userid){
 
 /*checkt ob 15 min vergangen sind*/
 function getTimeDifVon15($userid){
-	if(DBFunctions::db_getTimeLoginCheck($userid)-15=jetztTime($userid)){
-		DBFunctions::db_setCountandTimenull($userid)
+	if((DBFunctions::db_getTimeLoginCheck($userid)+900)<time()){
+		DBFunctions::db_setCountandTimenull($userid);
 	}
 }
 /*brute force*/
@@ -40,7 +40,7 @@ function isCountUnter5($userid){
 function checkBruFo($userid){
 	isUserExist($userid);
 	getTimeDifVon15($userid);
-	if(isCountUnter5){
+	if(isCountUnter5($userid)){
 		return true;
 	}
 	return false;

@@ -45,6 +45,7 @@ if(isset($_POST['username']) && isset($_POST['password']))
 			if(checkBruFo($userID)){
 			if(md5($_POST['password'].$regDate) === $passHash) //Eingegebenes Passwort ist richtig
 			{
+				DBFunctions::db_setCountandTimenull($userID);
 				$username = $_POST['username'];
 				$dbentry = DBFunctions::db_get_user($username);
 				$_USER->login($userID, $username, $dbentry['email'], $dbentry['firstname'], $dbentry['lastname']);
@@ -57,7 +58,7 @@ if(isset($_POST['username']) && isset($_POST['password']))
 				$output = '<red>Das eingegebene Passwort ist falsch!</red>';
 			}
 			else
-				$output = '<red>Bitte Zeile 60 angucken ist falsch!</red>';
+				$output = '<red>Bitte warten sie, ihr Account ist für 15 Minuten gesperrt,da zu viele Loginversuche auftraten.</red>';
 		}
 		else
 			$output = '<red>Der Account ist noch nicht verifiziert, bitte auf den Bestätigungslink in der Email klicken!</red>';

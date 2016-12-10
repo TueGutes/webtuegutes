@@ -2928,7 +2928,7 @@ class DBFunctions
 
 	public function db_insertUserIntoLoginCheck($userid){
 		$db = self::db_connect();
-		$sql = "INSERT INTO LoginCheck(userid,counter,timer) VALUES (?,0,0)";
+		$sql = "INSERT INTO LoginCheck(userid,counter,timecounter) VALUES (?,0,0)";
 		$stmt =$db->prepare($sql);
 		$stmt->bind_param('i',$userid);
 		if (!$stmt->execute()) {
