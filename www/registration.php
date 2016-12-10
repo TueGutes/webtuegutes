@@ -14,6 +14,7 @@ require "./includes/DEF.php";
 
 //Inkludieren von script-Dateien
 include './includes/db_connector.php';
+include './includes/sicherheitsCheck.php';
 
 //DB Funktionen, die später ausgelagert werden sollten
 // TIMM:
@@ -26,7 +27,7 @@ $nachname = isset($_POST['nachname']) ? $_POST['nachname'] : '';
 $pass = isset($_POST['passwort']) ? $_POST['passwort'] : '';
 $passwdh = isset($_POST['passwortwdh']) ? $_POST['passwortwdh'] : '';
 $mail = isset($_POST['mail']) ? $_POST['mail'] : '';
-
+$sjdnjghbeid=DBFunctions::db_initNewKey();
 $output = '';
 if(isset($_GET['c'])) // man kann auch wenn man mit einem Account angemeldet ist, einen anderen Account verifizieren
 {
@@ -78,6 +79,11 @@ else
 				$output .= "<red>Geben Sie ihren Nachnamen an!</red><br>";
 				$error = true;
 			}
+			// key test
+			if(neuerAcount($sjdnjghbeid)){
+				$output .= "<red> Bitte Aktualisiren sie ihr seite !</red><br>";
+				$error = true;
+			}
 			if(empty($pass))
 			{
 				$output .= "<red>Geben Sie ein Passwort an!</red><br>";
@@ -101,6 +107,7 @@ else
 
 			if(!$error)
 			{
+				DBFunctions::db_deleteKey();
 				$cryptkey = DBFunctions::db_createBenutzerAccount($username, $vorname, $nachname, $mail, $pass);
 				if($cryptkey)
 				{

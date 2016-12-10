@@ -52,7 +52,10 @@ function checkBruFo($userid){
 /*Beim öffnen der regestriren seite wird ein key in die datenbank gespeichert*/
 /*dieser key muss dann beime einloggen übergeben werden */
 /*perfekt wäre wenn der key nach 2 min gelöscht wird*/
-function neuerAcount(){
-	return DBFunctions::initNeuerKey();
+function neuerAcount($key){
+if(DBFunctions::db_getKey($key)){
+	return true;
+}
+return false;
 }
 ?>
