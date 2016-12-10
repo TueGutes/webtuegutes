@@ -99,22 +99,10 @@ if (isset($_POST['allow'])) {
 		sendEmail($erstellerEmail, '"' . $tat['name'] . '" wurde abgelehnt', $mailText);
 		die ('Die gute Tat wurde abgelehnt. Der Ersteller der guten Tat wird per Email darüber informiert.<br><a href="'.$HOST.'/deeds">Zurück zur Übersicht</a>');
 	}
-?>
-<script url="js/facebook.js"> </script>
 
-<?php
 	// --------Erstellen von Blöcken zur Formatierten ausgabe
-	$blAbout = '<h2>'.$tat["name"] .'</h>';
-	$blAbout .= '&nbsp
-		<div class="fb-like" 
-			data-href="https://www.facebook.com/tueGutesinHannover/" 
-			data-width="700" 
-			data-layout="button_count" 
-			data-action="like" 
-			data-size="small" 
-			data-show-faces="true" 
-			data-share="false">
-		</div>';
+	$blAbout = '<h2>'.$tat["name"] .'</h2>';
+	//$blAbout .= ' Gute Tat #'.$idTat.' </h>';
 
 	// -----------Gute Taten Details - genauer
 	$blTaten = '<table width="65%"> <tr> <td width="25%"> Kategorie: </td> <td style="padding:10px">'.$tat["category"].'</td> </tr>';
