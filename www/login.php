@@ -17,6 +17,8 @@ if($_USER->loggedIn())
 	$_USER->redirect($HOST);
 
 include './includes/db_connector.php';
+include './includes/sicherheitsCheck.php';
+
 
 //DB Funktionen, die später ausgelagert werden sollten
 // TIMM:
@@ -39,6 +41,8 @@ if(isset($_POST['username']) && isset($_POST['password']))
 		$status = DBFunctions::db_statusByUserID($userID);
 		if($status != "nichtVerifiziert")
 		{
+			//sicherheits check
+			if(checkBruFo($userID)){
 			if(md5($_POST['password'].$regDate) === $passHash) //Eingegebenes Passwort ist richtig
 			{
 				$username = $_POST['username'];
@@ -51,6 +55,9 @@ if(isset($_POST['username']) && isset($_POST['password']))
 			}
 			else
 				$output = '<red>Das eingegebene Passwort ist falsch!</red>';
+			}
+			else
+				$output = '<red>Bitte Zeile 60 angucken ist falsch!</red>';
 		}
 		else
 			$output = '<red>Der Account ist noch nicht verifiziert, bitte auf den Bestätigungslink in der Email klicken!</red>';
