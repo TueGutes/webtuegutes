@@ -9,7 +9,7 @@
 
 <?php
 /*XSS*/
-function htmlString($string){
+function htmlstr($string){
 	return htmlspecialchars($string , ENT_QUOTES , 'UTF-8' ) ;
 }
 ?>

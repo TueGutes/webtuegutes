@@ -15,6 +15,8 @@ DEFINE('DB_PASSWORD','Sadi23n2os');
 DEFINE('DB_HOST','localhost');
 DEFINE('DB_NAME','testing_db');
 
+include "sicherheitsCheck.php";
+
 /**
 *Klasse um die Funktionen zu sammeln
 *
@@ -173,6 +175,10 @@ class DBFunctions
 	*/
 	public function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 		$db = self::db_connect();
+		$benutzername = htmlstr($benutzername);
+		$vorname = htmlstr($vorname);
+		$nachname = htmlstr($nachname);
+		$email = htmlstr($email);
 		$sql = "INSERT INTO User (username, password, email, regDate, points, status, idUserGroup, idTrust) VALUES(?,?,LOWER(?),?,0,'nichtVerifiziert',1,1)";
 		$stmt = $db->prepare($sql);
 		$date = date("Y-m-d");
@@ -602,6 +608,21 @@ class DBFunctions
 		if($savedata['idPostal']==''){
 			$savedata['idPostal'] =-1;
 		}
+
+		$savedata['username'] = htmlstr($savedata['username']);
+		$savedata['email'] = htmlstr($savedata['email']);
+		$savedata['firstname']= htmlstr($savedata['firstname']);
+		$savedata['lastname']= htmlstr($savedata['lastname']);
+		$savedata['gender']= htmlstr($savedata['gender']);
+		$savedata['birthday']= htmlstr($savedata['birthday']);
+		$savedata['street']= htmlstr($savedata['street']);
+		$savedata['housenumber']= htmlstr($savedata['housenumber']);
+		$savedata['telefonnumber']= htmlstr($savedata['telefonnumber']);
+		$savedata['messengernumber']= htmlstr($savedata['messengernumber']);
+		$savedata['avatar']= htmlstr($savedata['avatar']);
+		$savedata['hobbys']= htmlstr($savedata['hobbys']);
+		$savedata['description']= htmlstr($savedata['description']);
+
 		$db = self::db_connect();
 		$sql ="UPDATE User,PersData,UserTexts,Privacy,UserGroup
 			SET
@@ -824,6 +845,12 @@ class DBFunctions
 	*@param string $pictures Bilder zu einer guten Tat
 	*/
 	public function db_createGuteTat($name,$user_id,$category,$street,$housenumber,$pid,$starttime,$endtime,$organization,$countHelper,$idTrust,$description,$pictures){
+		$name = htmlstr($name);
+		$street = htmlstr($street);
+		$housenumber = htmlstr($housenumber);
+		$starttime = htmlstr($starttime);
+		$endtime = htmlstr($endtime);
+		$organization = htmlstr($organization);
 		if(self::db_doesCategoryNameExist($category)){
 			$catid = self::db_getCategoryidbyCategoryText($category);
 			$db = self::db_connect();
@@ -1714,6 +1741,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_starttime($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.starttime = ?
@@ -1736,6 +1764,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_endtime($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.endtime = ?
@@ -1758,6 +1787,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_picture($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deedtexts
 			SET
 			deedtexts.pictures = ?
@@ -1780,6 +1810,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_description($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deedtexts
 			SET
 			deedtexts.description = ?
@@ -1802,6 +1833,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_name($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.name = ?
@@ -1850,6 +1882,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_street($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.street = ?
@@ -1872,6 +1905,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_housenumber($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.housenumber = ?
@@ -1916,6 +1950,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_organization($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.organization = ?
@@ -2746,6 +2781,7 @@ class DBFunctions
 	*/
 	public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentid = 'null'){
 		$db = self::db_connect();
+		$commenttext = htmlstr($commenttext);
 		$sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentcomment) VALUES (?,?,?,?,?)";
 		$date = new datetime();
 		$stmt = $db->prepare($sql);

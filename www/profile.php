@@ -561,6 +561,7 @@
 			$thisuser['privacykey'] .= isset($_POST['vsBirthyear'])?'1':'0';
 
 			//Änderungen speichern
+			
 			DBFunctions::db_update_user($thisuser);
 			$_USER->set('privacykey', $thisuser['privacykey']);
 			$_USER->set('gender', $thisuser['gender']);
