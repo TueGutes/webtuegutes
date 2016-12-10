@@ -31,7 +31,7 @@ environments:
         pass: Sadi23n2os
         port: 3306
         charset: utf8
-   
+
     presentation:
         adapter: mysql
         host: localhost

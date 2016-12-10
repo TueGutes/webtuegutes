@@ -112,7 +112,7 @@ if (isset($_POST['allow'])) {
 	if ($tat['starttime']!='0000-00-00 00:00:00') $blTaten .= '<tr> <td> Beginn: </td> <td style="padding:10px">'.$tat['starttime'].'</td> </tr>';
 	if ($tat['endtime']!='0000-00-00 00:00:00') $blTaten .= '<tr> <td> Ende: </td> <td style="padding:10px">'.$tat['endtime'].'</td> </tr>';
 	if ($tat['organization']!='') $blTaten .= '<tr> <td> Organisation: </td> <td style="padding:10px">'.$tat["organization"].'</td> </tr>';
-	$blTaten .= '<tr> <td> Anzahl Helfer: </td> <td style="padding:10px">'.$tat["countHelper"].'</td> </tr> </table>';
+	$blTaten .= '<tr> <td > Anzahl Helfer: </td> <td id="helfer" style="padding:10px">'.$tat["countHelper"].'</td> </tr> </table>';
 
 	// -------------- Einbindung der Map -------------------------
 	$blMap = '<h3>Adresse der Guten Tat:</h3>';

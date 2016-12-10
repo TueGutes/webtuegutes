@@ -719,6 +719,7 @@
 
 <!--Ausgabe der einzelnen Blöcke-->
 <?php
+
 	echo $blAvatar;
 	echo '<div align="center">' . $blPersoenlich . '</div>';
 	echo '<div align="center">' . $blUeber . '</div>';

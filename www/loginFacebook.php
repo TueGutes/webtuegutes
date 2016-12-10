@@ -34,13 +34,13 @@ require './includes/db_connector.php';
 
     // -------------------------- Unsere Datenbank ----------------------------------------
     $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-    echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
 //-------------------------- Kontroll Block unregistriert -------------------------------------------
+if(!isset($getUser['user_id'])){
     if(!isset($_POST['username'])){
     //Put user data into session
     $SESSION["userdata"] = $userData;
-           
+
      //Render facebook profile data
             if(!empty($userData)){
                 $output = '<h3> Ihre Facebook Profile Details: </h1>';
@@ -68,34 +68,31 @@ require './includes/db_connector.php';
                 </div> ';
 
         }
+        else{
+            $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
 
+            header("Location:./loginFacebook.php");
+
+
+        }
+}
 //-------------------------- Kontroll Block einloggen -------------------------------------------
     else{
-            unset($_COOKIE['fb_iduser']);
-            unset($_COOKIE['fb_username']);
-            unset($_COOKIE['fb_privacykey']);
-
-                    
+                   
             //------------------- User Anlegen, fals nicht existiert ------------------------
-                $getUser = DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
-    			echo DBFunctions::db_getUserIDbyFacebookID($userData['oauth_uid']);
 
-            echo $getuser;
-            echo $getuser['user_id'];
-            echo $getuser['privacykey'];
-            if(!$getuser){
-                $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
-            }
-            else{
+            if(!empty($getUser['user_id'])){
                 $loginData = array(
                     'idUser'    => $getUser['user_id'],
                     'privacykey'    => $getUser['privacykey']
                 );
-
-// >>>>>>>>>>>>>>>>>>> Ausgabe von Datenbanken zeug, welche aber nicht funktioniert                
-                echo 'Ausgabe der Datenbank-Facebook Daten: < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacykey'].'>';
+                /* echo   'Ausgabe der Datenbank-Facebook Daten: 
+                        < Userid='.$getUser['user_id'].', PrivacyKey='.$getUser['privacykey'].'>'; */               
             }
+            else{ echo "<h2> Gut ! Account bereits vorhanden. Weiter zum Login. </h2> "; }            
             // ------------------------------- LoginDaten sammeln -------------------------------------
+
+        if(!empty($_POST['username'])){
             $login = array(
                 'idUser'    => $loginData['idUser'],
                 'username'     => $_POST['username'],
@@ -105,7 +102,18 @@ require './includes/db_connector.php';
                 'privacykey'         => $loginData['privacykey'],
                 'gender'         => $userData['gender']
             );
-
+        }else{
+            $username = DBFunctions::db_getUsernameOfBenutzerByID($loginData['idUser']);
+            $login = array(
+                'idUser'    => $loginData['idUser'],
+                'username'     => $username,
+                'email'     => $userData['email'],
+                'first_name'     => $userData['first_name'],
+                'last_name'         => $userData['last_name'],
+                'privacykey'         => $loginData['privacykey'],
+                'gender'         => $userData['gender']
+            );
+        }
             //------------------------------- Einloggen und Setzen der LoginCookies ---------------------
 
             $_USER->login($login['idUser'], $login['username'], $login['email'], $login['first_name'], $login['last_name']);
@@ -116,22 +124,21 @@ require './includes/db_connector.php';
             setcookie("fb_username",$login['username'],(time()+86400*730),"/");
             setcookie("fb_privacykey",$login['privacykey'],(time()+86400*730),"/");
 
-            // ----------------------------- Ausgabe -----------------------------------
+            // ----------------------------- Ausgabe, falls Weiterleitung versagt -----------------------------------
             $out = '<h3> Registration über Facebook hat geklappt !!! <br>';
             $out .= 'Dann noch viel Spaß auf unserer Seite ... <br> ';
             $out .= 'Über den Button gelangst du zu deiner Startseite: ';
             $out .= '<div class="eingeloggt"> 
-                <form action="index.php" method="post">
+                <form action="profile.php" method="post">
                     <input type="submit" value="Ab Gehts! "> <br> 
                 </form>
             </div>';
 
-            // Automatische Weiterleitung - derzeit deaktiviert 
-            // header("Location:./");
+            // Automatische Weiterleitung - derzeit aktiviert 
+             header("Location:./profile");
 
         }
 
-   echo $getUser; 
    echo $out;
 
 require './includes/_bottom.php';

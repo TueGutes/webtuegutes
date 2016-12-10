@@ -13,27 +13,10 @@ include './includes/db_connector.php';
 //Include FB config file
 require './includes/fb/fbConfig.php';
 
-// --------------- Automatischer Login durch Cookies ------------------------------------
-	if(!empty($_COOKIE['fb_iduser'])){
+// --------------- Facebook Login Button ------------------------------------
 
-//>>>>>> Datenbank abfrage, ob Fb Account schon existiert 
-$getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
-
-		// User Einloggen
-		$_USER->login($_COOKIE['fb_iduser'], $_COOKIE['fb_username'], $_COOKIE['fb_email'], $_COOKIE['fb_first_name'], $_COOKIE['fb_last_name']);
-        $_USER->set('privacykey', $_COOKIE['fb_privacykey']);
-        $_USER->set('gender', $_COOKIE['fb_gender']);
-
-		//Redirect to homepage
-		header("Location:./");
-		   
-	}else{
-
-		$fbUser = NULL;
-	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
+ 	   $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
 	    $output = '<a href="'.$loginURL.'"><img src="./includes/fb/images/fblogin-btn.png"></a>'; 
-	}
-
 ?>
 
 <h2><?php echo $wlang['welcome']; ?></h2>
