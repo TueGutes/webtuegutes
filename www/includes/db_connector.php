@@ -344,16 +344,16 @@ class DBFunctions
 			return false;
 		}
 		
-		echo 'DIese FUnktion solle jetzt funktionieren';
+		//echo 'DIese FUnktion solle jetzt funktionieren';
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
 		self::db_close($db);
 		if(isset($dbentry['user_id'])){
-			echo 'Ich habe das Array zurückgegeben';
+			//echo 'Ich habe das Array zurückgegeben';
 			return $dbentry;
 		}
 		else {
-			echo ' Ich habe false zurückgeben';
+			//echo ' Ich habe false zurückgeben';
 			return false;
 		}
 		
@@ -2828,6 +2828,195 @@ class DBFunctions
 		$dbentry = $result->fetch_assoc();
 		return $dbentry['numberComments'];
 	}
+
+
+	public function db_getCountLoginCheck($userid){
+		$db = self::db_connect();
+		$sql = "SELECT counter FROM LoginCheck WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['counter'])){
+			self::db_close($db);
+			return $dbentry['counter'];
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+
+	public function db_doesUserExistInLoginCheck($userid){
+		$db = self::db_connect();
+		$sql = "SELECT userid FROM LoginCheck WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['userid'])){
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	public function db_setCountandTime($userid){
+		$db = self::db_connect();
+		$sql = "UPDATE LoginCheck SET counter=counter+1,timecounter=?  WHERE userid = ?";
+		$timer = time();
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('ii',$timer,$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+	}
+
+	public function db_setCountandTimenull($userid){
+		$db = self::db_connect();
+		$sql = "UPDATE LoginCheck SET counter=0,timecounter=0  WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+	}
+
+	public function db_getTimeLoginCheck($userid){
+		$db = self::db_connect();
+		$sql = "SELECT timecounter FROM LoginCheck WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['timecounter'])){
+			self::db_close($db);
+			return $dbentry['timecounter'];
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	public function db_insertUserIntoLoginCheck($userid){
+		$db = self::db_connect();
+		$sql = "INSERT INTO LoginCheck(userid,counter,timer) VALUES (?,0,0)";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+	}
+
+	public function db_initNewKey(){
+		self::db_deleteKey();
+		// Character List to Pick from
+		$chrList = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+		// Minimum/Maximum times to repeat character List to seed from
+		$chrRepeatMin = 2; // Minimum times to repeat the seed string
+		$chrRepeatMax = 20; // Maximum times to repeat the seed string
+
+		// Length of Random String returned
+		$chrRandomLength = 200;
+
+		// The ONE LINE random command with the above variables.
+		$key= substr(str_shuffle(str_repeat($chrList, mt_rand($chrRepeatMin,$chrRepeatMax))),1,$chrRandomLength);
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "INSERT INTO KeyReg(key,timecounter) VALUES (?,?)";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('si',$key,$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+	}
+
+	public function db_getKey($key){
+		$db = self::db_connect();
+		$sql = "SELECT key FROM KeyReg WHERE key = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('s',$key);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['key'])){
+			$sql ="DELETE From KeyReg
+				WHERE key = ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('s',$key);
+			$stmt->execute();
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	public function db_deleteKey(){
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "DELETE FROM KeyReg WHERE (?-timecounter)>300";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+
+	}
+
 }
 
 
