@@ -17,8 +17,6 @@ if($_USER->loggedIn())
 	$_USER->redirect($HOST);
 
 include './includes/db_connector.php';
-include './includes/sicherheitsCheck.php';
-
 
 //DB Funktionen, die später ausgelagert werden sollten
 // TIMM:
@@ -41,24 +39,23 @@ if(isset($_POST['username']) && isset($_POST['password']))
 		$status = DBFunctions::db_statusByUserID($userID);
 		if($status != "nichtVerifiziert")
 		{
-			//sicherheits check
-			if(checkBruFo($userID)){
-			if(md5($_POST['password'].$regDate) === $passHash) //Eingegebenes Passwort ist richtig
+			if(checkBruFo($userID))
 			{
-				DBFunctions::db_setCountandTimenull($userID);
-				$username = $_POST['username'];
-				$dbentry = DBFunctions::db_get_user($username);
-				$_USER->login($userID, $username, $dbentry['email'], $dbentry['firstname'], $dbentry['lastname']);
-				$_USER->set('privacykey', $dbentry['privacykey']);
-				$_USER->set('gender', $dbentry['gender']);
-				$_USER->redirect($continue); //Weiterleiten auf URL in $continue
-				exit;
+				if(md5($_POST['password'].$regDate) === $passHash) //Eingegebenes Passwort ist richtig
+				{
+					$username = $_POST['username'];
+					$dbentry = DBFunctions::db_get_user($username);
+					$_USER->login($userID, $username, $dbentry['email'], $dbentry['firstname'], $dbentry['lastname']);
+					$_USER->set('privacykey', $dbentry['privacykey']);
+					$_USER->set('gender', $dbentry['gender']);
+					$_USER->redirect($continue); //Weiterleiten auf URL in $continue
+					exit;
+				}
+				else
+					$output = '<red>Das eingegebene Passwort ist falsch!</red>';
 			}
 			else
-				$output = '<red>Das eingegebene Passwort ist falsch!</red>';
-			}
-			else
-				$output = '<red>Bitte warten sie, ihr Account ist für 15 Minuten gesperrt,da zu viele Loginversuche auftraten.</red>';
+				$output = '<red>Ihr Account ist für 15 Minuten gesperrt, da zu viele Loginversuche durchgefürt wurden.</red>';
 		}
 		else
 			$output = '<red>Der Account ist noch nicht verifiziert, bitte auf den Bestätigungslink in der Email klicken!</red>';

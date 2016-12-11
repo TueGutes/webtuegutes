@@ -14,7 +14,6 @@ require "./includes/DEF.php";
 
 //Inkludieren von script-Dateien
 include './includes/db_connector.php';
-include './includes/sicherheitsCheck.php';
 
 //DB Funktionen, die später ausgelagert werden sollten
 // TIMM:
@@ -27,7 +26,9 @@ $nachname = isset($_POST['nachname']) ? $_POST['nachname'] : '';
 $pass = isset($_POST['passwort']) ? $_POST['passwort'] : '';
 $passwdh = isset($_POST['passwortwdh']) ? $_POST['passwortwdh'] : '';
 $mail = isset($_POST['mail']) ? $_POST['mail'] : '';
-$sjdnjghbeid=DBFunctions::db_initNewKey();
+
+$sjdnjghbeid = DBFunctions::db_initNewKey();
+
 $output = '';
 if(isset($_GET['c'])) // man kann auch wenn man mit einem Account angemeldet ist, einen anderen Account verifizieren
 {
@@ -79,11 +80,6 @@ else
 				$output .= "<red>Geben Sie ihren Nachnamen an!</red><br>";
 				$error = true;
 			}
-			// key test
-			if(neuerAcount($sjdnjghbeid) == false){
-				$output .= "<red> Sie waren zu lange inaktiv, bitte laden sie die Seite neu, um sich registrieren zu können !</red><br>";
-				$error = true;
-			}
 			if(empty($pass))
 			{
 				$output .= "<red>Geben Sie ein Passwort an!</red><br>";
@@ -104,10 +100,18 @@ else
 				$output .= "<red>Geben Sie eine gültige Email-Adresse an!</red><br>";
 				$error = true;
 			}
+			
+			if(!neuerAcount($sjdnjghbeid))
+			{
+				// = statt .= weil dieser Fehler alle anderen Überschreiben soll
+				$output = "<red>Sie waren zu lange inaktiv. Bitte laden Sie die Seite neu, um sich zu registrieren!</red><br>";
+				$error = true;
+			}
 
 			if(!$error)
 			{
 				DBFunctions::db_deleteKey();
+			
 				$cryptkey = DBFunctions::db_createBenutzerAccount($username, $vorname, $nachname, $mail, $pass);
 				if($cryptkey)
 				{

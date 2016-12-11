@@ -68,8 +68,9 @@ if(!$_USER->loggedIn())
 			Ich bin noch nicht registriert:<br>
 			<a href='./registration'>Zur Registrierung</a>
 			<br>
-			<h5>Jetzt mit Facebook anmelden</h5><br>
-			<a href='" . $fb_loginURL . "'><img src='./includes/fb/images/fblogin-btn.png' /></a>
+			Jetzt mit Facebook anmelden<br>
+			<br>
+			<div class='block'><a href='" . $fb_loginURL . "'><img src='./includes/fb/images/fblogin-btn.png' /></a></div>
 		</div>
 		<div class='module'>
 			<br>
