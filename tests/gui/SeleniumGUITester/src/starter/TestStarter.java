@@ -80,7 +80,7 @@ public class TestStarter {
 		} catch (Exception e){
 			//wenn ein Fehler entsteht ist der Test nicht erfolgreich
 
-			log("<tr style=\"background-color:red\"><td>" + wd.getClass().getSimpleName() + "</td><td>nicht erfolgreich(" + e.getClass().getSimpleName() + ")</td></tr>");
+			log("<tr style=\"background-color:red\"><td>" + wd.getClass().getSimpleName() + "</td><td>nicht erfolgreich (" + e.getClass().getSimpleName() + ") </td></tr>");
 			e.printStackTrace();
 		}
 		
@@ -94,7 +94,12 @@ public class TestStarter {
 		
 		//hier neue Tests einfügen
 		testList.add(new LoginTest());
-		testList.add(new ExampleTest());
+		//testList.add(new ExampleTest());
+
+		testList.add(new GuteTatenCreateTest());
+		testList.add(new GuteTatenSearchTest());
+		testList.add(new GuteTatenCloseTest());
+		testList.add(new GuteTatenDeleteTest());
 	}
 
 
@@ -112,7 +117,7 @@ public class TestStarter {
 			
 
 		} else {
-			log("Betriebssystem wird nicht unterst�tzt");
+			log("Betriebssystem wird nicht unterstuetzt");
 			System.exit(0);
 		}
 		
