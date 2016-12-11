@@ -738,7 +738,7 @@
 	echo '<div align="center">' . $blPrivacy . '</div>';
 	
 	echo $form_bottom;
-	echo '
+	echo '<div class="center">
 	<div class="fb-like" 
 		data-href="https://www.facebook.com/tueGutesinHannover" 
 		data-width="600" 
@@ -747,7 +747,7 @@
 		data-size="small" 
 		data-show-faces="true" 
 		data-share="false">
-	</div>	';
+	</div>	</div>';
 
 ?>
 </div>
