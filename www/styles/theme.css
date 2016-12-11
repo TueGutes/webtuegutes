@@ -871,7 +871,8 @@ red
 }
 .comment .author a img
 {
-	height: 100%;
+	display: inline-block;
+	height: 10%;
 	border-radius: 50%;
 	
 	-webkit-transition: .2s ease-in-out;
