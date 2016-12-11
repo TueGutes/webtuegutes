@@ -66,10 +66,9 @@ if(!$_USER->loggedIn())
 			<a href='./PasswortUpdate'>Ich habe mein Passwort vergessen!</a>
 			<br><br>
 			Ich bin noch nicht registriert:<br>
-			<a href='./registration'>Zur Registrierung</a>
+			<a href='./registration'>Zur Registrierung</a><br>
 			<br>
 			Jetzt mit Facebook anmelden<br>
-			<br>
 			<div class='block'><a href='" . $fb_loginURL . "'><img src='./includes/fb/images/fblogin-btn.png' /></a></div>
 		</div>
 		<div class='module'>
