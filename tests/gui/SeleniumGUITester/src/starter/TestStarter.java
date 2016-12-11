@@ -1,5 +1,8 @@
 package starter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -18,18 +21,26 @@ public class TestStarter {
 	static ArrayList<GUITest> testList;
 	
 	//log-Variable
-	static String results = "";
+	static PrintWriter writer;
 	
 	
 	//Zum lokalen Testen muss dieser Pfad angepasst werden.
 	static String rootUrl = "http://localhost/projects/tuegutes/www";
 	
 	public static void main(String[] args){
+		try {
+			writer = new PrintWriter("results.html", "UTF-8");
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		
+		
 		initDrivers();
 		initTests();
 		startTests();
 		
-		log("Alle Tests wurden abgeschlossen");
 		
 		try{
 			firefoxDriver.close();
@@ -40,31 +51,36 @@ public class TestStarter {
 			log("Problem beim schließen der Treibers.");
 		}
 		
-		//Ergebnisse anzeigen
-		System.out.print(results);
+		writer.close();
+		
 	}
 	
 	
 	private static void startTests() {
+		log("<style> table,td { border: 1px solid black;} </style>");
+		log("<table>");
 		for( GUITest gTest : testList){
-			log("Aktueller Test: " + gTest.getClass().getSimpleName());
-
+			log("<tr>");
+			log("<th>" + gTest.getClass().getSimpleName() + "</th>");
+			log("</tr>");
 			execTestWithDriver(gTest, firefoxDriver);
 			execTestWithDriver(gTest, chromeDriver);		
 		}
+		log("</table>");
 		
 	}
 	
 	private static void execTestWithDriver(GUITest gTest, WebDriver wd){
 		try{
 			if(gTest.doTest(wd, rootUrl)){
-				log("\t" + wd.getClass().getSimpleName() + ": erfolgreich.");
+				log("<tr style=\"background-color:green\"><td>" + wd.getClass().getSimpleName() + "</td><td>erfolgreich</td></tr>");
 			} else {
-				log("\t" + wd.getClass().getSimpleName() + ": nicht erfolgreich.");
+				log("<tr style=\"background-color:red\"><td>" + wd.getClass().getSimpleName() + "</td><td>nicht erfolgreich</td></tr>");
 			}
 		} catch (Exception e){
 			//wenn ein Fehler entsteht ist der Test nicht erfolgreich
-			log("\t" + wd.getClass().getSimpleName() + ": nicht erfolgreich.(" + e.getClass().getSimpleName() + ")");
+
+			log("<tr style=\"background-color:red\"><td>" + wd.getClass().getSimpleName() + "</td><td>nicht erfolgreich(" + e.getClass().getSimpleName() + ")</td></tr>");
 			e.printStackTrace();
 		}
 		
@@ -114,6 +130,6 @@ public class TestStarter {
 	}
 	
 	public static void log(String s){
-		results += (s + "\n");
+		writer.println(s);
 	}
 }
