@@ -124,9 +124,9 @@ if (isset($_POST['allow'])) {
 
 
 	// --------------- Ausgabe der Blöcke, eingepackt in div boxen ----------
-	echo '<div>' . $blAbout . '</div>';
+	echo '<div class="center">' . $blAbout . '</div>';
 	echo '<p />';
-	echo '<div>' . $blTaten . '</div>';
+	echo '<div class="center">' . $blTaten . '</div>';
 	echo '<p />';
 	/*echo '<div>' .$blMap;
 
