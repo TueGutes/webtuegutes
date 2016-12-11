@@ -156,9 +156,13 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 			$stop=4;
 		}else if(!isset($_GET['organization'])){
 			$stop=5;
-		}else if(!isset($_GET['startdate']) || !DateHandler::isValid($_GET['startdate'] . ' ' . $_GET['starttime_hours'] . ':' . $_GET['starttime_minutes'])){
+		}else if(!isset($_GET['startdate']) ||
+			(intval($_GET['starttime_minutes']) % 5 != 0 && intval($_GET['starttime_minutes']) != 0) ||
+			!DateHandler::isValid($_GET['startdate'] . ' ' . $_GET['starttime_hours'] . ':' . $_GET['starttime_minutes'], 'd.m.Y H:i')){
 			$stop=6;
-		}else if(!isset($_GET['enddate']) || !DateHandler::isValid($_GET['enddate'] . ' ' . $_GET['endtime_hours'] . ':' . $_GET['endtime_minutes'])){
+		}else if(!isset($_GET['enddate']) ||
+			(intval($_GET['endtime_minutes']) % 5 != 0 && intval($_GET['endtime_minutes']) != 0) ||
+			!DateHandler::isValid($_GET['enddate'] . ' ' . $_GET['endtime_hours'] . ':' . $_GET['endtime_minutes'], 'd.m.Y H:i')){
 			$stop=7;
 		}else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode,$place)==false)){
 			$stop=8;
