@@ -29,7 +29,7 @@ class DateHandler
 
 	function __construct()
 	{
-		$this->date = DateTime::createFromFormat('Y-m-d H:i:s', '01.01.1970 00:00:00');
+		$this->date = DateTime::createFromFormat('Y-m-d H:i:s', '1970-01-01 00:00:00');
 	}
 	public static function isValid($date, $format = 'Y-m-d H:i:s')
 	{
