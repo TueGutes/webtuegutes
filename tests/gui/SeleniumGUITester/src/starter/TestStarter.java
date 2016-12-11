@@ -25,11 +25,11 @@ public class TestStarter {
 	
 	
 	//Zum lokalen Testen muss dieser Pfad angepasst werden.
-	static String rootUrl = "http://localhost/projects/tuegutes/www";
+	static String rootUrl = "http://localhost/tueGutes/www";
 	
 	public static void main(String[] args){
 		try {
-			writer = new PrintWriter("results.html", "UTF-8");
+			writer = new PrintWriter("gui-test-results.html", "UTF-8");
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (UnsupportedEncodingException e1) {
