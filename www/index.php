@@ -89,7 +89,7 @@ if(!$_USER->loggedIn())
 }
 else
 {
-	echo '<div class="center">
+	echo '<div class="block">
 	<div class="fb-like" 
 		data-href="https://www.facebook.com/tueGutesinHannover" 
 		data-width="600" 
