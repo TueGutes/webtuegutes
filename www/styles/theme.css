@@ -868,11 +868,13 @@ red
 {
 	position: absolute;
 	cursor: pointer;
+	
+	line-hright: 32px;
 }
 .comment .author a img
 {
 	display: inline-block;
-	height: 16px;
+	height: 32px;
 	border-radius: 50%;
 	
 	-webkit-transition: .2s ease-in-out;
