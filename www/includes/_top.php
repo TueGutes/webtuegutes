@@ -50,10 +50,6 @@ $activeTab = 'class="active"';
 					$profileMenuLinks = '
 						<a href="./profile">Mein Profil</a>
 						<a href="./deeds_create">Tat erstellen</a>
-						<div class="fb-share-button" 
-							data-href="https://www.facebook.com/tueGutesinHannover/"
-							data-layout="button_count"> 
-						</div>
 						<a href="./logout">Logout</a>
 					';
 					if($_USER->loggedIn())

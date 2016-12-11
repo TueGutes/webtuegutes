@@ -1,39 +1,18 @@
 <?php
 /**
  * Index
+ *
  * Startseite, die für eingeloggte Nutzer einen Schnellzugriff zu wichtigen Funktionen bietet
  *
- * @author Lukas Buttke FTW
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
  */
 
 require './includes/DEF.php';
+
 require './includes/_top.php';
+
 include './includes/db_connector.php';
-
-//Include FB config file
 require './includes/fb/fbConfig.php';
-
-// --------------- Automatischer Login durch Cookies ------------------------------------
-	if(!empty($_COOKIE['fb_iduser'])){
-
-//>>>>>> Datenbank abfrage, ob Fb Account schon existiert 
-$getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
-
-		// User Einloggen
-		$_USER->login($_COOKIE['fb_iduser'], $_COOKIE['fb_username'], $_COOKIE['fb_email'], $_COOKIE['fb_first_name'], $_COOKIE['fb_last_name']);
-        $_USER->set('privacykey', $_COOKIE['fb_privacykey']);
-        $_USER->set('gender', $_COOKIE['fb_gender']);
-
-		//Redirect to homepage
-		header("Location:./");
-		   
-	}else{
-
-		$fbUser = NULL;
-	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
-	    $output = '<a href="'.$loginURL.'"><img src="./includes/fb/images/fblogin-btn.png"></a>'; 
-	}
-
 ?>
 
 <h2><?php echo $wlang['welcome']; ?></h2>
@@ -71,6 +50,8 @@ $getUser = DBFunctions::db_getUserIDbyFacebookID($_COOKIE['fb_id']);
 
 <?php
 if(!$_USER->loggedIn())
+{
+	$fb_loginURL = $facebook->getLoginUrl(array('redirect_uri' => $redirectURL, 'scope' => $fbPermissions));
 	echo "
 		<div class='module transparent'>
 			<br><br>
@@ -85,12 +66,10 @@ if(!$_USER->loggedIn())
 			<a href='./PasswortUpdate'>Ich habe mein Passwort vergessen!</a>
 			<br><br>
 			Ich bin noch nicht registriert:<br>
-			<a href='./registration'>Zur Registrierung</a>
-			<hr>
-				<h5> Jetzt mit Facebook anmelden </h> <br>
-				<div class='block'>".$output." </div>
-
-
+			<a href='./registration'>Zur Registrierung</a><br>
+			<br>
+			Jetzt mit Facebook anmelden<br>
+			<div class='block'><a href='" . $fb_loginURL . "'><img src='./includes/fb/images/fblogin-btn.png' /></a></div>
 		</div>
 		<div class='module'>
 			<br>
@@ -107,6 +86,7 @@ if(!$_USER->loggedIn())
 			<br><br>
 		</div>
 	";
+}
 else
 {
 	echo "<a href='./deeds_create'><input type='button' value='Gute Tat erstellen' /></a><br>";
@@ -173,7 +153,8 @@ else
 		<a href='./contact'><input type='button' value='Kontakt zu uns' /></a>
 	";
 }
-echo "
+?>
+
 <script type='text/javascript'>
     function setTimeLabel(event) {
         var form = document.getElementById('form');
@@ -194,7 +175,7 @@ echo "
             keyword[0].parentNode.replaceChild(origin,keyword[0]);
         }
     }
-
+	
     function getFormat(){
         var format = '';
         var nTime = new Date();
@@ -209,11 +190,7 @@ echo "
         format += ':00';
         return format;
     }
-
 </script>
-";
-
-?>
 
 <?php
 require './includes/_bottom.php';

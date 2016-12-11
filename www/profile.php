@@ -561,6 +561,7 @@
 			$thisuser['privacykey'] .= isset($_POST['vsBirthyear'])?'1':'0';
 
 			//Änderungen speichern
+			
 			DBFunctions::db_update_user($thisuser);
 			$_USER->set('privacykey', $thisuser['privacykey']);
 			$_USER->set('gender', $thisuser['gender']);
@@ -719,6 +720,7 @@
 
 <!--Ausgabe der einzelnen Blöcke-->
 <?php
+
 	echo $blAvatar;
 	echo '<div align="center">' . $blPersoenlich . '</div>';
 	echo '<div align="center">' . $blUeber . '</div>';
@@ -736,6 +738,16 @@
 	echo '<div align="center">' . $blPrivacy . '</div>';
 	
 	echo $form_bottom;
+	echo '
+	<div class="fb-like" 
+		data-href="https://www.facebook.com/tueGutesinHannover" 
+		data-width="600" 
+		data-layout="standard" 
+		data-action="like" 
+		data-size="small" 
+		data-show-faces="true" 
+		data-share="false">
+	</div>	';
 
 ?>
 </div>

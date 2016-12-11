@@ -112,7 +112,7 @@ if (isset($_POST['allow'])) {
 	if ($tat['starttime']!='0000-00-00 00:00:00') $blTaten .= '<tr> <td> Beginn: </td> <td style="padding:10px">'.$tat['starttime'].'</td> </tr>';
 	if ($tat['endtime']!='0000-00-00 00:00:00') $blTaten .= '<tr> <td> Ende: </td> <td style="padding:10px">'.$tat['endtime'].'</td> </tr>';
 	if ($tat['organization']!='') $blTaten .= '<tr> <td> Organisation: </td> <td style="padding:10px">'.$tat["organization"].'</td> </tr>';
-	$blTaten .= '<tr> <td> Anzahl Helfer: </td> <td style="padding:10px">'.$tat["countHelper"].'</td> </tr> </table>';
+	$blTaten .= '<tr> <td > Anzahl Helfer: </td> <td id="helfer" style="padding:10px">'.$tat["countHelper"].'</td> </tr> </table>';
 
 	// -------------- Einbindung der Map -------------------------
 	$blMap = '<h3>Adresse der Guten Tat:</h3>';
@@ -124,11 +124,11 @@ if (isset($_POST['allow'])) {
 
 
 	// --------------- Ausgabe der Blöcke, eingepackt in div boxen ----------
-	echo '<div align="center">' . $blAbout . '</div>';
+	echo '<div class="block">' . $blAbout . '</div>';
 	echo '<p />';
-	echo '<div align="center">' . $blTaten . '</div>';
+	echo '<div class="block">' . $blTaten . '</div>';
 	echo '<p />';
-	echo '<div align="center">' .$blMap;
+	echo '<div class="block">' .$blMap;
 
 	if ($showMap) {
 			$map = new Map();
@@ -136,7 +136,7 @@ if (isset($_POST['allow'])) {
 			$map->createMap($tat['postalcode'] . ',' . $tat['street'] . ',' . $tat['housenumber']);
 		}
 	else{
-		echo '<div align="center" style="font-size:200%;">'.'Adresse wurde gar nicht oder <br> nur unvollständig angegeben! ';
+		echo '<div class="block" style="font-size:200%;">'.'Adresse wurde gar nicht oder <br> nur unvollständig angegeben! ';
 	}
 
 	echo '</div>';

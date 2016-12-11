@@ -8,13 +8,14 @@
 *@author Timm Romanik <timm.romanik@stud.hs-hannover.de
 */
 
-
 //Definition der Datenbankverbindung
+
 DEFINE('DB_USER','tueGutes');
 DEFINE('DB_PASSWORD','Sadi23n2os');
 DEFINE('DB_HOST','localhost');
 DEFINE('DB_NAME','testing_db');
 
+include "sicherheitsCheck.php";
 
 /**
 *Klasse um die Funktionen zu sammeln
@@ -33,7 +34,7 @@ class DBFunctions
 	*@return object Datenbankverbindungsobjekt auf dem gearbeitet werden kann
 	*/
 	public function db_connect() {
-		return mysqli_connect(DB_HOST,DB_USER, DB_PASSWORD, DB_NAME);
+		return mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
 	}
 
 	/**
@@ -174,6 +175,10 @@ class DBFunctions
 	*/
 	public function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 		$db = self::db_connect();
+		$benutzername = htmlstr($benutzername);
+		$vorname = htmlstr($vorname);
+		$nachname = htmlstr($nachname);
+		$email = htmlstr($email);
 		$sql = "INSERT INTO User (username, password, email, regDate, points, status, idUserGroup, idTrust) VALUES(?,?,LOWER(?),?,0,'nichtVerifiziert',1,1)";
 		$stmt = $db->prepare($sql);
 		$date = date("Y-m-d");
@@ -343,15 +348,20 @@ class DBFunctions
 			self::db_close($db);
 			return false;
 		}
+		
+		//echo 'DIese FUnktion solle jetzt funktionieren';
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
 		self::db_close($db);
 		if(isset($dbentry['user_id'])){
+			//echo 'Ich habe das Array zurückgegeben';
 			return $dbentry;
 		}
 		else {
+			//echo ' Ich habe false zurückgeben';
 			return false;
 		}
+		
 	}
 	
 
@@ -598,6 +608,21 @@ class DBFunctions
 		if($savedata['idPostal']==''){
 			$savedata['idPostal'] =-1;
 		}
+
+		$savedata['username'] = htmlstr($savedata['username']);
+		$savedata['email'] = htmlstr($savedata['email']);
+		$savedata['firstname']= htmlstr($savedata['firstname']);
+		$savedata['lastname']= htmlstr($savedata['lastname']);
+		$savedata['gender']= htmlstr($savedata['gender']);
+		$savedata['birthday']= htmlstr($savedata['birthday']);
+		$savedata['street']= htmlstr($savedata['street']);
+		$savedata['housenumber']= htmlstr($savedata['housenumber']);
+		$savedata['telefonnumber']= htmlstr($savedata['telefonnumber']);
+		$savedata['messengernumber']= htmlstr($savedata['messengernumber']);
+		$savedata['avatar']= htmlstr($savedata['avatar']);
+		$savedata['hobbys']= htmlstr($savedata['hobbys']);
+		$savedata['description']= htmlstr($savedata['description']);
+
 		$db = self::db_connect();
 		$sql ="UPDATE User,PersData,UserTexts,Privacy,UserGroup
 			SET
@@ -820,6 +845,12 @@ class DBFunctions
 	*@param string $pictures Bilder zu einer guten Tat
 	*/
 	public function db_createGuteTat($name,$user_id,$category,$street,$housenumber,$pid,$starttime,$endtime,$organization,$countHelper,$idTrust,$description,$pictures){
+		$name = htmlstr($name);
+		$street = htmlstr($street);
+		$housenumber = htmlstr($housenumber);
+		$starttime = htmlstr($starttime);
+		$endtime = htmlstr($endtime);
+		$organization = htmlstr($organization);
 		if(self::db_doesCategoryNameExist($category)){
 			$catid = self::db_getCategoryidbyCategoryText($category);
 			$db = self::db_connect();
@@ -1710,6 +1741,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_starttime($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.starttime = ?
@@ -1732,6 +1764,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_endtime($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.endtime = ?
@@ -1754,6 +1787,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_picture($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deedtexts
 			SET
 			deedtexts.pictures = ?
@@ -1776,6 +1810,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_description($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deedtexts
 			SET
 			deedtexts.description = ?
@@ -1798,6 +1833,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_name($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.name = ?
@@ -1846,6 +1882,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_street($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.street = ?
@@ -1868,6 +1905,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_housenumber($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.housenumber = ?
@@ -1912,6 +1950,7 @@ class DBFunctions
 	*/
 	public function db_update_deeds_organization($data,$idGuteTat){
 		$db = self::db_connect();
+		$data = htmlstr($data);
 		$sql ="UPDATE deeds
 			SET
 			deeds.organization = ?
@@ -2382,9 +2421,9 @@ class DBFunctions
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
 		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
-        WHERE `Deeds`.`name` like ?
-        OR `Deeds`.`category` like ?
-        AND `Deeds`.`status` != 'nichtFreigegeben'
+        WHERE `Deeds`.`status` != 'nichtFreigegeben'
+        AND (`Deeds`.`name` like ?
+        OR `Deeds`.`category` like ?)
         ORDER BY $sort_bedingung";
         $stmt = $db->prepare($sql);
         $stmt->bind_param('ss', $bedingung, $bedingung);
@@ -2473,8 +2512,8 @@ class DBFunctions
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
 		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
-        WHERE `Deeds`.`street` like ?
-        OR `Postalcode`.`place` like ?
+        WHERE (`Deeds`.`street` like ?
+        OR `Postalcode`.`place` like ?)
         AND `Deeds`.`status` != 'nichtFreigegeben'
         ORDER BY $sort_bedingung";
 		$stmt = $db->prepare($sql);
@@ -2742,6 +2781,7 @@ class DBFunctions
 	*/
 	public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentid = 'null'){
 		$db = self::db_connect();
+		$commenttext = htmlstr($commenttext);
 		$sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentcomment) VALUES (?,?,?,?,?)";
 		$date = new datetime();
 		$stmt = $db->prepare($sql);
@@ -2823,6 +2863,200 @@ class DBFunctions
 		$dbentry = $result->fetch_assoc();
 		return $dbentry['numberComments'];
 	}
+
+
+	public function db_getCountLoginCheck($userid){
+		$db = self::db_connect();
+		$sql = "SELECT counter FROM LoginCheck WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['counter'])){
+			self::db_close($db);
+			return $dbentry['counter'];
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+
+	public function db_doesUserExistInLoginCheck($userid){
+		$db = self::db_connect();
+		$sql = "SELECT userid FROM LoginCheck WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['userid'])){
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	public function db_setCountandTime($userid){
+		$db = self::db_connect();
+		$sql = "UPDATE LoginCheck SET counter=counter+1,timecounter=?  WHERE userid = ?";
+		$timer = time();
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('ii',$timer,$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+	}
+
+	public function db_setCountandTimenull($userid){
+		$db = self::db_connect();
+		$sql = "UPDATE LoginCheck SET counter=0,timecounter=0  WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+	}
+
+	public function db_getTimeLoginCheck($userid){
+		$db = self::db_connect();
+		$sql = "SELECT timecounter FROM LoginCheck WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['timecounter'])){
+			self::db_close($db);
+			return $dbentry['timecounter'];
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	public function db_insertUserIntoLoginCheck($userid){
+		$db = self::db_connect();
+		$sql = "INSERT INTO LoginCheck(userid,counter,timecounter) VALUES (?,0,0)";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+	}
+
+	public function db_initNewKey(){
+		self::db_deleteKey();
+		// Character List to Pick from
+		$chrList = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+		// Minimum/Maximum times to repeat character List to seed from
+		$chrRepeatMin = 2; // Minimum times to repeat the seed string
+		$chrRepeatMax = 20; // Maximum times to repeat the seed string
+
+		// Length of Random String returned
+		$chrRandomLength = 200;
+
+		// The ONE LINE random command with the above variables.
+		$key= substr(str_shuffle(str_repeat($chrList, mt_rand($chrRepeatMin,$chrRepeatMax))),1,$chrRandomLength);
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "INSERT INTO KeyReg(keyreg,timecounter) VALUES (?,?)";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('si',$key,$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return $key;
+		}
+	}
+
+	public function db_getKey($key){
+		self::db_deleteKey();
+		$db = self::db_connect();
+		$sql = "SELECT keyreg FROM KeyReg WHERE keyreg = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('s',$key);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['keyreg'])){
+			echo $dbentry['keyreg'];
+			$sql ="DELETE From KeyReg
+				WHERE keyreg = ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('s',$key);
+			$stmt->execute();
+			self::db_close($db);
+			echo "ich hab true";
+			return true;
+		}
+		else {
+			echo $key;
+			echo "Ich hab false ";
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	public function db_deleteKey(){
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "DELETE FROM KeyReg WHERE (?-timecounter)>300";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+
+	}
+
 }
 
 
