@@ -6,15 +6,12 @@
  *
  * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
  */
- $url =(isset($_SERVER['HTTPS'])?'https':'http').'://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; 
 ?>
 			</div>
 			<div class="bottom">
 				<footer>
 					<div>
 						<br><br>
-						
-						<br>
 						<a href="./privacy"><?php echo $wlang['privacy']; ?></a><br>
 						<a href="./imprint"><?php echo $wlang['imprint']; ?></a><br>
 						<a href="./terms"><?php echo $wlang['terms']; ?></a>

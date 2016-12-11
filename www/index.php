@@ -1,22 +1,18 @@
 <?php
 /**
  * Index
+ *
  * Startseite, die für eingeloggte Nutzer einen Schnellzugriff zu wichtigen Funktionen bietet
  *
- * @author Lukas Buttke FTW
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
  */
 
 require './includes/DEF.php';
+
 require './includes/_top.php';
+
 include './includes/db_connector.php';
-
-//Include FB config file
 require './includes/fb/fbConfig.php';
-
-// --------------- Facebook Login Button ------------------------------------
-
- 	   $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
-	    $output = '<a href="'.$loginURL.'"><img src="./includes/fb/images/fblogin-btn.png"></a>'; 
 ?>
 
 <h2><?php echo $wlang['welcome']; ?></h2>
@@ -54,6 +50,8 @@ require './includes/fb/fbConfig.php';
 
 <?php
 if(!$_USER->loggedIn())
+{
+	$fb_loginURL = $facebook->getLoginUrl(array('redirect_uri' => $redirectURL, 'scope' => $fbPermissions));
 	echo "
 		<div class='module transparent'>
 			<br><br>
@@ -69,11 +67,9 @@ if(!$_USER->loggedIn())
 			<br><br>
 			Ich bin noch nicht registriert:<br>
 			<a href='./registration'>Zur Registrierung</a>
-			<hr>
-				<h5> Jetzt mit Facebook anmelden </h> <br>
-				<div class='block'>".$output." </div>
-
-
+			<br>
+			<h5>Jetzt mit Facebook anmelden</h5><br>
+			<a href='" . $fb_loginURL . "'><img src='./includes/fb/images/fblogin-btn.png' /></a>
 		</div>
 		<div class='module'>
 			<br>
@@ -90,19 +86,9 @@ if(!$_USER->loggedIn())
 			<br><br>
 		</div>
 	";
+}
 else
-{	
-	echo '
-	<div class="fb-like" 
-		data-href="https://www.facebook.com/tueGutesinHannover" 
-		data-width="600" 
-		data-layout="standard" 
-		data-action="like" 
-		data-size="small" 
-		data-show-faces="true" 
-		data-share="false">
-	</div>	';
-
+{
 	echo "<a href='./deeds_create'><input type='button' value='Gute Tat erstellen' /></a><br>";
 
 	echo "
@@ -167,7 +153,8 @@ else
 		<a href='./contact'><input type='button' value='Kontakt zu uns' /></a>
 	";
 }
-echo "
+?>
+
 <script type='text/javascript'>
     function setTimeLabel(event) {
         var form = document.getElementById('form');
@@ -188,7 +175,7 @@ echo "
             keyword[0].parentNode.replaceChild(origin,keyword[0]);
         }
     }
-
+	
     function getFormat(){
         var format = '';
         var nTime = new Date();
@@ -203,11 +190,7 @@ echo "
         format += ':00';
         return format;
     }
-
 </script>
-";
-
-?>
 
 <?php
 require './includes/_bottom.php';
