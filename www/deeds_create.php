@@ -9,8 +9,6 @@ require './includes/UTILS.php';
 require './includes/db_connector.php';
 
 require './includes/_top.php';
-echo '<script type="text/javascript" src="./includes/dateSelector/dateSelector.js"></script>
-<link rel="stylesheet" type="text/css" href="./includes/dateSelector/dateSelector.css" />';
 	
 $pictures = isset($POST['pictures']) ? $_POST['pictures'] : '';
 $name = isset($_GET['name']) ? $_GET['name'] : '';
@@ -20,8 +18,8 @@ $street = isset($_GET['street']) ? $_GET['street'] : '';
 $housenumber = isset($_GET['housenumber']) ? $_GET['housenumber'] : '';
 $postalcode = isset($_GET['postalcode']) ? $_GET['postalcode'] : '';
 $place = isset($_GET['place']) ? $_GET['place'] : '';
-$startdate = isset($_GET['startdate']) ? $_GET['startdate'] : '';
-$enddate = isset($_GET['enddate']) ? $_GET['enddate'] : '';
+$startdate = isset($_GET['startdate']) ? $_GET['startdate'] . ' ' . $_GET['starttime_hours'] . ':' . $_GET['starttime_minutes'] : '';
+$enddate = isset($_GET['enddate']) ? $_GET['enddate'] . ' ' . $_GET['endtime_hours'] . ':' . $_GET['endtime_minutes'] : '';
 $organization = isset($_GET['organization']) ? $_GET['organization'] : '';
 $countHelper = isset($_GET['countHelper']) ? $_GET['countHelper'] : '1';
 $idTrust = isset($_GET['tat_verantwortungslevel']) ? $_GET['tat_verantwortungslevel'] : '';
@@ -158,11 +156,9 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 			$stop=4;
 		}else if(!isset($_GET['organization'])){
 			$stop=5;
-		}else if(!isset($_GET['startdate'] )){
-			//|| !DateHandler::isValid($_GET['startdate']) braucht es mit dem Kalender nicht mehr 
+		}else if(!isset($_GET['startdate']) || !DateHandler::isValid($_GET['startdate'] . ' ' . $_GET['starttime_hours'] . ':' . $_GET['starttime_minutes'])){
 			$stop=6;
-		}else if(!isset($_GET['enddate'] )){
-			//|| !DateHandler::isValid($_GET['enddate'])
+		}else if(!isset($_GET['enddate']) || !DateHandler::isValid($_GET['enddate'] . ' ' . $_GET['endtime_hours'] . ':' . $_GET['endtime_minutes'])){
 			$stop=7;
 		}else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode,$place)==false)){
 			$stop=8;
@@ -209,13 +205,13 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 				$start_dh = (new DateHandler())->set($startdate);
 				$end_dh = (new DateHandler())->set($enddate);
 				echo 'Beginn:<br><input type="date" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('Y-m-d') : '') . '" placeholder="DD.MM.YYYY" required />';
-				echo ' um <select><option name="00" value="00">00</option><option name="01" value="01">01</option><option name="02" value="02">02</option><option name="03" value="03">03</option><option name="04" value="04">04</option><option name="05" value="05">05</option><option name="06" value="06">06</option><option name="07" value="07">07</option><option name="08" value="08">08</option><option name="09" value="09">09</option><option name="10" value="10">10</option><option name="11" value="11">11</option><option name="12" value="12">12</option><option name="13" value="13">13</option><option name="14" value="14">14</option><option name="15" value="15">15</option><option name="16" value="16">16</option><option name="17" value="17">17</option><option name="18" value="18">18</option><option name="19" value="19">19</option><option name="20" value="20">20</option><option name="21" value="21">21</option><option name="22" value="22">22</option><option name="23" value="23">23</option></select>';
-				echo ' : <select><option name="00" value="00">00</option><option name="05" value="05">05</option><option name="10" value="10">10</option><option name="15" value="15">15</option><option name="20" value="20">20</option><option name="25" value="25">25</option><option name="30" value="30">30</option><option name="35" value="35">35</option><option name="40" value="40">40</option><option name="45" value="45">45</option><option name="50" value="50">50</option><option name="55" value="55">55</option></select>';
+				echo ' um <select name="starttime_hours"><option name="00" value="00">00</option><option name="01" value="01">01</option><option name="02" value="02">02</option><option name="03" value="03">03</option><option name="04" value="04">04</option><option name="05" value="05">05</option><option name="06" value="06">06</option><option name="07" value="07">07</option><option name="08" value="08">08</option><option name="09" value="09">09</option><option name="10" value="10">10</option><option name="11" value="11">11</option><option name="12" value="12">12</option><option name="13" value="13">13</option><option name="14" value="14">14</option><option name="15" value="15">15</option><option name="16" value="16">16</option><option name="17" value="17">17</option><option name="18" value="18">18</option><option name="19" value="19">19</option><option name="20" value="20">20</option><option name="21" value="21">21</option><option name="22" value="22">22</option><option name="23" value="23">23</option></select>';
+				echo ' : <select name="starttime_minutes"><option name="00" value="00">00</option><option name="05" value="05">05</option><option name="10" value="10">10</option><option name="15" value="15">15</option><option name="20" value="20">20</option><option name="25" value="25">25</option><option name="30" value="30">30</option><option name="35" value="35">35</option><option name="40" value="40">40</option><option name="45" value="45">45</option><option name="50" value="50">50</option><option name="55" value="55">55</option></select>';
 				echo ' Uhr<br><br>';
 				
 				echo 'Ende:<br><input type="date" name="enddate" value="' . ($end_dh !== false ? $end_dh->get('Y-m-d') : '') . '" placeholder="DD.MM.YYYY" required />';
-				echo ' um <select><option name="00" value="00">00</option><option name="01" value="01">01</option><option name="02" value="02">02</option><option name="03" value="03">03</option><option name="04" value="04">04</option><option name="05" value="05">05</option><option name="06" value="06">06</option><option name="07" value="07">07</option><option name="08" value="08">08</option><option name="09" value="09">09</option><option name="10" value="10">10</option><option name="11" value="11">11</option><option name="12" value="12">12</option><option name="13" value="13">13</option><option name="14" value="14">14</option><option name="15" value="15">15</option><option name="16" value="16">16</option><option name="17" value="17">17</option><option name="18" value="18">18</option><option name="19" value="19">19</option><option name="20" value="20">20</option><option name="21" value="21">21</option><option name="22" value="22">22</option><option name="23" value="23">23</option></select>';
-				echo ' : <select><option name="00" value="00">00</option><option name="05" value="05">05</option><option name="10" value="10">10</option><option name="15" value="15">15</option><option name="20" value="20">20</option><option name="25" value="25">25</option><option name="30" value="30">30</option><option name="35" value="35">35</option><option name="40" value="40">40</option><option name="45" value="45">45</option><option name="50" value="50">50</option><option name="55" value="55">55</option></select>';
+				echo ' um <select name="endtime_hours"><option name="00" value="00">00</option><option name="01" value="01">01</option><option name="02" value="02">02</option><option name="03" value="03">03</option><option name="04" value="04">04</option><option name="05" value="05">05</option><option name="06" value="06">06</option><option name="07" value="07">07</option><option name="08" value="08">08</option><option name="09" value="09">09</option><option name="10" value="10">10</option><option name="11" value="11">11</option><option name="12" value="12">12</option><option name="13" value="13">13</option><option name="14" value="14">14</option><option name="15" value="15">15</option><option name="16" value="16">16</option><option name="17" value="17">17</option><option name="18" value="18">18</option><option name="19" value="19">19</option><option name="20" value="20">20</option><option name="21" value="21">21</option><option name="22" value="22">22</option><option name="23" value="23">23</option></select>';
+				echo ' : <select name="endtime_minutes"><option name="00" value="00">00</option><option name="05" value="05">05</option><option name="10" value="10">10</option><option name="15" value="15">15</option><option name="20" value="20">20</option><option name="25" value="25">25</option><option name="30" value="30">30</option><option name="35" value="35">35</option><option name="40" value="40">40</option><option name="45" value="45">45</option><option name="50" value="50">50</option><option name="55" value="55">55</option></select>';
 				echo ' Uhr<br>';
 				
 				echo '<input type="text" name="organization" value="'; echo $organization; echo'" placeholder="Organisation" />
