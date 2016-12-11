@@ -89,7 +89,7 @@ if(!$_USER->loggedIn())
 }
 else
 {
-	echo '<div class="block">
+	echo '<div class="center">
 	<div class="fb-like" 
 		data-href="https://www.facebook.com/tueGutesinHannover" 
 		data-width="600" 
@@ -100,6 +100,7 @@ else
 		data-share="false">
 	</div>	</div>';
 	
+	echo "<br>";
 	echo "<a href='./deeds_create'><input type='button' value='Gute Tat erstellen' /></a><br>";
 
 	echo "
