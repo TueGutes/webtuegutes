@@ -124,11 +124,11 @@ if (isset($_POST['allow'])) {
 
 
 	// --------------- Ausgabe der Blöcke, eingepackt in div boxen ----------
-	echo '<div class="block">' . $blAbout . '</div>';
+	echo '<div class="center">' . $blAbout . '</div>';
 	echo '<p />';
-	echo '<div class="block">' . $blTaten . '</div>';
+	echo '<div class="center">' . $blTaten . '</div>';
 	echo '<p />';
-	echo '<div class="block">' .$blMap;
+	echo '<div class="center">' .$blMap;
 
 	if ($showMap) {
 			$map = new Map();
@@ -136,7 +136,7 @@ if (isset($_POST['allow'])) {
 			$map->createMap($tat['postalcode'] . ',' . $tat['street'] . ',' . $tat['housenumber']);
 		}
 	else{
-		echo '<div class="block" style="font-size:200%;">'.'Adresse wurde gar nicht oder <br> nur unvollständig angegeben! ';
+		echo '<div class="center" style="font-size:200%;">'.'Adresse wurde gar nicht oder <br> nur unvollständig angegeben! ';
 	}
 
 	echo '</div>';
