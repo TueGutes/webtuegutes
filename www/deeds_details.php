@@ -105,7 +105,7 @@ if (isset($_POST['allow'])) {
 	//$blAbout .= ' Gute Tat #'.$idTat.' </h>';
 
 	// -----------Gute Taten Details - genauer
-	$blTaten = '<table class="block" width="65%"> <tr> <td width="25%"> Kategorie: </td> <td style="padding:10px">'.$tat["category"].'</td> </tr>';
+	$blTaten = '<table width="65%"> <tr> <td width="25%"> Kategorie: </td> <td style="padding:10px">'.$tat["category"].'</td> </tr>';
 	$blTaten .= '<tr> <td> Kontaktperson: </td> <td style="padding:10px"> <a href="./profile?user='.$tat["username"].'">'.'<img src="' . $tat["avatar"] . '" style="height:3%;float:left" >&nbsp'.$tat["username"].'</a> </td>';
 	$blTaten .= '<tr> <td> Gewünschter Vertrauenslevel: </td> <td style="padding:10px">'.$tat["idTrust"]. ' ('.$tat['trustleveldescription'].')' .'</td> </tr>';
 	$blTaten .= '<tr> <td> Beschreibung: </td> <td style="padding:10px">'.(($tat['description']!='')?$tat["description"]:'keine Beschreibung angegeben').'</td> </tr>';
@@ -124,11 +124,11 @@ if (isset($_POST['allow'])) {
 
 
 	// --------------- Ausgabe der Blöcke, eingepackt in div boxen ----------
-	echo '<div>' . $blAbout . '</div>';
-	//echo '<p />';
-	echo '<div>' . $blTaten . '</div>';
-	//echo '<p />';
-	echo '<div>' .$blMap;
+	echo '<div class="center">' . $blAbout . '</div>';
+	echo '<p />';
+	echo '<div class="center">' . $blTaten . '</div>';
+	echo '<p />';
+	echo '<div class="center">' .$blMap;
 
 	if ($showMap) {
 			$map = new Map();
