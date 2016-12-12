@@ -534,6 +534,13 @@
 				imagepng($avatar_64, $uploadDir . '64x64.png');
 				imagepng($avatar_32, $uploadDir . '32x32.png');
 
+				//chmod('./img/profiles/', 0775);
+				chmod($uploadDir.'512x512.png');
+				chmod($uploadDir.'256x256.png');
+				chmod($uploadDir.'128x128.png');
+				chmod($uploadDir.'64x64.png');
+				chmod($uploadDir.'32x32.png');
+
 				unlink($uploadDir . 'converted.png');
 
 				$thisuser['avatar'] = $uploadDir.'512x512.png';
