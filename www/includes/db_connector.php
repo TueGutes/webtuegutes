@@ -256,7 +256,7 @@ class DBFunctions
 	*
 	*@return string|false Gibt den Verschlüsselungskey zurück oder "false" wenn etwas bei der Erstellung schief geht.
 	*/
-	public function db_createOverFBBenutzerAccount($username,$fb_id, $vorname, $nachname, $email, $gender,$picture) {
+	public function db_createOverFBBenutzerAccount($username,$fb_id, $vorname, $nachname, $email, $gender) {
 		$db = self::db_connect();
 		$sql = "INSERT INTO User (username, password, email, regDate, points, status, idUserGroup, idTrust) VALUES(?,'registriertUeberFB',LOWER(?),?,0,'Verifiziert',1,1)";
 		$stmt = $db->prepare($sql);
@@ -269,6 +269,12 @@ class DBFunctions
 			return false;
 		}
 
+		$sql = "SELECT MAX(idUser) AS idUser FROM User";
+		$stmt = $db->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+
 		$sql = "INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) VALUES ((SELECT MAX(idUser) FROM User),?,?)";
 		$stmt = $db->prepare($sql);
 
@@ -280,7 +286,7 @@ class DBFunctions
 			self::db_close($db);
 			return false;
 		}
-
+		$picture = "./img/profiles/" . $dbentry['idUser'] . "/512x512.png";
 		$sql = "INSERT INTO UserTexts (idUserTexts,avatar) VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('s',$picture);
@@ -300,11 +306,7 @@ class DBFunctions
 			return false;
 		}
 
-		$sql = "SELECT MAX(idUser) AS idUser FROM User";
-		$stmt = $db->prepare($sql);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		$dbentry = $result->fetch_assoc();
+		
 
 		$sql = "INSERT INTO FacebookUser(user_id,facebook_id) VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
