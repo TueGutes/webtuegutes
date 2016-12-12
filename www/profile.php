@@ -535,11 +535,11 @@
 				imagepng($avatar_32, $uploadDir . '32x32.png');
 
 				//chmod('./img/profiles/', 0775);
-				chmod($uploadDir.'512x512.png');
-				chmod($uploadDir.'256x256.png');
-				chmod($uploadDir.'128x128.png');
-				chmod($uploadDir.'64x64.png');
-				chmod($uploadDir.'32x32.png');
+				chmod($uploadDir.'512x512.png', 0775);
+				chmod($uploadDir.'256x256.png', 0775);
+				chmod($uploadDir.'128x128.png', 0775);
+				chmod($uploadDir.'64x64.png', 0775);
+				chmod($uploadDir.'32x32.png', 0775);
 
 				unlink($uploadDir . 'converted.png');
 
