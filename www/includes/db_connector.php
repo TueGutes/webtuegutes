@@ -3021,19 +3021,15 @@ class DBFunctions
 		$result = $stmt->get_result();
 		$dbentry=$result->fetch_assoc();
 		if(isset($dbentry['keyreg'])){
-			echo $dbentry['keyreg'];
 			$sql ="DELETE From KeyReg
 				WHERE keyreg = ?";
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('s',$key);
 			$stmt->execute();
 			self::db_close($db);
-			echo "ich hab true";
 			return true;
 		}
 		else {
-			echo $key;
-			echo "Ich hab false ";
 			self::db_close($db);
 			return false;
 		}
