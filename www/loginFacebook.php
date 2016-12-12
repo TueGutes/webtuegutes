@@ -69,10 +69,55 @@ if(!isset($getUser['user_id'])){
 
         }
         else{
-            $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender'],$userData['picture']);
+
+            //"Picture" wird nicht mehr mit übergeben, da Timm in der Datenbank den korrekten Pfad zu dem Profilbild auf unserem Server angibt
+            $loginData = DBFunctions::db_createOverFBBenutzerAccount($_POST['username'],$userData['oauth_uid'],$userData['first_name'],$userData['last_name'],$userData['email'],$userData['gender']);
+
+            $uploadDir = './img/profiles/'.$loginData['idUser'].'/';
+            if (!is_dir('./img/profiles/')) {
+                mkdir('./img/profiles/');
+                chmod('./img/profiles/', 0775);
+            }
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir);
+                chmod($uploadDir, 0775);
+            }
+            imagepng(imagecreatefromstring(file_get_contents($userData['picture'])), $uploadDir . 'converted.png');
+            $size = getimagesize($uploadDir . 'converted.png');
+
+            //Anlegen der Dateien
+            $uploaded = imagecreatefrompng($uploadDir . 'converted.png');
+            $avatar_512 = imagecreatetruecolor(512,512);
+            $avatar_256 = imagecreatetruecolor(256,256);
+            $avatar_128 = imagecreatetruecolor(128,128);
+            $avatar_64 = imagecreatetruecolor(64,64);
+            $avatar_32 = imagecreatetruecolor(32,32);
+
+            //Resizing
+            imagecopyresized($avatar_512, $uploaded, 0, 0, 0, 0, 512, 512 , $size[0], $size[1]);
+            imagecopyresized($avatar_256, $uploaded, 0, 0, 0, 0, 256, 256 , $size[0], $size[1]);
+            imagecopyresized($avatar_128, $uploaded, 0, 0, 0, 0, 128, 128 , $size[0], $size[1]);
+            imagecopyresized($avatar_64, $uploaded, 0, 0, 0, 0, 64, 64 , $size[0], $size[1]);
+            imagecopyresized($avatar_32, $uploaded, 0, 0, 0, 0, 32, 32 , $size[0], $size[1]);
+
+            imagepng($avatar_512, $uploadDir . '512x512.png');
+            imagepng($avatar_256, $uploadDir . '256x256.png');
+            imagepng($avatar_128, $uploadDir . '128x128.png');
+            imagepng($avatar_64, $uploadDir . '64x64.png');
+            imagepng($avatar_32, $uploadDir . '32x32.png');
+
+            //chmod('./img/profiles/', 0775);
+            chmod($uploadDir.'512x512.png', 0775);
+            chmod($uploadDir.'256x256.png', 0775);
+            chmod($uploadDir.'128x128.png', 0775);
+            chmod($uploadDir.'64x64.png', 0775);
+            chmod($uploadDir.'32x32.png', 0775);
+
+            unlink($uploadDir . 'converted.png');
+
+            //$thisuser['avatar'] = $uploadDir.'512x512.png';
 
             header("Location:./loginFacebook.php");
-
 
         }
 }
