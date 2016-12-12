@@ -9,7 +9,7 @@ require './includes/db_connector.php';
     //----------------- Facebook --------------------------
     $out="";
     //Get user profile data from facebook
-    $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture');    
+    $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture.width(512).height(512)');
     //Insert or update user data to the database
     $userData = array(
         'oauth_provider'=> 'facebook',
