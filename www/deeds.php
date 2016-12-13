@@ -24,15 +24,21 @@ if (!isset($_POST['status'])) {
 ?>
 
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
-<div class="fb-like" 
-	data-href="https://www.facebook.com/tueGutesinHannover" 
-	data-width="600" 
-	data-layout="standard" 
-	data-action="like" 
-	data-size="small" 
-	data-show-faces="true" 
-	data-share="false">
-</div>
+	<div class="fb-like" 
+		data-href="https://www.facebook.com/tueGutesinHannover" 
+		data-width="600" 
+		data-layout="standard" 
+		data-action="like" 
+		data-size="small" 
+		data-show-faces="true" 
+		data-share="false">
+	</div>
+<!--
+	<div class="fb-share-button" 
+		data-href="https://www.facebook.com/tueGutesinHannover/"
+		data-layout="button_count"> 
+	</div>
+-->
 <div>
 <form action="deeds_create" method="post">
 	<input type="hidden" name="opened">
