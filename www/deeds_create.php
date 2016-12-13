@@ -267,11 +267,13 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 				<br>
 				<input type="text" name="street" value="';echo $street ;echo'" placeholder="Straßenname" required />
 				<input type="text" name="housenumber" value="'; echo $housenumber ;echo '" placeholder="Hausnummer" required />
-				<br>
+				<br>';
+				// ALEX: Removed text fields for postal code and place.
+				/*
 				<input type="text" name="postalcode" value="'; echo $postalcode ;echo '" placeholder="Postleitzahl" required />
 				<br>
 				<input type="text" name="place" value="'; echo $place ; echo'" placeholder="Stadtteil" required />
-				<br>';
+				<br>';*/
 				
 				/*
 				var o = '<select>';
