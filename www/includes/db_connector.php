@@ -703,54 +703,54 @@ class DBFunctions
 	*@param string $user Benutzername des Benutzers
 	*@param string $pass Das Passwort des Benutzers
 	*/
-	public function db_delete_user($user, $pass) {
+	public function db_delete_user($user) {
 		$me = self::db_get_user($user);
-		$pass_md5 = md5($pass.substr($me['regDate'],0,10));
-		if ($pass_md5 === $me['password']) {
-			$db = self::db_connect();
+		//$pass_md5 = md5($pass.substr($me['regDate'],0,10));
+		//if ($pass_md5 === $me['password']) {
+		$db = self::db_connect();
 
-			if(db_doesFacebookUserExists($me['idUser'])){
-				$sql = "DELETE FROM FacebookUser WHERE user_id= ?";
-				$stmt = $db->prepare($sql);
-				$stmt->bind_param('i',$me['idUser']);
-				$stmt->execute();
-			}
-
-
-			if(db_doesCommentwithCreatoridExist($me['idUser'])){
-				$sql = "UPDATE DeedComments SET user_id_creator = NULL WHERE user_id_creator= ?";
-				$stmt = $db->prepare($sql);
-				$stmt->bind_param('i',$me['idUser']);
-				$stmt->execute();
-			}
-
-
-			$sql = "DELETE FROM PersData WHERE idPersData= ?";
+		if(db_doesFacebookUserExists($me['idUser'])){
+			$sql = "DELETE FROM FacebookUser WHERE user_id= ?";
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('i',$me['idUser']);
 			$stmt->execute();
-
-			$sql = "DELETE FROM UserTexts WHERE idUserTexts= ?";
-			$stmt = $db->prepare($sql);
-			$stmt->bind_param('i',$me['idUser']);
-			$stmt->execute();
-
-			$sql = "DELETE FROM Privacy WHERE idPrivacy= ?";
-			$stmt = $db->prepare($sql);
-			$stmt->bind_param('i',$me['idUser']);
-			$stmt->execute();
-
-			$sql = "DELETE FROM User WHERE idUser = ?";
-			$stmt = $db->prepare($sql);
-			$stmt->bind_param('i',$me['idUser']);
-			$stmt->execute();
-
-
-			self::db_close($db);
-			Header('Location:./logout.php');
-		} else {
-			die ('RegDate: ' . substr($me['regDate'],0,10) . 'DB: ' . $me['password'] . '<br>Eingegeben: ' . $pass_md5);
 		}
+
+
+		if(db_doesCommentwithCreatoridExist($me['idUser'])){
+			$sql = "UPDATE DeedComments SET user_id_creator = NULL WHERE user_id_creator= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+		}
+
+
+		$sql = "DELETE FROM PersData WHERE idPersData= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "DELETE FROM UserTexts WHERE idUserTexts= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "DELETE FROM Privacy WHERE idPrivacy= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "DELETE FROM User WHERE idUser = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+
+		self::db_close($db);
+		Header('Location:./logout.php');
+		//} else {
+		//	die ('RegDate: ' . substr($me['regDate'],0,10) . 'DB: ' . $me['password'] . '<br>Eingegeben: ' . $pass_md5);
+		//}
 	}
 
 	/**
@@ -3111,6 +3111,82 @@ class DBFunctions
 		}
 
 	}
+
+	public function db_initDeletepwNewKey(){
+		self::db_deleteKey();
+		// Character List to Pick from
+		$chrList = '0123456789';
+
+		// Minimum/Maximum times to repeat character List to seed from
+		$chrRepeatMin = 2; // Minimum times to repeat the seed string
+		$chrRepeatMax = 20; // Maximum times to repeat the seed string
+
+		// Length of Random String returned
+		$chrRandomLength = 5;
+
+		// The ONE LINE random command with the above variables.
+		$key= substr(str_shuffle(str_repeat($chrList, mt_rand($chrRepeatMin,$chrRepeatMax))),1,$chrRandomLength);
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "INSERT INTO KeyReg(keyreg,timecounter) VALUES (?,?)";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('si',$key,$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return $key;
+		}
+	}
+
+	public function db_getDeletepwKey($key){
+		self::db_deleteKey();
+		$db = self::db_connect();
+		$sql = "SELECT keyreg FROM KeyReg WHERE keyreg = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('s',$key);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['keyreg'])){
+			$sql ="DELETE From KeyReg
+				WHERE keyreg = ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('s',$key);
+			$stmt->execute();
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	public function db_deleteDeletepwKey(){
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "DELETE FROM KeyReg WHERE (?-timecounter)>300";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+
+	}
+
 
 }
 
