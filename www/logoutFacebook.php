@@ -13,6 +13,7 @@ unset($_SESSION['userData']);
 //Destroy session data
 $facebook->destroySession();
 
+// facebook cookies weg
 unset($_COOKIE['fb_id']);
 unset($_COOKIE['fb_email']);
 unset($_COOKIE['fb_first_name']);
@@ -21,6 +22,10 @@ unset($_COOKIE['fb_gender']);
 unset($_COOKIE['fb_picture']);
 unset($_COOKIE['fb_link']);
 
-//Redirect to homepage
-header("Location:index.php");
+// unsere Cookies weg
+unset($_COOKIE['fb_iduser']);
+unset($_COOKIE['fb_username']);
+unset($_COOKIE['fb_privacykey']);
+
+$_USER->logout();
 ?>
