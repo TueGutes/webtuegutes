@@ -9,8 +9,6 @@ require './includes/UTILS.php';
 require './includes/db_connector.php';
 
 require './includes/_top.php';
-echo '<script type="text/javascript" src="./includes/dateSelector/dateSelector.js"></script>
-<link rel="stylesheet" type="text/css" href="./includes/dateSelector/dateSelector.css" />';
 	
 $pictures = isset($POST['pictures']) ? $_POST['pictures'] : '';
 $name = isset($_GET['name']) ? $_GET['name'] : '';
@@ -20,8 +18,8 @@ $street = isset($_GET['street']) ? $_GET['street'] : '';
 $housenumber = isset($_GET['housenumber']) ? $_GET['housenumber'] : '';
 $postalcode = isset($_GET['postalcode']) ? $_GET['postalcode'] : '';
 $place = isset($_GET['place']) ? $_GET['place'] : '';
-$startdate = isset($_GET['startdate']) ? $_GET['startdate'] : '';
-$enddate = isset($_GET['enddate']) ? $_GET['enddate'] : '';
+$startdate = isset($_GET['startdate']) ? $_GET['startdate'] . ' ' . $_GET['starttime_hours'] . ':' . $_GET['starttime_minutes'] : '';
+$enddate = isset($_GET['enddate']) ? $_GET['enddate'] . ' ' . $_GET['endtime_hours'] . ':' . $_GET['endtime_minutes'] : '';
 $organization = isset($_GET['organization']) ? $_GET['organization'] : '';
 $countHelper = isset($_GET['countHelper']) ? $_GET['countHelper'] : '1';
 $idTrust = isset($_GET['tat_verantwortungslevel']) ? $_GET['tat_verantwortungslevel'] : '';
@@ -158,11 +156,13 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 			$stop=4;
 		}else if(!isset($_GET['organization'])){
 			$stop=5;
-		}else if(!isset($_GET['startdate'] )){
-			//|| !DateHandler::isValid($_GET['startdate']) braucht es mit dem Kalender nicht mehr 
+		}else if(!isset($_GET['startdate']) ||
+			(intval($_GET['starttime_minutes']) % 5 != 0 && intval($_GET['starttime_minutes']) != 0) ||
+			!DateHandler::isValid($_GET['startdate'] . ' ' . $_GET['starttime_hours'] . ':' . $_GET['starttime_minutes'], 'd.m.Y H:i')){
 			$stop=6;
-		}else if(!isset($_GET['enddate'] )){
-			//|| !DateHandler::isValid($_GET['enddate'])
+		}else if(!isset($_GET['enddate']) ||
+			(intval($_GET['endtime_minutes']) % 5 != 0 && intval($_GET['endtime_minutes']) != 0) ||
+			!DateHandler::isValid($_GET['enddate'] . ' ' . $_GET['endtime_hours'] . ':' . $_GET['endtime_minutes'], 'd.m.Y H:i')){
 			$stop=7;
 		}else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode,$place)==false)){
 			$stop=8;
@@ -201,21 +201,37 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 				for(var i = 0; i < 60; i++)
 				{
 					var p = i < 10 ? '0' + i : i;
-					o += '<option name="' + p + '" value="' + p + '">' + p + '</option>';
+					o += '<option value="' + p + '">' + p + '</option>';
 				}
 				o += '</select>';
 				document.getElementById('out').innerHTML = o;
+				
+				
+				
+				var o = '<option value="00">00</option><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option>';
+				o = o.replaceAll('</option>', '</option');
+				var parts = o.split('>');
+				for(var i = 0; i < parts.length -1; i++)
+				{
+					var curNumber = parseInt(parts[i].split('"')[1]);
+					parts[i] = parts[i] + "' . (intval($start_dh->getHours()) == " + curNumber + " ? ' selected' : '') . '";
+				}
+				var output = parts.join(">");
+				output.replaceAll('</option', '</option>');
+				document.getElementById('out').innerHTML = output;
 				*/
 				$start_dh = (new DateHandler())->set($startdate);
 				$end_dh = (new DateHandler())->set($enddate);
-				echo 'Beginn:<br><input type="date" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('Y-m-d') : '') . '" placeholder="DD.MM.YYYY" required />';
-				echo ' um <select><option name="00" value="00">00</option><option name="01" value="01">01</option><option name="02" value="02">02</option><option name="03" value="03">03</option><option name="04" value="04">04</option><option name="05" value="05">05</option><option name="06" value="06">06</option><option name="07" value="07">07</option><option name="08" value="08">08</option><option name="09" value="09">09</option><option name="10" value="10">10</option><option name="11" value="11">11</option><option name="12" value="12">12</option><option name="13" value="13">13</option><option name="14" value="14">14</option><option name="15" value="15">15</option><option name="16" value="16">16</option><option name="17" value="17">17</option><option name="18" value="18">18</option><option name="19" value="19">19</option><option name="20" value="20">20</option><option name="21" value="21">21</option><option name="22" value="22">22</option><option name="23" value="23">23</option></select>';
-				echo ' : <select><option name="00" value="00">00</option><option name="05" value="05">05</option><option name="10" value="10">10</option><option name="15" value="15">15</option><option name="20" value="20">20</option><option name="25" value="25">25</option><option name="30" value="30">30</option><option name="35" value="35">35</option><option name="40" value="40">40</option><option name="45" value="45">45</option><option name="50" value="50">50</option><option name="55" value="55">55</option></select>';
+				echo 'Beginn:<br><input type="date" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('d.m.Y') : '') . '" placeholder="DD.MM.YYYY" required />';
+				if($start_dh === false) $start_dh = (new DateHandler())->setHours(8)->setMinutes(0);
+				echo ' um <select name="starttime_hours"><option value="00"' . (intval($start_dh->getHours()) == 0 ? ' selected' : '') . '>00</option><option value="01"' . (intval($start_dh->getHours()) == 1 ? ' selected' : '') . '>01</option><option value="02"' . (intval($start_dh->getHours()) == 2 ? ' selected' : '') . '>02</option><option value="03"' . (intval($start_dh->getHours()) == 3 ? ' selected' : '') . '>03</option><option value="04"' . (intval($start_dh->getHours()) == 4 ? ' selected' : '') . '>04</option><option value="05"' . (intval($start_dh->getHours()) == 5 ? ' selected' : '') . '>05</option><option value="06"' . (intval($start_dh->getHours()) == 6 ? ' selected' : '') . '>06</option><option value="07"' . (intval($start_dh->getHours()) == 7 ? ' selected' : '') . '>07</option><option value="08"' . (intval($start_dh->getHours()) == 8 ? ' selected' : '') . '>08</option><option value="09"' . (intval($start_dh->getHours()) == 9 ? ' selected' : '') . '>09</option><option value="10"' . (intval($start_dh->getHours()) == 10 ? ' selected' : '') . '>10</option><option value="11"' . (intval($start_dh->getHours()) == 11 ? ' selected' : '') . '>11</option><option value="12"' . (intval($start_dh->getHours()) == 12 ? ' selected' : '') . '>12</option><option value="13"' . (intval($start_dh->getHours()) == 13 ? ' selected' : '') . '>13</option><option value="14"' . (intval($start_dh->getHours()) == 14 ? ' selected' : '') . '>14</option><option value="15"' . (intval($start_dh->getHours()) == 15 ? ' selected' : '') . '>15</option><option value="16"' . (intval($start_dh->getHours()) == 16 ? ' selected' : '') . '>16</option><option value="17"' . (intval($start_dh->getHours()) == 17 ? ' selected' : '') . '>17</option><option value="18"' . (intval($start_dh->getHours()) == 18 ? ' selected' : '') . '>18</option><option value="19"' . (intval($start_dh->getHours()) == 19 ? ' selected' : '') . '>19</option><option value="20"' . (intval($start_dh->getHours()) == 20 ? ' selected' : '') . '>20</option><option value="21"' . (intval($start_dh->getHours()) == 21 ? ' selected' : '') . '>21</option><option value="22"' . (intval($start_dh->getHours()) == 22 ? ' selected' : '') . '>22</option><option value="23"' . (intval($start_dh->getHours()) == 23 ? ' selected' : '') . '>23</option></select>';
+				echo ' : <select name="starttime_minutes"><option value="00"' . (intval($start_dh->getMinutes()) == 0 ? ' selected' : '') . '>00</option><option value="05"' . (intval($start_dh->getMinutes()) == 5 ? ' selected' : '') . '>05</option><option value="10"' . (intval($start_dh->getMinutes()) == 10 ? ' selected' : '') . '>10</option><option value="15"' . (intval($start_dh->getMinutes()) == 15 ? ' selected' : '') . '>15</option><option value="20"' . (intval($start_dh->getMinutes()) == 20 ? ' selected' : '') . '>20</option><option value="25"' . (intval($start_dh->getMinutes()) == 25 ? ' selected' : '') . '>25</option><option value="30"' . (intval($start_dh->getMinutes()) == 30 ? ' selected' : '') . '>30</option><option value="35"' . (intval($start_dh->getMinutes()) == 35 ? ' selected' : '') . '>35</option><option value="40"' . (intval($start_dh->getMinutes()) == 40 ? ' selected' : '') . '>40</option><option value="45"' . (intval($start_dh->getMinutes()) == 45 ? ' selected' : '') . '>45</option><option value="50"' . (intval($start_dh->getMinutes()) == 50 ? ' selected' : '') . '>50</option><option value="55"' . (intval($start_dh->getMinutes()) == 55 ? ' selected' : '') . '>55</option></select>';
 				echo ' Uhr<br><br>';
 				
-				echo 'Ende:<br><input type="date" name="enddate" value="' . ($end_dh !== false ? $end_dh->get('Y-m-d') : '') . '" placeholder="DD.MM.YYYY" required />';
-				echo ' um <select><option name="00" value="00">00</option><option name="01" value="01">01</option><option name="02" value="02">02</option><option name="03" value="03">03</option><option name="04" value="04">04</option><option name="05" value="05">05</option><option name="06" value="06">06</option><option name="07" value="07">07</option><option name="08" value="08">08</option><option name="09" value="09">09</option><option name="10" value="10">10</option><option name="11" value="11">11</option><option name="12" value="12">12</option><option name="13" value="13">13</option><option name="14" value="14">14</option><option name="15" value="15">15</option><option name="16" value="16">16</option><option name="17" value="17">17</option><option name="18" value="18">18</option><option name="19" value="19">19</option><option name="20" value="20">20</option><option name="21" value="21">21</option><option name="22" value="22">22</option><option name="23" value="23">23</option></select>';
-				echo ' : <select><option name="00" value="00">00</option><option name="05" value="05">05</option><option name="10" value="10">10</option><option name="15" value="15">15</option><option name="20" value="20">20</option><option name="25" value="25">25</option><option name="30" value="30">30</option><option name="35" value="35">35</option><option name="40" value="40">40</option><option name="45" value="45">45</option><option name="50" value="50">50</option><option name="55" value="55">55</option></select>';
+				echo 'Ende:<br><input type="date" name="enddate" value="' . ($end_dh !== false ? $end_dh->get('d.m.Y') : '') . '" placeholder="DD.MM.YYYY" required />';
+				if($end_dh === false) $end_dh = (new DateHandler())->setHours(8)->setMinutes(0);
+				echo ' um <select name="endtime_hours"><option value="00"' . (intval($end_dh->getHours()) == 0 ? ' selected' : '') . '>00</option><option value="01"' . (intval($end_dh->getHours()) == 1 ? ' selected' : '') . '>01</option><option value="02"' . (intval($end_dh->getHours()) == 2 ? ' selected' : '') . '>02</option><option value="03"' . (intval($end_dh->getHours()) == 3 ? ' selected' : '') . '>03</option><option value="04"' . (intval($end_dh->getHours()) == 4 ? ' selected' : '') . '>04</option><option value="05"' . (intval($end_dh->getHours()) == 5 ? ' selected' : '') . '>05</option><option value="06"' . (intval($end_dh->getHours()) == 6 ? ' selected' : '') . '>06</option><option value="07"' . (intval($end_dh->getHours()) == 7 ? ' selected' : '') . '>07</option><option value="08"' . (intval($end_dh->getHours()) == 8 ? ' selected' : '') . '>08</option><option value="09"' . (intval($end_dh->getHours()) == 9 ? ' selected' : '') . '>09</option><option value="10"' . (intval($end_dh->getHours()) == 10 ? ' selected' : '') . '>10</option><option value="11"' . (intval($end_dh->getHours()) == 11 ? ' selected' : '') . '>11</option><option value="12"' . (intval($end_dh->getHours()) == 12 ? ' selected' : '') . '>12</option><option value="13"' . (intval($end_dh->getHours()) == 13 ? ' selected' : '') . '>13</option><option value="14"' . (intval($end_dh->getHours()) == 14 ? ' selected' : '') . '>14</option><option value="15"' . (intval($end_dh->getHours()) == 15 ? ' selected' : '') . '>15</option><option value="16"' . (intval($end_dh->getHours()) == 16 ? ' selected' : '') . '>16</option><option value="17"' . (intval($end_dh->getHours()) == 17 ? ' selected' : '') . '>17</option><option value="18"' . (intval($end_dh->getHours()) == 18 ? ' selected' : '') . '>18</option><option value="19"' . (intval($end_dh->getHours()) == 19 ? ' selected' : '') . '>19</option><option value="20"' . (intval($end_dh->getHours()) == 20 ? ' selected' : '') . '>20</option><option value="21"' . (intval($end_dh->getHours()) == 21 ? ' selected' : '') . '>21</option><option value="22"' . (intval($end_dh->getHours()) == 22 ? ' selected' : '') . '>22</option><option value="23"' . (intval($end_dh->getHours()) == 23 ? ' selected' : '') . '>23</option></select>';
+				echo ' : <select name="endtime_minutes"><option value="00"' . (intval($end_dh->getMinutes()) == 0 ? ' selected' : '') . '>00</option><option value="05"' . (intval($end_dh->getMinutes()) == 5 ? ' selected' : '') . '>05</option><option value="10"' . (intval($end_dh->getMinutes()) == 10 ? ' selected' : '') . '>10</option><option value="15"' . (intval($end_dh->getMinutes()) == 15 ? ' selected' : '') . '>15</option><option value="20"' . (intval($end_dh->getMinutes()) == 20 ? ' selected' : '') . '>20</option><option value="25"' . (intval($end_dh->getMinutes()) == 25 ? ' selected' : '') . '>25</option><option value="30"' . (intval($end_dh->getMinutes()) == 30 ? ' selected' : '') . '>30</option><option value="35"' . (intval($end_dh->getMinutes()) == 35 ? ' selected' : '') . '>35</option><option value="40"' . (intval($end_dh->getMinutes()) == 40 ? ' selected' : '') . '>40</option><option value="45"' . (intval($end_dh->getMinutes()) == 45 ? ' selected' : '') . '>45</option><option value="50"' . (intval($end_dh->getMinutes()) == 50 ? ' selected' : '') . '>50</option><option value="55"' . (intval($end_dh->getMinutes()) == 55 ? ' selected' : '') . '>55</option></select>';
 				echo ' Uhr<br>';
 				
 				echo '<input type="text" name="organization" value="'; echo $organization; echo'" placeholder="Organisation" />

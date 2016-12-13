@@ -54,6 +54,7 @@ if(isset($_POST['set']) && $_POST['set'] == '1')
 			$output .= "<green>" . $wlang['comment_suc_sent'] . "</green><br>";
 			
 			// Felder resetten
+			unset($_POST['comment']);
 			$message = '';
 			
 			$scrollToElemID = "#commentWrap";

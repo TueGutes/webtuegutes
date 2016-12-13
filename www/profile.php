@@ -534,6 +534,13 @@
 				imagepng($avatar_64, $uploadDir . '64x64.png');
 				imagepng($avatar_32, $uploadDir . '32x32.png');
 
+				//chmod('./img/profiles/', 0775);
+				chmod($uploadDir.'512x512.png', 0775);
+				chmod($uploadDir.'256x256.png', 0775);
+				chmod($uploadDir.'128x128.png', 0775);
+				chmod($uploadDir.'64x64.png', 0775);
+				chmod($uploadDir.'32x32.png', 0775);
+
 				unlink($uploadDir . 'converted.png');
 
 				$thisuser['avatar'] = $uploadDir.'512x512.png';
@@ -738,16 +745,6 @@
 	echo '<div align="center">' . $blPrivacy . '</div>';
 	
 	echo $form_bottom;
-	echo '
-	<div class="fb-like" 
-		data-href="https://www.facebook.com/tueGutesinHannover" 
-		data-width="600" 
-		data-layout="standard" 
-		data-action="like" 
-		data-size="small" 
-		data-show-faces="true" 
-		data-share="false">
-	</div>	';
 
 ?>
 </div>

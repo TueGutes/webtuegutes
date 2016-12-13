@@ -256,7 +256,7 @@ class DBFunctions
 	*
 	*@return string|false Gibt den Verschlüsselungskey zurück oder "false" wenn etwas bei der Erstellung schief geht.
 	*/
-	public function db_createOverFBBenutzerAccount($username,$fb_id, $vorname, $nachname, $email, $gender,$picture) {
+	public function db_createOverFBBenutzerAccount($username,$fb_id, $vorname, $nachname, $email, $gender) {
 		$db = self::db_connect();
 		$sql = "INSERT INTO User (username, password, email, regDate, points, status, idUserGroup, idTrust) VALUES(?,'registriertUeberFB',LOWER(?),?,0,'Verifiziert',1,1)";
 		$stmt = $db->prepare($sql);
@@ -269,6 +269,12 @@ class DBFunctions
 			return false;
 		}
 
+		$sql = "SELECT MAX(idUser) AS idUser FROM User";
+		$stmt = $db->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+
 		$sql = "INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) VALUES ((SELECT MAX(idUser) FROM User),?,?)";
 		$stmt = $db->prepare($sql);
 
@@ -280,7 +286,7 @@ class DBFunctions
 			self::db_close($db);
 			return false;
 		}
-
+		$picture = "./img/profiles/" . $dbentry['idUser'] . "/512x512.png";
 		$sql = "INSERT INTO UserTexts (idUserTexts,avatar) VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('s',$picture);
@@ -300,11 +306,7 @@ class DBFunctions
 			return false;
 		}
 
-		$sql = "SELECT MAX(idUser) AS idUser FROM User";
-		$stmt = $db->prepare($sql);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		$dbentry = $result->fetch_assoc();
+		
 
 		$sql = "INSERT INTO FacebookUser(user_id,facebook_id) VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
@@ -362,6 +364,27 @@ class DBFunctions
 			return false;
 		}
 		
+	}
+
+	public function db_doesFacebookUserExists($userid){
+		$db = self::db_connect();
+		$sql = "SELECT user_id FROM FacebookUser WHERE user_id = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['user_id'])){
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
 	}
 	
 
@@ -680,36 +703,54 @@ class DBFunctions
 	*@param string $user Benutzername des Benutzers
 	*@param string $pass Das Passwort des Benutzers
 	*/
-	public function db_delete_user($user, $pass) {
+	public function db_delete_user($user) {
 		$me = self::db_get_user($user);
-		$pass_md5 = md5($pass.substr($me['regDate'],0,10));
-		if ($pass_md5 === $me['password']) {
-			$db = self::db_connect();
+		//$pass_md5 = md5($pass.substr($me['regDate'],0,10));
+		//if ($pass_md5 === $me['password']) {
+		$db = self::db_connect();
 
-			$sql = "DELETE FROM PersData WHERE idPersData= ?";
+		if(db_doesFacebookUserExists($me['idUser'])){
+			$sql = "DELETE FROM FacebookUser WHERE user_id= ?";
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('i',$me['idUser']);
 			$stmt->execute();
-
-			$sql = "DELETE FROM UserTexts WHERE idUserTexts= ?";
-			$stmt = $db->prepare($sql);
-			$stmt->bind_param('i',$me['idUser']);
-			$stmt->execute();
-
-			$sql = "DELETE FROM Privacy WHERE idPrivacy= ?";
-			$stmt = $db->prepare($sql);
-			$stmt->bind_param('i',$me['idUser']);
-			$stmt->execute();
-
-			$sql = "DELETE FROM User WHERE idUser = ?";
-			$stmt = $db->prepare($sql);
-			$stmt->bind_param('i',$me['idUser']);
-			$stmt->execute();
-			self::db_close($db);
-			Header('Location:./logout.php');
-		} else {
-			die ('RegDate: ' . substr($me['regDate'],0,10) . 'DB: ' . $me['password'] . '<br>Eingegeben: ' . $pass_md5);
 		}
+
+
+		if(db_doesCommentwithCreatoridExist($me['idUser'])){
+			$sql = "UPDATE DeedComments SET user_id_creator = NULL WHERE user_id_creator= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+		}
+
+
+		$sql = "DELETE FROM PersData WHERE idPersData= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "DELETE FROM UserTexts WHERE idUserTexts= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "DELETE FROM Privacy WHERE idPrivacy= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "DELETE FROM User WHERE idUser = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+
+		self::db_close($db);
+		Header('Location:./logout.php');
+		//} else {
+		//	die ('RegDate: ' . substr($me['regDate'],0,10) . 'DB: ' . $me['password'] . '<br>Eingegeben: ' . $pass_md5);
+		//}
 	}
 
 	/**
@@ -2767,6 +2808,24 @@ class DBFunctions
 			return false;
 		}
 	}
+
+	public function db_doesCommentwithCreatoridExist($userid){
+		$db = self::db_connect();
+		$sql = "SELECT user_id_creator FROM DeedComments WHERE user_id_creator = ? ";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['user_id_creator'])){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	/**
 	*Erstellt ein Kommentar zu einer Guten Tat.
 	*
@@ -3021,19 +3080,15 @@ class DBFunctions
 		$result = $stmt->get_result();
 		$dbentry=$result->fetch_assoc();
 		if(isset($dbentry['keyreg'])){
-			echo $dbentry['keyreg'];
 			$sql ="DELETE From KeyReg
 				WHERE keyreg = ?";
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('s',$key);
 			$stmt->execute();
 			self::db_close($db);
-			echo "ich hab true";
 			return true;
 		}
 		else {
-			echo $key;
-			echo "Ich hab false ";
 			self::db_close($db);
 			return false;
 		}
@@ -3056,6 +3111,82 @@ class DBFunctions
 		}
 
 	}
+
+	public function db_initpwNewKey(){
+		self::db_deleteKey();
+		// Character List to Pick from
+		$chrList = '0123456789';
+
+		// Minimum/Maximum times to repeat character List to seed from
+		$chrRepeatMin = 2; // Minimum times to repeat the seed string
+		$chrRepeatMax = 20; // Maximum times to repeat the seed string
+
+		// Length of Random String returned
+		$chrRandomLength = 5;
+
+		// The ONE LINE random command with the above variables.
+		$key= substr(str_shuffle(str_repeat($chrList, mt_rand($chrRepeatMin,$chrRepeatMax))),1,$chrRandomLength);
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "INSERT INTO KeyRegDeletePW(keyreg,timecounter) VALUES (?,?)";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('si',$key,$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return $key;
+		}
+	}
+
+	public function db_getpwKey($key){
+		self::db_deleteKey();
+		$db = self::db_connect();
+		$sql = "SELECT keyreg FROM KeyRegDeletePW WHERE keyreg = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('s',$key);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['keyreg'])){
+			$sql ="DELETE From KeyReg
+				WHERE keyreg = ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('s',$key);
+			$stmt->execute();
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	public function db_deletepwKey(){
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "DELETE FROM KeyRegDeletePW WHERE (?-timecounter)>300";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+
+	}
+
 
 }
 
