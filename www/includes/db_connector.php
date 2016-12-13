@@ -3112,7 +3112,7 @@ class DBFunctions
 
 	}
 
-	public function db_initDeletepwNewKey(){
+	public function db_initpwNewKey(){
 		self::db_deleteKey();
 		// Character List to Pick from
 		$chrList = '0123456789';
@@ -3128,7 +3128,7 @@ class DBFunctions
 		$key= substr(str_shuffle(str_repeat($chrList, mt_rand($chrRepeatMin,$chrRepeatMax))),1,$chrRandomLength);
 		$timer = time();
 		$db = self::db_connect();
-		$sql = "INSERT INTO KeyReg(keyreg,timecounter) VALUES (?,?)";
+		$sql = "INSERT INTO KeyRegDeletePW(keyreg,timecounter) VALUES (?,?)";
 		$stmt =$db->prepare($sql);
 		$stmt->bind_param('si',$key,$timer);
 		if (!$stmt->execute()) {
@@ -3142,10 +3142,10 @@ class DBFunctions
 		}
 	}
 
-	public function db_getDeletepwKey($key){
+	public function db_getpwKey($key){
 		self::db_deleteKey();
 		$db = self::db_connect();
-		$sql = "SELECT keyreg FROM KeyReg WHERE keyreg = ?";
+		$sql = "SELECT keyreg FROM KeyRegDeletePW WHERE keyreg = ?";
 		$stmt =$db->prepare($sql);
 		$stmt->bind_param('s',$key);
 		if (!$stmt->execute()) {
@@ -3169,10 +3169,10 @@ class DBFunctions
 		}
 	}
 
-	public function db_deleteDeletepwKey(){
+	public function db_deletepwKey(){
 		$timer = time();
 		$db = self::db_connect();
-		$sql = "DELETE FROM KeyReg WHERE (?-timecounter)>300";
+		$sql = "DELETE FROM KeyRegDeletePW WHERE (?-timecounter)>300";
 		$stmt =$db->prepare($sql);
 		$stmt->bind_param('i',$timer);
 		if (!$stmt->execute()) {
