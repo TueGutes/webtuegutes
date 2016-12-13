@@ -1,7 +1,7 @@
 <?php
 //Include FB config file && User class
 require './includes/DEF.php';
-require_once './includes/fb/fbConfig.php';
+require './includes/fb/fbConfig.php';
 require './includes/_top.php';
 require './includes/db_connector.php';
 
@@ -22,7 +22,7 @@ require './includes/db_connector.php';
         'picture'         => $fbUserProfile['picture']['data']['url'],
         'link'             => $fbUserProfile['link']
     );
-    
+
     //--------------------- Cookies -----------------------------------
     setcookie("fb_id",$userData['oauth_uid'],(time()+86400*30),"/");
     setcookie("fb_email",$userData['email'],(time()+86400*30),"/");

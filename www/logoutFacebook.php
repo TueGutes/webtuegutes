@@ -1,6 +1,6 @@
 <?php
 //Include FB config file
-require_once 'fbConfig.php';
+require './includes/fb/fbConfig.php';
 
 //Remove App permissions
 $fbUid = $_SESSION['userData']['oauth_uid'];
