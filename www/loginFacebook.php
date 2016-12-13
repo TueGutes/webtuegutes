@@ -9,7 +9,7 @@ require './includes/db_connector.php';
     //----------------- Facebook --------------------------
     $out="";
     //Get user profile data from facebook
-    $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture.width(512).height(512)');
+    $fbUserProfile = $facebook->api('/me?fields=id,first_name,last_name,email,link,gender,locale,picture.type(square).height(512)');
     //Insert or update user data to the database
     $userData = array(
         'oauth_provider'=> 'facebook',
@@ -22,14 +22,15 @@ require './includes/db_connector.php';
         'picture'         => $fbUserProfile['picture']['data']['url'],
         'link'             => $fbUserProfile['link']
     );
+    
     //--------------------- Cookies -----------------------------------
-    setcookie("fb_id",$userData['oauth_uid'],(time()+86400*730),"/");
-    setcookie("fb_email",$userData['email'],(time()+86400*730),"/");
-    setcookie("fb_first_name",$userData['first_name'],(time()+86400*730),"/");
-    setcookie("fb_last_name",$userData['last_name'],(time()+86400*730),"/");
-    setcookie("fb_gender",$userData['gender'],(time()+86400*730),"/");
-    setcookie("fb_picture",$userData['picture'],(time()+86400*730),"/");
-    setcookie("fb_link",$userData['link'],(time()+86400*730),"/");
+    setcookie("fb_id",$userData['oauth_uid'],(time()+86400*30),"/");
+    setcookie("fb_email",$userData['email'],(time()+86400*30),"/");
+    setcookie("fb_first_name",$userData['first_name'],(time()+86400*30),"/");
+    setcookie("fb_last_name",$userData['last_name'],(time()+86400*30),"/");
+    setcookie("fb_gender",$userData['gender'],(time()+86400*30),"/");
+    setcookie("fb_picture",$userData['picture'],(time()+86400*30),"/");
+    setcookie("fb_link",$userData['link'],(time()+86400*30),"/");
 
 
     // -------------------------- Unsere Datenbank ----------------------------------------
