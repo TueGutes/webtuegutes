@@ -12,54 +12,151 @@ class TestUser extends PHPUnit_Framework_TestCase
 	
 	public function tearDown() { }
 	
-	public function testLoggedIn()
+	public function testLoggedInTrue()
 	{	
+		$lExpected = true;
+		
 		$lUser = new User();		
 		$lUser->login(1, "testuser", "testEMail", "testFirstName", "testLastName");
-		return $this->assertEquals(true, $lUser->loggedIn());
+		
+		return $this->assertEquals($lExpected, $lUser->loggedIn());
+	}
+	
+	public function testLoggedInFalse()
+	{	
+		$lExpected = false;
+		
+		$lUser = new User();		
+		
+		return $this->assertEquals($lExpected, $lUser->loggedIn());
 	}
 	
 	function testGetID()
 	{		
+		$lExpected = 1;
+		
 		$lUser = new User();		
 		$lUser->login(1, "testuser", "testEMail", "testFirstName", "testLastName");
-		return $this->assertEquals(1, $lUser->getID());
+		
+		return $this->assertEquals($lExpected, $lUser->getID());
+	}
+	
+	function testGetIDFalse()
+	{		
+		$lExpected = false;
+		
+		$lUser = new User();		
+		
+		return $this->assertEquals($lExpected, $lUser->getID());
 	}
 	
 	function testGetUsername()
 	{
+		$lExpected = "testuser";
+		
 		$lUser = new User();		
 		$lUser->login(1, "testuser", "testEMail", "testFirstName", "testLastName");
-		return $this->assertEquals("testuser", $lUser->getUsername());
+		
+		return $this->assertEquals($lExpected, $lUser->getUsername());
+	}
+	
+	function testGetUsernameFalse()
+	{
+		$lExpected = false;
+		
+		$lUser = new User();		
+		
+		return $this->assertEquals($lExpected, $lUser->getUsername());
 	}
 	
 	function testGetEmail()
 	{
+		$lExpected = "testEMail";
+		
 		$lUser = new User();		
 		$lUser->login(1, "testuser", "testEMail", "testFirstName", "testLastName");
-		return $this->assertEquals("testEMail", $lUser->getEmail());
+		
+		return $this->assertEquals($lExpected, $lUser->getEmail());
+	}
+	
+	function testGetEmailFalse()
+	{
+		$lExpected = false;
+		
+		$lUser = new User();		
+		
+		return $this->assertEquals($lExpected, $lUser->getEmail());
 	}
 	
 	function testGetFirstname()
 	{	
+		$lExpected = "testFirstName";
+		
 		$lUser = new User();		
 		$lUser->login(1, "testuser", "testEMail", "testFirstName", "testLastName");
-		return $this->assertEquals("testFirstName", $lUser->getFirstname());
+		
+		return $this->assertEquals($lExpected, $lUser->getFirstname());
+	}
+	
+	function testGetFirstnameFalse()
+	{	
+		$lExpected = false;
+		
+		$lUser = new User();		
+		
+		return $this->assertEquals($lExpected, $lUser->getFirstname());
 	}
 	
 	function testGetLastname()
 	{
+		$lExpected = "testLastName";
+		
 		$lUser = new User();		
 		$lUser->login(1, "testuser", "testEMail", "testFirstName", "testLastName");
-		return $this->assertEquals("testLastName", $lUser->getLastname());
+		
+		return $this->assertEquals($lExpected, $lUser->getLastname());
 	}
 	
-	function testGet()
+	function testGetLastnameFalse()
 	{
+		$lExpected = false;
+		
+		$lUser = new User();		
+		
+		return $this->assertEquals($lExpected, $lUser->getLastname());
+	}
+	
+	function testSetGet()
+	{
+		$lExpected = "testValue";
+		
+		$lIndex = 2;
 		$lUser = new User();		
 		$lUser->login(1, "testuser", "testEMail", "testFirstName", "testLastName");
-		$lUser->set(2, "testValue");
-		return $this->assertEquals("testValue", $lUser->get(2));
+		$lUser->set($lIndex, "testValue");
+		
+		return $this->assertEquals($lExpected, $lUser->get($lIndex));
+	}
+	
+	function testSetGetFalse()
+	{
+		$lExpected = false;
+		
+		$lIndex = 2;
+		$lUser = new User();		
+		$lUser->set($lIndex, "testValue");
+		
+		return $this->assertEquals($lExpected, $lUser->get($lIndex));
+	}
+	
+	function testGetFalse()
+	{
+		$lExpected = false;
+		
+		$lIndex = 2;
+		$lUser = new User();		
+		
+		return $this->assertEquals($lExpected, $lUser->get($lIndex));
 	}
 	
 	function testGetProfileImagePathDefaultOther()

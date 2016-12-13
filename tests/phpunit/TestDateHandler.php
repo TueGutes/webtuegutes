@@ -12,7 +12,7 @@ class TestDateHandler extends PHPUnit_Framework_TestCase
 	
 	public function tearDown() { }
 	
-	public function testIsValidDefaultTrue()
+	public function testIsValidDefaultTrue1()
 	{	 
 		$lExpected = true;
 		$lDate = "2016-02-29 00:00:00";
@@ -20,7 +20,23 @@ class TestDateHandler extends PHPUnit_Framework_TestCase
 		return $this->assertEquals($lExpected, DateHandler::isValid($lDate));
 	}
 	
-	public function testIsValidDefaultFalse()
+	public function testIsValidDefaultTrue2()
+	{	 
+		$lExpected = true;
+		$lDate = "2015-02-28 00:00:00";
+		
+		return $this->assertEquals($lExpected, DateHandler::isValid($lDate));
+	}
+	
+	public function testIsValidDefaultFalse1()
+	{	 
+		$lExpected = false;
+		$lDate = "2016-02-30 00:00:00";
+		
+		return $this->assertEquals($lExpected, DateHandler::isValid($lDate));
+	}
+	
+	public function testIsValidDefaultFalse2()
 	{	 
 		$lExpected = false;
 		$lDate = "2015-02-29 00:00:00";
@@ -46,8 +62,47 @@ class TestDateHandler extends PHPUnit_Framework_TestCase
 		return $this->assertEquals($lExpected, DateHandler::isValid($lDate, $lFormat));
 	}
 	
-	// TODO: Improve.
-	public function testSetGetDefaultTrue()
+	public function testSetDefaultTrue()
+	{
+		$lDateHandler = new DateHandler();
+		
+		$lExpected = "DateHandler";
+		$lDate = "2016-02-29 00:00:00";		
+		
+		return $this->assertEquals($lExpected, get_class($lDateHandler->set($lDate)));
+	}
+	
+	public function testSetDefaultFalse()
+	{
+		$lDateHandler = new DateHandler();
+		
+		$lExpected = false;
+		$lDate = "2015-02-29 00:00:00";		
+		
+		return $this->assertEquals($lExpected, $lDateHandler->set($lDate));
+	}
+	
+	public function testSetCustomTrue()
+	{
+		$lDateHandler = new DateHandler();
+		
+		$lExpected = "DateHandler";
+		$lDate = "2016-02-29";		
+		
+		return $this->assertEquals($lExpected, get_class($lDateHandler->set($lDate)));
+	}
+	
+	public function testSetCustomFalse()
+	{
+		$lDateHandler = new DateHandler();
+		
+		$lExpected = false;
+		$lDate = "2015-02-29";		
+		
+		return $this->assertEquals($lExpected, $lDateHandler->set($lDate));
+	}
+	
+	public function testGetDefault()
 	{
 		$lDateHandler = new DateHandler();
 		
@@ -57,6 +112,19 @@ class TestDateHandler extends PHPUnit_Framework_TestCase
 		$lDateHandler->set($lDate);
 		
 		return $this->assertEquals($lExpected, $lDateHandler->get());
+	}
+	
+	public function testGetCustom()
+	{
+		$lDateHandler = new DateHandler();
+		
+		$lExpected = "2016-02-29";
+		$lDate = "2016-02-29 00:00:00";
+		$lFormat = "Y-m-d";
+		
+		$lDateHandler->set($lDate);
+		
+		return $this->assertEquals($lExpected, $lDateHandler->get($lFormat));
 	}
 	
 	public function testGetYear()
