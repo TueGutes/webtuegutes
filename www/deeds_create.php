@@ -222,16 +222,93 @@ if((($Seite==3 || $Seite==4)&& $button=='weiter' )||(($Seite==5)&& $button=='zur
 }
 if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 
-	if($Seite==5){
-		if(!isset($_GET['street'])){
+	$error = false;
+	if($Seite == 5)
+	{
+		// ALEX: Check for valid street and house number.
+		$lFoundValues = getPostalPlaceToAddress($street, $housenumber);
+		$lAddMailContent = "";
+			
+		if (stripos($streetList, $street) === false)
+		{
+			$lAddMailContent = "<br>Die Straße " . $street . " wurde nicht gefunden. Bitte prüfen.";
+		}
+		else if($lFoundValues['retHouseNumber'] == "")
+		{
+			$lAddMailContent = "<br>Die Hausnummer " . $housenumber . " der Straße " . $street . " wurde nicht gefunden. Bitte prüfen.";
+		}
+		
+		// ALEX: An dummy foreign key will be entered if no proper postal code was found.
+		$lIdPostal = -1;
+		
+		if(is_numeric($lFoundValues['retPostal']))
+		{
+			// If postal code wasn't found in DB, add it and set foreign key in userdata.
+			$lIdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+			// If no corresponding postal code was found, add it to database.
+			if($lIdPostal == "")
+			{
+				DBFunctions::db_insertPostalCode($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+				$IdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+			}
+		}
+				
+		//Name der guten Tat
+		if(empty($name) || DBFunctions::db_doesGuteTatNameExists($name))
+		{
+			$error = true;
+		}
+
+		//Falls eine fehlerhafte PLZ angegeben wird
+		// ALEX: Removed.
+		/*
+		if(!is_numeric($postalcode))
+		{
+			$error = true;
+		}*/
+
+		//TODO Enddatum darf nicht vor dem Startdatum liegen
+		
+		//Startzeitpunkt
+		$start_dh = (new DateHandler())->set($starttime);
+		if(!$start_dh)
+		{
+			$error = true;
+		}
+		//Endzeitpunkt
+		$end_dh = (new DateHandler())->set($endtime);
+		if(!$end_dh)
+		{
+			$error = true;
+		}
+
+		// ALEX: Removed.
+		/*
+		if(!DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode, $place))
+		{
+			$error = true;
+		}*/
+
+		//Anzahl Helfer keine Zahl
+		if(!is_numeric($countHelper))
+		{
+			$error = true;
+		}
+		
+		if(!isset($_GET['street']))
+		{
 			$stop=1;
-		}else if(!isset($_GET['housenumber'])){
+		}else if((!isset($_GET['housenumber'])) || (!is_numeric($_GET['housenumber']))){
 			$stop=2;
-		}else if(!isset($_GET['postalcode'])|| !is_numeric($_GET['postalcode'])){
+		}// ALEX: Removed if statements for postal code and place.
+		/*
+		else if(!isset($_GET['postalcode'])|| !is_numeric($_GET['postalcode'])){
 			$stop=3;
 		}else if(!isset($_GET['place'])){
 			$stop=4;
-		}else if(!isset($_GET['organization'])){
+		}*/
+		// ALEX: Modified.
+		else if(!isset($_GET['organization'])){
 			$stop=5;
 		}else if(!isset($_GET['startdate']) ||
 			(intval($_GET['starttime_minutes']) % 5 != 0 && intval($_GET['starttime_minutes']) != 0) ||
@@ -241,10 +318,12 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' ){
 			(intval($_GET['endtime_minutes']) % 5 != 0 && intval($_GET['endtime_minutes']) != 0) ||
 			!DateHandler::isValid($_GET['enddate'] . ' ' . $_GET['endtime_hours'] . ':' . $_GET['endtime_minutes'], 'd.m.Y H:i')){
 			$stop=7;
-		}else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode,$place)==false)){
-			$stop=8;
 		}
-	}	
+		// ALEX: Removed.
+		/*else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode,$place)==false)){
+			$stop=8;
+		}*/	
+	}
 	if($stop!=0)$Seite=4;
 	if($Seite==4){
 		echo'
