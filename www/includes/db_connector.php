@@ -365,6 +365,27 @@ class DBFunctions
 		}
 		
 	}
+
+	public function db_doesFacebookUserExists($userid){
+		$db = self::db_connect();
+		$sql = "SELECT user_id FROM FacebookUser WHERE user_id = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['user_id'])){
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
 	
 
 	/**
@@ -688,6 +709,22 @@ class DBFunctions
 		if ($pass_md5 === $me['password']) {
 			$db = self::db_connect();
 
+			if(db_doesFacebookUserExists($me['idUser'])){
+				$sql = "DELETE FROM FacebookUser WHERE user_id= ?";
+				$stmt = $db->prepare($sql);
+				$stmt->bind_param('i',$me['idUser']);
+				$stmt->execute();
+			}
+
+
+			if(db_doesCommentwithCreatoridExist($me['idUser']){
+				$sql = "UPDATE DeedComments SET user_id_creator = NULL WHERE user_id_creator= ?";
+				$stmt = $db->prepare($sql);
+				$stmt->bind_param('i',$me['idUser']);
+				$stmt->execute();
+			}
+
+
 			$sql = "DELETE FROM PersData WHERE idPersData= ?";
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('i',$me['idUser']);
@@ -707,6 +744,8 @@ class DBFunctions
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('i',$me['idUser']);
 			$stmt->execute();
+
+
 			self::db_close($db);
 			Header('Location:./logout.php');
 		} else {
@@ -2769,6 +2808,24 @@ class DBFunctions
 			return false;
 		}
 	}
+
+	public function db_doesCommentwithCreatoridExist($userid){
+		$db = self::db_connect();
+		$sql = "SELECT user_id_creator FROM DeedComments WHERE user_id_creator = ? ";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['user_id_creator'])){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	/**
 	*Erstellt ein Kommentar zu einer Guten Tat.
 	*
