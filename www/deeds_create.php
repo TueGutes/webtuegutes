@@ -353,7 +353,7 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' )
 		// ALEX: Temporary removed.
 		/*<input type="search" list="lstStreets" name="street" value="'; echo $street; echo '" placeholder="Strasse" required />'
 		. $streetList . */
-		echo '<input type="text" name="street" value="'; echo $stree; echo '" placeholder="Strasse" required />
+		echo '<input type="text" name="street" value="'; echo $street; echo '" placeholder="Strasse" required />
 		<input type="text" name="housenumber" value="'; echo $housenumber ;echo '" placeholder="Hausnummer" required />
 		<br>';
 		// Removed text fields for postal code and place.
