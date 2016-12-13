@@ -717,7 +717,7 @@ class DBFunctions
 			}
 
 
-			if(db_doesCommentwithCreatoridExist($me['idUser']){
+			if(db_doesCommentwithCreatoridExist($me['idUser'])){
 				$sql = "UPDATE DeedComments SET user_id_creator = NULL WHERE user_id_creator= ?";
 				$stmt = $db->prepare($sql);
 				$stmt->bind_param('i',$me['idUser']);
