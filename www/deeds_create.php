@@ -24,6 +24,83 @@ $organization = isset($_GET['organization']) ? $_GET['organization'] : '';
 $countHelper = isset($_GET['countHelper']) ? $_GET['countHelper'] : '1';
 $idTrust = isset($_GET['tat_verantwortungslevel']) ? $_GET['tat_verantwortungslevel'] : '';
 
+// ALEX: Returns a map of postal code and place to a given address. (Currently redundant.)
+	function getPostalPlaceToAddress($pStreet, $pHouseNumber)
+	{
+		$lRetVals = [
+			"retPostal" => "",
+			"retPlace" => "",
+			"retHouseNumber" => "",
+		];
+		$lHouseNumber = (!is_numeric($pHouseNumber)) ? 1 : $pHouseNumber;
+
+		// Create address in format "<street>[+<street appendices],<house number>,Hannover".
+		$lAddressString = $pStreet . ',' . $pHouseNumber . ',Hannover';
+		// Replace empty spaces.
+		$lAddressString = str_replace(' ', '+', $lAddressString);
+		// Get JSON result.
+		$lContents = file('http://nominatim.openstreetmap.org/search?format=json&limit=2&q=' . $lAddressString);
+		// Put string in new variable for safety.
+		$lResult = $lContents[0];
+
+		// If result string is too short, no address was found.
+		if(strlen($lResult) < 10)
+		{
+			return $lRetVals;
+		}
+
+		$lContents = explode('"', $lResult);
+		// Get the proper string containing postal code and place.
+		$lFoundIndex = -1;
+		for($i = 0; $i < sizeof($lContents); $i++)
+		{
+			if(stripos($lContents[$i], 'Hannover') !== false)
+			{
+				$lFoundIndex = $i;
+				break;
+			}
+		}
+		if($lFoundIndex === -1)
+		{
+			return $lRetVals;
+		}
+		// Put string in variable for safety.
+		$lResult = $lContents[$lFoundIndex];
+		$lContents = explode(',', $lResult);
+
+		// Important for correctness.
+		// OSM indices for place and postal code.
+		if(sizeof($lContents) < 9)
+		{
+			$lIndexPlace = 2;
+		}
+		else
+		{
+			$lIndexPlace = 3;
+		}
+		$lIndexPostal = sizeof($lContents) - 2;
+
+		$size = sizeof($lContents);
+		// Set return values.
+		$lRetVals['retPostal'] = $lContents[$lIndexPostal];
+		$lRetVals['retPlace'] = $lContents[$lIndexPlace];
+
+		// If housenumber was given, check if it was found.
+		if(is_numeric($pHouseNumber))
+		{
+			if(is_numeric($lContents[0]))
+			{
+				$lRetVals['retHouseNumber'] = $lContents[0];
+			}
+			else if(is_numeric($lContents[1]))
+			{
+				$lRetVals['retHouseNumber'] = $lContents[1];
+			}
+		}
+
+		return $lRetVals;
+	}
+
 //Zeigt an auf welcher Unterseite man gerade ist.
 isset($_GET['Seite']) ? $_GET['Seite'] : '';
 if(isset($_GET['Seite'])){
