@@ -1,9 +1,10 @@
 <?php
 //Include FB config file
+require './includes/DEF.php';
 require './includes/fb/fbConfig.php';
 
 //Remove App permissions
-$fbUid = $_SESSION['userData']['oauth_uid'];
+$fbUid = $_COOKIE['fb_id'];
 $facebook->api('/'.$fbUid.'/permissions','DELETE');
 
 //Unset user data from session
