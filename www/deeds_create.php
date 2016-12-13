@@ -201,13 +201,13 @@ if($Seite==3 || $Seite==5){
 	if($stop==1)echo '<h3><red>Bitte eine neue Beschreibung eingeben.</red></h3><br>';
 echo'
 <h2>Beschreibe deine Tat.</h2>
-<h3>Was und wie ist es zu tun? </h3>
+<h3>Was und wie soll das vorhaben durchgeführt werden? </h3>
 <br><br>
 <div class="center block deeds_create">
 		<form action="" method="GET" enctype="multipart/form-data">
 		<br>
 		<br>
-		<textarea id="text" name="description" rows="10" placeholder="Beschreiben Sie die auszuführende Tat. Werben Sie für Ihr Angebot. Nutzen sie ggf. eine Rechtschreibüberprüfung." required>';echo $description ;echo'</textarea>
+		<textarea id="text" name="description" rows="10" placeholder="Beschreiben die auszuführende Tat. Werben Sie für Ihr Angebot. Nutzen Sie ggf. eine Rechtschreibüberprüfung." required>';echo $description ;echo'</textarea>
 		<br><br>
 		<br>
 
@@ -222,43 +222,65 @@ echo'
 }
 if(($Seite==4 ||$Seite==5)&& $button=='weiter' )
 {
-	$error = false;
+	// ALEX: Created string for error messages.
+	$errorMessage = "";
+	$hasCompleteAddress = true;
+	
 	// ALEX: Moved checks here.
 	if($Seite == 5)
 	{
-		// ALEX: Check for valid street and house number.
-		$lFoundValues = getPostalPlaceToAddress($street, $housenumber);
-		$lAddMailContent = "";
-			
-		if (stripos($streetList, $street) === false)
+		if(!isset($_GET['street']) || ($street == ""))
 		{
-			$lAddMailContent = "<br>Die Straße " . $street . " wurde nicht gefunden. Bitte prüfen.";
-		}
-		else if($lFoundValues['retHouseNumber'] == "")
-		{
-			$lAddMailContent = "<br>Die Hausnummer " . $housenumber . " der Straße " . $street . " wurde nicht gefunden. Bitte prüfen.";
+			$errorMessage .= "Bitte eine Straße angeben.<br>";
+			$hasCompleteAddress = false;
 		}
 		
-		// ALEX: An dummy foreign key will be entered if no proper postal code was found.
-		$lIdPostal = -1;
-		
-		if(is_numeric($lFoundValues['retPostal']))
+		if(!isset($_GET['housenumber']) || ($housenumber == ""))//|| !is_numeric($housenumber))
 		{
-			// If postal code wasn't found in DB, add it and set foreign key in userdata.
-			$lIdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
-			// If no corresponding postal code was found, add it to database.
-			if($lIdPostal == "")
-			{
-				DBFunctions::db_insertPostalCode($lFoundValues['retPostal'], $lFoundValues['retPlace']);
-				$IdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
-			}
+			$errorMessage .= "Bitte eine Hausnummer angeben.";
+			$hasCompleteAddress = false;
 		}
+		
+		if($hasCompleteAddress)
+		{
+			// ALEX: Check for valid street and house number.
+			$lFoundValues = getPostalPlaceToAddress($street, $housenumber);
+			$lAddMailContent = "";
 				
-		//Name der guten Tat
+			if (stripos($streetList, $street) === false)
+			{
+				$lAddMailContent = "<br>Die Straße " . $street . " wurde nicht gefunden. Bitte prüfen.";
+			}
+			else if($lFoundValues['retHouseNumber'] == "")
+			{
+				$lAddMailContent = "<br>Die Hausnummer " . $housenumber . " der Straße " . $street . " wurde nicht gefunden. Bitte prüfen.";
+			}
+			
+			// ALEX: A dummy foreign key will be entered if no proper postal code was found.
+			$lIdPostal = -1;
+			
+			if(is_numeric($lFoundValues['retPostal']))
+			{
+				// If postal code wasn't found in DB, add it and set foreign key in userdata.
+				$lIdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+				// If no corresponding postal code was found, add it to database.
+				if($lIdPostal == "")
+				{
+					DBFunctions::db_insertPostalCode($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+					$IdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($lFoundValues['retPostal'], $lFoundValues['retPlace']);
+				}
+			}
+					
+			
+		}
+		
+		// ALEX: Removed because check would already fail at begin of creation.
+		/*//Name der guten Tat
 		if(empty($name) || DBFunctions::db_doesGuteTatNameExists($name))
 		{
-			$error = true;
-		}
+			$errorMessage .= "Es existiert bereits eine gute Tat mit diesem Namen. Bitte wähle einen anderen.<br>";
+		}*/
+		
 
 		//Falls eine fehlerhafte PLZ angegeben wird
 		// ALEX: Removed.
@@ -274,13 +296,14 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' )
 		$start_dh = (new DateHandler())->set($starttime);
 		if(!$start_dh)
 		{
-			$error = true;
+			$errorMessage .= "Bitte ein gültiges Startdatum angeben.<br>";
 		}
+		
 		//Endzeitpunkt
 		$end_dh = (new DateHandler())->set($endtime);
 		if(!$end_dh)
 		{
-			$error = true;
+			$errorMessage .= "Bitte ein gültiges Enddatum angeben.<br>";
 		}
 
 		// ALEX: Removed.
@@ -293,15 +316,9 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' )
 		//Anzahl Helfer keine Zahl
 		if(!is_numeric($countHelper))
 		{
-			$error = true;
+			$errorMessage .= "Bitte eine Zahl bei der Anzahl der Helfer angeben.<br>";
 		}
-		
-		if(!isset($_GET['street']))
-		{
-			$stop=1;
-		}else if((!isset($_GET['housenumber'])) || (!is_numeric($_GET['housenumber']))){
-			$stop=2;
-		}// ALEX: Removed if statements for postal code and place.
+		// ALEX: Removed if statements for postal code and place.
 		/*
 		else if(!isset($_GET['postalcode'])|| !is_numeric($_GET['postalcode'])){
 			$stop=3;
@@ -309,14 +326,9 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' )
 			$stop=4;
 		}*/
 		// ALEX: Modified.
-		else if((!isset($_GET['organization'])) || ($_GET['organization'] == "")){
-			$stop=5;
-		}else if(!isset($_GET['starttime'] )){
-			//|| !DateHandler::isValid($_GET['starttime']) braucht es mit dem Kalender nicht mehr 
-			$stop=6;
-		}else if(!isset($_GET['endtime'] )){
-			//|| !DateHandler::isValid($_GET['endtime'])
-			$stop=7;
+		if((!isset($_GET['organization'])) || ($_GET['organization'] == ""))
+		{
+			$errorMessage .= "Bitte eine Organisation angeben.";
 		}
 		// ALEX: Removed.
 		/*else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode,$place)==false)){
@@ -325,14 +337,15 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' )
 	}
 	
 	// ALEX: Modified.
-	if(($stop!=0) || $error)
+	if(($stop != 0) || $errorMessage !== "")
 	{
 		$Seite=4;
 	}
 	
 	if($Seite==4)
 	{
-		echo'
+		// ALEX: Removed.
+		/* echo'
 		<h2>Rahmendaten</h2>
 		<h3>Hier noch einmal alle notwendigen Informationen für Bewerber.</h3>';
 		if($stop==1)echo '<h3><red>Bitte eine neue Straße eingeben.</red></h3><br>';
@@ -342,19 +355,22 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' )
 		if($stop==5)echo '<h3><red>Bitte eine neue Organisation eingeben.</red></h3><br>';
 		if($stop==6)echo '<h3><red>Das Format von der Startzeit ist falsch.</red></h3><br>';
 		if($stop==7)echo '<h3><red>Das Format von der Endzeit ist falsch.</red></h3><br>';
-		if($stop==8)echo '<h3><red>Die Postleitzahl passt nicht zum Ort.</red></h3><br>';	
-				
+		if($stop==8)echo '<h3><red>Die Postleitzahl passt nicht zum Ort.</red></h3><br>';	*/
+		
+		// ALEX: If any errors occured, print them.
+		echo '<red>' . $errorMessage . '</red>';
+		
 		echo '<br><br>
 		<div class="center block deeds_create">
 		<form action="" method="GET" enctype="multipart/form-data">
 		<br>
 		<br>
 		<br>';
-		// ALEX: Temporary removed.
-		/*<input type="search" list="lstStreets" name="street" value="'; echo $street; echo '" placeholder="Strasse" required />'
-		. $streetList . */
-		echo '<input type="text" name="street" value="'; echo $street; echo '" placeholder="Strasse" required />
-		<input type="text" name="housenumber" value="'; echo $housenumber ;echo '" placeholder="Hausnummer" required />
+		// ALEX: Added street list.
+		echo '<input type="search" list="lstStreets" name="street" value="' . $street . '" placeholder="Strasse" required />'
+		. $streetList;
+		/* <input type="text" name="street" value="'; echo $street; echo '" placeholder="Strasse" required /> */
+		echo '<input type="text" name="housenumber" value="'; echo $housenumber ;echo '" placeholder="Hausnummer" required />
 		<br>';
 		// Removed text fields for postal code and place.
 		/*
@@ -363,9 +379,9 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' )
 		<input type="text" name="place" value="'; echo $place ; echo'" placeholder="Stadtteil" required />
 		<br>*/
 		echo '
-		<input type="text" name="starttime" value="'; echo $starttime; echo'" placeholder="Startzeitpunkt (dd.mm.yyyy HH:MM)" required />
+		<input type="date" name="starttime" value="'; echo $starttime; echo'" placeholder="Startzeitpunkt (dd.mm.yyyy HH:MM)" required />
 		<br>
-		<input type="text" name="endtime" value="'; echo $endtime; echo'" placeholder="Endzeitpunkt (dd.mm.yyyy HH:MM)" required />
+		<input type="date" name="endtime" value="'; echo $endtime; echo'" placeholder="Endzeitpunkt (dd.mm.yyyy HH:MM)" required />
 		<br>
 		<input type="text" name="organization" value="'; echo $organization; echo'" placeholder="Organisation" />
 		<br>
@@ -392,9 +408,13 @@ if(($Seite==4 ||$Seite==5)&& $button=='weiter' )
 }
 if(($Seite==5) && ($button!='zurück'))
 {
+	// ALEX: Set category temporary to "keine Angabe".
+		$category = "keine Angabe";
+	
 		//Einfügen der Guten Tat
 		$uid = DBFunctions::db_idOfBenutzername($_USER->getUsername());
-									  
+							
+		/* echo $name . ', ' . $uid . ', ' . $category . ', ' . $street . ', '. $housenumber . ', ' . $lIdPostal . ', ' . $start_dh->get() . ', ' . $end_dh->get() . ', ' . $organization . ', ' . $countHelper . ', ' .  $idTrust . ', ' . $description . ', ' . $pictures; */
 		DBFunctions::db_createGuteTat($name, $uid, $category, $street, $housenumber, 
 									  $lIdPostal, $start_dh->get(),$end_dh->get(), $organization, $countHelper,
 									  $idTrust, $description, $pictures);
@@ -412,6 +432,9 @@ if(($Seite==5) && ($button!='zurück'))
 	
 		// ALEX: Added additional info text if street wasn't found.
 		$mailContent2 .= $lAddMailContent;
+		
+		// TODO: RAUS
+		echo $lAddMailContent;
 		
 		//$mailContent2 .= 
 
