@@ -364,7 +364,7 @@
 		$blAdresse .= '<td><input type="text" size="5%" name="txtHausnummer" placeholder="Nr." value="'
 			. $thisuser['housenumber'] . '">';
 		$blAdresse .= "</td></tr>";
-		$blAdresse .= '<tr><td></td><td colspan=2><br><input type="submit" value="meine Adresse fehlt..." form="suggestAddress"/></td></tr>';
+		$blAdresse .= '<tr><td></td><td colspan=2><br><input type="submit" class="anchor" value="Meine Adresse fehlt..." form="suggestAddress"/></td></tr>';
 
 		// ALEX: Auskommentiert.
 		//PLZ/Ort bearbeiten:
