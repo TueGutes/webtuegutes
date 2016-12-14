@@ -700,8 +700,7 @@ class DBFunctions
 	*
 	*Die Funktion löscht alle Informationen zu einem Benutzer. Da dies ein endgültiger Vorgang ist, wird für die Endgültige Löschung die Eingabe des Passworts verlangt. Es werden auch alle Abhängigkeiten entfernt.
 	*
-	*@param string $user Benutzername des Benutzers
-	*@param string $pass Das Passwort des Benutzers
+	*@param mixed[] $user RÜckgabe Objekt der db_get_user funktion
 	*/
 	public function db_delete_user($user) {
 		$me = self::db_get_user($user);
@@ -751,6 +750,66 @@ class DBFunctions
 		//} else {
 		//	die ('RegDate: ' . substr($me['regDate'],0,10) . 'DB: ' . $me['password'] . '<br>Eingegeben: ' . $pass_md5);
 		//}
+	}
+
+	/**
+	*Löscht alle informationen zu einem User.
+	*
+	*Die Funktion löscht alle Informationen zu einem Benutzer. Da dies ein endgültiger Vorgang ist, wird für die Endgültige Löschung die Eingabe des Passworts verlangt. Es werden keine Abhängigkeiten entfernt. Alle Informationen zu einem Nutzer sind gelöscht. Aber deren Nutzer ID lebt noch weiter im System rum, da es sonst Probleme mit der DB gibt.
+	*
+	*@param mixed[] $user RÜckgabe Objekt der db_get_user funktion
+	*/
+	public function db_delete_user_v2($user){
+		$me = self::db_get_user($user);
+		$db = self::db_connect();
+
+		if(db_doesFacebookUserExists($me['idUser'])){
+			$sql = "DELETE FROM FacebookUser WHERE user_id= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+		}
+
+		$sql = "UPDATE PersData SET 
+			firstname='deleted',
+			lastname='deleted',
+			gender='z',
+			street='deleted'
+			housenumber='0',
+			idPostal=-1,
+			telefonnumber='deleted',
+			messengernumber='deleted',
+			birthday = NULL
+			WHERE idPersData= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "UPDATE UserTexts SET avatar='deleted',hobbys='deleted',description='deleted' WHERE idUserTexts= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "UPDATE Privacy SET privacykey='deleted',cryptkey='deleted' WHERE idPrivacy = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "UPDATE User SET username='deleted',
+			password='deleted',
+			email='deleted',
+			regDate= NULL,
+			points=0,
+			idTrust=1,
+			idUserGroup=1,
+			status='deleted' 
+			WHERE idUser = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		self::db_close($db);
+		Header('Location:./logout.php');
 	}
 
 	/**
@@ -2883,7 +2942,8 @@ class DBFunctions
 			DeedComments.date_created,
 			DeedComments.commenttext,
 			DeedComments.parentcomment,
-			User.username 
+			User.username,
+			User.status 
 			FROM DeedComments 
 			JOIN User 
 				ON (DeedComments.user_id_creator=User.idUser) 
@@ -2911,7 +2971,7 @@ class DBFunctions
 	*
 	*@return int Anzahl der Kommentare
 	*/
-	public function countDeedComments($iddeed){
+	public function db_countDeedComments($iddeed){
 		$db = self::db_connect();
 		$sql = "SELECT COUNT(*) AS numberComments FROM DeedComments WHERE DeedComments.deeds_id = ?";
 		$stmt = $db->prepare($sql);
@@ -2923,12 +2983,20 @@ class DBFunctions
 		return $dbentry['numberComments'];
 	}
 
-
-	public function db_getCountLoginCheck($userid){
+	/**
+	*Gibt den Counter zu einer Nutzer ID aus der Tabelle LoginCheck zurück
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und liest aus der Tabelle LoginCheck den Wert Counter aus, der zu der Nutzer ID gehört. Wenn es einen Counter gibt so gibt die Funktion den Wert des Counters zurück, sonst false
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return int|false
+	*/
+	public function db_getCountLoginCheck($user_id){
 		$db = self::db_connect();
 		$sql = "SELECT counter FROM LoginCheck WHERE userid = ?";
 		$stmt =$db->prepare($sql);
-		$stmt->bind_param('i',$userid);
+		$stmt->bind_param('i',$user_id);
 		if (!$stmt->execute()) {
 			die('Fehler: ' . mysqli_error($db));
 			self::db_close($db);
@@ -2945,12 +3013,20 @@ class DBFunctions
 		}
 	}
 
-
-	public function db_doesUserExistInLoginCheck($userid){
+	/**
+	*Überprüft ob es eine Nutzer ID in der Tabelle LoginCheck gibt.
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und Überprüft ob es die Nutzer ID in der Tabelle LoginCheck gibt. Wenn ja, dann wird true zurück gegeben und false wenn nicht.
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return boolean
+	*/
+	public function db_doesUserExistInLoginCheck($user_id){
 		$db = self::db_connect();
 		$sql = "SELECT userid FROM LoginCheck WHERE userid = ?";
 		$stmt =$db->prepare($sql);
-		$stmt->bind_param('i',$userid);
+		$stmt->bind_param('i',$user_id);
 		if (!$stmt->execute()) {
 			die('Fehler: ' . mysqli_error($db));
 			self::db_close($db);
@@ -2967,12 +3043,21 @@ class DBFunctions
 		}
 	}
 
-	public function db_setCountandTime($userid){
+	/**
+	*zählt den Counter einen hoch und Zeitcounter auf die aktuelle Zeit zu einem User in LoginCheck auf 0.
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und setzt den counter um einen hoch und den Zeitcounter des Nutzers auf die aktuelle Zeit in der Tabelle auf LoginCheck. Gibt true zurück wenn erfolgreich, false wenn nicht.
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return boolean
+	*/
+	public function db_setCountandTime($user_id){
 		$db = self::db_connect();
 		$sql = "UPDATE LoginCheck SET counter=counter+1,timecounter=?  WHERE userid = ?";
 		$timer = time();
 		$stmt =$db->prepare($sql);
-		$stmt->bind_param('ii',$timer,$userid);
+		$stmt->bind_param('ii',$timer,$user_id);
 		if (!$stmt->execute()) {
 			die('Fehler: ' . mysqli_error($db));
 			self::db_close($db);
@@ -2984,11 +3069,20 @@ class DBFunctions
 		}
 	}
 
-	public function db_setCountandTimenull($userid){
+	/**
+	*Setzt den Counter und Zeitcounter zu einem User in LoginCheck auf 0.
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und setzt den counter und Zeitcounter des Nutzers auf 0 in der Tabelle auf LoginCheck. Gibt true zurück wenn erfolgreich, false wenn nicht.
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return boolean
+	*/
+	public function db_setCountandTimenull($user_id){
 		$db = self::db_connect();
 		$sql = "UPDATE LoginCheck SET counter=0,timecounter=0  WHERE userid = ?";
 		$stmt =$db->prepare($sql);
-		$stmt->bind_param('i',$userid);
+		$stmt->bind_param('i',$user_id);
 		if (!$stmt->execute()) {
 			die('Fehler: ' . mysqli_error($db));
 			self::db_close($db);
@@ -3000,11 +3094,20 @@ class DBFunctions
 		}
 	}
 
-	public function db_getTimeLoginCheck($userid){
+	/**
+	*Gibt den Zeitcounter zu einem Nutzer aus LoginCheck zurück.
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und liest den dazugehörigen Zeitcounter aus der DB und gibt ihn zurück. Wenn es keinen Zeitcounter zu dem Nutzer gibt, so wird false zurück gegeben.
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return int|false
+	*/
+	public function db_getTimeLoginCheck($user_id){
 		$db = self::db_connect();
 		$sql = "SELECT timecounter FROM LoginCheck WHERE userid = ?";
 		$stmt =$db->prepare($sql);
-		$stmt->bind_param('i',$userid);
+		$stmt->bind_param('i',$user_id);
 		if (!$stmt->execute()) {
 			die('Fehler: ' . mysqli_error($db));
 			self::db_close($db);
@@ -3021,11 +3124,20 @@ class DBFunctions
 		}
 	}
 
-	public function db_insertUserIntoLoginCheck($userid){
+	/**
+	*Erstellt einen Eintrag in der Tabelle für den LoginCheck
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und erstellt demensprechend einen Eintrag in der Tabelle. Ist es erfolreich gibt sie true zurück, wenn nicht false.
+	*
+	*@param int $userid Nutzer ID
+	*
+	*@return boolean	
+	*/
+	public function db_insertUserIntoLoginCheck($user_id){
 		$db = self::db_connect();
 		$sql = "INSERT INTO LoginCheck(userid,counter,timecounter) VALUES (?,0,0)";
 		$stmt =$db->prepare($sql);
-		$stmt->bind_param('i',$userid);
+		$stmt->bind_param('i',$user_id);
 		if (!$stmt->execute()) {
 			die('Fehler: ' . mysqli_error($db));
 			self::db_close($db);
@@ -3037,6 +3149,14 @@ class DBFunctions
 		}
 	}
 
+
+	/**
+	*Generiert einen 200 stelligen Key der für die Registrierung nötig ist.
+	*
+	*Die Funktion generiert einen 200 Stelligen Key der in der DB abgespeichert wird. die Funktion gibt den Key zurück wenn er erstellt werden konnte, oder false, wenn es nicht der fall ist.
+	*
+	*@return string|false
+	*/
 	public function db_initNewKey(){
 		self::db_deleteKey();
 		// Character List to Pick from
@@ -3067,6 +3187,13 @@ class DBFunctions
 		}
 	}
 
+	/**
+	*Überprüft ob ein Key v in der DB ist
+	*
+	*Die Funktion kriegt einen 200 stelligen Key. Mittels des Parameters wird überprüft ob dieser Key in der Datenbank existiert. Existiert der Key  so wird der Key gelöscht und es wird true zurück gegeben. Wenn es kein key gibt, so gibt die Funktion false zurück.
+	*
+	*@return boolean
+	*/
 	public function db_getKey($key){
 		self::db_deleteKey();
 		$db = self::db_connect();
@@ -3094,6 +3221,14 @@ class DBFunctions
 		}
 	}
 
+
+	/**
+	*Löscht ggf einen Key der zur Registrierung eines Nutzers gebraucht wird aus der DB.
+	*
+	*Die Funktion überprüft, ob Keys, die für die Registrierung eines Nutzers generiert wurden, von ihrer Lebenszeit abgelaufen ist. Immoment ist sie auf 300 Sekunden festgelegt. Ist die Lebenszeit bei der Abfrage überschritten, so wird der Key gelöscht und der Nutzer muss sich einen neuen anfordern. Die Funktion gibt true aus, wenn die Funktion erfolgreich ausgeführt wurde, was nicht heißt das ein Key gelöscht wurde. Die Funktion gibt false zurück, wenn das SQL Statement nicht erfolgreich durchgeführt werden konnte.
+	*
+	*@return boolean 
+	*/
 	public function db_deleteKey(){
 		$timer = time();
 		$db = self::db_connect();
@@ -3112,8 +3247,16 @@ class DBFunctions
 
 	}
 
-	public function db_initpwNewKey(){
-		self::db_deleteKey();
+	/**
+	*Generiert einen Key zu einer User ID gehört welcher zum Löschen des Nutzers benutzt wird.
+	*
+	*Die Funktion kriegt eine Nutzer ID übergeben und generiert einen zufälligen fünfstelligen Code mit den Zahlen 0-9. Dieser Code wird für die Löschung eines Nutzer gebraucht. Zu diesem Nutzer gehört nun der Key. Die Funktion gibt den Key zurück.
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return string|false
+	*/
+	public function db_initpwNewKey($user_id){
 		// Character List to Pick from
 		$chrList = '0123456789';
 
@@ -3128,9 +3271,9 @@ class DBFunctions
 		$key= substr(str_shuffle(str_repeat($chrList, mt_rand($chrRepeatMin,$chrRepeatMax))),1,$chrRandomLength);
 		$timer = time();
 		$db = self::db_connect();
-		$sql = "INSERT INTO KeyRegDeletePW(keyreg,timecounter) VALUES (?,?)";
+		$sql = "INSERT INTO KeyRegDeletePW(user_id,keyreg,timecounter) VALUES (?,?,?)";
 		$stmt =$db->prepare($sql);
-		$stmt->bind_param('si',$key,$timer);
+		$stmt->bind_param('isi',$user_id,$key,$timer);
 		if (!$stmt->execute()) {
 			die('Fehler: ' . mysqli_error($db));
 			self::db_close($db);
@@ -3142,12 +3285,23 @@ class DBFunctions
 		}
 	}
 
-	public function db_getpwKey($key){
+
+	/**
+	*Überprüft ob ein Key von einem Nutzer in der DB ist
+	*
+	*Die Funktion kriegt einen fünf stelligen Key und eine User_id übergeben. Mittels den beiden Parametern wird überprüft ob diese Kombination in der Datenbank existiert. Existiert die Kombination von Key und Nutzer ID so wird der Key gelöscht und es wird true zurück gegeben. Wenn es keine Kombination gibt, so gibt die Funktion false zurück.
+	*
+	*@param string $key fünf stelliger Code von 0-9
+	*@param int $user_id Nutzer ID
+	*
+	*@return boolean
+	*/
+	public function db_getpwKey($key,$user_id){
 		self::db_deleteKey();
 		$db = self::db_connect();
-		$sql = "SELECT keyreg FROM KeyRegDeletePW WHERE keyreg = ?";
+		$sql = "SELECT keyreg FROM KeyRegDeletePW WHERE keyreg = ? AND user_id =? ";
 		$stmt =$db->prepare($sql);
-		$stmt->bind_param('s',$key);
+		$stmt->bind_param('si',$key,$user_id);
 		if (!$stmt->execute()) {
 			die('Fehler: ' . mysqli_error($db));
 			self::db_close($db);
@@ -3168,11 +3322,17 @@ class DBFunctions
 			return false;
 		}
 	}
-
+	/**
+	*Löscht ggf einen Key der zur Löschung eines Nutzers gebraucht wird aus der DB.
+	*
+	*Die Funktion überprüft, ob ein Key, die für die Löschun eines Nutzers generiert wurden, von ihrer Lebenszeit abgelaufen ist. Immoment ist sie auf 600 Sekunden festgelegt. Ist die Lebenszeit bei der Abfrage überschritten, so wird der Key gelöscht und der Nutzer muss sich einen neuen anfordern. Die Funktion gibt true aus, wenn die Funktion erfolgreich ausgeführt wurde, was nicht heißt das ein Key gelöscht wurde. Die Funktion gibt false zurück, wenn das SQL Statement nicht erfolgreich durchgeführt werden konnte.
+	*
+	*@return boolean 
+	*/
 	public function db_deletepwKey(){
 		$timer = time();
 		$db = self::db_connect();
-		$sql = "DELETE FROM KeyRegDeletePW WHERE (?-timecounter)>300";
+		$sql = "DELETE FROM KeyRegDeletePW WHERE (?-timecounter)>600";
 		$stmt =$db->prepare($sql);
 		$stmt->bind_param('i',$timer);
 		if (!$stmt->execute()) {
