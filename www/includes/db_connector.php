@@ -1759,9 +1759,10 @@ class DBFunctions
 	*/
 	public function db_getCryptkeyByMail($mail) {
 		$db = self::db_connect();
-		$sql = "SELECT cryptkey FROM Privacy WHERE idPrivacy = (SELECT idUser FROM User WHERE email = LOWER(?))";
+		$user_id = self::db_idOfEmailAdresse($mail);
+		$sql = "SELECT cryptkey FROM Privacy WHERE idPrivacy = ?";
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('s',$mail);
+		$stmt->bind_param('i',$user_id);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
@@ -1817,10 +1818,11 @@ class DBFunctions
 		$date = self::db_regDateByCryptkey($cryptkey);
 		$pass_md5 = md5($newPasswort.$date);
 		$db = self::db_connect();
+		//(SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)
 		$sql = "UPDATE User SET password = ? WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
 		$stmt = $db->prepare($sql);
-		mysqli_stmt_bind_param($stmt, "ss", $pass_md5, $cryptkey);
-
+		$stmt->bind_param("ss", $pass_md5, $cryptkey);
+		$stmt->execute();
 		self::db_close($db);
 		if (!$stmt->execute()) {
 			return false;
