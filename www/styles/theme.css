@@ -37,18 +37,10 @@ a:hover
     0 0 20px #fefcc9,
     10px -10px 30px #feec85,
     -20px -20px 40px #ffae34,
-    20px -40px 50px #ec760c,
-    -20px -60px 60px #cd4606,
-    0 -80px 70px #973716,
-    10px -90px 80px #451b0e,
 	/*nach unten*/
 	/*0 0 20px #fefcc9,*/
     10px 10px 30px #feec85,
-    -20px 20px 40px #ffae34,
-    20px 40px 50px #ec760c,
-    -20px 60px 60px #cd4606,
-    0 80px 70px #973716,
-    10px 90px 80px #451b0e;
+    -20px 20px 40px #ffae34;
 }
 h1, h2, h3, h4, h5, h6 { margin: 5px 0px 15px 0px; clear: both; font-weight: lighter; }
 h1 { font-size: 36px; }
@@ -67,7 +59,7 @@ figure { margin: 0; }
 :-ms-input-placeholder { color: rgba(51, 51, 51, 0.7); font-style: italic; }
 
 
-input[type=button], input[type=submit]
+input[type=button], input[type=submit]:not(.anchor)
 {
 	border: none;
 	background: #ff8000;
@@ -95,7 +87,7 @@ input[type=button], input[type=submit]
 	-webkit-transition: .2s ease-in-out;
 	transition: .2s ease-in-out;
 }
-input[type=button]:hover, input[type=submit]:hover
+input[type=button]:hover, input[type=submit]:not(.anchor):hover
 {
 	background: #848484;
 	background-image: -webkit-linear-gradient(top, #848484, #424242);
@@ -107,7 +99,7 @@ input[type=button]:hover, input[type=submit]:hover
 	
 	color: #ff6000;
 }
-input[type=button]:active, input[type=submit]:active
+input[type=button]:active, input[type=submit]:not(.anchor):active
 {
 	-webkit-transition: .1s ease-in-out;
 	transition: .1s ease-in-out;
@@ -314,16 +306,12 @@ header.smaller .siteLogo h1 a img { height: 50px; }
     -20px -20px 40px #ffae34,
     20px -40px 50px #ec760c,
     -20px -60px 60px #cd4606,
-    0 -80px 70px #973716,
-    10px -90px 80px #451b0e,
 	/*nach unten*/
 	/*0 0 20px #fefcc9,*/
     10px 10px 30px #feec85,
     -20px 20px 40px #ffae34,
     20px 40px 50px #ec760c,
-    -20px 60px 60px #cd4606,
-    0 80px 70px #973716,
-    10px 90px 80px #451b0e;
+    -20px 60px 60px #cd4606;
 }
 .navigation li a { padding: 42px 41px 36px 41px; font-size: 16px; color: #ffffff; font-family: 'Open Sans', sans-serif; font-weight: 400; text-decoration: none; display: block; -webkit-transition: all .3s ease; transition: all .3s ease; }
 .navigation li span
@@ -599,7 +587,7 @@ footer a
 	color: #ffffff;
 	font-weight: bold;
 }
-footer a:hover { color: #ff6000; }
+footer a:hover { color: #212121; }
 footer .copyright { padding:  28px 0px; max-width: 1100px; margin: auto;}
 footer .copyright p { padding: 0px; font-size: 14px; color: #a9abad; font-family: 'Arial'; margin: 0px; }
 footer .copyright a { color: #a9abad; text-decoration: none; }
@@ -631,6 +619,36 @@ red
 .hide
 {
 	display: none;
+}
+
+.anchor
+{
+	background: none !important;
+    border: none; 
+    padding: 0 !important; 
+    font-family: arial, sans-serif;
+    cursor: pointer;
+
+	
+	color: #ff6000;
+	text-decoration: none;
+	
+	-webkit-transition: .2s ease-in-out;
+	transition: .2s ease-in-out;
+}
+.anchor:hover
+{
+	color: #424242;
+	
+	text-shadow:
+	/*nach oben*/
+    0 0 20px #fefcc9,
+    10px -10px 30px #feec85,
+    -20px -20px 40px #ffae34,
+	/*nach unten*/
+	/*0 0 20px #fefcc9,*/
+    10px 10px 30px #feec85,
+    -20px 20px 40px #ffae34;
 }
 
 /*====index====*/
