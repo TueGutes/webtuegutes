@@ -174,9 +174,62 @@
 	//Profile sind nur für eingeloggte Nutzer sichtbar:
 	if (!$_USER->loggedIn()) die ('Profile sind nur für eingeloggte Nutzer sichtbar!<p/><a href="./login">Zum Login</a>');
 
-	//Sollte das Profil gelöscht werden?
-	if (isset($_POST['save_pw']))
-		DBFunctions::db_delete_user($_USER->getUsername(), $_POST['save_pw']);
+	$errorMessage = "";
+	
+	//====Profil löschen====
+	if(isset($_POST['deletion_send_code']))
+	{
+		$deletionCode = DBFunctions::db_initpwNewKey($_USER->getID());
+		$deletionMail = '
+<style>
+.logo
+{
+	margin-left: 10%;
+	margin-right: 10%;
+	background: #757575;
+}
+.logo img
+{
+	width: 25%;
+}
+.content
+{
+	margin-left: 10%;
+	margin-right: 10%;
+}
+span
+{
+	font-weight: bold;
+}
+</style>
+<div class="logo"><img src="' . $HOST . '/img/wLogo.png" alt="TueGutes" title="TueGutes" /></div>
+<div class="content">
+	<h2>Meinen Account bei TueGutes löschen</h2>
+	<h3>Schade, dass du deinen Account bei TueGutes löschen möchtest :(<h3>
+	<br>
+	Vielleicht möchtest du uns <a href="' . $HOST . '/contact">HIER</a> mitteilen, wieso du deinen Account löschen möchest.<br>
+	<br>
+	Wenn du deinen Account doch nicht löschen möchtest, kannst du diese E-Mail ignorieren.<br>
+	<br>
+	Wenn du deinen Account löschen möchtest, gib den nachfolgenden Code in deinem Profil ein:<br>
+	<span>' . $deletionCode . '</span><br>
+	(diese Code ist 10 Minuten gültig)
+</div>';
+		$_USER->sendEmail('TueGutes Account löschen', $deletionMail);
+		$errorMessage = '<green>Dir wurde eine E-Mail mit einem Bestätigungscode geschickt.</green>';
+	}
+	else if(isset($_POST['deletion_code']))
+	{
+		$deletionError = !DBFunctions::db_getpwKey($_POST['deletion_code'], $_USER->getID());
+		if($deletionError)
+			$errorMessage = '<red>Der eingegebene Code ist entweder falsch oder ist bereits abgelaufen!</red>';
+		else
+		{
+			DBFunctions::db_delete_user($_USER->getUsername());
+			$_USER->redirect($HOST . '/logout');
+		}
+	}
+	//====/Profil löschen====
 
 	//Festlegen des auszulesenden Nutzers:
 	if (!isset($_GET['user'])) $_GET['user'] = $_USER->getUsername();
@@ -227,8 +280,6 @@
 			&& ((substr($thisuser['birthday'],0,4) != "") && (substr($thisuser['birthday'],0,4) != 0)));
 	}
 
-	// ALEX2: Renamed $error in $errorMessage.
-	$errorMessage = "";
 	// Fehlerüberprüfung, wenn das Formular zum speichern gesendet wurde.
 	if(isset($_POST['action']) && ($_POST['action'] == 'save'))
 	{
@@ -273,10 +324,10 @@
 				$errorMessage .= 'Hausnummer ist ungueltig.';
 			}
 			*/
-		}
-
-		echo $errorMessage;
+		}	
 	}
+	
+	echo $errorMessage;
 
 	//Prüfen, ob das Eingabefeld angefordert wurde oder ob ein ungueltiger Eintrag gesetzt wurde.
 	if((isset($_POST['action']) && ($_POST['action'] == 'edit')) || ($errorMessage != "")) {
@@ -430,8 +481,19 @@
 
 		$form_bottom = '<p /><p /><input type=submit value="Änderungen speichern"><input type="hidden" name="action" value="save"><br><br><br><br><br></form>';
 
-		// ALEX2: Increased text box size.
-		$form_bottom .= '<h3>Profil unwiderruflich löschen</h3><p class="deleteMessage">Hier kannst du dein Nutzerprofil bei TueGutes löschen. Beachte aber, dass wir ein einmal gelöschtes Nutzerprofil nicht mehr wiederherstellen können. Du verlierst damit alle deine Einstellungen, Profilinhalte, Karma und gute Taten. Wenn du dir sicher bist, dass du dein Profil löschen willst, gib dein Passwort zur Sicherheit nochmal ein und klicke auf "PROFIL ENTGÜLTIG LÖSCHEN"</p><form action="" method="post"><input type="password" size="50px" name="save_pw" placeholder="Passwort zur Sicherheit erneut eingeben..."><br><br><input type=submit value="Profil entgültig löschen"></form>';
+		$form_bottom .= '<h3>Profil unwiderruflich löschen</h3>
+		<p class="deleteMessage">Hier kannst du dein Nutzerprofil bei TueGutes löschen. Beachte aber, dass wir ein einmal gelöschtes Nutzerprofil nicht mehr wiederherstellen können. Du verlierst damit alle deine Einstellungen, Profilinhalte, Karma und gute Taten. Wenn du dir sicher bist, dass du dein Profil löschen willst, schicken wir dir einen 5 stelligen Code per E-Mail, den du hier eingeben musst. Klicke anschließend auf "PROFIL ENTGÜLTIG LÖSCHEN".</p>
+		<form action="" method="post">
+			<input type="hidden" name="deletion_send_code" />
+			<input type="submit" value="CODE senden" /><br>
+			(Der CODE ist 10 Minuten gültig)
+		</form><br>
+		<br>
+		<form action="" method="post">
+			<input type="text" size="10" name="deletion_code" placeholder="CODE" required /><br>
+			<br>
+			<input type="submit" value="Profil entgültig löschen" />
+		</form>';
 
 	} else {
 		//Zeige das Profil ohne Änderungsmöglichkeit an
