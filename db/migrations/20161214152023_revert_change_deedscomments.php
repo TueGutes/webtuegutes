@@ -36,7 +36,10 @@ class RevertChangeDeedscomments extends AbstractMigration
 
     public function down(){
         $table = $this->table('DeedComments');
+        $table->dropForeignKey('user_id_creator');
         $table->changeColumn('user_id_creator','integer',array('null' => true))
+              ->update();
+        $table->addForeignKey('user_id_creator','User','idUser',array('delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'))
               ->update();
     }
 }
