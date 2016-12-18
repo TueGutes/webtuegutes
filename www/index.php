@@ -13,10 +13,15 @@ require './includes/_top.php';
 
 include './includes/db_connector.php';
 require './includes/fb/fbConfig.php';
+
+
 ?>
 
 <h2><?php echo $wlang['welcome']; ?></h2>
+
+
 <?php
+
 	$messages = array( // später aus Datenbank
 		'TueGutes: Soziale Hilfe aus der Nachbarschaft.',
 		'TueGutes: Das soziale Netzwerk für Gutes.',
@@ -51,7 +56,7 @@ require './includes/fb/fbConfig.php';
 <?php
 if(!$_USER->loggedIn())
 {
-	$fb_loginURL = $facebook->getLoginUrl(array('redirect_uri' => $redirectURL, 'scope' => $fbPermissions));
+	$fb_loginURL = $facebook->getLoginUrl(array('redirect_uri' => $redirectURL, 'scope' => $fbPermissions));	
 	echo "
 		<div class='module transparent'>
 			<br><br>
@@ -65,12 +70,14 @@ if(!$_USER->loggedIn())
 			<br><br>
 			<a href='./PasswortUpdate'>Ich habe mein Passwort vergessen!</a>
 			<br><br>
-			Ich bin noch nicht registriert:<br>
-			<a href='./registration'>Zur Registrierung</a><br>
-			<br>
-			Jetzt mit Facebook anmelden<br>
-			<div class='block'><a href='" . $fb_loginURL . "'><img src='./includes/fb/images/fblogin-btn.png' /></a></div>
-		</div>
+			
+			
+			noch nicht registriert ? - REGISTRIEREN:<br>
+			<div class='block'><a href='./registration'> <img src='./img/tuegutesLogin.png'></a></div>
+			<div class='block'><a href='" . $fb_loginURL . "'><img src='./img/facebookLogin.png'></a></div>
+			"//<div class='block'><a href='./googleLogin/index'> <img src='./img/googleLogin.png'></a></div>
+			
+		."</div>
 		<div class='module'>
 			<br>
 			Willkommen auf der Plattform für gute Taten im Raum Hannover.<br>
