@@ -138,21 +138,10 @@
 
 		return $lRetVals;
 	}
-
-	// ALEX2: Checks whether the given value is a number and if yes, is it out of the given range.
-	function checkNumberAndRange($pValue, $pMin, $pMax)
+	
+	function checkPlace($pPlace)
 	{
-		// Not a number?
-		if(!is_numeric($pValue))
-		{
-			return false;
-		}
-		// Out of range?
-		if(($pValue < $pMin) || ($pValue > $pMax))
-		{
-			return false;
-		}
-		return true;
+		return (($pPlace == "404") || ($pPlace == 404)) ? "" : $pPlace;
 	}
 
 	//Includes
@@ -249,7 +238,7 @@
 		$shGeschlecht = ($thisuser['gender']!="" && $thisuser['gender']!="0");
 		$shStrasse = ($thisuser['street']!="");
 		$shHausnummer = ($thisuser['housenumber']!="");
-		$shPlzOrt = ($thisuser['postalcode']!="");
+		$shOrt = (checkPlace($thisuser['place'])!="");
 		$shTelefon = ($thisuser['telefonnumber']!="");
 		$shMessenger = ($thisuser['messengernumber']!="");
 		// ALEX2: Hides day and month of birth if one value is equal 0 or empty.
@@ -270,7 +259,7 @@
 		$shGeschlecht = (substr($thisuser['privacykey'],7,1) === "1" && $thisuser['gender']!="");
 		$shStrasse = (substr($thisuser['privacykey'],8,1) === "1" && $thisuser['street']!="");
 		$shHausnummer = (substr($thisuser['privacykey'],9,1) === "1" && $thisuser['housenumber']!="");
-		$shPlzOrt = (substr($thisuser['privacykey'],10,1) === "1" && $thisuser['postalcode']!="0");
+		$shOrt = (substr($thisuser['privacykey'],10,1) === "1" && (checkPlace($thisuser['place']) != ""));
 		$shTelefon = (substr($thisuser['privacykey'],11,1) === "1" && $thisuser['telefonnumber']!="");
 		$shMessenger = (substr($thisuser['privacykey'],12,1) === "1" && $thisuser['messengernumber']!="");
 		$shGeburtstag = (substr($thisuser['privacykey'],13,1) === "1"
@@ -279,7 +268,6 @@
 		$shJahrgang = (substr($thisuser['privacykey'],14,1) === "1"
 			&& ((substr($thisuser['birthday'],0,4) != "") && (substr($thisuser['birthday'],0,4) != 0)));
 	}
-	
 		// ALEX
 		$gender = isset($_POST['txtGender']) ? $_POST['txtGender'] : $thisuser['gender'];
 		$birthday = isset($_POST['txtGeburtstag']) ? $_POST['txtGeburtstag'] : $thisuser['birthday'];
@@ -289,10 +277,7 @@
 		$street = isset($_POST['txtStrasse']) ? $_POST['txtStrasse'] : $thisuser['street'];
 		$telephonenumber = isset($_POST['txtTelNr']) ? $_POST['txtTelNr'] : $thisuser['telefonnumber'];
 		$messengernumber = isset($_POST['txtMsgNr']) ? $_POST['txtMsgNr'] : $thisuser['messengernumber'];
-		$place = isset($_POST['txtOrt']) ? $_POST['txtOrt'] : $thisuser['place'];
-		
-		$place = ($place == "404") ? "" : $place;
-		
+		$place = isset($_POST['txtOrt']) ? $_POST['txtOrt'] : $thisuser['place'];		
 	
 	// Fehlerüberprüfung, wenn das Formular zum speichern gesendet wurde.
 	if(isset($_POST['action']) && ($_POST['action'] == 'save'))
@@ -301,44 +286,70 @@
 		
 		if($birthday != "")
 		{
-			$birthday_dh = (new DateHandler())->set($birtdhday);
+			$birthday_dh = (new DateHandler())->set($birthday);
 			if(!$birthday_dh)
 			{
-				$errorMessage .= "Bitte ein gültiges Geburtsdatum angeben oder das Feld leerlassen.";
+				$errorMessage .= "Bitte ein gültiges Geburtsdatum angeben oder das Feld leerlassen.<br>";
 			}
 			else
 			{
 				$thisuser['birthday'] = $birthday_dh->get();
 			}
-		}		
+		}			
+				
+		// Check street value for digits. (Could be solved better probably.)
+		if($street != "")
+		{
+			for($i = 0; $i < strlen($street); $i++)
+			{
+				if(is_numeric($street[$i]))
+				{
+					$errorMessage .= "Die Hausnummer bitte im separaten Textfeld angeben.<br>";
+					break;
+				}
+			}
+		}
 		
+		// Important: Has to be the last check to avoid multiple DB inserts.
 		if(($street != "") && ($houseNumber != "") && ($place != ""))
 		{
-			// Check for valid address.
-			$lFoundValues = getPostalPlaceToAddress($street, $houseNumber, $place);
-			
-			if($lFoundValues['retPostal'] == "")
+			if($errorMessage == "")
 			{
-				$errorMessage .= "Diese Adresse wurde nicht gefunden. Hat sich vielleicht ein Schreibfehler eingeschlichen?";
-			}
-			else
-			{
-				// Has to be set to search it in DB when finishing creating deed.
-				$postalcode = $lFoundValues['retPostal'];
+				// Check for valid address.
+				$lFoundValues = getPostalPlaceToAddress($street, $houseNumber, $place);
 				
-				if($lFoundValues['retHouseNumber'] == "")
+				if($lFoundValues['retPostal'] == "")
 				{
-					sendEmail("alexander.gauggel@stud.hs-hannover.de", "TG_Strasse",
-						"<br>Die Hausnummer " . $houseNumber . " der Straße " . $street . " wurde nicht gefunden. Bitte prüfen.");
+					$errorMessage .= "Diese Adresse wurde nicht gefunden. Hat sich vielleicht ein Schreibfehler eingeschlichen?<br>";
 				}
-			}		
+				else
+				{
+					$postalcode = $lFoundValues['retPostal'];
+					
+					// If postal code wasn't found in DB, add it and set foreign key in userdata.
+					$lIdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode, $place);
+					
+					// If no corresponding postal code was found, add it to DB.
+					if($lIdPostal == "")
+					{
+						DBFunctions::db_insertPostalCode($postalcode, $place);
+					}
+					
+					if($lFoundValues['retHouseNumber'] == "")
+					{
+						sendEmail("alexander.gauggel@stud.hs-hannover.de", "TG_Strasse",
+							"<br>Die Hausnummer " . $houseNumber . " der Straße " . $street . " wurde nicht gefunden. Bitte prüfen.");
+					}
+				}		
+			}
 		}	
 		else if(($street == "") && ($houseNumber == "") && ($place == ""))
 		{
+			$postalcode = "";
 		}
 		else 
 		{
-			$errorMessage .= 'Bitte Strasse, Hausnummer und Ort zusammen angeben oder alle Felder leerlassen.';
+			$errorMessage .= 'Bitte Strasse, Hausnummer und Ort zusammen angeben oder alle Felder leerlassen.<br>';
 		}
 	}
 	
@@ -396,7 +407,7 @@
 		$blPersoenlich .= '.<input type="text" size="4px" name="txtYearOfBirth" placeholder="JJJJ" value="' . $tempValue . '"></td></tr>';*/
 
 		//RegDate anzeigen
-		$blPersoenlich .= '<tr><td><br>Tut Gutes seit:</td><td><br>' . substr($thisuser['regDate'],8,2) . '. ' . substr($thisuser['regDate'],5,2) . '. ' . substr($thisuser['regDate'],0,4) . '</td></tr>';
+		$blPersoenlich .= '<tr><td><br>Tut Gutes seit:</td><td><br> ' . substr($thisuser['regDate'],8,2) . '.' . substr($thisuser['regDate'],5,2) . '.' . substr($thisuser['regDate'],0,4) . '</td></tr>';
 		$blPersoenlich .= "</table><br><br><hr><br>";
 
 		//Block 2: Über USER
@@ -427,9 +438,7 @@
 		$blAdresse .= '</td>';
 
 		// ALEX: Hausnummer einfügen.
-		$blAdresse .= '<td><input type="text" size="5%" name="txtHausnummer" placeholder="Nr." value="'
-			. $thisuser['housenumber'] . '">';
-		$blAdresse .= "</td></tr>";
+		$blAdresse .= '<td><input type="text" size="5%" name="txtHausnummer" placeholder="Nr." value="' . $houseNumber . '"></td></tr>';
 
 		// ALEX: Auskommentiert.
 		//PLZ/Ort bearbeiten:
@@ -439,7 +448,7 @@
 
 //		$blAdresse .= '<tr><td>PLZ:</td><td><input type="text" name="txtPostleitzahl" placeholder="PLZ" value="' . (($thisuser['postalcode']!=0)?$thisuser['postalcode']:'') . '"></td>';
 		// Ort bearbeiten.
-		$blAdresse .= '<td></td><td><input type="text" name="txtOrt" placeholder="Ort" value="' . $place . '"></td></tr>';
+		$blAdresse .= '<td></td><td><input type="text" name="txtOrt" placeholder="Ort" value="' . checkPlace($place) . '"></td></tr>';
 
 		$blAdresse .= '<tr><td></td><td colspan=2><br><input type="submit" class="anchor" value="Meine Adresse fehlt..." form="suggestAddress"/></td></tr>';
 		$blAdresse .= "</table><br><br><hr><br>";
@@ -498,11 +507,11 @@
 		$form_bottom = '<p /><p /><input type=submit value="Änderungen speichern"><input type="hidden" name="action" value="save"><br><br><br><br><br></form>';
 
 		$form_bottom .= '<h3>Profil unwiderruflich löschen</h3>
-		<p class="deleteMessage">Hier kannst du dein Nutzerprofil bei TueGutes löschen. Beachte aber, dass wir ein einmal gelöschtes Nutzerprofil nicht mehr wiederherstellen können. Du verlierst damit alle deine Einstellungen, Profilinhalte, Karma und gute Taten. Wenn du dir sicher bist, dass du dein Profil löschen willst, schicken wir dir einen 5 stelligen Code per E-Mail, den du hier eingeben musst. Klicke anschließend auf "PROFIL ENTGÜLTIG LÖSCHEN".</p>
+		<p class="deleteMessage">Hier kannst du dein Nutzerprofil bei TueGutes löschen. Beachte aber, dass wir ein einmal gelöschtes Nutzerprofil nicht mehr wiederherstellen können. Du verlierst damit alle deine Einstellungen, Profilinhalte, Karma und gute Taten. Wenn du dir sicher bist, dass du dein Profil löschen willst, schicken wir dir einen  fünfstelligen Code per E-Mail, den du hier eingeben musst. Klicke anschließend auf "PROFIL ENTGÜLTIG LÖSCHEN".</p>
 		<form action="" method="post">
 			<input type="hidden" name="deletion_send_code" />
 			<input type="submit" value="CODE senden" /><br>
-			(Der CODE ist 10 Minuten gültig)
+			(Der Code ist 10 Minuten gültig)
 		</form><br>
 		<br>
 		<form action="" method="post">
@@ -517,34 +526,7 @@
 		//Ggf. Speichern / Verwerfen der geänderten Werte
 		if(isset($_POST['action']) && ($_POST['action'] == 'save'))
 		{
-			// TODO: CHANGE
-			// ALEX: If street is set, check name and find postal code.
-			if($street !== '')
-			{
-				// Find postal code and place to address.
-				$lFoundValues = getPostalPlaceToAddress($street, $houseNumber, $place);
-
-				// If postal code wasn't found in DB, add it and set foreign key in userdata.
-				$lIdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode, $place);
-			
-				// If no corresponding postal code was found, add it to DB.
-				if($lIdPostal == "")
-				{
-					DBFunctions::db_insertPostalCode($postalcode, $place);
-					$IdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($postalcode, $place);
-				}
-			}
-
 			// Nutzerdaten überschreiben:
-
-			
-			// ALEX2: Replace empty values with 0. Created $tempValue.
-			/*$tempValue = ($_POST['txtYearOfBirth'] == "") ? 0 : $_POST['txtYearOfBirth'];
-			$thisuser['birthday'] = $tempValue . '-';
-			$tempValue = ($_POST['txtMonthOfBirth'] == "") ? 0 : $_POST['txtMonthOfBirth'];
-			$thisuser['birthday'] .= $tempValue . '-';
-			$tempValue = ($_POST['txtDayOfBirth'] == "") ? 0 : $_POST['txtDayOfBirth'];
-			$thisuser['birthday'] .= $tempValue;*/
 
 			//Daten überschreiben
 			$thisuser['street'] = $street;
@@ -554,8 +536,9 @@
 			$thisuser['telefonnumber'] = $telephonenumber;
 			$thisuser['hobbys'] = $hobbys;
 			$thisuser['description'] = $description;
-			$thisuser['postalcode'] = getPostalPlaceToAddress($street, $houseNumber, $pPlace)['retPostal'];
-			$thisuser['place'] = getPostalPlaceToAddress($thisuser['street'], $thisuser['housenumber'])['retPlace'];
+			$thisuser['birthday']= $birthday;
+			$thisuser['postalcode'] = $postalcode;
+			$thisuser['place'] = $place;
 
 			//Speichern des Profilbildes
 			if ($_FILES['neuerAvatar']['name'] != '') {
@@ -712,31 +695,27 @@
 			$blTaten .= ((($thisuser['username']==$_USER->getUsername()) && !(@$_GET['view']!='public'))?'<br><a href="./deeds?user=' . $thisuser['username'] . '">Alle deine guten Taten</a>':'<br><a href="./deeds?user=' . $thisuser['username'] . '">Alle guten Taten des Nutzers</a>');
 		}
 		$blTaten .= "<br><br><hr><br>";
-
+		
 		//Block 4: Adresse
 		$blAdresse = "";
-		if ($shStrasse || $shHausnummer || $shPlzOrt) {
+		if ($shStrasse || $shHausnummer || $shOrt) {
 
 			$blAdresse .= '<h3>Wo findet man ' . $thisuser['username'] . '?</h3><table>';
 			//Adresse anzeigen:
-			// ALEX: Strasse und Hausnummer werden nur angezeigt, wenn entweder mind. die Straße oder beides gesetzt ist.
-			if ($shStrasse)
+			$blAdresse .= '<tr><td>Adresse:</td><td>';
+			$blAdresse .= $thisuser['street'];
+			if ($shHausnummer)
 			{
-				$blAdresse .= '<tr><td>Adresse:</td><td>';
-				$blAdresse .= $thisuser['street'];
-				if ($shHausnummer)
-				{
-					$blAdresse .= ' ' . $thisuser['housenumber'];
-				}
-				$blAdresse .= "</td></tr>";
+				$blAdresse .= ' ' . $thisuser['housenumber'];
 			}
-
-			//PLZ/Ort anzeigen:
-			if ($shPlzOrt) $blAdresse .= '<tr><td>PLZ/Ort:</td><td>' . $thisuser['postalcode'] . ' / ' . $thisuser['place'] . '</td></tr>';
+			$blAdresse .= "</td></tr>";
+		
+			//Ort anzeigen:
+			if ($shOrt) $blAdresse .= '<tr><td>Ort:</td><td>' . checkPlace($thisuser['place']) . '</td></tr>';
 
 			$blAdresse .= "</table><br><br><hr><br>";
 		}
-		$showMap = ($shPlzOrt && $shStrasse && $shHausnummer);
+		$showMap = ($shOrt && $shStrasse && $shHausnummer);
 
 		//Block 5: Kontakt
 		$blKontakt = "";
