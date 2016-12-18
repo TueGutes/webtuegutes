@@ -5,7 +5,7 @@
 
 require './includes/DEF.php';
 
-include './includes/ACCESS.php';
+//include './includes/ACCESS.php';
 
 include "./includes/Map.php";
 include './includes/db_connector.php';
@@ -143,6 +143,12 @@ if (isset($_POST['allow'])) {
 	echo '<p />';
 
 	echo '<br> <hr> <br> ';
+
+	echo'
+	<div class="fb-share-button" 
+		data-href="http://www.tue-gutes-in-hannover.de/tueGutes/live/deeds_details?id='.$idTat.'"
+		data-layout="button_count"> 
+	</div>';
 
 	if (!DBFunctions::db_istFreigegeben($idTat)) {
 		$form1 = '<form method="post" action="">';

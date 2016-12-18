@@ -11,7 +11,12 @@
 			<div class="bottom">
 				<footer>
 					<div>
-						<br><br>
+						<br>
+						<div class="fb-share-button" 
+							data-href="www.tue-gutes-in-hannover.de/tueGutes/live"
+							data-layout="button_count"> 
+						</div> 
+						<br>
 						<a href="./privacy"><?php echo $wlang['privacy']; ?></a><br>
 						<a href="./imprint"><?php echo $wlang['imprint']; ?></a><br>
 						<a href="./terms"><?php echo $wlang['terms']; ?></a>
