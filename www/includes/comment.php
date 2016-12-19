@@ -72,7 +72,7 @@ if(isset($_POST['set']) && $_POST['set'] == '1')
 
 
 //====get comments====
-$commentCount = DBFunctions::countDeedComments($deedID);
+$commentCount = DBFunctions::db_countDeedComments($deedID);
 $commentsPerPage = 10;
 $neededPages = ceil($commentCount/$commentsPerPage);
 $currentPage = isset($_POST['commentPage']) ? $_POST['commentPage'] : 1;

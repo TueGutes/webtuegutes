@@ -119,7 +119,6 @@ require "./includes/_top.php";
 								</form>';
 						}
 						else {
-
 							DBFunctions::db_changePasswortByCryptkey($_SESSION['cryptkey'], $_POST['passwort']);
 
 							unset($_SESSION['cryptkey']);

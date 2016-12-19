@@ -51,6 +51,10 @@ else
 		if(isset($_POST['set']) && $_POST['set'] == '1')
 		{
 			$error = false;
+			if(!isset($_POST['cbdatenschutzAgb'])) {
+				$output .= "<red>Sie müssen unsere Datenschutzerklärung akzeptieren, damit Sie sich registrieren können<br></red>";
+				$error = true;
+			}
 			if(empty($username))
 			{
 				$output .= "<red>Geben Sie einen Benutzernamen an!</red><br>";
@@ -100,7 +104,7 @@ else
 				$output .= "<red>Geben Sie eine gültige Email-Adresse an!</red><br>";
 				$error = true;
 			}
-			
+
 			if(!neuerAcount($sjdnjghbeid))
 			{
 				// = statt .= weil dieser Fehler alle anderen Überschreiben soll
@@ -111,7 +115,7 @@ else
 			if(!$error)
 			{
 				DBFunctions::db_deleteKey();
-			
+
 				$cryptkey = DBFunctions::db_createBenutzerAccount($username, $vorname, $nachname, $mail, $pass);
 				if($cryptkey)
 				{
@@ -150,6 +154,10 @@ require "./includes/_top.php";
 		<input type="password" name="passwort" value="" placeholder="<?php echo "Passwort"; ?>" required /><br>
 		<input type="password" name="passwortwdh" value="" placeholder="<?php echo "Passwort wiederholen"; ?>" required /><br>
 		<input type="text" name="mail" value="<?php echo $mail; ?>" placeholder="<?php echo "E-Mail Adresse"; ?>" required /><br>
+		<br>
+		<input id="cAGB" type="checkbox" name="cbdatenschutzAgb">
+		<label for="cAGB">Ich habe die <a href=<?php echo $HOST . "/privacy"?>>Datenschutzerklärung</a> gelesen und akzeptiere sie</label> <!-- TODO: AGB hinzufügen sobald verfügbar -->
+		<br>
 		<br>
 		<input type='hidden' name='set' value='1' />
 		<input type="submit" value="Registrieren" />
