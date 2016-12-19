@@ -168,7 +168,7 @@
 	//====Profil löschen====
 	if(isset($_POST['deletion_send_code']))
 	{
-		$deletionCode = 12345;//DBFunctions::db_initpwNewKey($_USER->getID());
+		$deletionCode = DBFunctions::db_initpwNewKey($_USER->getID());
 		// FOLGENDES BITTE NICHT EINRÜCKEN!
 		$deletionMail = '
 <style>

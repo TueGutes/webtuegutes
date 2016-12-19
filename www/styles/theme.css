@@ -53,10 +53,10 @@ p {font-size: 13px; margin: 5px 0px 15px 0px; }
 
 img { -ms-interpolation-mode: bicubic; border: 0; height: auto; vertical-align: middle; display: block;  }
 figure { margin: 0; }
-::-webkit-input-placeholder { color: rgba(51, 51, 51, 0.7); font-style: italic; }
-:-moz-placeholder { color: rgba(51, 51, 51, 0.7); font-style: italic; }
-::-moz-placeholder { color: rgba(51, 51, 51, 0.7); opacity: 1; /* Firefox 19 verringert die opacity eines placeholders standardm‰ﬂig */ font-style: italic; }
-:-ms-input-placeholder { color: rgba(51, 51, 51, 0.7); font-style: italic; }
+::-webkit-input-placeholder { color: rgba(51, 51, 51, .7); font-style: italic; }
+:-moz-placeholder { color: rgba(51, 51, 51, .7); font-style: italic; }
+::-moz-placeholder { color: rgba(51, 51, 51, .7); opacity: 1; /* Firefox 19 verringert die opacity eines placeholders standardm‰ﬂig */ font-style: italic; }
+:-ms-input-placeholder { color: rgba(51, 51, 51, .7); font-style: italic; }
 
 
 input[type=button], input[type=submit]:not(.anchor)
@@ -115,9 +115,9 @@ input[type=text], input[type=password], input[type=email], input[type=number], i
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
-	-moz-box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
-	-webkit-box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95A2A7 inset;
-	box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95A2A7 inset;
+	-moz-box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95a2a7 inset;
+	-webkit-box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95A2A7 inset;
+	box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95A2A7 inset;
 	
 	padding: 10px 14px 10px 14px;
 	
@@ -148,9 +148,9 @@ input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, inp
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
-	-moz-box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
-	-webkit-box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95A2A7 inset;
-	box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95A2A7 inset;
+	-moz-box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95a2a7 inset;
+	-webkit-box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95A2A7 inset;
+	box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95A2A7 inset;
 	
 	padding: 10px 14px 10px 14px;
 	
@@ -267,17 +267,17 @@ body
 	color: #424242;
 }
 
-.holder { position: relative; display: block; width: 100%; min-height: 100%; }
+.holder { position: relative; display: block; width: 100%; }
 .wrap { margin: 0 auto; display: block; width: 100%; }
 
 
-header { width: 100%; position: fixed; top: 0px; left: 0px; height: 105px; background: rgba(0, 0, 0, 0.5); z-index: 10; }
+header { width: 100%; position: fixed; top: 0px; left: 0px; height: 105px; background: rgba(0, 0, 0, .5); z-index: 10; }
 header .center { margin: auto; }
 header .siteLogo { padding: 10px/*(105-88)/2*/ 0px 0px 0px; width: 220px; float: left; text-align: center; -webkit-transition: all .3s; transition: all .3s; }
 header .siteLogo h1 { margin: 0px; }
 header .siteLogo h1 a { font-size: 36px; color: #fff; font-family: 'Open Sans', sans-serif; font-weight: 800; text-decoration: none; text-transform: uppercase; text-shadow: rgb(3, 3, 3) 0px 2px 5px; -webkit-transition: all .7s ease; transition: all .7s ease; }
 header .siteLogo h1 a img { padding-left: 5px; height: 88px; -webkit-transition: all .3s; transition: all .3s; }
-header.smaller { padding: 0px 0px 0px 0px; height: 60px; background: rgba(0, 0, 0, 0.75); -webkit-transition: all .3s; transition: all .3s; }
+header.smaller { padding: 0px 0px 0px 0px; height: 60px; background: rgba(0, 0, 0, .75); -webkit-transition: all .3s; transition: all .3s; }
 header.smaller .siteLogo {padding: 5px 0px 0px 0px; }
 header.smaller .siteLogo h1 { line-height: 30px; }
 header.smaller .siteLogo h1 a { font-size: 30px; }
@@ -530,7 +530,7 @@ header.smaller #profileSection input[type=submit]
 	margin-top: 55px;
 	left: -95px;
 	min-width: 160px;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, .2);
 }
 .mobileProfileContent.closed
 {
@@ -554,11 +554,13 @@ header.smaller #profileSection input[type=submit]
 {
 	position: relative;
 	width: 100%;
+	height: 100%;
 }
 .content
 {
 	width: 100%;
 	max-width: 1100px;
+	min-height: 80%;
 	margin: auto; 
 	text-align: center;
 	overflow: auto;
@@ -581,7 +583,7 @@ header.smaller #profileSection input[type=submit]
 
 .bottom { position: relative; width: 100%; overflow: hidden; /*background: url(../img/bottom-bg.jpg) top center no-repeat; background-size: cover;*/ }
 
-footer { overflow: hidden; width: 100%; text-align: center; background: rgba(0, 0, 0, 0.6); }
+footer { overflow: hidden; width: 100%; text-align: center; background: rgba(0, 0, 0, .6); }
 footer a
 {
 	color: #ffffff;
