@@ -439,7 +439,7 @@ header.smaller #profileSection input[type=submit]
 	position: absolute;
 	background-color: #f9f9f9;
 	min-width: 160px;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, .2);
 }
 .profileContent a
 {
@@ -624,12 +624,11 @@ red
 .anchor
 {
 	background: none !important;
-    border: none; 
+    border: none !important; 
     padding: 0 !important; 
     font-family: arial, sans-serif;
     cursor: pointer;
 
-	
 	color: #ff6000;
 	text-decoration: none;
 	
@@ -654,7 +653,7 @@ red
 /*====index====*/
 .module
 {
-	display: inline-block; background: rgba(100, 100, 100, .4); width: 100%; max-width: 500px; padding: 10px; margin: 15px; border: 1px solid #424242;
+	display: inline-block; background: rgba(100, 100, 100, .4); width: 100%; max-width: 500px; padding: 10px; margin: 1.2%; border: 1px solid #424242;
 }
 .module .output
 {
@@ -866,6 +865,97 @@ red
 }
 /*====/search====*/
 
+/*====deeds_details====*/
+.deed_details
+{
+	display: inline-block;
+	position: relative;
+	background: rgba(255, 255, 255, .6);
+	width: 80%;
+	max-width: 1000px;
+	padding: 20px;
+	margin: 1.2%;
+	border: 1px solid #424242;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, .4);
+}
+
+.deed_details .author
+{
+	position: absolute;
+	cursor: pointer;
+	
+	line-height: 32px;
+}
+.deed_details .author a img
+{
+	display: inline-block;
+	height: 32px;
+	margin-right: 5px;
+	border-radius: 50%;
+	
+	-webkit-transition: .2s ease-in-out;
+	transition: .2s ease-in-out;
+}
+.deed_details .author:hover a img
+{
+	border-radius: 0%;
+}
+
+.deed_details .period
+{
+	/*background: #ff0000;position: absolute;width:100%;*/
+	text-align: right;
+	float: right;
+}
+.deed_details .period span
+{
+	font-weight: bold;
+}
+
+.deed_details .description
+{
+	margin-top: 50px;
+	text-align: left;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	
+	background: rgba(255, 255, 255, .6);
+	padding: 10px;
+	margin-bottom: 15px;
+	border: 1px solid #424242;
+	box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, .2);
+}
+.deed_details .description span
+{
+	font-weight: bold;
+}
+.deed_details .infos
+{
+	width: 82%;
+	padding: 10px 10px 0 10px;
+	margin-bottom: 15px;
+	background: rgba(255, 255, 255, .6);
+	border: 1px solid #424242;
+	box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, .2);
+}
+.deed_details .infoLabel
+{
+	padding-right: 30px;
+}
+.deed_details .infoValue
+{
+	padding-right: 50px;
+}
+.deed_details .addressValue
+{
+	padding-right: 70px;
+}
+.deed_details td
+{
+	padding-bottom: 6px;
+}
+/*====/deeds_details====*/
+
 /*====comment====*/
 #comments
 {
@@ -877,8 +967,8 @@ red
 	background: rgba(255, 255, 255, .2);
 	width: 100%;
 	max-width: 500px;
-	padding: 10px;
-	margin: 15px;
+	padding: 1%;
+	margin: 1.2%;
 	border: 1px solid #424242;
 	border-radius: 20px;
 }
@@ -902,6 +992,11 @@ red
 .comment .author:hover a img
 {
 	border-radius: 0%;
+}
+.comment .author.deleted
+{
+	left: 37px;
+	cursor: default;
 }
 .comment .createDate
 {
