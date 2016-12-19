@@ -1890,10 +1890,10 @@ class DBFunctions
 	public function db_update_deeds_picture($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE Deedtexts
+		$sql ="UPDATE DeedTexts
 			SET
-			Deedtexts.pictures = ?
-			WHERE Deedtexts.idDeedTexts = ?";
+			DeedTexts.pictures = ?
+			WHERE DeedTexts.idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1913,10 +1913,10 @@ class DBFunctions
 	public function db_update_deeds_description($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE Deedtexts
+		$sql ="UPDATE DeedTexts
 			SET
-			Deedtexts.description = ?
-			WHERE Deedtexts.idDeedTexts = ?";
+			DeedTexts.description = ?
+			WHERE DeedTexts.idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
