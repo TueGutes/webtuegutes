@@ -21,3 +21,5 @@ case "$(uname -s)" in
      echo 'Dein Betriebssystem ist other OS' 
      ;;
 esac
+
+vendor/bin/phinx migrate -e testing
