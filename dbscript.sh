@@ -7,7 +7,7 @@ case "$(uname -s)" in
      ;;
 
    Linux)
-     echo 'Dein Betriebssystem ist Linux'
+     echo 'Dein Betriebssystem ist Linux!'
      ;;
 
    CYGWIN*|MINGW32*|MSYS*)
