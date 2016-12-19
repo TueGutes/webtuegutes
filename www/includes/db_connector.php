@@ -2033,7 +2033,7 @@ class DBFunctions
 		$sql ="UPDATE Deeds
 			SET
 			Deeds.idPostal = ?
-			WHERE veeds.idGuteTat = ?";
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('ii',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -2053,7 +2053,7 @@ class DBFunctions
 	public function db_update_deeds_organization($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE veeds
+		$sql ="UPDATE Deeds
 			SET
 			Deeds.organization = ?
 			WHERE Deeds.idGuteTat = ?";
