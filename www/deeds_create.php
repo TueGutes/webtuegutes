@@ -136,7 +136,7 @@ if($_SESSION['Seite'] ==3){
 echo'
 <h2>Beschreibe deine Tat.</h2>
 <h3>Was und wie ist es zu tun? </h3>';
-if($stop==1)echo '<h3><red>Bitte beschreibe deine Tat.</red></h3><br>';
+if($stop==1)echo '<h3><red>Bitte beschreibe deine Tat.</red></h3>';
 echo '
 <br><br>
 <div class="center block deeds_create">
