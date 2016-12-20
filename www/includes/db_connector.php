@@ -2711,8 +2711,8 @@ class DBFunctions
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
 		self::db_close($db);
-		if(isset($dbentry['categorytext'])){
-			return $dbentry['categorytext'];
+		if(isset($dbentry['categoryname'])){
+			return $dbentry['categoryname'];
 		}
 		else {
 			return false;
