@@ -532,6 +532,11 @@ span
 		{
 			// Nutzerdaten überschreiben:
 
+			// ALEX
+			$lHandler = new DateHandler();
+			$lHandler->set($birthday);
+			$thisuser['birthday'] = $lHandler->get();
+			
 			//Daten überschreiben
 			$thisuser['street'] = $street;
 			$thisuser['housenumber'] = $houseNumber;
@@ -540,9 +545,8 @@ span
 			$thisuser['telefonnumber'] = $telephonenumber;
 			$thisuser['hobbys'] = $hobbys;
 			$thisuser['description'] = $description;
-			$thisuser['birthday']= $birthday;
 			$thisuser['postalcode'] = $postalcode;
-			$thisuser['place'] = $place;
+			$thisuser['place'] = $place;			
 
 			//Speichern des Profilbildes
 			if ($_FILES['neuerAvatar']['name'] != '') {
