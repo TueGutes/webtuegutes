@@ -182,10 +182,7 @@ if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
                 $stop=3;
         }else if($_POST['place']==''){
                 $stop=4;
-        }else if($_POST['organization']==''){
-                $stop=5;
-		}
-		else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($_POST['postalcode'],$_POST['place'])==false)){
+        }else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($_POST['postalcode'],$_POST['place'])==false)){
                 $stop=8;
         }
 			}        
