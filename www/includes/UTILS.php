@@ -130,6 +130,23 @@ class DateHandler
 		$this->date->setTime($this->getHours(), $this->getMinutes(), $w);
 		return $this;
 	}
+	
+	public function diff($date)
+	{
+		return strtotime($this->date->get()) - strtotime($date);
+	}
+	public function equals($date)
+	{
+		return $this->diff($date) == 0;
+	}
+	public function before($date)
+	{
+		return $this->diff($date) < 0;
+	}
+	public function after($date)
+	{
+		return $this->diff($date) > 0;
+	}
 }
 
 /*

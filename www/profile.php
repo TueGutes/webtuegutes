@@ -169,41 +169,45 @@
 	if(isset($_POST['deletion_send_code']))
 	{
 		$deletionCode = DBFunctions::db_initpwNewKey($_USER->getID());
+		// FOLGENDES BITTE NICHT EINRÜCKEN!
 		$deletionMail = '
-			<style>
-			.logo
-			{
-				margin-left: 10%;
-				margin-right: 10%;
-				background: #757575;
-			}
-			.logo img
-			{
-				width: 25%;
-			}
-			.content
-			{
-				margin-left: 10%;
-				margin-right: 10%;
-			}
-			span
-			{
-				font-weight: bold;
-			}
-			</style>
-			<div class="logo"><img src="' . $HOST . '/img/wLogo.png" alt="TueGutes" title="TueGutes" /></div>
-			<div class="content">
-				<h2>Meinen Account bei TueGutes löschen</h2>
-				<h3>Schade, dass du deinen Account bei TueGutes löschen möchtest :(<h3>
-				<br>
-				Vielleicht möchtest du uns <a href="' . $HOST . '/contact">HIER</a> mitteilen, wieso du deinen Account löschen möchest.<br>
-				<br>
-				Wenn du deinen Account doch nicht löschen möchtest, kannst du diese E-Mail ignorieren.<br>
-				<br>
-				Wenn du deinen Account löschen möchtest, gib den nachfolgenden Code in deinem Profil ein:<br>
-				<span>' . $deletionCode . '</span><br>
-				(dieser Code ist 10 Minuten gültig)
-			</div>';
+<style>
+.logo
+{
+	margin-left: 10%;
+	margin-right: 10%;
+	background: #757575;
+	text-align: center;
+}
+.logo img
+{
+	display: inline-block;
+	width: 25%;
+}
+.content
+{
+	margin-left: 10%;
+	margin-right: 10%;
+}
+span
+{
+	font-weight: bold;
+	font-size: 42px;
+}
+</style>
+<div class="logo"><img src="' . $HOST . '/img/wLogo.png" alt="TueGutes" title="TueGutes" /></div>
+<div class="content">
+	<h2>Meinen Account bei TueGutes löschen</h2>
+	<h3>Schade, dass du deinen Account bei TueGutes löschen möchtest :(<h3>
+	<br>
+	Vielleicht möchtest du uns <a href="' . $HOST . '/contact" target="_blank">HIER</a> mitteilen, wieso du deinen Account löschen möchest.<br>
+	<br>
+	Wenn du deinen Account doch nicht löschen möchtest, kannst du diese E-Mail ignorieren.<br>
+	<br>
+	Wenn du deinen Account löschen möchtest, gib den nachfolgenden Code in deinem Profil ein:<br>
+	<span>' . $deletionCode . '</span><br>
+	(dieser Code ist für 10 Minuten gültig)
+</div>';
 		$_USER->sendEmail('TueGutes Account löschen', $deletionMail);
 		$errorMessage = '<green>Dir wurde eine E-Mail mit einem Bestätigungscode geschickt.</green>';
 	}
