@@ -156,7 +156,7 @@ DBFunctions::db_update_deeds_picture($gleichcodiert,$idGuteTat);
 $link = './deeds_bearbeiten?idGuteTat=' . $idGuteTat;
 $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 
-?> 
+echo'
 
 		<center>
 		<br>
@@ -185,13 +185,18 @@ $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 			</tr>
 			<tr>
 				<td><h3>Kategorie: </td>
-				<td>
-				<select name="category" size="1">
-				<?php echo'<option ';if($tat['category']==='Altenheim'){echo'selected ';} echo'value="Altenheim">Altenheim</option>';
-					  echo'<option ';if($tat['category']==='Busbahnhof'){echo'selected ';} echo'value="Busbahnhof">Busbahnhof</option>';
-					  echo'<option ';if($tat['category']==='Müll einsammeln'){echo'selected ';} echo'value="Müll einsammeln">Müll einsammeln</option>';
-					?>
-				</select></td>
+				<td>';
+
+				$kz=0;//KategorieZähler
+				echo'<select name="category">';		
+				while(DBFunctions::db_doesCategoryIDExist(++$kz)){
+					echo'<option value="'.$kz.'">'.DBFunctions::db_getCategorytextbyCategoryid($kz).'</option>';			
+					}	
+				echo'</select><br><br>
+                <br>
+				</form></div>
+}
+}</td>
 			</tr>
 			<tr>
 				<td><h3>Straße: </td>
@@ -226,10 +231,10 @@ $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 				<td><h3>Erforderlicher Verantwortungslevel: </td>
 				<td>
 				<select name="idTrust" size="1">
-				<?php echo'<option ';if($tat['idTrust']=='1'){echo'selected ';} echo'value="1">1</option>';
+				 <option ';if($tat['idTrust']=='1'){echo'selected ';} echo'value="1">1</option>';
 					  echo'<option ';if($tat['idTrust']=='2'){echo'selected ';} echo'value="2">2</option>';
-					  echo'<option ';if($tat['idTrust']=='3'){echo'selected ';} echo'value="3">3</option>';
-					?>
+					  echo'<option ';if($tat['idTrust']=='3'){echo'selected ';} echo'value="3">3</option>
+					
 				</select></td>
 			</tr>
 		</table>
@@ -243,4 +248,5 @@ $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 		</form>
 		</center>
 		</form>
-<?php require "./includes/_bottom.php";?>
+ require "./includes/_bottom.php";';
+ ?>
