@@ -2905,9 +2905,9 @@ class DBFunctions
 		$db = self::db_connect();
 		$commenttext = htmlstr($commenttext);
 		$sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentcomment) VALUES (?,?,?,?,?)";
-		$date = new datetime();
+		$date = (new datetime())->format('Y-m-d H:i:s');
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('iissi',$idofdeeds,$creatorid,$date->format('Y-m-d H:i:s'),$commenttext,$parentcomment);
+		$stmt->bind_param('iissi',$idofdeeds,$creatorid,$date,$commenttext,$parentid);
 		if($stmt->execute()){
 			self::db_close($db);
 			return true;
