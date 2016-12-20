@@ -25,8 +25,8 @@ $_SESSION['tat_street'] ='';
 $_SESSION['tat_housenumber'] ='';
 $_SESSION['tat_postalcode'] ='';
 $_SESSION['tat_place'] ='';
-$_SESSION['tat_starttime'] ='';
-$_SESSION['tat_endtime'] ='';
+$_SESSION['tat_startdate'] ='';
+$_SESSION['tat_enddate'] ='';
 $_SESSION['tat_organization'] ='';
 $_SESSION['tat_countHelper'] ='1';
 $_SESSION['tat_idTrust'] ='1';
@@ -152,33 +152,33 @@ echo '
 } 
 }
 if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
-		$startdate = $_POST['startdate'] . ' ' . $_POST['starttime_hours'] . ':' . $_POST['starttime_minutes'];
-		$enddate = $_POST['enddate'] . ' ' . $_POST['endtime_hours'] . ':' . $_POST['endtime_minutes'];
+		$startdate = isset($_POST['startdate']) ? $_POST['startdate'] . ' ' . $_POST['starttime_hours'] . ':' . $_POST['starttime_minutes'] : '';
+		$enddate = isset($_POST['enddate']) ? $_POST['enddate'] . ' ' . $_POST['endtime_hours'] . ':' . $_POST['endtime_minutes'] : '';
         if($_SESSION['Seite'] ==5){
 		if(!DateHandler::isValid($startdate, 'd.m.Y H:i') ||
 			(intval($_POST['starttime_minutes']) % 5 != 0 && intval($_POST['starttime_minutes']) != 0)){
 				$stop=6;
 		}
 		else
-			$_SESSION['startdate'] = $startdate;
+			$_SESSION['tat_startdate'] = $startdate;
 		if(!DateHandler::isValid($enddate, 'd.m.Y H:i') ||
 			(intval($_POST['endtime_minutes']) % 5 != 0 && intval($_POST['endtime_minutes']) != 0)){
 				$stop=7;
 		}
 		else
-			$_SESSION['enddate'] = $enddate;
+			$_SESSION['tat_enddate'] = $enddate;
         if(isset($_POST['street']))$_SESSION['tat_street']=$_POST['street'];
         if(isset($_POST['housenumber']))$_SESSION['tat_housenumber']=$_POST['housenumber'];
         if(isset($_POST['postalcode']))$_SESSION['tat_postalcode']=$_POST['postalcode'];
         if(isset($_POST['place']))$_SESSION['tat_place']=$_POST['place'];
         if(isset($_POST['organization']))$_SESSION['tat_organization']=$_POST['organization'];
-        if(isset($_POST['starttime']))$_SESSION['tat_starttime']=$_POST['starttime'];
-        if(isset($_POST['endtime']))$_SESSION['tat_endtime']=$_POST['endtime'];
+       // if(isset($_POST['starttime']))$_SESSION['tat_starttime']=$_POST['starttime'];
+       // if(isset($_POST['endtime']))$_SESSION['tat_endtime']=$_POST['endtime'];
         if(isset($_POST['idTrust']))$_SESSION['tat_idTrust']=$_POST['idTrust'];
         if(isset($_POST['countHelper']))$_SESSION['tat_countHelper']=$_POST['countHelper'];
         if(isset($_POST['category']))$_SESSION['tat_category']=$_POST['category'];
-		if(isset($_POST['startdate']))$_SESSION['tat_starttime'] =$_POST['startdate'];
-		if(isset($_POST['enddate']))$_SESSION['tat_endtime'] =$_POST['enddate'];
+		//if(isset($_POST['startdate']))$_SESSION['tat_starttime'] =$_POST['startdate'];
+		//if(isset($_POST['enddate']))$_SESSION['tat_endtime'] =$_POST['enddate'];
         if(!isset($_POST['street'])){
                 $stop=1;
         }else if($_POST['housenumber']==''){
@@ -219,8 +219,8 @@ echo'
                 <br>
                 <input type="text" name="place" value="'.$_SESSION["tat_place"].'"placeholder="Stadtteil" />
                 <br>';
-				$start_dh = (new DateHandler())->set($_SESSION['startdate']);
-				$end_dh = (new DateHandler())->set($_SESSION['enddate']);
+				$start_dh = (new DateHandler())->set(isset($_SESSION['tat_startdate']) ? $_SESSION['tat_startdate'] : $startdate);
+                $end_dh = (new DateHandler())->set(isset($_SESSION['tat_enddate']) ? $_SESSION['tat_enddate'] : $enddate);
 				echo 'Beginn:<br><input type="date" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('d.m.Y') : '') . '" placeholder="DD.MM.YYYY" required />';
 				if($start_dh === false) $start_dh = (new DateHandler())->setHours(8)->setMinutes(0);
 				echo ' um <select name="starttime_hours"><option value="00"' . (intval($start_dh->getHours()) == 0 ? ' selected' : '') . '>00</option><option value="01"' . (intval($start_dh->getHours()) == 1 ? ' selected' : '') . '>01</option><option value="02"' . (intval($start_dh->getHours()) == 2 ? ' selected' : '') . '>02</option><option value="03"' . (intval($start_dh->getHours()) == 3 ? ' selected' : '') . '>03</option><option value="04"' . (intval($start_dh->getHours()) == 4 ? ' selected' : '') . '>04</option><option value="05"' . (intval($start_dh->getHours()) == 5 ? ' selected' : '') . '>05</option><option value="06"' . (intval($start_dh->getHours()) == 6 ? ' selected' : '') . '>06</option><option value="07"' . (intval($start_dh->getHours()) == 7 ? ' selected' : '') . '>07</option><option value="08"' . (intval($start_dh->getHours()) == 8 ? ' selected' : '') . '>08</option><option value="09"' . (intval($start_dh->getHours()) == 9 ? ' selected' : '') . '>09</option><option value="10"' . (intval($start_dh->getHours()) == 10 ? ' selected' : '') . '>10</option><option value="11"' . (intval($start_dh->getHours()) == 11 ? ' selected' : '') . '>11</option><option value="12"' . (intval($start_dh->getHours()) == 12 ? ' selected' : '') . '>12</option><option value="13"' . (intval($start_dh->getHours()) == 13 ? ' selected' : '') . '>13</option><option value="14"' . (intval($start_dh->getHours()) == 14 ? ' selected' : '') . '>14</option><option value="15"' . (intval($start_dh->getHours()) == 15 ? ' selected' : '') . '>15</option><option value="16"' . (intval($start_dh->getHours()) == 16 ? ' selected' : '') . '>16</option><option value="17"' . (intval($start_dh->getHours()) == 17 ? ' selected' : '') . '>17</option><option value="18"' . (intval($start_dh->getHours()) == 18 ? ' selected' : '') . '>18</option><option value="19"' . (intval($start_dh->getHours()) == 19 ? ' selected' : '') . '>19</option><option value="20"' . (intval($start_dh->getHours()) == 20 ? ' selected' : '') . '>20</option><option value="21"' . (intval($start_dh->getHours()) == 21 ? ' selected' : '') . '>21</option><option value="22"' . (intval($start_dh->getHours()) == 22 ? ' selected' : '') . '>22</option><option value="23"' . (intval($start_dh->getHours()) == 23 ? ' selected' : '') . '>23</option></select>';
@@ -265,8 +265,8 @@ if($_SESSION['Seite'] ==5){
                 //Einfügen der Guten Tat
                 $uid = DBFunctions::db_idOfBenutzername($_USER->getUsername());
                 $plz = DBFunctions::db_getIdPostalbyPostalcodePlace($_SESSION['tat_postalcode'], $_SESSION['tat_place']);
-                $start_dh = (new DateHandler())->set($_SESSION['tat_starttime']);
-                $end_dh = (new DateHandler())->set($_SESSION['tat_endtime']);
+				$start_dh = (new DateHandler())->set($_SESSION['tat_startdate']);
+                $end_dh = (new DateHandler())->set($_SESSION['tat_enddate']);
                 DBFunctions::db_createGuteTat($_SESSION['tat_name'], $uid, DBFunctions::db_getCategorytextbyCategoryid($_SESSION['tat_category']), $_SESSION['tat_street'], $_SESSION['tat_housenumber'], 
                                                                           $plz, $start_dh->get(),$end_dh->get(), $_SESSION['tat_organization'], $_SESSION['tat_countHelper'],
                                                                           $_SESSION['tat_idTrust'], $_SESSION['tat_description'], $_SESSION['tat_pictures']);
