@@ -104,6 +104,11 @@ else
 				$output .= "<red>Geben Sie eine gültige Email-Adresse an!</red><br>";
 				$error = true;
 			}
+			else if(DBFunctions::db_idOfEmailAdresse(strtolower($mail)) <> false) {
+				$output .= "<red>Die angegebene Email-Adresse wird bereits für einen anderen Account verwendet</red><br>";
+				$error = true;
+			}
+
 
 			if(!neuerAcount($sjdnjghbeid))
 			{
