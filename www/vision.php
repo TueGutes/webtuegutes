@@ -14,7 +14,7 @@ require './includes/_top.php';
 <h2>Unsere Vision</h2>
 <h3>Stell dir vor...</h3>
 
-du würdest dich heute entschließen drei fremden Menschen etwas gutes zu tun. <br>
+du würdest dich heute entschließen drei fremden Menschen etwas Gutes zu tun. <br>
 Sie sind dir dankbar und helfen jeder wiederum drei Menschen ohne eine Gegenleistung zu erwarten. <br>
 Es nimmt seinen Lauf und nach <b>nur 12 Tagen</b> wurde jedem Menschen in Hannover geholfen. <br>
 Damit nicht genug. Die Botschaft verbreitet sich auf der ganzen Welt <br>
@@ -28,7 +28,7 @@ Wir widmeten uns der Frage wie man es Menschen erleichtert Hilfe zu bekommen <br
 und umgekehrt auch auf vielfältige und einfache Art Hilfe zu leisten <br><br>
 Frei nach dem Motto: <br>
 
-<h4> "Sei selbst die Veränderung, die du dir für diese Welt wünscht!" </h4>
+<h4> „Sei selbst die Veränderung, die du dir für diese Welt wünscht!“ </h4>
 <br>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/OYrPa0MEteM" frameborder="0" allowfullscreen></iframe>
 

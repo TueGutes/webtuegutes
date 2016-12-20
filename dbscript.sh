@@ -7,7 +7,7 @@ case "$(uname -s)" in
      ;;
 
    Linux)
-     echo 'Dein Betriebssystem ist Linux'
+     echo 'Dein Betriebssystem ist Linux!!'
      ;;
 
    CYGWIN*|MINGW32*|MSYS*)
@@ -21,3 +21,5 @@ case "$(uname -s)" in
      echo 'Dein Betriebssystem ist other OS' 
      ;;
 esac
+
+vendor/bin/phinx migrate -e testing
