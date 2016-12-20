@@ -152,16 +152,21 @@ echo '
 } 
 }
 if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
+		$startdate = $_POST['startdate'] . ' ' . $_POST['starttime_hours'] . ':' . $_POST['starttime_minutes'];
+		$enddate = $_POST['enddate'] . ' ' . $_POST['endtime_hours'] . ':' . $_POST['endtime_minutes'];
         if($_SESSION['Seite'] ==5){
-		if(!isset($_POST['startdate']) ||
-                        (intval($_POST['starttime_minutes']) % 5 != 0 && intval($_POST['starttime_minutes']) != 0) ||
-                        !DateHandler::isValid($_POST['startdate'] . ' ' . $_POST['starttime_hours'] . ':' . $_POST['starttime_minutes'], 'd.m.Y H:i')){
-                        $stop=6;
-                }else if(!isset($_POST['enddate']) ||
-                        (intval($_POST['endtime_minutes']) % 5 != 0 && intval($_POST['endtime_minutes']) != 0) ||
-                        !DateHandler::isValid($_POST['enddate'] . ' ' . $_POST['endtime_hours'] . ':' . $_POST['endtime_minutes'], 'd.m.Y H:i')){
-                        $stop=7;
-                }
+		if(!DateHandler::isValid($startdate, 'd.m.Y H:i') ||
+			(intval($_POST['starttime_minutes']) % 5 != 0 && intval($_POST['starttime_minutes']) != 0)){
+				$stop=6;
+		}
+		else
+			$_SESSION['startdate'] = $startdate;
+		if(!DateHandler::isValid($enddate, 'd.m.Y H:i') ||
+			(intval($_POST['endtime_minutes']) % 5 != 0 && intval($_POST['endtime_minutes']) != 0)){
+				$stop=7;
+		}
+		else
+			$_SESSION['enddate'] = $enddate;
         if(isset($_POST['street']))$_SESSION['tat_street']=$_POST['street'];
         if(isset($_POST['housenumber']))$_SESSION['tat_housenumber']=$_POST['housenumber'];
         if(isset($_POST['postalcode']))$_SESSION['tat_postalcode']=$_POST['postalcode'];
@@ -188,8 +193,7 @@ if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
 			}        
 if($stop!=0)$_SESSION['Seite'] =4;
 if($_SESSION['Seite'] ==4){
-	if(!isset($startdate))$startdate='';
-	if(!isset($enddate))$enddate='';
+
 echo'
 <h2>Rahmendaten</h2>
 <h3>Hier noch einmal alle notwendigen Informationen für Bewerber.</h3>';
@@ -215,8 +219,8 @@ echo'
                 <br>
                 <input type="text" name="place" value="'.$_SESSION["tat_place"].'"placeholder="Stadtteil" />
                 <br>';
-				$start_dh = (new DateHandler())->set($startdate);
-				$end_dh = (new DateHandler())->set($enddate);
+				$start_dh = (new DateHandler())->set($_SESSION['startdate']);
+				$end_dh = (new DateHandler())->set($_SESSION['enddate']);
 				echo 'Beginn:<br><input type="date" name="startdate" value="' . ($start_dh !== false ? $start_dh->get('d.m.Y') : '') . '" placeholder="DD.MM.YYYY" required />';
 				if($start_dh === false) $start_dh = (new DateHandler())->setHours(8)->setMinutes(0);
 				echo ' um <select name="starttime_hours"><option value="00"' . (intval($start_dh->getHours()) == 0 ? ' selected' : '') . '>00</option><option value="01"' . (intval($start_dh->getHours()) == 1 ? ' selected' : '') . '>01</option><option value="02"' . (intval($start_dh->getHours()) == 2 ? ' selected' : '') . '>02</option><option value="03"' . (intval($start_dh->getHours()) == 3 ? ' selected' : '') . '>03</option><option value="04"' . (intval($start_dh->getHours()) == 4 ? ' selected' : '') . '>04</option><option value="05"' . (intval($start_dh->getHours()) == 5 ? ' selected' : '') . '>05</option><option value="06"' . (intval($start_dh->getHours()) == 6 ? ' selected' : '') . '>06</option><option value="07"' . (intval($start_dh->getHours()) == 7 ? ' selected' : '') . '>07</option><option value="08"' . (intval($start_dh->getHours()) == 8 ? ' selected' : '') . '>08</option><option value="09"' . (intval($start_dh->getHours()) == 9 ? ' selected' : '') . '>09</option><option value="10"' . (intval($start_dh->getHours()) == 10 ? ' selected' : '') . '>10</option><option value="11"' . (intval($start_dh->getHours()) == 11 ? ' selected' : '') . '>11</option><option value="12"' . (intval($start_dh->getHours()) == 12 ? ' selected' : '') . '>12</option><option value="13"' . (intval($start_dh->getHours()) == 13 ? ' selected' : '') . '>13</option><option value="14"' . (intval($start_dh->getHours()) == 14 ? ' selected' : '') . '>14</option><option value="15"' . (intval($start_dh->getHours()) == 15 ? ' selected' : '') . '>15</option><option value="16"' . (intval($start_dh->getHours()) == 16 ? ' selected' : '') . '>16</option><option value="17"' . (intval($start_dh->getHours()) == 17 ? ' selected' : '') . '>17</option><option value="18"' . (intval($start_dh->getHours()) == 18 ? ' selected' : '') . '>18</option><option value="19"' . (intval($start_dh->getHours()) == 19 ? ' selected' : '') . '>19</option><option value="20"' . (intval($start_dh->getHours()) == 20 ? ' selected' : '') . '>20</option><option value="21"' . (intval($start_dh->getHours()) == 21 ? ' selected' : '') . '>21</option><option value="22"' . (intval($start_dh->getHours()) == 22 ? ' selected' : '') . '>22</option><option value="23"' . (intval($start_dh->getHours()) == 23 ? ' selected' : '') . '>23</option></select>';
