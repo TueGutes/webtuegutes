@@ -34,7 +34,9 @@ class DBFunctions
 	*@return object Datenbankverbindungsobjekt auf dem gearbeitet werden kann
 	*/
 	public function db_connect() {
-		return mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+		$db = mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+		$db->set_charset('utf8');
+		return $db;
 	}
 
 	/**
