@@ -14,9 +14,6 @@ require './includes/_top.php';
 if(isset($_GET['Seite'])){
 	$_SESSION['Seite'] =$_GET['Seite'];
 }
-else{
-	$_SESSION['Seite']=0;
-}
 //Initialisiert alle Variablen bei Erststart
 if(!isset($_SESSION['Seite']))$_SESSION['Seite'] =0;
 if($_SESSION['Seite']==0){
