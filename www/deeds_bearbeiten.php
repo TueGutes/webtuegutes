@@ -159,7 +159,7 @@ echo'
 		<center>
 		<br>
 		<br>
-		<form method="post" action="<?php echo $link; ?>" enctype="multipart/form-data">
+		<form method="post" action="'.$link.'" enctype="multipart/form-data">
 		<table>
 			<tr>
 				
