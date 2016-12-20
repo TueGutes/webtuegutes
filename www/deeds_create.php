@@ -389,12 +389,11 @@ if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
 					
 					if($lFoundValues['retHouseNumber'] == "")
 					{
-						$lAddMailContent = "<br>Die Hausnummer " . $_SESSION['tat_housenumber'] . " der Straße " . $_SESSION['tat_street'] . " wurde nicht gefunden. Bitte prüfen.";
+						$lAddMailContent = "<br>Die Hausnummer '" . $_SESSION['tat_housenumber'] . "' der Straße '" . $_SESSION['tat_street'] . "' im Ort '"
+							. $_SESSION['tat_place'] . "' wurde nicht gefunden. Bitte prüfen.";
 					}
 				}			
-			}
-			
-			
+			}		
 		}        
 	if(($stop != 0) || ($errorMessage != ""))
 	{
@@ -463,7 +462,7 @@ if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
 				echo'</select><br><br>
                 <br>
 				<a href=./deeds_create?Seite=3><input type="button" name="button" value="zurück" /></a>
-                <input type="submit" name="button" value="weiter" />
+                <input type="submit" name="button" value="Absenden" />
 	</form></div>';
 	}
 }
@@ -484,10 +483,13 @@ if($_SESSION['Seite'] ==5){
 				
 				$category = DBFunctions::db_getCategorytextbyCategoryid($_SESSION['tat_category']);
 				
-				/* echo $name . ', ' . $uid . ', ' . $category . ', ' . $street . ', '. $housenumber . ', ' . $lIdPostal . ', ' . $start_dh->get() . ', ' . $end_dh->get() . ', ' . $organization . ', ' . $countHelper . ', ' .  $idTrust . ', ' . $description . ', ' . $pictures; */
-								
 				$start_dh = (new DateHandler())->set($_SESSION['tat_startdate']);
                 $end_dh = (new DateHandler())->set($_SESSION['tat_enddate']);
+				
+				/*echo $_SESSION['tat_name'] . ", " . $uid  . ", " . $category . ", " .  $_SESSION['tat_street']  . ", " 
+					.  $_SESSION['tat_housenumber']  . ", " . $lIdPostal  . ", " .  $start_dh->get()  . ", " 
+					. $end_dh->get()  . ", " .  $_SESSION['tat_organization']  . ", " .  $_SESSION['tat_countHelper']
+					 . ", " . $_SESSION['tat_idTrust']  . ", " .  $_SESSION['tat_description']  . ", " .  $_SESSION['tat_pictures'];	*/	
 				
                 DBFunctions::db_createGuteTat($_SESSION['tat_name'], $uid, $category		
 				, $_SESSION['tat_street'], $_SESSION['tat_housenumber'], 
