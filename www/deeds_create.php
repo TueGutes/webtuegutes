@@ -280,15 +280,16 @@ if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
 					$errorMessage .= "Der Endzeitpunkt muss hinter dem Startzeitpunkt liegen.<br>";
 				}
 			}
-			
+						
 			// Organization check.
 			if(!isset($_POST['organization']) || ($_POST['organization'] == ""))
 			{
-				$errorMessage .= "Bitte eine Organisation angeben.<br>";
+				//$errorMessage .= "Bitte eine Organisation angeben.<br>";
+				$_SESSION['tat_organization'] = "";
 			}
 			else
 			{
-				$_SESSION['tat_organization']=$_POST['organization'];
+				$_SESSION['tat_organization'] = $_POST['organization'];
 			}
 			
 			// TODO: Check.
