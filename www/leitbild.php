@@ -29,6 +29,7 @@ require './includes/_top.php';
   Unser großes Anliegen ist es, <br>dass jeder Mensch nach Hilfe fragen kann,
   <br>unabhängig von körperlichen und geistigen Einschränkungen.
   <br><br>
+  
   Mit jeder guten Tat wird ein Teil der Verantwortung in der Gesellschaft übernommen
 <br>
 </div>

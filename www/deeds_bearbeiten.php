@@ -133,8 +133,6 @@ if(isset($_FILES['picture'])){
 	if($data==NULL){
 	}else{
 		//Bei Bedarf aendern
-		$bildgroesze = 600*1024; 
-		$kb = $bildgroesze/1024;
 //falls es mehr Bildformate geben sollte, bitte ergänzen
 $bildformate = array('jpeg','jpg', 'gif','png');
 $dateiendung = strtolower(pathinfo($_FILES['picture']['name'], PATHINFO_EXTENSION));
@@ -142,8 +140,8 @@ $dateiendung = strtolower(pathinfo($_FILES['picture']['name'], PATHINFO_EXTENSIO
 if(!in_array($dateiendung, $bildformate)) {
 //zünded auch wenn kein Bild angegeben wurde...wird noch gefixt
  //echo'<h2>Bitte ein Bild hochladen.</h2>';
-}else if($_FILES['picture']['size'] > $bildgroesze) {
- echo("Die Maximalgröße beträgt $kb kb.");
+}else if($_FILES['picture']['size'] > 10000000) {			
+ echo '<red><h3>bitte ein Bild mit einer Größe unter 1mb hochladen.</h3></red>';
 }else{																		     
 $gleichcodiert='data: ' . mime_content_type($_FILES['picture']['tmp_name']) . ';base64,' . base64_encode (file_get_contents($_FILES['picture']['tmp_name']));
 DBFunctions::db_update_deeds_picture($gleichcodiert,$idGuteTat);	
@@ -156,7 +154,7 @@ DBFunctions::db_update_deeds_picture($gleichcodiert,$idGuteTat);
 $link = './deeds_bearbeiten?idGuteTat=' . $idGuteTat;
 $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 
-?> 
+echo'
 
 		<center>
 		<br>
@@ -166,14 +164,14 @@ $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 			<tr>
 				
 				<td><h3>Name der Tat: </td>
-				<td><h3><?php echo '<input type="text" name="name" placeholder="Neuer Name" value="'.$tat['name'].'">'?></td>	
+				<td><h3><input type="text" name="name" placeholder="Neuer Name" value="'.$tat['name'].'"></td>	
 			</tr>
 			<tr>
 			<td><h3>Bild:</h3></td>
 			<td></td>	
 			</tr>	
 			<tr>
-			<td colspan="2"><?php echo '<img src="'.$tat["pictures"] .'" >'?><br><input type="file" name="picture" accept="image/*"></td>
+			<td colspan="2"><img src="'.$tat["pictures"] .'" ><br><input type="file" name="picture" accept="image/*"></td>
 			<td></td>	
 			</tr>	
 			<tr>			
@@ -181,17 +179,22 @@ $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 				<td><h3></td>	
 			</tr>
 			<tr>			
-				<td colspan="2"><h3><?php echo '<textarea id="text" type="textarea" cols="65" rows="6" name="description" placeholder="neue Beschreibung">'.$tat['description'].'</textarea>'?></td>	
+				<td colspan="2"><h3><textarea id="text" type="textarea" cols="65" rows="6" name="description" placeholder="neue Beschreibung">'.$tat['description'].'</textarea></td>	
 			</tr>
 			<tr>
 				<td><h3>Kategorie: </td>
-				<td>
-				<select name="category" size="1">
-				<?php echo'<option ';if($tat['category']==='Altenheim'){echo'selected ';} echo'value="Altenheim">Altenheim</option>';
-					  echo'<option ';if($tat['category']==='Busbahnhof'){echo'selected ';} echo'value="Busbahnhof">Busbahnhof</option>';
-					  echo'<option ';if($tat['category']==='Müll einsammeln'){echo'selected ';} echo'value="Müll einsammeln">Müll einsammeln</option>';
-					?>
-				</select></td>
+				<td>';
+
+				$kz=0;//KategorieZähler
+				echo'<select name="category">';		
+				while(DBFunctions::db_doesCategoryIDExist(++$kz)){
+					echo'<option value="'.$kz.'">'.DBFunctions::db_getCategorytextbyCategoryid($kz).'</option>';			
+					}	
+				echo'</select><br><br>
+                <br>
+				</form></div>
+}
+}</td>
 			</tr>
 			<tr>
 				<td><h3>Straße: </td>
@@ -226,10 +229,10 @@ $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 				<td><h3>Erforderlicher Verantwortungslevel: </td>
 				<td>
 				<select name="idTrust" size="1">
-				<?php echo'<option ';if($tat['idTrust']=='1'){echo'selected ';} echo'value="1">1</option>';
+				 <option ';if($tat['idTrust']=='1'){echo'selected ';} echo'value="1">1</option>';
 					  echo'<option ';if($tat['idTrust']=='2'){echo'selected ';} echo'value="2">2</option>';
-					  echo'<option ';if($tat['idTrust']=='3'){echo'selected ';} echo'value="3">3</option>';
-					?>
+					  echo'<option ';if($tat['idTrust']=='3'){echo'selected ';} echo'value="3">3</option>
+					
 				</select></td>
 			</tr>
 		</table>
@@ -243,4 +246,5 @@ $zeit=$tat['starttime'].'<br> bis <br>'.$tat['endtime'];
 		</form>
 		</center>
 		</form>
-<?php require "./includes/_bottom.php";?>
+ require "./includes/_bottom.php";';
+ ?>

@@ -104,6 +104,11 @@ else
 				$output .= "<red>Geben Sie eine gültige Email-Adresse an!</red><br>";
 				$error = true;
 			}
+			else if(DBFunctions::db_idOfEmailAdresse(strtolower($mail)) <> false) {
+				$output .= "<red>Die angegebene Email-Adresse wird bereits für einen anderen Account verwendet</red><br>";
+				$error = true;
+			}
+
 
 			if(!neuerAcount($sjdnjghbeid))
 			{
@@ -155,8 +160,17 @@ require "./includes/_top.php";
 		<input type="password" name="passwortwdh" value="" placeholder="<?php echo "Passwort wiederholen"; ?>" required /><br>
 		<input type="text" name="mail" value="<?php echo $mail; ?>" placeholder="<?php echo "E-Mail Adresse"; ?>" required /><br>
 		<br>
-		<input id="cAGB" type="checkbox" name="cbdatenschutzAgb">
-		<label for="cAGB">Ich habe die <a href=<?php echo $HOST . "/privacy"?>>Datenschutzerklärung</a> gelesen und akzeptiere sie</label> <!-- TODO: AGB hinzufügen sobald verfügbar -->
+		<table class='block'>
+			<tr>
+				<td><input id="cAGB" type="checkbox" name="cbdatenschutzAgb">
+					<label for="cAGB">Ich habe die <a href=<?php echo $HOST . "/privacy"?>>Datenschutzerklärung</a> gelesen <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;und akzeptiere sie (erforderlich)</label> </td><!-- TODO: AGB hinzufügen sobald verfügbar -->
+			</tr>
+
+			<tr>
+				<td><input id="cLeitbild" type="checkbox" name="cbLeitbild">
+					<label for="cLeitbild">Ich habe das <a href=<?php echo $HOST . "/leitbild"?>>Leitbild</a> gelesen  und <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;teile die Überzeugungen und Werte</label></td>
+			<tr>
+		</table>
 		<br>
 		<br>
 		<input type='hidden' name='set' value='1' />

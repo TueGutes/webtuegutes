@@ -91,7 +91,7 @@ else
 {
 	echo '<div class="fb-like" 
 		data-href="https://www.facebook.com/tueGutesinHannover" 
-		data-width="600" 
+		data-width="350" 
 		data-layout="standard" 
 		data-action="like" 
 		data-size="small" 
@@ -99,7 +99,7 @@ else
 		data-share="false">
 	</div>';
 	
-	echo "<br>";
+	echo "<br><br>";
 	echo "<a href='./deeds_create'><input type='button' value='Gute Tat erstellen' /></a><br>";
 
 	echo "
