@@ -245,7 +245,7 @@ echo'
 				Kategorie:<br>';
 				//todo: mehr datenbankzugriffe als nötig
 				//todo: Kategorien müssen fortlaufend sein
-				$kz=0;//KategorieZähler, kein Nazischeiss	
+				$kz=0;//KategorieZähler
 				echo'<select name="category">';		
 				while(DBFunctions::db_doesCategoryIDExist(++$kz)){
 					echo'<option value="'.$kz.'">'.DBFunctions::db_getCategorytextbyCategoryid($kz).'</option>';			
