@@ -136,7 +136,7 @@ if($_SESSION['Seite'] ==3){
 echo'
 <h2>Beschreibe deine Tat.</h2>
 <h3>Was und wie ist es zu tun? </h3>';
-if($stop==1)echo '<h3><red>Bitte beschreibe deine Tat.</red></h3><br>';
+if($stop==1)echo '<h3><red>Bitte beschreibe deine Tat.</red></h3>';
 echo '
 <br><br>
 <div class="center block deeds_create">
@@ -182,10 +182,7 @@ if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
                 $stop=3;
         }else if($_POST['place']==''){
                 $stop=4;
-        }else if($_POST['organization']==''){
-                $stop=5;
-		}
-		else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($_POST['postalcode'],$_POST['place'])==false)){
+        }else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($_POST['postalcode'],$_POST['place'])==false)){
                 $stop=8;
         }
 			}        
@@ -248,7 +245,7 @@ echo'
 				Kategorie:<br>';
 				//todo: mehr datenbankzugriffe als nötig
 				//todo: Kategorien müssen fortlaufend sein
-				$kz=0;//KategorieZähler, kein Nazischeiss	
+				$kz=0;//KategorieZähler
 				echo'<select name="category">';		
 				while(DBFunctions::db_doesCategoryIDExist(++$kz)){
 					echo'<option value="'.$kz.'">'.DBFunctions::db_getCategorytextbyCategoryid($kz).'</option>';			
