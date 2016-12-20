@@ -1,7 +1,6 @@
 <?php
 /*
 *@	Autor Christian Hock
-	kekse können fliegen
 	alpha in zusammenarbeit mit Klaus Sobotta
 	Mailsysstem: Nick Nolting
 	Kalenderfunktion: Henrik Huckauf
