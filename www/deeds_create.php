@@ -166,7 +166,7 @@ if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
 				$stop=7;
 		}
 		else
-			$_SESSION['enddate'] = $enddate;
+			$_SESSION['tat_enddate'] = $enddate;
         if(isset($_POST['street']))$_SESSION['tat_street']=$_POST['street'];
         if(isset($_POST['housenumber']))$_SESSION['tat_housenumber']=$_POST['housenumber'];
         if(isset($_POST['postalcode']))$_SESSION['tat_postalcode']=$_POST['postalcode'];
