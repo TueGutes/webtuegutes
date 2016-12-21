@@ -163,12 +163,12 @@ require "./includes/_top.php";
 		<table class='block'>
 			<tr>
 				<td><input id="cAGB" type="checkbox" name="cbdatenschutzAgb">
-					<label for="cAGB">Ich habe die <a href=<?php echo $HOST . "/privacy"?>>Datenschutzerklärung</a> gelesen <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;und akzeptiere sie (erforderlich)</label> </td><!-- TODO: AGB hinzufügen sobald verfügbar -->
+					<label for="cAGB">Ich habe die <a href=<?php echo $HOST . "/privacy"; ?> target="_blank">Datenschutzerklärung</a> gelesen <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;und akzeptiere sie (erforderlich)</label> </td><!-- TODO: AGB hinzufügen sobald verfügbar -->
 			</tr>
 
 			<tr>
 				<td><input id="cLeitbild" type="checkbox" name="cbLeitbild">
-					<label for="cLeitbild">Ich habe das <a href=<?php echo $HOST . "/leitbild"?>>Leitbild</a> gelesen  und <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;teile die Überzeugungen und Werte</label></td>
+					<label for="cLeitbild">Ich habe das <a href=<?php echo $HOST . "/terms"; ?> target="_blank">Leitbild</a> gelesen und <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;teile die Überzeugungen und Werte</label></td>
 			<tr>
 		</table>
 		<br>
