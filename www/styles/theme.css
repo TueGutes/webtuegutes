@@ -952,6 +952,11 @@ red
 {
 	padding-right: 70px;
 }
+.deed_details tr td:first-child,
+.deed_details tr td:nth-child(3)
+{
+	text-decoration: underline;
+}
 .deed_details td
 {
 	padding-bottom: 6px;
