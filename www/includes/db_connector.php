@@ -1846,7 +1846,6 @@ class DBFunctions
 	public function db_update_deeds_starttime($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		echo $data;
 		$sql ="UPDATE Deeds
 			SET
 			Deeds.starttime = ?
