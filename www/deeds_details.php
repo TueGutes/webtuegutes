@@ -73,7 +73,7 @@ else
 						</tr>
 						<tr>
 							<td class="infoLabel">Adresse:</td>
-							<td rowspan="3" class="addressValue">' . $deed['street'] . '&nbsp;' . $deed['housenumber'] . ', ' . $deed['postalcode'] . '&nbsp;' . $deed['place'] . '</td>
+							<td rowspan="3" class="addressValue">' . $deed['street'] . '&nbsp;' . $deed['housenumber'] . ', ' . "30159"/*$deed['postalcode']*/ . '&nbsp;' . "Hannover"/*$deed['place']*/ . '</td>
 						</tr>
 					<tbody>
 				</table>
