@@ -170,7 +170,7 @@ Frei nach dem Motto: </p>
 	<h3 id="Timm">Timm</h3>
 	<img class="team_pic_links" src="./img/team/Timm.JPG" alt="Foto von Timm" width="30%">
 	<p>In der heutigen Gesellschaft kommt es einem, zumindest mir, so vor, als ob die Menschen immer weniger Zeit hätten, sich sozial zu engagieren. Sogar ich persönlich habe nie so recht die Zeit und Motivation gefunden, mich gesellschaftlich zu engagieren. Mit TueGutes kann ich nun einen Beitrag zur Gesellschaft leisten, Menschen zu helfen, sei es auch nur eine Plattform zu erstellen um mögliches Engagement zugänglicher zu gestalten.<br><br>
-	In dem Projekt bin ich der Verantwortliche für die Datenbank und den Zugriff darauf, sodass die Plattform optimal funktioniert. Das es eine recht aufwendige Aufgabe, da es die Schnittstelle zwischen Datenspeicherung und Anwendung ist. Insbesondere während der Softwareentwicklung, da sich noch viele Aspekte ändern können und sich dementsprechend Arbeit ansammelt.<br><br>
+	In dem Projekt bin ich der Verantwortliche für die Datenbank und den Zugriff darauf, sodass die Plattform optimal funktioniert. Das ist eine recht aufwendige Aufgabe, da es die Schnittstelle zwischen Datenspeicherung und Anwendung ist. Insbesondere während der Softwareentwicklung, da sich noch viele Aspekte ändern können und sich dementsprechend Arbeit ansammelt.<br><br>
 	Für mich ist das Projekt TueGutes ein voller Erfolg, da ich neue Technologien lernen konnte und ich mich freue, ein Teil dieser Plattform und des Projektteams sein zu können.</p>
 </div>
 
