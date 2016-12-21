@@ -5,9 +5,9 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
-ErrorDocument 403 /error
-ErrorDocument 404 /error
-ErrorDocument 500 /error
+ErrorDocument 403 /tueGutes/presentation/error
+ErrorDocument 404 /tueGutes/presentation/error
+ErrorDocument 500 /tueGutes/presentation/error
 
 			
 # Timm	
