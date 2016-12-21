@@ -446,9 +446,13 @@ if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
                 <br>
 				Erforderlicher Verantwortungslevel:<br>
 				<select name="idTrust">
-					<option value="1"<?php echo $_SESSION[';echo"'";echo"tat_idTrust']";echo' == 1?" selected":""; >1</option>
-					<option value="2"<?php echo $_SESSION[';echo"'";echo"tat_idTrust']";echo' == 2?" selected":""; >2</option>
-					<option value="3"<?php echo $_SESSION[';echo"'";echo"tat_idTrust']";echo' == 3?" selected":""; >3</option>
+					<option value="1"<?php echo $_SESSION[';echo"'";echo"tat_idTrust']";echo' == 1?" selected":""; >1 - Neuling</option>
+					<option value="2"<?php echo $_SESSION[';echo"'";echo"tat_idTrust']";echo' == 2?" selected":""; >2 - Mitglied</option>
+					<option value="3"<?php echo $_SESSION[';echo"'";echo"tat_idTrust']";echo' == 3?" selected":""; >3 - Stammmitglied</option>
+					<option value="4"<?php echo $_SESSION[';echo"'";echo"tat_idTrust']";echo' == 4?" selected":""; >4 - Veteran</option>
+					<option value="5"<?php echo $_SESSION[';echo"'";echo"tat_idTrust']";echo' == 5?" selected":""; >5 - Guter Freund</option>
+					<option value="6"<?php echo $_SESSION[';echo"'";echo"tat_idTrust']";echo' == 6?" selected":""; >6 - Familienmitglied</option>
+					<option value="7"<?php echo $_SESSION[';echo"'";echo"tat_idTrust']";echo' == 7?" selected":""; >7 - Seelenverwandter</option>
 				</select>
                 <br><br>
 				Kategorie:<br>';
