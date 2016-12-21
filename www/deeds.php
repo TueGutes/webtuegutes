@@ -26,7 +26,7 @@ if (!isset($_POST['status'])) {
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
 	<div class="fb-like" 
 		data-href="https://www.facebook.com/tueGutesinHannover" 
-		data-width="600" 
+		data-width="350" 
 		data-layout="standard" 
 		data-action="like" 
 		data-size="small" 

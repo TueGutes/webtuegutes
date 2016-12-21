@@ -4,12 +4,100 @@
 	alpha in zusammenarbeit mit Klaus Sobotta
 	Mailsysstem: Nick Nolting
 	Kalenderfunktion: Henrik Huckauf
+	Ergänzungen: Alexander Gauggel
 enthält Teile von deeds_create und deeds_bearbeiten
 */
 require './includes/DEF.php';
 require './includes/UTILS.php';
 require './includes/db_connector.php';
 require './includes/_top.php';
+
+// ALEX
+include "./includes/streets.php";
+
+	// ALEX: Returns postal code, place and house number to a given address.
+	function getPostalPlaceToAddress($pStreet, $pHouseNumber, $pPlace)
+	{
+		// ALEX2: Added entry retHouseNumber.
+		$lRetVals = [
+			"retPostal" => "",
+			"retPlace" => "",
+			"retHouseNumber" => "",
+		];
+		// ALEX2: Added value $lHouseNumber to set a valid search value if neccessary.
+		$lHouseNumber = (!is_numeric($pHouseNumber)) ? 1 : $pHouseNumber;
+
+		// Create address in format "<street>[+<street appendices],<house number>,Hannover".
+		$lAddressString = $pStreet . ',' . $pHouseNumber . ',' . $pPlace;
+		// Replace empty spaces.
+		$lAddressString = str_replace(' ', '+', $lAddressString);
+		// Get JSON result.
+		$lContents = file('http://nominatim.openstreetmap.org/search?format=json&limit=2&q=' . $lAddressString);
+		// Put string in new variable for safety.
+		$lResult = $lContents[0];
+
+		// TODO: Raus
+		//echo $lResult;
+		//echo strlen($lResult);
+
+		// ALEX2: If result string is too short, no address was found.
+		if(strlen($lResult) < 10)
+		{
+			return $lRetVals;
+		}
+
+		$lContents = explode('"', $lResult);
+		// Get the proper string containing postal code and place.
+		$lFoundIndex = -1;
+		for($i = 0; $i < sizeof($lContents); $i++)
+		{
+			if(stripos($lContents[$i], 'display_name') !== false)
+			{
+				$lFoundIndex = $i + 2;
+				break;
+			}
+		}
+		if($lFoundIndex === -1)
+		{
+			return $lRetVals;
+		}
+		// Put string in variable for safety.
+		$lResult = $lContents[$lFoundIndex];
+		$lContents = explode(',', $lResult);
+
+		// Important for correctness.
+		// OSM indices for place and postal code.
+		if(sizeof($lContents) < 9)
+		{
+			$lIndexPlace = 2;
+		}
+		else
+		{
+			$lIndexPlace = 3;
+		}
+		$lIndexPostal = sizeof($lContents) - 2;
+
+		$size = sizeof($lContents);
+		// Set return values.
+		$lRetVals['retPostal'] = $lContents[$lIndexPostal];
+		$lRetVals['retPlace'] = $lContents[$lIndexPlace];
+
+		// ALEX2: If housenumber was given, check if it was found.
+		if(is_numeric($pHouseNumber))
+		{
+			if(is_numeric($lContents[0]))
+			{
+				$lRetVals['retHouseNumber'] = $lContents[0];
+			}
+			else if(is_numeric($lContents[1]))
+			{
+				$lRetVals['retHouseNumber'] = $lContents[1];
+			}
+		}
+
+		return $lRetVals;
+	}
+
 //Zeigt an auf welcher Unterseite man gerade ist.
 if(isset($_GET['Seite'])){
 	$_SESSION['Seite'] =$_GET['Seite'];
@@ -50,7 +138,7 @@ if($_SESSION['Seite'] ==2) {
 }
 if($_SESSION['Seite'] ==1 ||$_SESSION['Seite'] ==3){
 echo'
-<h2>Wähle zuerst einen aussagekräftigen Namen für deine Tat. :)</h2>
+<h2>Wähle zuerst einen aussagekräftigen Namen für deine gute Tat</h2>
 <h3>Jede Tat hat einen eigenen Namen und kann auch durch diesen gesucht werden. Deine Tat wird dem entsprechend öfter aufgerufen, wenn dein Name intuitiv verständlich ist.</h3>
 <br><br>';
 //Fehlermeldung für nicht erfolgreichen Aufruf.
@@ -62,7 +150,7 @@ echo'
         <form action="./deeds_create?Seite=2" method="POST">
                 <br>
                 <br>
-                <input type="text" name="name" value="';echo $_SESSION['tat_name'] ;echo'" placeholder="Name der Tat" />
+                <input type="text" name="name" value="';echo $_SESSION['tat_name'] ;echo'" placeholder="Name der guten Tat" />
                 <br>
                 <br>
                 <input type="submit" name="button" value="weiter" />
@@ -73,11 +161,11 @@ echo'
 if($_SESSION['Seite'] ==2 || $_SESSION['Seite']==3){
         if(isset($_FILES['pictures']))$_SESSION['tat_pictures']=$_FILES['pictures'];        
         if($_SESSION['Seite']==2){
-echo'
-<h2>Möchtest du ein Bild hochladen?</h2>
-<h3>Taten mit Bildern werden eher von anderen Nutzern angeklickt.</h3>
-<br><br>
-<div class="center block deeds_create"> 
+				echo'
+				<h2>Möchtest du ein Bild hochladen?</h2>
+				<h3>Gute Taten mit Bildern werden eher von anderen Nutzern angeklickt.</h3>
+				<br><br>
+				<div class="center block deeds_create"> 
                 <br>
                 <br>
                 <form action="" method="POST" enctype="multipart/form-data">        
@@ -120,8 +208,8 @@ echo'
                 echo'
                 <a href=./deeds_create?Seite=1><input type="button" name="button" value="zurück" /></a>
                 <input type="submit" name="button" value="weiter" />
-</form></div>';
-}
+		</form></div>';
+	}
 }
 //Beschreibung setzen
 if(($_SESSION['Seite'] ==3 || $_SESSION['Seite'] ==4)){        
@@ -133,91 +221,208 @@ if($_SESSION['Seite'] ==4){
 }
 }
 if($_SESSION['Seite'] ==3){        
-echo'
-<h2>Beschreibe deine Tat.</h2>
-<h3>Was und wie ist es zu tun? </h3>';
-if($stop==1)echo '<h3><red>Bitte beschreibe deine Tat.</red></h3>';
-echo '
-<br><br>
-<div class="center block deeds_create">
-                <form action="./deeds_create?Seite=4" method="POST" enctype="multipart/form-data">
-                <br>
-                <br>
-                <textarea id="text" name="description" rows="10" placeholder="Beschreiben Sie die auszuführende Tat. Werben Sie für Ihr Angebot. Nutzen sie ggf. eine Rechtschreibüberprüfung." >';echo $_SESSION['tat_description'] ;echo'</textarea>
-                <br><br>
-                <br>
-                <a href=./deeds_create?Seite=2><input type="button" name="button" value="zurück" /></a>
-                <input type="submit" name="button" value="weiter" />
-</form></div>';
-} 
+	echo'
+	<h2>Beschreibe deine Tat.</h2>
+	<h3>Was soll durchgeführt werden und wie ist es zu tun?</h3>';
+	if($stop==1)echo '<h3><red>Bitte beschreibe deine Tat.</red></h3>';
+	echo '
+	<br><br>
+	<div class="center block deeds_create">
+					<form action="./deeds_create?Seite=4" method="POST" enctype="multipart/form-data">
+					<br>
+					<br>
+					<textarea id="text" name="description" rows="10" placeholder="Beschreibe die auszuführende Tat. So kannst du für dein Angebot werben." >';echo $_SESSION['tat_description'] ;echo'</textarea>
+					<br><br>
+					<br>
+					<a href=./deeds_create?Seite=2><input type="button" name="button" value="zurück" /></a>
+					<input type="submit" name="button" value="weiter" />
+	</form></div>';
+	} 
 }
 if(($_SESSION['Seite'] ==4 ||$_SESSION['Seite'] ==5)){
 		$startdate = isset($_POST['startdate']) ? $_POST['startdate'] . ' ' . $_POST['starttime_hours'] . ':' . $_POST['starttime_minutes'] : '';
 		$enddate = isset($_POST['enddate']) ? $_POST['enddate'] . ' ' . $_POST['endtime_hours'] . ':' . $_POST['endtime_minutes'] : '';
-        if($_SESSION['Seite'] ==5){
-		if(!DateHandler::isValid($startdate, 'd.m.Y H:i') ||
-			(intval($_POST['starttime_minutes']) % 5 != 0 && intval($_POST['starttime_minutes']) != 0)){
-				$stop=6;
-		}
-		else
-			$_SESSION['tat_startdate'] = $startdate;
-		if(!DateHandler::isValid($enddate, 'd.m.Y H:i') ||
-			(intval($_POST['endtime_minutes']) % 5 != 0 && intval($_POST['endtime_minutes']) != 0)){
-				$stop=7;
-		}
-		else
-			$_SESSION['tat_enddate'] = $enddate;
-        if(isset($_POST['street']))$_SESSION['tat_street']=$_POST['street'];
-        if(isset($_POST['housenumber']))$_SESSION['tat_housenumber']=$_POST['housenumber'];
-        if(isset($_POST['postalcode']))$_SESSION['tat_postalcode']=$_POST['postalcode'];
-        if(isset($_POST['place']))$_SESSION['tat_place']=$_POST['place'];
-        if(isset($_POST['organization']))$_SESSION['tat_organization']=$_POST['organization'];
-       // if(isset($_POST['starttime']))$_SESSION['tat_starttime']=$_POST['starttime'];
-       // if(isset($_POST['endtime']))$_SESSION['tat_endtime']=$_POST['endtime'];
-        if(isset($_POST['idTrust']))$_SESSION['tat_idTrust']=$_POST['idTrust'];
-        if(isset($_POST['countHelper']))$_SESSION['tat_countHelper']=$_POST['countHelper'];
-        if(isset($_POST['category']))$_SESSION['tat_category']=$_POST['category'];
-		//if(isset($_POST['startdate']))$_SESSION['tat_starttime'] =$_POST['startdate'];
-		//if(isset($_POST['enddate']))$_SESSION['tat_endtime'] =$_POST['enddate'];
-        if(!isset($_POST['street'])){
-                $stop=1;
-        }else if($_POST['housenumber']==''){
-                $stop=2;
-        }else if($_POST['postalcode']==''|| !is_numeric($_POST['postalcode'])){
-                $stop=3;
-        }else if($_POST['place']==''){
-                $stop=4;
-        }else if ((DBFunctions::db_getIdPostalbyPostalcodePlace($_POST['postalcode'],$_POST['place'])==false)){
-                $stop=8;
-        }
-			}        
-if($stop!=0)$_SESSION['Seite'] =4;
-if($_SESSION['Seite'] ==4){
+		
+		// ALEX.
+		$errorMessage = "";
+		
+        if($_SESSION['Seite'] ==5)
+		{			
+			$lDatesCorrect = true;
+		
+			// Start date check.
+			if(!DateHandler::isValid($startdate, 'd.m.Y H:i') ||
+				(intval($_POST['starttime_minutes']) % 5 != 0 && intval($_POST['starttime_minutes']) != 0)){
+					$errorMessage .= "Bitte ein gültiges Startdatum angeben.<br>";
+					$lDatesCorrect = false;
+			}
+			else
+			{
+				$_SESSION['tat_startdate'] = $startdate;
+			}
+			
+			// End date check.
+			if(!DateHandler::isValid($enddate, 'd.m.Y H:i') ||
+				(intval($_POST['endtime_minutes']) % 5 != 0 && intval($_POST['endtime_minutes']) != 0))
+			{
+				$errorMessage .= "Bitte ein gültiges Enddatum angeben.<br>";$lDatesCorrect = false;				
+			}			
+			else
+			{
+				$_SESSION['tat_enddate'] = $enddate;
+			}
+			
+			if($lDatesCorrect)
+			{
+				if((strtotime($_SESSION['tat_enddate']))
+					- (strtotime($_SESSION['tat_startdate'])) <= 0)
+				{
+					$errorMessage .= "Der Endzeitpunkt muss hinter dem Startzeitpunkt liegen.<br>";
+				}
+			}
+						
+			// Organization check.
+			if(!isset($_POST['organization']) || ($_POST['organization'] == ""))
+			{
+				//$errorMessage .= "Bitte eine Organisation angeben.<br>";
+				$_SESSION['tat_organization'] = "";
+			}
+			else
+			{
+				$_SESSION['tat_organization'] = $_POST['organization'];
+			}
+			
+			// TODO: Check.
+			if(isset($_POST['idTrust']))
+			{
+				$_SESSION['tat_idTrust']=$_POST['idTrust'];
+			}
+			
+			// Count helper check.
+			if(isset($_POST['countHelper']) && ($_POST['countHelper'] != ""))
+			{
+				$helper = $_POST['countHelper'];
+				if(is_numeric($helper))
+				{
+					$_SESSION['tat_countHelper'] = $helper;
+				}
+				else
+				{
+					$errorMessage .= "Bitte eine Zahl bei der Anzahl der Helfer angeben.<br>";
+				}
+			}
+			else
+			{
+				$errorMessage .= "Bitte die Anzahl der Helfer angeben.<br>";
+			}
+			
+			// Category check.
+			if(isset($_POST['category']))
+			{
+				$_SESSION['tat_category'] = $_POST['category'];
+			}
+			else
+			{
+				$errorMessage .= "Bitte eine Kategorie angeben.<br>";
+			}		
+			
+			// Street check.
+			if(isset($_POST['street']) && ($_POST['street'] != ""))
+			{
+				$_SESSION['tat_street'] = $_POST['street'];
+			}
+			else
+			{
+				$errorMessage .= "Bitte eine Straße angeben.<br>";
+				$hasCompleteAddress = false;
+			}
+			
+			// Check street value for digits. (Could be solved better probably.)
+			for($i = 0; $i < strlen($_SESSION['tat_street']); $i++)
+			{
+				if(is_numeric($_SESSION['tat_street'][$i]))
+				{
+					$errorMessage .= "Die Hausnummer bitte getrennt angeben.<br>";
+					break;
+				}
+			}
+			
+			// House number check.
+			if(!isset($_POST['housenumber']) || ($_POST['housenumber'] == ""))
+			{
+				$errorMessage .= "Bitte eine Hausnummer angeben.<br>";
+				$hasCompleteAddress = false;
+			}
+			else if(!is_numeric($_POST['housenumber']))
+			{
+				$errorMessage .= "Bitte eine gültige Hausnummer angeben.<br>";
+			}
+			else
+			{
+				$_SESSION['tat_housenumber'] = $_POST['housenumber'];
+			}
+			
+			if((!isset($_POST['place'])) || ($_POST['place'] == ""))
+			{
+				$errorMessage .= "Bitte einen Ort angeben.<br>";
+			}
+			{
+				$_SESSION['tat_place'] = $_POST['place'];
+			}
+			
+			// Important: Has to be the last check to avoid multiple DB inserts.
+			if($errorMessage == "")
+			{
+				// Check for valid street and house number.
+				$lFoundValues = getPostalPlaceToAddress($_SESSION['tat_street'], $_SESSION['tat_housenumber'], $_SESSION['tat_place']);
+				
+				$lAddMailContent = "";
+				
+				if($lFoundValues['retPostal'] == "")
+				{
+					$errorMessage .= "Diese Adresse wurde nicht gefunden. Hat sich vielleicht ein Schreibfehler eingeschlichen?<br>";
+				}
+				else
+				{
+					// Has to be set to search it in DB when finishing creating deed.
+					$_SESSION['tat_postalcode'] = $lFoundValues['retPostal'];
+					
+					if($lFoundValues['retHouseNumber'] == "")
+					{
+						$lAddMailContent = "<br>Die Hausnummer '" . $_SESSION['tat_housenumber'] . "' der Straße '" . $_SESSION['tat_street'] . "' im Ort '"
+							. $_SESSION['tat_place'] . "' wurde nicht gefunden. Bitte prüfen.";
+					}
+				}			
+			}		
+		}        
+	if(($stop != 0) || ($errorMessage != ""))
+	{
+		$_SESSION['Seite'] =4;
+	}
+	if($_SESSION['Seite'] ==4){
 
-echo'
-<h2>Rahmendaten</h2>
-<h3>Hier noch einmal alle notwendigen Informationen für Bewerber.</h3>';
-        if($stop==1)echo '<h3><red>Bitte eine neue Straße eingeben.</red></h3><br>';
-        if($stop==2)echo '<h3><red>Bitte eine neue Hausnummer eingeben.</red></h3><br>';        
-        if($stop==3)echo '<h3><red>Die Postleitzahl bitte als Zahl eingeben.</red></h3><br>';        
-        if($stop==4)echo '<h3><red>Bitte einen Ort angeben.</red></h3><br>';
-        if($stop==5)echo '<h3><red>Bitte eine neue Organisation eingeben.</red></h3><br>';
-        if($stop==6)echo '<h3><red>Das Format von der Startzeit ist falsch.</red></h3><br>';
-        if($stop==7)echo '<h3><red>Das Format von der Endzeit ist falsch.</red></h3><br>';
-        if($stop==8)echo '<h3><red>Die Postleitzahl passt nicht zum Ort.</red></h3><br>';               
-        echo '<br><br>
-<div class="center block deeds_create">
-<form action="./deeds_create?Seite=5" method="POST" enctype="multipart/form-data">
+	echo'
+	<h2>Rahmendaten</h2>
+	<h3>Hier noch einmal alle notwendigen Informationen für Bewerber.</h3>';           
+			echo '<br><br>
+	<div class="center block deeds_create">
+	<form action="./deeds_create?Seite=5" method="POST" enctype="multipart/form-data">
 			<br><br>
                 <br>
                 <br>
-                <br>
-                <input type="text" name="street" value="'.$_SESSION["tat_street"].'" placeholder="Straßenname" />
-                <input type="text" name="housenumber" value="'.$_SESSION["tat_housenumber"].'" placeholder="Hausnummer" />
-                <br>
-                <input type="text" name="postalcode" value="'.$_SESSION["tat_postalcode"].'" placeholder="Postleitzahl" />
-                <br>
-                <input type="text" name="place" value="'.$_SESSION["tat_place"].'"placeholder="Stadtteil" />
+                <br>';
+				// ALEX: If any errors occured, print them.
+				echo '<red>' . $errorMessage . '</red><br>';
+				
+				// ALEX: Added street list.
+                echo '<input type="search" list="lstStreets" name="street" value="'.$_SESSION["tat_street"].'" placeholder="Straßenname" />'
+					. $streetList .
+                '<input type="text" name="housenumber" value="'.$_SESSION["tat_housenumber"].'" placeholder="Hausnr." />
+                <br>';
+				// ALEX: Removed.
+				//<input type="text" name="postalcode" value="'.$_SESSION["tat_postalcode"].'" placeholder="Postleitzahl" />
+                echo '<br>
+                <input type="text" name="place" value="'.$_SESSION["tat_place"].'"placeholder="Ort" />
                 <br>';
 				$start_dh = (new DateHandler())->set(isset($_SESSION['tat_startdate']) ? $_SESSION['tat_startdate'] : $startdate);
                 $end_dh = (new DateHandler())->set(isset($_SESSION['tat_enddate']) ? $_SESSION['tat_enddate'] : $enddate);
@@ -257,19 +462,40 @@ echo'
 				echo'</select><br><br>
                 <br>
 				<a href=./deeds_create?Seite=3><input type="button" name="button" value="zurück" /></a>
-                <input type="submit" name="button" value="weiter" />
-</form></div>';
-}
+                <input type="submit" name="button" value="Absenden" />
+	</form></div>';
+	}
 }
 if($_SESSION['Seite'] ==5){        
+
+				// If postal code wasn't found in DB, add it and set foreign key in userdata.
+				$lIdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($_SESSION['tat_postalcode'], $_SESSION['tat_place']);
+				
+				// If no corresponding postal code was found, add it to DB.
+				if($lIdPostal == "")
+				{
+					DBFunctions::db_insertPostalCode($_SESSION['tat_postalcode'], $_SESSION['tat_place']);
+					$IdPostal = DBFunctions::db_getIdPostalbyPostalcodePlace($_SESSION['tat_postalcode'], $_SESSION['tat_place']);
+				}
+		
                 //Einfügen der Guten Tat
                 $uid = DBFunctions::db_idOfBenutzername($_USER->getUsername());
-                $plz = DBFunctions::db_getIdPostalbyPostalcodePlace($_SESSION['tat_postalcode'], $_SESSION['tat_place']);
+				
+				$category = DBFunctions::db_getCategorytextbyCategoryid($_SESSION['tat_category']);
+				
 				$start_dh = (new DateHandler())->set($_SESSION['tat_startdate']);
                 $end_dh = (new DateHandler())->set($_SESSION['tat_enddate']);
-                DBFunctions::db_createGuteTat($_SESSION['tat_name'], $uid, DBFunctions::db_getCategorytextbyCategoryid($_SESSION['tat_category']), $_SESSION['tat_street'], $_SESSION['tat_housenumber'], 
-                                                                          $plz, $start_dh->get(),$end_dh->get(), $_SESSION['tat_organization'], $_SESSION['tat_countHelper'],
+				
+				/*echo $_SESSION['tat_name'] . ", " . $uid  . ", " . $category . ", " .  $_SESSION['tat_street']  . ", " 
+					.  $_SESSION['tat_housenumber']  . ", " . $lIdPostal  . ", " .  $start_dh->get()  . ", " 
+					. $end_dh->get()  . ", " .  $_SESSION['tat_organization']  . ", " .  $_SESSION['tat_countHelper']
+					 . ", " . $_SESSION['tat_idTrust']  . ", " .  $_SESSION['tat_description']  . ", " .  $_SESSION['tat_pictures'];	*/	
+				
+                DBFunctions::db_createGuteTat($_SESSION['tat_name'], $uid, $category		
+				, $_SESSION['tat_street'], $_SESSION['tat_housenumber'], 
+                                                                          $lIdPostal, $start_dh->get(),$end_dh->get(), $_SESSION['tat_organization'], $_SESSION['tat_countHelper'],
                                                                           $_SESSION['tat_idTrust'], $_SESSION['tat_description'], $_SESSION['tat_pictures']);
+																		  
                 //Versenden der Info-Mails        
                 //Bestimmen der Empfänger
                 $mods = DBFunctions::db_getAllModerators();
@@ -278,6 +504,10 @@ if($_SESSION['Seite'] ==5){
                 $mailSubject = 'Gute Tat ' . "'" . $_SESSION['tat_name'] . "'" . ' wurde erstellt!';
                 $mailContent1 = '<div style="margin-left:10%;margin-right:10%;background-color:#757575"><img src="img/wLogo.png" alt="TueGutes" title="TueGutes" style="width:25%"/></div><h2>Hallo!';
                 $mailContent2 = '</h2><br>' . $_USER->getUsername() . ' hat gerade eine neue gute Tat erstellt. <br>Um die gute Tat zu bestätigen oder abzulehnen, klicke auf den folgenden Link: <br><a href="' . $HOST . '/deeds_details?id=' . DBFunctions::db_getIDOfGuteTatByName($_SESSION['tat_name']) . '">Zur guten Tat</a>';
+				
+				// ALEX: Added additional info text if house number wasn't found.
+				$mailContent2 .= $lAddMailContent;
+				
                 //Versenden der Emails an Moderatoren
                 for ($i = 0; $i < sizeof($mods); $i++) {
                         sendEmail($mods[$i], $mailSubject, $mailContent1 . $mailContent2);
@@ -291,7 +521,7 @@ if($_SESSION['Seite'] ==5){
 echo'
 <h2><green>Deine Tat wurde erstellt! </green></h2>
 <h3>und wird nun von uns geprüft. </h3>
-<a href="./deeds.php"><input type="button" name="Toll" value="Toll!"/></a>';
+<a href="./deeds.php"><input type="button" name="Toll" value="Zurück zur Übersicht"/></a>';
 }
 require './includes/_bottom.php';
 ?>

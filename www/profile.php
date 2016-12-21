@@ -340,11 +340,16 @@ span
 					}
 					
 					if($lFoundValues['retHouseNumber'] == "")
-					{
-						sendEmail("alexander.gauggel@stud.hs-hannover.de", "TG_Strasse",
-							"<br>Die Hausnummer " . $houseNumber . " der Straße " . $street . " wurde nicht gefunden. Bitte prüfen.");
+					{ 
+						// Send mail to administrators if house number was not found.						
+						$admins = DBFunctions::db_getAllAdministrators();
+						for ($i = 0; $i < sizeof($admins); $i++) 
+						{
+							sendEmail($admins[$i], "TueGutes - Hausnummer", "Die Hausnummer '" . $houseNumber . "' der Straße '" 
+								. $street . "' im Ort '" . $place . "' wurde nicht gefunden. Bitte prüfen.");							
+						}		
 					}
-				}		
+				}
 			}
 		}	
 		else if(($street == "") && ($houseNumber == "") && ($place == ""))
