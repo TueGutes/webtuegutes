@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Oberer Teil der Website
@@ -11,7 +10,6 @@
 $currentPath = $_SERVER['PHP_SELF'];
 $extension = '.php';
 $activeTab = 'class="active"';
-$str = "http://tue-gutes-in-hannover.de/tueGutes/www/";
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,10 +26,15 @@ $str = "http://tue-gutes-in-hannover.de/tueGutes/www/";
     <link rel="stylesheet" href="styles/responsive.css" type="text/css" />
 	<!--====for mobile icons====--><link rel="stylesheet" href="styles/font-awesome.min.css" type="text/css" /><!--====/for mobile icons====-->
 	
+	<link rel="stylesheet" href="js/jQueryUI/jquery-ui.min.css">
 	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
-	<script type="text/javascript" src="js/global.js"></script>
-	<script src="js/fb.js"> </script>
+	<script type="text/javascript" src="js/jQueryUI/jquery-ui.min.js"></script>
 
+	<script type="text/javascript" src="js/modernizr.js"></script>
+	
+	<script type="text/javascript" src="js/global.js"></script>
+	
+	<script type="text/javascript" src="js/facebook.js"></script>
 </head>
 
 <body>
@@ -47,10 +50,6 @@ $str = "http://tue-gutes-in-hannover.de/tueGutes/www/";
 					$profileMenuLinks = '
 						<a href="./profile">Mein Profil</a>
 						<a href="./deeds_create">Tat erstellen</a>
-						<div class="fb-share-button" 
-							data-href="https://www.facebook.com/tueGutesinHannover/"
-							data-layout="button"> 
-						</div>
 						<a href="./logout">Logout</a>
 					';
 					if($_USER->loggedIn())

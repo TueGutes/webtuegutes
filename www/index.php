@@ -1,25 +1,18 @@
 <?php
 /**
  * Index
+ *
  * Startseite, die für eingeloggte Nutzer einen Schnellzugriff zu wichtigen Funktionen bietet
  *
- * @author Lukas Buttke FTW
+ * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
  */
 
 require './includes/DEF.php';
+
 require './includes/_top.php';
+
 include './includes/db_connector.php';
-//Include FB config file
-require './fb/fbConfig.php';
-
-	if(!$fbUser){
-	    $fbUser = NULL;
-	    $loginURL = $facebook->getLoginUrl(array('redirect_uri'=>$redirectURL,'scope'=>$fbPermissions));
-	    $output = '<a href="'.$loginURL.'"><img src="./fb/images/fblogin-btn.png"></a>';     
-	}else{
-		$output = '<a href="./fb/logout.php"><img src="./fb/images/fblogout-btn.png"></a>';
-	}
-
+require './includes/fb/fbConfig.php';
 ?>
 
 <h2><?php echo $wlang['welcome']; ?></h2>
@@ -32,8 +25,7 @@ require './fb/fbConfig.php';
 		'TueGutes: Wir verbinden Menschen.',
 		'Deine Stadt, deine Taten!',
 		'Mit jeder Tat ein Schritt zum Glück.',
-		'You are Hannover!',
-		'Make Hannover great again!'
+		'You are Hannover!'
 	);
 	$moveCount = mt_rand(0, sizeof($messages)-1);
 	for($i = 0; $i < $moveCount; $i++)
@@ -57,6 +49,8 @@ require './fb/fbConfig.php';
 
 <?php
 if(!$_USER->loggedIn())
+{
+	$fb_loginURL = $facebook->getLoginUrl(array('redirect_uri' => $redirectURL, 'scope' => $fbPermissions));
 	echo "
 		<div class='module transparent'>
 			<br><br>
@@ -71,12 +65,10 @@ if(!$_USER->loggedIn())
 			<a href='./PasswortUpdate'>Ich habe mein Passwort vergessen!</a>
 			<br><br>
 			Ich bin noch nicht registriert:<br>
-			<a href='./registration'>Zur Registrierung</a>
-			<hr>
-				<h5> Jetzt mit Facebook anmelden </h> <br>
-				<div class='block'>".$output." </div>
-
-
+			<a href='./registration'>Zur Registrierung</a><br>
+			<br>
+			Jetzt mit Facebook anmelden<br>
+			<div class='block'><a href='" . $fb_loginURL . "'><img src='./includes/fb/images/fblogin-btn.png' /></a></div>
 		</div>
 		<div class='module'>
 			<br>
@@ -93,6 +85,7 @@ if(!$_USER->loggedIn())
 			<br><br>
 		</div>
 	";
+}
 else
 {
 	echo "<a href='./deeds_create'><input type='button' value='Gute Tat erstellen' /></a><br>";
@@ -159,7 +152,8 @@ else
 		<a href='./contact'><input type='button' value='Kontakt zu uns' /></a>
 	";
 }
-echo "
+?>
+
 <script type='text/javascript'>
     function setTimeLabel(event) {
         var form = document.getElementById('form');
@@ -180,7 +174,7 @@ echo "
             keyword[0].parentNode.replaceChild(origin,keyword[0]);
         }
     }
-
+	
     function getFormat(){
         var format = '';
         var nTime = new Date();
@@ -195,56 +189,8 @@ echo "
         format += ':00';
         return format;
     }
-
 </script>
-";
 
-
-
-
-
-
-
-
-?>
-
-
-<!--
-<div class='center'>
-	<a href='/login'>(Link) zum Login</a>
-	<br><br>
-	<input type="submit" value="submit">
-	<br><br>
-	<input type="button" value="button">
-	<br><br>
-	<input type="text" value="" placeholder="NAME">
-	<br><br>
-	<input type="email" value="" placeholder="EMAIL">
-	<br><br>
-	<input type="password" value="" placeholder="PASSWORT">
-	<br><br>
-	<textarea cols="16"  rows="2" placeholder="TEXT"></textarea>
-	<br><br>
-	<select>
-		<option value="none">Bitte wählen</option>
-		<option value="1">Option 1</option>
-		<option value="2">Option 2</option>
-		<option value="3">Option 3</option>
-	</select>
-	<br><br>
-	<input id="radio1" name="radio" type="radio" checked="checked"><label for="radio1">Option 1</label>
-	<br><br>
-	<input id="radio2" name="radio" type="radio"><label for="radio2">Option 2</label>
-	<br><br>
-	<input id="radio3" name="radio" type="radio"><label for="radio3">Option 3</label>
-	<br><br>
-	<input id="checkbox1" type="checkbox" checked="checked"><label for="checkbox1">Check 1</label>
-	&nbsp;
-	<input id="checkbox2" type="checkbox"><label for="checkbox2">Check 2</label>
-	&nbsp;
-	<input id="checkbox3" type="checkbox"><label for="checkbox3">Check 3</label>
-</div>
--->
 <?php
 require './includes/_bottom.php';
 ?>

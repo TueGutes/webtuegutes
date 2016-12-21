@@ -8,13 +8,14 @@
 *@author Timm Romanik <timm.romanik@stud.hs-hannover.de
 */
 
-
 //Definition der Datenbankverbindung
+
 DEFINE('DB_USER','tueGutes');
 DEFINE('DB_PASSWORD','Sadi23n2os');
 DEFINE('DB_HOST','localhost');
 DEFINE('DB_NAME','presentation_db');
 
+include "sicherheitsCheck.php";
 
 /**
 *Klasse um die Funktionen zu sammeln
@@ -33,7 +34,9 @@ class DBFunctions
 	*@return object Datenbankverbindungsobjekt auf dem gearbeitet werden kann
 	*/
 	public function db_connect() {
-		return mysqli_connect(DB_HOST,DB_USER, DB_PASSWORD, DB_NAME);
+		$db = mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+		$db->set_charset('utf8');
+		return $db;
 	}
 
 	/**
@@ -174,6 +177,10 @@ class DBFunctions
 	*/
 	public function db_createBenutzerAccount($benutzername, $vorname, $nachname, $email, $passwort) {
 		$db = self::db_connect();
+		$benutzername = htmlstr($benutzername);
+		$vorname = htmlstr($vorname);
+		$nachname = htmlstr($nachname);
+		$email = htmlstr($email);
 		$sql = "INSERT INTO User (username, password, email, regDate, points, status, idUserGroup, idTrust) VALUES(?,?,LOWER(?),?,0,'nichtVerifiziert',1,1)";
 		$stmt = $db->prepare($sql);
 		$date = date("Y-m-d");
@@ -251,74 +258,66 @@ class DBFunctions
 	*
 	*@return string|false Gibt den Verschlüsselungskey zurück oder "false" wenn etwas bei der Erstellung schief geht.
 	*/
-	public function db_createOverFBBenutzerAccount($username,$fb_id, $vorname, $nachname, $email, $gender,$picture) {
+	public function db_createOverFBBenutzerAccount($username,$fb_id, $vorname, $nachname, $email, $gender) {
 		$db = self::db_connect();
 		$sql = "INSERT INTO User (username, password, email, regDate, points, status, idUserGroup, idTrust) VALUES(?,'registriertUeberFB',LOWER(?),?,0,'Verifiziert',1,1)";
 		$stmt = $db->prepare($sql);
 		$date = date("Y-m-d");
 		$fulldate = new DateTime();
-		mysqli_stmt_bind_param($stmt, "sss", $benutzername,$email,$fulldate->format('Y-m-d H:i:s'));
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		} else {
-			echo 'beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db);
-			//return false;
+		mysqli_stmt_bind_param($stmt, "sss", $username,$email,$fulldate->format('Y-m-d H:i:s'));
+		if(!$stmt->execute()){
+			die('beim erstellen des nutzers ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
+			return false;
 		}
+
+		$sql = "SELECT MAX(idUser) AS idUser FROM User";
+		$stmt = $db->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
 
 		$sql = "INSERT INTO Privacy (idPrivacy, privacykey, cryptkey) VALUES ((SELECT MAX(idUser) FROM User),?,?)";
 		$stmt = $db->prepare($sql);
 
-		$cryptkey = md5($benutzername.$date); //Der Cryptkey wird erstellt
+		$cryptkey = md5($username.$date); //Der Cryptkey wird erstellt
 		$privacykey = "011111011111111";
 		mysqli_stmt_bind_param($stmt, "ss", $privacykey, $cryptkey);
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		}
-		else {
-			echo 'beim erstellen des privacys ist was schief gegangen: '.mysqli_error($db);
+		if(!$stmt->execute()){
+			die('beim erstellen des Privacys ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
 			return false;
 		}
-
-		$sql = "INSERT INTO UserTexts (idUserTexts,avater) VALUES ((SELECT MAX(idUser) FROM User),?)";
+		$picture = "./img/profiles/" . $dbentry['idUser'] . "/512x512.png";
+		$sql = "INSERT INTO UserTexts (idUserTexts,avatar) VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('s',$picture);
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		}
-		else {
-			echo 'beim erstellen des UsexTexts ist was schief gegangen: '.mysqli_error($db);
+		if(!$stmt->execute()){
+			die('beim erstellen des Usertexts ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
 			return false;
 		}
+
 		$placeholderidpostal = -1;
-		$sql = "INSERT INTO PersData (idPersData, firstname, lastname,gender) VALUES((SELECT MAX(idUser) FROM User),?,?,?,?)";
+		$sql = "INSERT INTO PersData (idPersData, firstname, lastname,gender, idPostal) VALUES((SELECT MAX(idUser) FROM User),?,?,?,?)";
 		$stmt = $db->prepare($sql);
-		mysqli_stmt_bind_param($stmt, "sss", $vorname, $nachname,$gender);
-		$stmt->execute();
-		$affected_rows = mysqli_stmt_affected_rows($stmt);
-		if($affected_rows == 1) {
-			//return true;
-		}
-		else {
-			echo 'beim erstellen von PersData Eintrag ist was schief gegangen '.mysqli_error($db);
+		mysqli_stmt_bind_param($stmt, "sssi", $vorname, $nachname,$gender, $placeholderidpostal);
+		if(!$stmt->execute()){
+			die('beim erstellen des PersData ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
 			return false;
 		}
 
-		$sql = "SELECT MAX(idUser) AS idUser FROM USER";
-		$stmt = $db->prepare($sql);
-		$stmt->execute();
-		$result->$stmt->get_result();
-		$dbentry = $result->fetch_assoc();
+		
 
-		$sql = "INSERT INTO FacebookUser VALUES ((SELECT MAX(idUser) FROM User),?)";
+		$sql = "INSERT INTO FacebookUser(user_id,facebook_id) VALUES ((SELECT MAX(idUser) FROM User),?)";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('i',$fb_id);
-		$stmt->execute();
+		if(!$stmt->execute()){
+			die('beim erstellen des FacebooKUser Eintrags ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
 
 		self::db_close($db);
 		$arr = array('idUser' => $dbentry['idUser'],'privacykey' => $privacykey);
@@ -326,6 +325,70 @@ class DBFunctions
 
 		//return "asdfjklö"; //Für Testzwecke
 	}
+
+
+	/**
+	*Funktion gibt userid und privacykey zu einer funktion zurück.
+	*
+	*Die Funktion kriegt eine Facebook_id übergeben und gibt die dazugehörige Userid und Privacykey aus wenn es die Datensötze in verbindung mit der fbid schon gibt. Wenn dies nicht der Fall ist, gibt die Funktion false zurück.
+	*
+	*@param int $fb_id Facebook_id
+	*
+	*@return (int|string)[]|false gibt einen Array mit userid und privacykey zurück oder false
+	*/
+	public function db_getUserIDbyFacebookID($fb_id){
+		$db = self::db_connect();
+		$sql="SELECT
+			user_id,
+			privacykey
+			FROM FacebookUser
+			JOIN Privacy
+				ON FacebookUser.user_id = Privacy.idPrivacy
+			WHERE facebook_id = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$fb_id);
+		if(!$stmt->execute()){
+			die('bei der Funktion getUserIDbyFacebookID ist was schief gegangen '.mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		
+		//echo 'DIese FUnktion solle jetzt funktionieren';
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['user_id'])){
+			//echo 'Ich habe das Array zurückgegeben';
+			return $dbentry;
+		}
+		else {
+			//echo ' Ich habe false zurückgeben';
+			return false;
+		}
+		
+	}
+
+	public function db_doesFacebookUserExists($userid){
+		$db = self::db_connect();
+		$sql = "SELECT user_id FROM FacebookUser WHERE user_id = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['user_id'])){
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+	
 
 	/**
 	*Aktiviert einen Benutzeraccount.
@@ -570,6 +633,21 @@ class DBFunctions
 		if($savedata['idPostal']==''){
 			$savedata['idPostal'] =-1;
 		}
+
+		$savedata['username'] = htmlstr($savedata['username']);
+		$savedata['email'] = htmlstr($savedata['email']);
+		$savedata['firstname']= htmlstr($savedata['firstname']);
+		$savedata['lastname']= htmlstr($savedata['lastname']);
+		$savedata['gender']= htmlstr($savedata['gender']);
+		$savedata['birthday']= htmlstr($savedata['birthday']);
+		$savedata['street']= htmlstr($savedata['street']);
+		$savedata['housenumber']= htmlstr($savedata['housenumber']);
+		$savedata['telefonnumber']= htmlstr($savedata['telefonnumber']);
+		$savedata['messengernumber']= htmlstr($savedata['messengernumber']);
+		$savedata['avatar']= htmlstr($savedata['avatar']);
+		$savedata['hobbys']= htmlstr($savedata['hobbys']);
+		$savedata['description']= htmlstr($savedata['description']);
+
 		$db = self::db_connect();
 		$sql ="UPDATE User,PersData,UserTexts,Privacy,UserGroup
 			SET
@@ -624,39 +702,116 @@ class DBFunctions
 	*
 	*Die Funktion löscht alle Informationen zu einem Benutzer. Da dies ein endgültiger Vorgang ist, wird für die Endgültige Löschung die Eingabe des Passworts verlangt. Es werden auch alle Abhängigkeiten entfernt.
 	*
-	*@param string $user Benutzername des Benutzers
-	*@param string $pass Das Passwort des Benutzers
+	*@param mixed[] $user RÜckgabe Objekt der db_get_user funktion
 	*/
-	public function db_delete_user($user, $pass) {
+	public function db_delete_user($user) {
 		$me = self::db_get_user($user);
-		$pass_md5 = md5($pass.substr($me['regDate'],0,10));
-		if ($pass_md5 === $me['password']) {
-			$db = self::db_connect();
+		//$pass_md5 = md5($pass.substr($me['regDate'],0,10));
+		//if ($pass_md5 === $me['password']) {
+		$db = self::db_connect();
 
-			$sql = "DELETE FROM PersData WHERE idPersData= ?";
+		if(db_doesFacebookUserExists($me['idUser'])){
+			$sql = "DELETE FROM FacebookUser WHERE user_id= ?";
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('i',$me['idUser']);
 			$stmt->execute();
-
-			$sql = "DELETE FROM UserTexts WHERE idUserTexts= ?";
-			$stmt = $db->prepare($sql);
-			$stmt->bind_param('i',$me['idUser']);
-			$stmt->execute();
-
-			$sql = "DELETE FROM Privacy WHERE idPrivacy= ?";
-			$stmt = $db->prepare($sql);
-			$stmt->bind_param('i',$me['idUser']);
-			$stmt->execute();
-
-			$sql = "DELETE FROM User WHERE idUser = ?";
-			$stmt = $db->prepare($sql);
-			$stmt->bind_param('i',$me['idUser']);
-			$stmt->execute();
-			self::db_close($db);
-			Header('Location:./logout.php');
-		} else {
-			die ('RegDate: ' . substr($me['regDate'],0,10) . 'DB: ' . $me['password'] . '<br>Eingegeben: ' . $pass_md5);
 		}
+
+
+		if(db_doesCommentwithCreatoridExist($me['idUser'])){
+			$sql = "UPDATE DeedComments SET user_id_creator = NULL WHERE user_id_creator= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+		}
+
+
+		$sql = "DELETE FROM PersData WHERE idPersData= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "DELETE FROM UserTexts WHERE idUserTexts= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "DELETE FROM Privacy WHERE idPrivacy= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "DELETE FROM User WHERE idUser = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+
+		self::db_close($db);
+		Header('Location:./logout.php');
+		//} else {
+		//	die ('RegDate: ' . substr($me['regDate'],0,10) . 'DB: ' . $me['password'] . '<br>Eingegeben: ' . $pass_md5);
+		//}
+	}
+
+	/**
+	*Löscht alle informationen zu einem User.
+	*
+	*Die Funktion löscht alle Informationen zu einem Benutzer. Da dies ein endgültiger Vorgang ist, wird für die Endgültige Löschung die Eingabe des Passworts verlangt. Es werden keine Abhängigkeiten entfernt. Alle Informationen zu einem Nutzer sind gelöscht. Aber deren Nutzer ID lebt noch weiter im System rum, da es sonst Probleme mit der DB gibt.
+	*
+	*@param mixed[] $user RÜckgabe Objekt der db_get_user funktion
+	*/
+	public function db_delete_user_v2($user){
+		$me = self::db_get_user($user);
+		$db = self::db_connect();
+
+		if(db_doesFacebookUserExists($me['idUser'])){
+			$sql = "DELETE FROM FacebookUser WHERE user_id= ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('i',$me['idUser']);
+			$stmt->execute();
+		}
+
+		$sql = "UPDATE PersData SET 
+			firstname='deleted',
+			lastname='deleted',
+			gender='z',
+			street='deleted'
+			housenumber='0',
+			idPostal=-1,
+			telefonnumber='deleted',
+			messengernumber='deleted',
+			birthday = NULL
+			WHERE idPersData= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "UPDATE UserTexts SET avatar='deleted',hobbys='deleted',description='deleted' WHERE idUserTexts= ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "UPDATE Privacy SET privacykey='deleted',cryptkey='deleted' WHERE idPrivacy = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		$sql = "UPDATE User SET username='deleted',
+			password='deleted',
+			email='deleted',
+			regDate= NULL,
+			points=0,
+			idTrust=1,
+			idUserGroup=1,
+			status='deleted' 
+			WHERE idUser = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$me['idUser']);
+		$stmt->execute();
+
+		self::db_close($db);
+		Header('Location:./logout.php');
 	}
 
 	/**
@@ -792,6 +947,12 @@ class DBFunctions
 	*@param string $pictures Bilder zu einer guten Tat
 	*/
 	public function db_createGuteTat($name,$user_id,$category,$street,$housenumber,$pid,$starttime,$endtime,$organization,$countHelper,$idTrust,$description,$pictures){
+		$name = htmlstr($name);
+		$street = htmlstr($street);
+		$housenumber = htmlstr($housenumber);
+		$starttime = htmlstr($starttime);
+		$endtime = htmlstr($endtime);
+		$organization = htmlstr($organization);
 		if(self::db_doesCategoryNameExist($category)){
 			$catid = self::db_getCategoryidbyCategoryText($category);
 			$db = self::db_connect();
@@ -1600,9 +1761,10 @@ class DBFunctions
 	*/
 	public function db_getCryptkeyByMail($mail) {
 		$db = self::db_connect();
-		$sql = "SELECT cryptkey FROM Privacy WHERE idPrivacy = (SELECT idUser FROM User WHERE email = LOWER(?))";
+		$user_id = self::db_idOfEmailAdresse($mail);
+		$sql = "SELECT cryptkey FROM Privacy WHERE idPrivacy = ?";
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('s',$mail);
+		$stmt->bind_param('i',$user_id);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
@@ -1658,10 +1820,11 @@ class DBFunctions
 		$date = self::db_regDateByCryptkey($cryptkey);
 		$pass_md5 = md5($newPasswort.$date);
 		$db = self::db_connect();
+		//(SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)
 		$sql = "UPDATE User SET password = ? WHERE idUser = (SELECT idPrivacy FROM Privacy WHERE cryptkey = ?)";
 		$stmt = $db->prepare($sql);
-		mysqli_stmt_bind_param($stmt, "ss", $pass_md5, $cryptkey);
-
+		$stmt->bind_param("ss", $pass_md5, $cryptkey);
+		$stmt->execute();
 		self::db_close($db);
 		if (!$stmt->execute()) {
 			return false;
@@ -1682,10 +1845,11 @@ class DBFunctions
 	*/
 	public function db_update_deeds_starttime($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$data = htmlstr($data);
+		$sql ="UPDATE Deeds
 			SET
-			deeds.starttime = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.starttime = ?
+			WHERE Seeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1704,10 +1868,11 @@ class DBFunctions
 	*/
 	public function db_update_deeds_endtime($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$data = htmlstr($data);
+		$sql ="UPDATE Deeds
 			SET
-			deeds.endtime = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.endtime = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1726,10 +1891,11 @@ class DBFunctions
 	*/
 	public function db_update_deeds_picture($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deedtexts
+		$data = htmlstr($data);
+		$sql ="UPDATE DeedTexts
 			SET
-			deedtexts.pictures = ?
-			WHERE deedtexts.idDeedTexts = ?";
+			DeedTexts.pictures = ?
+			WHERE DeedTexts.idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1748,10 +1914,11 @@ class DBFunctions
 	*/
 	public function db_update_deeds_description($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deedtexts
+		$data = htmlstr($data);
+		$sql ="UPDATE DeedTexts
 			SET
-			deedtexts.description = ?
-			WHERE deedtexts.idDeedTexts = ?";
+			DeedTexts.description = ?
+			WHERE DeedTexts.idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1770,10 +1937,11 @@ class DBFunctions
 	*/
 	public function db_update_deeds_name($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$data = htmlstr($data);
+		$sql ="UPDATE Deeds
 			SET
-			deeds.name = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.name = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1794,10 +1962,10 @@ class DBFunctions
 		if(self::db_doesCategoryNameExist($data)){
 			$catid = self::db_getCategoryidbyCategoryText($data);
 			$db = self::db_connect();
-			$sql ="UPDATE deeds
+			$sql ="UPDATE Deeds
 				SET
-				deeds.category = ?
-				WHERE deeds.idGuteTat = ?";
+				Deeds.category = ?
+				WHERE Deeds.idGuteTat = ?";
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('ii',$catid,$idGuteTat);
 			if (!$stmt->execute()) {
@@ -1818,10 +1986,11 @@ class DBFunctions
 	*/
 	public function db_update_deeds_street($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$data = htmlstr($data);
+		$sql ="UPDATE Deeds
 			SET
-			deeds.street = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.street = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1840,10 +2009,11 @@ class DBFunctions
 	*/
 	public function db_update_deeds_housenumber($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$data = htmlstr($data);
+		$sql ="UPDATE Deeds
 			SET
-			deeds.housenumber = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.housenumber = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1862,10 +2032,10 @@ class DBFunctions
 	*/
 	public function db_update_deeds_postalcode($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.idPostal = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.idPostal = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('ii',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1884,10 +2054,11 @@ class DBFunctions
 	*/
 	public function db_update_deeds_organization($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$data = htmlstr($data);
+		$sql ="UPDATE Deeds
 			SET
-			deeds.organization = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.organization = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1906,10 +2077,10 @@ class DBFunctions
 	*/
 	public function db_update_deeds_countHelper($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.countHelper = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.countHelper = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('ii',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1928,10 +2099,10 @@ class DBFunctions
 	*/
 	public function db_update_deeds_idTrust($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.idTrust = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.idTrust = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('ii',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -2329,10 +2500,10 @@ class DBFunctions
 	 */
 	public function db_searchDuringGutes($keyword,$sort)
 	{
-		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
-		$sort_bedingung = self::set_sortBedingung($sort);
-		$db = self::db_connect();
-		$sql = "SELECT DISTINCT
+        $bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
+        $sort_bedingung = self::db_set_sortBedingung($sort);
+        $db = self::db_connect();
+        $sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,
 			`Deeds`.`category`,
@@ -2348,22 +2519,22 @@ class DBFunctions
 			`Trust`.`trustleveldescription`,
 			`DeedTexts`.`description`,
 			`Postalcode`.`postalcode`,
-			`Postalcode`.`place`,
+			`Postalcode`.`place`
 		FROM `User` JOIN `Deeds`
         ON (`User`.`idUser` = `Deeds`.`contactPerson`) JOIN `Postalcode`
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
 		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
-        WHERE `Deeds`.`name` like ?
-        OR `Deeds`.`category` like ?
-        AND `Deeds`.`status` != 'nichtFreigegeben'
+        WHERE `Deeds`.`status` != 'nichtFreigegeben'
+        AND (`Deeds`.`name` like ?
+        OR `Deeds`.`category` like ?)
         ORDER BY $sort_bedingung";
-		$stmt = $db->prepare($sql);
-		$stmt->bind_param('ss', $bedingung, $bedingung);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		self::db_close($db);
-		return $result;
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('ss', $bedingung, $bedingung);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        self::db_close($db);
+        return $result;
 	}
 
 	/**
@@ -2376,7 +2547,7 @@ class DBFunctions
 	public function db_searchDruingUsername($keyword,$sort)
 	{
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
-		$sort_bedingung = self::set_sortBedingung($sort);
+		$sort_bedingung = self::db_set_sortBedingung($sort);
 		$db = self::db_connect();
 		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
@@ -2421,7 +2592,7 @@ class DBFunctions
 	public function db_searchDuringOrt($keyword,$sort)
 	{
 		$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
-		$sort_bedingung = self::set_sortBedingung($sort);
+		$sort_bedingung = self::db_set_sortBedingung($sort);
 		$db = self::db_connect();
 		$sql = "SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
@@ -2445,8 +2616,8 @@ class DBFunctions
         ON (`Deeds`.`idPostal` = `Postalcode`.`idPostal`) JOIN `DeedTexts`
         ON (`Deeds`.`idGuteTat`=`DeedTexts`.`idDeedTexts`) JOIN `Trust`
 		ON (`Deeds`.`idTrust` =	`Trust`.`idTrust`)
-        WHERE `Deeds`.`street` like ?
-        OR `Postalcode`.`place` like ?
+        WHERE (`Deeds`.`street` like ?
+        OR `Postalcode`.`place` like ?)
         AND `Deeds`.`status` != 'nichtFreigegeben'
         ORDER BY $sort_bedingung";
 		$stmt = $db->prepare($sql);
@@ -2467,7 +2638,7 @@ class DBFunctions
 	public function db_searchDuringZeit($keyword,$sort)
 	{
 		$db = self::db_connect();
-		$sort_bedingung = self::set_sortBedingung($sort);
+		$sort_bedingung = self::db_set_sortBedingung($sort);
 		$sql = " SELECT DISTINCT
 			`Deeds`.`idGuteTat`,
 			`Deeds`.`name`,
@@ -2542,8 +2713,8 @@ class DBFunctions
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
 		self::db_close($db);
-		if(isset($dbentry['categorytext'])){
-			return $dbentry['categorytext'];
+		if(isset($dbentry['categoryname'])){
+			return $dbentry['categoryname'];
 		}
 		else {
 			return false;
@@ -2700,6 +2871,24 @@ class DBFunctions
 			return false;
 		}
 	}
+
+	public function db_doesCommentwithCreatoridExist($userid){
+		$db = self::db_connect();
+		$sql = "SELECT user_id_creator FROM DeedComments WHERE user_id_creator = ? ";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$userid);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['user_id_creator'])){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	/**
 	*Erstellt ein Kommentar zu einer Guten Tat.
 	*
@@ -2712,12 +2901,13 @@ class DBFunctions
 	*
 	*@return boolean
 	*/
-	public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentid = 'null'){
+	public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentid = null){
 		$db = self::db_connect();
-		$sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentcomment) VALUES (?,?,?,?,?)";
-		$date = new datetime();
+		$commenttext = htmlstr($commenttext);
+		$sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentid) VALUES (?,?,?,?,?)";
+		$date = (new datetime())->format('Y-m-d H:i:s');
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('iissi',$idofdeeds,$creatorid,$date->format('Y-m-d H:i:s'),$commenttext,$parentcomment);
+		$stmt->bind_param('iissi',$idofdeeds,$creatorid,$date,$commenttext,$parentid);
 		if($stmt->execute()){
 			self::db_close($db);
 			return true;
@@ -2756,7 +2946,8 @@ class DBFunctions
 			DeedComments.date_created,
 			DeedComments.commenttext,
 			DeedComments.parentcomment,
-			User.username 
+			User.username,
+			User.status 
 			FROM DeedComments 
 			JOIN User 
 				ON (DeedComments.user_id_creator=User.idUser) 
@@ -2784,7 +2975,7 @@ class DBFunctions
 	*
 	*@return int Anzahl der Kommentare
 	*/
-	public function countDeedComments($iddeed){
+	public function db_countDeedComments($iddeed){
 		$db = self::db_connect();
 		$sql = "SELECT COUNT(*) AS numberComments FROM DeedComments WHERE DeedComments.deeds_id = ?";
 		$stmt = $db->prepare($sql);
@@ -2795,6 +2986,372 @@ class DBFunctions
 		$dbentry = $result->fetch_assoc();
 		return $dbentry['numberComments'];
 	}
+
+	/**
+	*Gibt den Counter zu einer Nutzer ID aus der Tabelle LoginCheck zurück
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und liest aus der Tabelle LoginCheck den Wert Counter aus, der zu der Nutzer ID gehört. Wenn es einen Counter gibt so gibt die Funktion den Wert des Counters zurück, sonst false
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return int|false
+	*/
+	public function db_getCountLoginCheck($user_id){
+		$db = self::db_connect();
+		$sql = "SELECT counter FROM LoginCheck WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$user_id);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['counter'])){
+			self::db_close($db);
+			return $dbentry['counter'];
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	/**
+	*Überprüft ob es eine Nutzer ID in der Tabelle LoginCheck gibt.
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und Überprüft ob es die Nutzer ID in der Tabelle LoginCheck gibt. Wenn ja, dann wird true zurück gegeben und false wenn nicht.
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return boolean
+	*/
+	public function db_doesUserExistInLoginCheck($user_id){
+		$db = self::db_connect();
+		$sql = "SELECT userid FROM LoginCheck WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$user_id);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['userid'])){
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	/**
+	*zählt den Counter einen hoch und Zeitcounter auf die aktuelle Zeit zu einem User in LoginCheck auf 0.
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und setzt den counter um einen hoch und den Zeitcounter des Nutzers auf die aktuelle Zeit in der Tabelle auf LoginCheck. Gibt true zurück wenn erfolgreich, false wenn nicht.
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return boolean
+	*/
+	public function db_setCountandTime($user_id){
+		$db = self::db_connect();
+		$sql = "UPDATE LoginCheck SET counter=counter+1,timecounter=?  WHERE userid = ?";
+		$timer = time();
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('ii',$timer,$user_id);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+	}
+
+	/**
+	*Setzt den Counter und Zeitcounter zu einem User in LoginCheck auf 0.
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und setzt den counter und Zeitcounter des Nutzers auf 0 in der Tabelle auf LoginCheck. Gibt true zurück wenn erfolgreich, false wenn nicht.
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return boolean
+	*/
+	public function db_setCountandTimenull($user_id){
+		$db = self::db_connect();
+		$sql = "UPDATE LoginCheck SET counter=0,timecounter=0  WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$user_id);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+	}
+
+	/**
+	*Gibt den Zeitcounter zu einem Nutzer aus LoginCheck zurück.
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und liest den dazugehörigen Zeitcounter aus der DB und gibt ihn zurück. Wenn es keinen Zeitcounter zu dem Nutzer gibt, so wird false zurück gegeben.
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return int|false
+	*/
+	public function db_getTimeLoginCheck($user_id){
+		$db = self::db_connect();
+		$sql = "SELECT timecounter FROM LoginCheck WHERE userid = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$user_id);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['timecounter'])){
+			self::db_close($db);
+			return $dbentry['timecounter'];
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+	/**
+	*Erstellt einen Eintrag in der Tabelle für den LoginCheck
+	*
+	*Funktion kriegt eine Nutzer ID übergeben und erstellt demensprechend einen Eintrag in der Tabelle. Ist es erfolreich gibt sie true zurück, wenn nicht false.
+	*
+	*@param int $userid Nutzer ID
+	*
+	*@return boolean	
+	*/
+	public function db_insertUserIntoLoginCheck($user_id){
+		$db = self::db_connect();
+		$sql = "INSERT INTO LoginCheck(userid,counter,timecounter) VALUES (?,0,0)";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$user_id);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+	}
+
+
+	/**
+	*Generiert einen 200 stelligen Key der für die Registrierung nötig ist.
+	*
+	*Die Funktion generiert einen 200 Stelligen Key der in der DB abgespeichert wird. die Funktion gibt den Key zurück wenn er erstellt werden konnte, oder false, wenn es nicht der fall ist.
+	*
+	*@return string|false
+	*/
+	public function db_initNewKey(){
+		self::db_deleteKey();
+		// Character List to Pick from
+		$chrList = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+		// Minimum/Maximum times to repeat character List to seed from
+		$chrRepeatMin = 2; // Minimum times to repeat the seed string
+		$chrRepeatMax = 20; // Maximum times to repeat the seed string
+
+		// Length of Random String returned
+		$chrRandomLength = 200;
+
+		// The ONE LINE random command with the above variables.
+		$key= substr(str_shuffle(str_repeat($chrList, mt_rand($chrRepeatMin,$chrRepeatMax))),1,$chrRandomLength);
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "INSERT INTO KeyReg(keyreg,timecounter) VALUES (?,?)";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('si',$key,$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return $key;
+		}
+	}
+
+	/**
+	*Überprüft ob ein Key v in der DB ist
+	*
+	*Die Funktion kriegt einen 200 stelligen Key. Mittels des Parameters wird überprüft ob dieser Key in der Datenbank existiert. Existiert der Key  so wird der Key gelöscht und es wird true zurück gegeben. Wenn es kein key gibt, so gibt die Funktion false zurück.
+	*
+	*@return boolean
+	*/
+	public function db_getKey($key){
+		self::db_deleteKey();
+		$db = self::db_connect();
+		$sql = "SELECT keyreg FROM KeyReg WHERE keyreg = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('s',$key);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['keyreg'])){
+			$sql ="DELETE From KeyReg
+				WHERE keyreg = ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('s',$key);
+			$stmt->execute();
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+
+
+	/**
+	*Löscht ggf einen Key der zur Registrierung eines Nutzers gebraucht wird aus der DB.
+	*
+	*Die Funktion überprüft, ob Keys, die für die Registrierung eines Nutzers generiert wurden, von ihrer Lebenszeit abgelaufen ist. Immoment ist sie auf 300 Sekunden festgelegt. Ist die Lebenszeit bei der Abfrage überschritten, so wird der Key gelöscht und der Nutzer muss sich einen neuen anfordern. Die Funktion gibt true aus, wenn die Funktion erfolgreich ausgeführt wurde, was nicht heißt das ein Key gelöscht wurde. Die Funktion gibt false zurück, wenn das SQL Statement nicht erfolgreich durchgeführt werden konnte.
+	*
+	*@return boolean 
+	*/
+	public function db_deleteKey(){
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "DELETE FROM KeyReg WHERE (?-timecounter)>300";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+
+	}
+
+	/**
+	*Generiert einen Key zu einer User ID gehört welcher zum Löschen des Nutzers benutzt wird.
+	*
+	*Die Funktion kriegt eine Nutzer ID übergeben und generiert einen zufälligen fünfstelligen Code mit den Zahlen 0-9. Dieser Code wird für die Löschung eines Nutzer gebraucht. Zu diesem Nutzer gehört nun der Key. Die Funktion gibt den Key zurück.
+	*
+	*@param int $user_id Nutzer ID
+	*
+	*@return string|false
+	*/
+	public function db_initpwNewKey($user_id){
+		// Character List to Pick from
+		$chrList = '0123456789';
+
+		// Minimum/Maximum times to repeat character List to seed from
+		$chrRepeatMin = 2; // Minimum times to repeat the seed string
+		$chrRepeatMax = 20; // Maximum times to repeat the seed string
+
+		// Length of Random String returned
+		$chrRandomLength = 5;
+
+		// The ONE LINE random command with the above variables.
+		$key= substr(str_shuffle(str_repeat($chrList, mt_rand($chrRepeatMin,$chrRepeatMax))),1,$chrRandomLength);
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "INSERT INTO KeyRegDeletePW(user_id,keyreg,timecounter) VALUES (?,?,?)";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('isi',$user_id,$key,$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return $key;
+		}
+	}
+
+
+	/**
+	*Überprüft ob ein Key von einem Nutzer in der DB ist
+	*
+	*Die Funktion kriegt einen fünf stelligen Key und eine User_id übergeben. Mittels den beiden Parametern wird überprüft ob diese Kombination in der Datenbank existiert. Existiert die Kombination von Key und Nutzer ID so wird der Key gelöscht und es wird true zurück gegeben. Wenn es keine Kombination gibt, so gibt die Funktion false zurück.
+	*
+	*@param string $key fünf stelliger Code von 0-9
+	*@param int $user_id Nutzer ID
+	*
+	*@return boolean
+	*/
+	public function db_getpwKey($key,$user_id){
+		self::db_deleteKey();
+		$db = self::db_connect();
+		$sql = "SELECT keyreg FROM KeyRegDeletePW WHERE keyreg = ? AND user_id =? ";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('si',$key,$user_id);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+		}
+		$result = $stmt->get_result();
+		$dbentry=$result->fetch_assoc();
+		if(isset($dbentry['keyreg'])){
+			$sql ="DELETE From KeyReg
+				WHERE keyreg = ?";
+			$stmt = $db->prepare($sql);
+			$stmt->bind_param('s',$key);
+			$stmt->execute();
+			self::db_close($db);
+			return true;
+		}
+		else {
+			self::db_close($db);
+			return false;
+		}
+	}
+	/**
+	*Löscht ggf einen Key der zur Löschung eines Nutzers gebraucht wird aus der DB.
+	*
+	*Die Funktion überprüft, ob ein Key, die für die Löschun eines Nutzers generiert wurden, von ihrer Lebenszeit abgelaufen ist. Immoment ist sie auf 600 Sekunden festgelegt. Ist die Lebenszeit bei der Abfrage überschritten, so wird der Key gelöscht und der Nutzer muss sich einen neuen anfordern. Die Funktion gibt true aus, wenn die Funktion erfolgreich ausgeführt wurde, was nicht heißt das ein Key gelöscht wurde. Die Funktion gibt false zurück, wenn das SQL Statement nicht erfolgreich durchgeführt werden konnte.
+	*
+	*@return boolean 
+	*/
+	public function db_deletepwKey(){
+		$timer = time();
+		$db = self::db_connect();
+		$sql = "DELETE FROM KeyRegDeletePW WHERE (?-timecounter)>600";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$timer);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+
+	}
+
+
 }
 
 

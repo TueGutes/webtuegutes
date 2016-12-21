@@ -27,6 +27,8 @@ $pass = isset($_POST['passwort']) ? $_POST['passwort'] : '';
 $passwdh = isset($_POST['passwortwdh']) ? $_POST['passwortwdh'] : '';
 $mail = isset($_POST['mail']) ? $_POST['mail'] : '';
 
+$sjdnjghbeid = DBFunctions::db_initNewKey();
+
 $output = '';
 if(isset($_GET['c'])) // man kann auch wenn man mit einem Account angemeldet ist, einen anderen Account verifizieren
 {
@@ -49,6 +51,10 @@ else
 		if(isset($_POST['set']) && $_POST['set'] == '1')
 		{
 			$error = false;
+			if(!isset($_POST['cbdatenschutzAgb'])) {
+				$output .= "<red>Sie müssen unsere Datenschutzerklärung akzeptieren, damit Sie sich registrieren können<br></red>";
+				$error = true;
+			}
 			if(empty($username))
 			{
 				$output .= "<red>Geben Sie einen Benutzernamen an!</red><br>";
@@ -98,9 +104,23 @@ else
 				$output .= "<red>Geben Sie eine gültige Email-Adresse an!</red><br>";
 				$error = true;
 			}
+			else if(DBFunctions::db_idOfEmailAdresse(strtolower($mail)) <> false) {
+				$output .= "<red>Die angegebene Email-Adresse wird bereits für einen anderen Account verwendet</red><br>";
+				$error = true;
+			}
+
+
+			if(!neuerAcount($sjdnjghbeid))
+			{
+				// = statt .= weil dieser Fehler alle anderen Überschreiben soll
+				$output = "<red>Sie waren zu lange inaktiv. Bitte laden Sie die Seite neu, um sich zu registrieren!</red><br>";
+				$error = true;
+			}
 
 			if(!$error)
 			{
+				DBFunctions::db_deleteKey();
+
 				$cryptkey = DBFunctions::db_createBenutzerAccount($username, $vorname, $nachname, $mail, $pass);
 				if($cryptkey)
 				{
@@ -139,6 +159,19 @@ require "./includes/_top.php";
 		<input type="password" name="passwort" value="" placeholder="<?php echo "Passwort"; ?>" required /><br>
 		<input type="password" name="passwortwdh" value="" placeholder="<?php echo "Passwort wiederholen"; ?>" required /><br>
 		<input type="text" name="mail" value="<?php echo $mail; ?>" placeholder="<?php echo "E-Mail Adresse"; ?>" required /><br>
+		<br>
+		<table class='block'>
+			<tr>
+				<td><input id="cAGB" type="checkbox" name="cbdatenschutzAgb">
+					<label for="cAGB">Ich habe die <a href=<?php echo $HOST . "/privacy"; ?> target="_blank">Datenschutzerklärung</a> gelesen <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;und akzeptiere sie (erforderlich)</label> </td><!-- TODO: AGB hinzufügen sobald verfügbar -->
+			</tr>
+
+			<tr>
+				<td><input id="cLeitbild" type="checkbox" name="cbLeitbild">
+					<label for="cLeitbild">Ich habe das <a href=<?php echo $HOST . "/terms"; ?> target="_blank">Leitbild</a> gelesen und <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;teile die Überzeugungen und Werte</label></td>
+			<tr>
+		</table>
+		<br>
 		<br>
 		<input type='hidden' name='set' value='1' />
 		<input type="submit" value="Registrieren" />

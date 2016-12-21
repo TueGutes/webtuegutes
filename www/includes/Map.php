@@ -105,6 +105,56 @@ class Map {
         <?php
     }
 	
+	/**
+     * Erstellt eine Karte auf der, die guten Taten markiert werden, nach denen gesucht wurde.
+     * Jede Markierung hat ein Popup, in dem der Name der guten Tat angezeigt wird. Der Name kann angeklickt werden und leitet auf die entsprechende deeds_details Seite.
+     * @param string $keyword eingenommene Stichworte (category oder TatName)
+	 * @param string $sort die Etikett aus search.php, kann 'starttime','endtime' und 'status' sein
+     */
+    public function createSearchMap($keyword,$sort) {
+        ?>
+        <div id="mapid"></div>
+        <script type="text/javascript">
+		// Generieren der Karte. Karte wird auf Hannover zentriert.
+		var mymap = L.map('mapid').setView([52.375892, 9.73201], 12);
+		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+			maxZoom: 18
+		}).addTo(mymap);
+		var markers = L.markerClusterGroup();
+        <?php
+		 $arr = DBFunctions::db_searchDuringGutes($keyword,$sort);
+        // Gehe alle Taten durch und erstelle für jeden Eintrag ein Marker.
+        foreach ($arr as $oneDeed) {
+            $latLon = $this->getLatLonFromAddress($oneDeed->postalcode . ',' . $oneDeed->street . ',' . $oneDeed->housenumber);
+            ?>
+			// latlng repräsentiert einen geographischen Punkt mit den atitude und longitude Werten.
+			var latlng = L.latLng(<?php echo $latLon["lat"] ?>, <?php echo $latLon["lon"] ?>);
+			// Erstellen den Marker mit einem Popup.
+			markers.addLayer(L.marker(latlng).bindPopup('<a href="<?php echo 'deeds_details?id=' . $oneDeed->idGuteTat ?>"><?php echo $oneDeed->name ?></a>'));
+            <?php
+        }
+	?>
+        mymap.addLayer(markers);
+        </script>
+        <?php
+    }
+	
+	/**
+	 *
+	 */
+	 public function getDistance($addressStart, $addressDestination){
+		 $latLonStart = $this->getLatLonFromAddress($addressStart);
+		 $latLonDestination = $this->getLatLonFromAddress($addressDestination);
+		?>
+		<script type="text/javascript">
+			// latlng repräsentiert einen geographischen Punkt mit den atitude und longitude Werten.
+			var latlngStart = L.latLng(<?php echo $latLonStart["lat"] ?>, <?php echo $latLonStart["lon"] ?>);
+			var latlngDestination = L.latLng(<?php echo $latLonDestination["lat"] ?>, <?php echo $latLonDestination["lon"] ?>);
+			document.write(latlngStart.distanceTo(latlngDestination));
+		</script>
+		<?php
+	 }
     /**
      * Wandelt den Adressstring in die geographischen Koordinaten "lat" und "lon" um.
      * @param string $address Format: "Postleitzahl,Straße,Hausnummer"

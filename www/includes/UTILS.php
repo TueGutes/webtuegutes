@@ -27,9 +27,10 @@ class DateHandler
     self::$staticVar;
 	*/
 
-	/*function __construct()
+	function __construct()
 	{
-	}*/
+		$this->date = DateTime::createFromFormat('Y-m-d H:i:s', '1970-01-01 00:00:00');
+	}
 	public static function isValid($date, $format = 'Y-m-d H:i:s')
 	{
 		$d = DateTime::createFromFormat($format, $date);
@@ -128,6 +129,23 @@ class DateHandler
 	{
 		$this->date->setTime($this->getHours(), $this->getMinutes(), $w);
 		return $this;
+	}
+	
+	public function diff($date)
+	{
+		return strtotime($this->date->get()) - strtotime($date);
+	}
+	public function equals($date)
+	{
+		return $this->diff($date) == 0;
+	}
+	public function before($date)
+	{
+		return $this->diff($date) < 0;
+	}
+	public function after($date)
+	{
+		return $this->diff($date) > 0;
 	}
 }
 

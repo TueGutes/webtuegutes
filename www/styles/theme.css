@@ -37,18 +37,10 @@ a:hover
     0 0 20px #fefcc9,
     10px -10px 30px #feec85,
     -20px -20px 40px #ffae34,
-    20px -40px 50px #ec760c,
-    -20px -60px 60px #cd4606,
-    0 -80px 70px #973716,
-    10px -90px 80px #451b0e,
 	/*nach unten*/
 	/*0 0 20px #fefcc9,*/
     10px 10px 30px #feec85,
-    -20px 20px 40px #ffae34,
-    20px 40px 50px #ec760c,
-    -20px 60px 60px #cd4606,
-    0 80px 70px #973716,
-    10px 90px 80px #451b0e;
+    -20px 20px 40px #ffae34;
 }
 h1, h2, h3, h4, h5, h6 { margin: 5px 0px 15px 0px; clear: both; font-weight: lighter; }
 h1 { font-size: 36px; }
@@ -61,13 +53,13 @@ p {font-size: 13px; margin: 5px 0px 15px 0px; }
 
 img { -ms-interpolation-mode: bicubic; border: 0; height: auto; vertical-align: middle; display: block;  }
 figure { margin: 0; }
-::-webkit-input-placeholder { color: rgba(51, 51, 51, 0.7); font-style: italic; }
-:-moz-placeholder { color: rgba(51, 51, 51, 0.7); font-style: italic; }
-::-moz-placeholder { color: rgba(51, 51, 51, 0.7); opacity: 1; /* Firefox 19 verringert die opacity eines placeholders standardm‰ﬂig */ font-style: italic; }
-:-ms-input-placeholder { color: rgba(51, 51, 51, 0.7); font-style: italic; }
+::-webkit-input-placeholder { color: rgba(51, 51, 51, .7); font-style: italic; }
+:-moz-placeholder { color: rgba(51, 51, 51, .7); font-style: italic; }
+::-moz-placeholder { color: rgba(51, 51, 51, .7); opacity: 1; /* Firefox 19 verringert die opacity eines placeholders standardm‰ﬂig */ font-style: italic; }
+:-ms-input-placeholder { color: rgba(51, 51, 51, .7); font-style: italic; }
 
 
-input[type=button], input[type=submit]
+input[type=button], input[type=submit]:not(.anchor)
 {
 	border: none;
 	background: #ff8000;
@@ -95,7 +87,7 @@ input[type=button], input[type=submit]
 	-webkit-transition: .2s ease-in-out;
 	transition: .2s ease-in-out;
 }
-input[type=button]:hover, input[type=submit]:hover
+input[type=button]:hover, input[type=submit]:not(.anchor):hover
 {
 	background: #848484;
 	background-image: -webkit-linear-gradient(top, #848484, #424242);
@@ -107,7 +99,7 @@ input[type=button]:hover, input[type=submit]:hover
 	
 	color: #ff6000;
 }
-input[type=button]:active, input[type=submit]:active
+input[type=button]:active, input[type=submit]:not(.anchor):active
 {
 	-webkit-transition: .1s ease-in-out;
 	transition: .1s ease-in-out;
@@ -115,7 +107,7 @@ input[type=button]:active, input[type=submit]:active
 	color: #ffffff;
 }
 
-input[type=text], input[type=password], input[type=email], input[type=number], select, textarea
+input[type=text], input[type=password], input[type=email], input[type=number], input[type=date], input[type=time], input[type=search], select, textarea
 {
 	border: 2px inset #eeeeee; 
 	outline: 0;
@@ -123,16 +115,49 @@ input[type=text], input[type=password], input[type=email], input[type=number], s
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
-	-moz-box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
-	-webkit-box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95A2A7 inset;
-	box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95A2A7 inset;
+	-moz-box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95a2a7 inset;
+	-webkit-box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95A2A7 inset;
+	box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95A2A7 inset;
 	
 	padding: 10px 14px 10px 14px;
 	
 	-webkit-transition: .4s ease-in-out;
 	transition: .4s ease-in-out;
 }
-input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, select:focus, textarea:focus
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=number]:focus, input[type=date]:focus, input[type=time]:focus, input[type=search]:focus, select:focus, textarea:focus
+{
+	border: 2px inset #eeeeee;
+	
+	-moz-box-shadow: inset 0 0 4px #ff6000; 
+	-webkit-box-shadow: inset 0 0 4px #ff6000; 
+	box-shadow: inset 0 0 4px #ff6000;
+} 
+/*::-webkit-datetime-edit
+::-webkit-datetime-edit-fields-wrapper
+::-webkit-datetime-edit-text
+::-webkit-datetime-edit-month-field
+::-webkit-datetime-edit-day-field
+::-webkit-datetime-edit-year-field
+::-webkit-inner-spin-button
+::-webkit-calendar-picker-indicator*/
+::-webkit-datetime-edit-fields-wrapper
+{
+	border: 2px inset #eeeeee; 
+	outline: 0;
+	
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	-moz-box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95a2a7 inset;
+	-webkit-box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95A2A7 inset;
+	box-shadow: 2px 3px 3px rgba(0, 0, 0, .06) inset, 0 0 1px #95A2A7 inset;
+	
+	padding: 10px 14px 10px 14px;
+	
+	-webkit-transition: .4s ease-in-out;
+	transition: .4s ease-in-out;
+}
+::-webkit-datetime-edit-fields-wrapper:focus
 {
 	border: 2px inset #eeeeee;
 	
@@ -242,17 +267,17 @@ body
 	color: #424242;
 }
 
-.holder { position: relative; display: block; width: 100%; min-height: 100%; }
+.holder { position: relative; display: block; width: 100%; }
 .wrap { margin: 0 auto; display: block; width: 100%; }
 
 
-header { width: 100%; position: fixed; top: 0px; left: 0px; height: 105px; background: rgba(0, 0, 0, 0.5); z-index: 10; }
+header { width: 100%; position: fixed; top: 0px; left: 0px; height: 105px; background: rgba(0, 0, 0, .5); z-index: 10; }
 header .center { margin: auto; }
 header .siteLogo { padding: 10px/*(105-88)/2*/ 0px 0px 0px; width: 220px; float: left; text-align: center; -webkit-transition: all .3s; transition: all .3s; }
 header .siteLogo h1 { margin: 0px; }
 header .siteLogo h1 a { font-size: 36px; color: #fff; font-family: 'Open Sans', sans-serif; font-weight: 800; text-decoration: none; text-transform: uppercase; text-shadow: rgb(3, 3, 3) 0px 2px 5px; -webkit-transition: all .7s ease; transition: all .7s ease; }
-header .siteLogo h1 a img { height: 88px; -webkit-transition: all .3s; transition: all .3s; }
-header.smaller { padding: 0px 0px 0px 0px; height: 60px; background: rgba(0, 0, 0, 0.75); -webkit-transition: all .3s; transition: all .3s; }
+header .siteLogo h1 a img { padding-left: 5px; height: 88px; -webkit-transition: all .3s; transition: all .3s; }
+header.smaller { padding: 0px 0px 0px 0px; height: 60px; background: rgba(0, 0, 0, .75); -webkit-transition: all .3s; transition: all .3s; }
 header.smaller .siteLogo {padding: 5px 0px 0px 0px; }
 header.smaller .siteLogo h1 { line-height: 30px; }
 header.smaller .siteLogo h1 a { font-size: 30px; }
@@ -281,16 +306,12 @@ header.smaller .siteLogo h1 a img { height: 50px; }
     -20px -20px 40px #ffae34,
     20px -40px 50px #ec760c,
     -20px -60px 60px #cd4606,
-    0 -80px 70px #973716,
-    10px -90px 80px #451b0e,
 	/*nach unten*/
 	/*0 0 20px #fefcc9,*/
     10px 10px 30px #feec85,
     -20px 20px 40px #ffae34,
     20px 40px 50px #ec760c,
-    -20px 60px 60px #cd4606,
-    0 80px 70px #973716,
-    10px 90px 80px #451b0e;
+    -20px 60px 60px #cd4606;
 }
 .navigation li a { padding: 42px 41px 36px 41px; font-size: 16px; color: #ffffff; font-family: 'Open Sans', sans-serif; font-weight: 400; text-decoration: none; display: block; -webkit-transition: all .3s ease; transition: all .3s ease; }
 .navigation li span
@@ -418,7 +439,7 @@ header.smaller #profileSection input[type=submit]
 	position: absolute;
 	background-color: #f9f9f9;
 	min-width: 160px;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, .2);
 }
 .profileContent a
 {
@@ -509,7 +530,7 @@ header.smaller #profileSection input[type=submit]
 	margin-top: 55px;
 	left: -95px;
 	min-width: 160px;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, .2);
 }
 .mobileProfileContent.closed
 {
@@ -533,11 +554,13 @@ header.smaller #profileSection input[type=submit]
 {
 	position: relative;
 	width: 100%;
+	height: 100%;
 }
 .content
 {
 	width: 100%;
 	max-width: 1100px;
+	min-height: 80%;
 	margin: auto; 
 	text-align: center;
 	overflow: auto;
@@ -560,13 +583,13 @@ header.smaller #profileSection input[type=submit]
 
 .bottom { position: relative; width: 100%; overflow: hidden; /*background: url(../img/bottom-bg.jpg) top center no-repeat; background-size: cover;*/ }
 
-footer { overflow: hidden; width: 100%; text-align: center; background: rgba(0, 0, 0, 0.6); }
+footer { overflow: hidden; width: 100%; text-align: center; background: rgba(0, 0, 0, .6); }
 footer a
 {
 	color: #ffffff;
 	font-weight: bold;
 }
-footer a:hover { color: #ff6000; }
+footer a:hover { color: #212121; }
 footer .copyright { padding:  28px 0px; max-width: 1100px; margin: auto;}
 footer .copyright p { padding: 0px; font-size: 14px; color: #a9abad; font-family: 'Arial'; margin: 0px; }
 footer .copyright a { color: #a9abad; text-decoration: none; }
@@ -600,10 +623,39 @@ red
 	display: none;
 }
 
+.anchor
+{
+	background: none !important;
+    border: none !important; 
+    padding: 0 !important; 
+    font-family: arial, sans-serif;
+    cursor: pointer;
+
+	color: #ff6000;
+	text-decoration: none;
+	
+	-webkit-transition: .2s ease-in-out;
+	transition: .2s ease-in-out;
+}
+.anchor:hover
+{
+	color: #424242;
+	
+	text-shadow:
+	/*nach oben*/
+    0 0 20px #fefcc9,
+    10px -10px 30px #feec85,
+    -20px -20px 40px #ffae34,
+	/*nach unten*/
+	/*0 0 20px #fefcc9,*/
+    10px 10px 30px #feec85,
+    -20px 20px 40px #ffae34;
+}
+
 /*====index====*/
 .module
 {
-	display: inline-block; background: rgba(100, 100, 100, .4); width: 100%; max-width: 500px; padding: 10px; margin: 15px; border: 1px solid #424242;
+	display: inline-block; background: rgba(100, 100, 100, .4); width: 100%; max-width: 500px; padding: 10px; margin: 1.2%; border: 1px solid #424242;
 }
 .module .output
 {
@@ -742,12 +794,20 @@ red
 .deeds_create input[name=name],
 .deeds_create input[name=place],
 .deeds_create input[name=place],
-.deeds_create input[name=starttime],
-.deeds_create input[name=endtime],
 .deeds_create input[name=organization]
 {
 	width: 80%;
 	margin-bottom: 5px;
+}
+.deeds_create input[name=startdate],
+.deeds_create input[name=enddate]
+{
+	width: 25%;
+}
+.deeds_create input[name=starttime],
+.deeds_create input[name=endtime]
+{
+	width: 29%;
 }
 .deeds_create input[name=street]
 {
@@ -807,6 +867,102 @@ red
 }
 /*====/search====*/
 
+/*====deeds_details====*/
+.deed_details
+{
+	display: inline-block;
+	position: relative;
+	background: rgba(255, 255, 255, .6);
+	width: 80%;
+	max-width: 1000px;
+	padding: 20px;
+	margin: 1.2%;
+	border: 1px solid #424242;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, .4);
+}
+
+.deed_details .author
+{
+	position: absolute;
+	cursor: pointer;
+	
+	line-height: 32px;
+}
+.deed_details .author a img
+{
+	display: inline-block;
+	height: 32px;
+	margin-right: 5px;
+	border-radius: 50%;
+	
+	-webkit-transition: .2s ease-in-out;
+	transition: .2s ease-in-out;
+}
+.deed_details .author:hover a img
+{
+	border-radius: 0%;
+}
+
+.deed_details .period
+{
+	/*background: #ff0000;position: absolute;width:100%;*/
+	text-align: right;
+	float: right;
+}
+.deed_details .period span
+{
+	font-weight: bold;
+}
+
+.deed_details .description
+{
+	margin-top: 50px;
+	text-align: left;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	
+	background: rgba(255, 255, 255, .6);
+	padding: 10px;
+	margin-bottom: 15px;
+	border: 1px solid #424242;
+	box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, .2);
+}
+.deed_details .description span
+{
+	font-weight: bold;
+}
+.deed_details .infos
+{
+	width: 82%;
+	padding: 10px 10px 0 10px;
+	margin-bottom: 15px;
+	background: rgba(255, 255, 255, .6);
+	border: 1px solid #424242;
+	box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, .2);
+}
+.deed_details .infoLabel
+{
+	padding-right: 30px;
+}
+.deed_details .infoValue
+{
+	padding-right: 50px;
+}
+.deed_details .addressValue
+{
+	padding-right: 70px;
+}
+.deed_details tr td:first-child,
+.deed_details tr td:nth-child(3)
+{
+	text-decoration: underline;
+}
+.deed_details td
+{
+	padding-bottom: 6px;
+}
+/*====/deeds_details====*/
+
 /*====comment====*/
 #comments
 {
@@ -818,8 +974,8 @@ red
 	background: rgba(255, 255, 255, .2);
 	width: 100%;
 	max-width: 500px;
-	padding: 10px;
-	margin: 15px;
+	padding: 1%;
+	margin: 1.2%;
 	border: 1px solid #424242;
 	border-radius: 20px;
 }
@@ -827,9 +983,14 @@ red
 {
 	position: absolute;
 	cursor: pointer;
+	
+	line-height: 32px;
 }
 .comment .author a img
 {
+	display: inline-block;
+	height: 32px;
+	margin-right: 5px;
 	border-radius: 50%;
 	
 	-webkit-transition: .2s ease-in-out;
@@ -839,15 +1000,22 @@ red
 {
 	border-radius: 0%;
 }
+.comment .author.deleted
+{
+	left: 37px;
+	cursor: default;
+}
 .comment .createDate
 {
 	position: absolute;
 	width: 95%;
 	text-align: right;
+	font-size: 12px;
+	color: #848484;
 }
 .comment .text
 {
-	margin-top: 20px;
+	margin-top: 42px;
 	text-align: left;
 	white-space: pre-wrap;
 	word-wrap: break-word;
