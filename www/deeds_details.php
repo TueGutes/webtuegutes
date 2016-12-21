@@ -33,7 +33,7 @@ else
 	//Setzen eines Standartbildes bei fehledndem Bild
 	if($deed['pictures'] == "")
 		$deed['pictures'] = './img/profiles/standard_other.png';
-
+	
 	echo '<h2>' . $deed['name'] . '</h2>';
 	//Datehandler für die Zeiten
 	$dh_start = (new DateHandler())->set($deed['starttime']);
@@ -78,11 +78,11 @@ else
 					<tbody>
 				</table>
 			</div>';
-
+			
 			$map = new Map();
 			$map->createSpace('9%', '350px', '82%');
 			$map->createMap($deed['postalcode'] . ',' . $deed['street'] . ',' . $deed['housenumber']);
-
+			
 			echo '
 		</div>
 	</div>';
@@ -92,7 +92,7 @@ else
 	{
 		echo '<a href="./deeds_bearbeiten?id=' . $id . '"><input type="submit" value="Bearbeiten"></a>
 		<a href="./deeds_bewerten?id=' . $id . '"><input type="submit" value="Schließen"></a>';
-
+		
 		/*echo '<form method="post" action=""> // wenn Nutzer ihre Tat entfernen wollen soll sie geschlossen werden
 			<input type="hidden" name="delete" value="false">
 			<input type="submit" value="Löschen">
@@ -102,10 +102,11 @@ else
 	{
 		echo '<a href="./deeds_bewerbung?idGuteTat=' . $id . '"><input type="submit" value="Bewerben"></a>';
 	}
-
-
+	
+	
 	echo "<br><br><br><br>" . $_COMMENTS;
 }
 
 require './includes/_bottom.php';
 ?>
+
