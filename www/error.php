@@ -17,6 +17,7 @@ if($errorCode == 200) // sollte man die error Seite manuell besuchen... (Status 
 if($errorCode == 403) // fake 404 wenn der Zugriff verweigert wird (403) aus Sicherheitsgründen
 	$errorCode = 404;
 
+require './includes/DEF.php';
 require './includes/_top.php';
 ?>
 
