@@ -112,6 +112,7 @@ if(isset($_GET['id']))$idGuteTat = $_GET['id'];
 		$data=$_POST['von'];
 		$data2=$_POST['bis'];
 	if (!DateHandler::isValid($data)){
+		echo .$data;
 		echo 'Das Format von der Startzeit ist falsch.';
 	}else if (!DateHandler::isValid($data2)){
 		echo 'Das Format von der Endzeit ist falsch.';
