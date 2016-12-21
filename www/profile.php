@@ -168,7 +168,7 @@
 	//====Profil löschen====
 	if(isset($_POST['deletion_send_code']))
 	{
-		$deletionCode = 12345;//DBFunctions::db_initpwNewKey($_USER->getID());
+		$deletionCode = DBFunctions::db_initpwNewKey($_USER->getID());
 		// FOLGENDES BITTE NICHT EINRÜCKEN!
 		$deletionMail = '
 <style>
@@ -340,11 +340,16 @@ span
 					}
 					
 					if($lFoundValues['retHouseNumber'] == "")
-					{
-						sendEmail("alexander.gauggel@stud.hs-hannover.de", "TG_Strasse",
-							"<br>Die Hausnummer " . $houseNumber . " der Straße " . $street . " wurde nicht gefunden. Bitte prüfen.");
+					{ 
+						// Send mail to administrators if house number was not found.						
+						$admins = DBFunctions::db_getAllAdministrators();
+						for ($i = 0; $i < sizeof($admins); $i++) 
+						{
+							sendEmail($admins[$i], "TueGutes - Hausnummer", "Die Hausnummer '" . $houseNumber . "' der Straße '" 
+								. $street . "' im Ort '" . $place . "' wurde nicht gefunden. Bitte prüfen.");							
+						}		
 					}
-				}		
+				}
 			}
 		}	
 		else if(($street == "") && ($houseNumber == "") && ($place == ""))
@@ -532,6 +537,11 @@ span
 		{
 			// Nutzerdaten überschreiben:
 
+			// ALEX
+			$lHandler = new DateHandler();
+			$lHandler->set($birthday);
+			$thisuser['birthday'] = $lHandler->get();
+			
 			//Daten überschreiben
 			$thisuser['street'] = $street;
 			$thisuser['housenumber'] = $houseNumber;
@@ -540,9 +550,8 @@ span
 			$thisuser['telefonnumber'] = $telephonenumber;
 			$thisuser['hobbys'] = $hobbys;
 			$thisuser['description'] = $description;
-			$thisuser['birthday']= $birthday;
 			$thisuser['postalcode'] = $postalcode;
-			$thisuser['place'] = $place;
+			$thisuser['place'] = $place;			
 
 			//Speichern des Profilbildes
 			if ($_FILES['neuerAvatar']['name'] != '') {

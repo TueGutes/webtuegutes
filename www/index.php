@@ -13,15 +13,10 @@ require './includes/_top.php';
 
 include './includes/db_connector.php';
 require './includes/fb/fbConfig.php';
-
-
 ?>
 
 <h2><?php echo $wlang['welcome']; ?></h2>
-
-
 <?php
-
 	$messages = array( // später aus Datenbank
 		'TueGutes: Soziale Hilfe aus der Nachbarschaft.',
 		'TueGutes: Das soziale Netzwerk für Gutes.',
@@ -30,8 +25,7 @@ require './includes/fb/fbConfig.php';
 		'TueGutes: Wir verbinden Menschen.',
 		'Deine Stadt, deine Taten!',
 		'Mit jeder Tat ein Schritt zum Glück.',
-		'You are Hannover!',
-		'Make Hannover great again!'
+		'You are Hannover!'
 	);
 	$moveCount = mt_rand(0, sizeof($messages)-1);
 	for($i = 0; $i < $moveCount; $i++)
@@ -56,7 +50,7 @@ require './includes/fb/fbConfig.php';
 <?php
 if(!$_USER->loggedIn())
 {
-	$fb_loginURL = $facebook->getLoginUrl(array('redirect_uri' => $redirectURL, 'scope' => $fbPermissions));	
+	$fb_loginURL = $facebook->getLoginUrl(array('redirect_uri' => $redirectURL, 'scope' => $fbPermissions));
 	echo "
 		<div class='module transparent'>
 			<br><br>
@@ -70,14 +64,12 @@ if(!$_USER->loggedIn())
 			<br><br>
 			<a href='./PasswortUpdate'>Ich habe mein Passwort vergessen!</a>
 			<br><br>
-			
-			
-			noch nicht registriert ? - REGISTRIEREN:<br>
-			<div class='block'><a href='./registration'> <img src='./img/tuegutesLogin.png'></a></div>
-			<div class='block'><a href='" . $fb_loginURL . "'><img src='./img/facebookLogin.png'></a></div>
-			"//<div class='block'><a href='./googleLogin/index'> <img src='./img/googleLogin.png'></a></div>
-			
-		."</div>
+			Ich bin noch nicht registriert:<br>
+			<a href='./registration'>Zur Registrierung</a><br>
+			<br>
+			Jetzt mit Facebook anmelden<br>
+			<div class='block'><a href='" . $fb_loginURL . "'><img src='./includes/fb/images/fblogin-btn.png' /></a></div>
+		</div>
 		<div class='module'>
 			<br>
 			Willkommen auf der Plattform für gute Taten im Raum Hannover.<br>
@@ -96,17 +88,6 @@ if(!$_USER->loggedIn())
 }
 else
 {
-	echo '<div class="fb-like" 
-		data-href="https://www.facebook.com/tueGutesinHannover" 
-		data-width="600" 
-		data-layout="standard" 
-		data-action="like" 
-		data-size="small" 
-		data-show-faces="false" 
-		data-share="false">
-	</div>';
-	
-	echo "<br>";
 	echo "<a href='./deeds_create'><input type='button' value='Gute Tat erstellen' /></a><br>";
 
 	echo "

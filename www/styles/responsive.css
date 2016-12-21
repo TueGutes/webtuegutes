@@ -118,6 +118,7 @@
 
 @media only screen and (min-width: 480px) and (max-width: 767px)
 {
+	/* Mobile device 1 (small Tablet) */
 	header
 	{
 		width: 100%;
@@ -218,7 +219,7 @@
 	}
 	.content *
 	{
-		max-width: 100% !important;
+		max-width: 98% !important;
 	}
 	
 	.bottom
@@ -234,11 +235,35 @@
 		width: 100%;
 		padding: 10px 3%;
 	}
+	
+	/*====deeds_details====*/
+	.deed_details .infoLabel,
+	.deed_details .infoValue,
+	.deed_details .addressValue
+	{
+		padding-right: 0px;
+	}
+	.deed_details .infos table
+	{
+		width: 100%;
+	}
+	.deed_details td
+	{
+		width: 100%;
+		word-wrap: break-word;
+	}
+	.deed_details td
+	{
+		display: inline-block;
+		margin-top: 2px;
+	}
+	/*====/deeds_details====*/
 }
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 
 @media only screen and (max-width: 479px)
 {
+	/* Mobile device 2 */
 	header
 	{
 		width: 100%;
@@ -345,7 +370,7 @@
 	}
 	.content *
 	{
-		max-width: 100% !important;
+		max-width: 98% !important;
 	}
 	
 	.bottom
@@ -361,6 +386,43 @@
 		width: 100%;
 		padding: 10px 3%;
 	}
+	
+	/*====deeds_details====*/
+	.deed_details
+	{
+		width: 96%;
+		/*t r b l*/
+		padding: 2% 2% 2% 4%;
+	}
+	.deed_details .author
+	{
+		top: 32px;
+	}
+	.deed_details .description
+	{
+		margin-top: 66px;
+	}
+	.deed_details .infoLabel,
+	.deed_details .infoValue,
+	.deed_details .addressValue
+	{
+		padding-right: 0px;
+	}
+	.deed_details .infos table
+	{
+		width: 100%;
+	}
+	.deed_details td
+	{
+		width: 100%;
+		word-wrap: break-word;
+	}
+	.deed_details td
+	{
+		display: inline-block;
+		margin-top: 2px;
+	}
+	/*====/deeds_details====*/
 }
 @media only screen and (max-width: 1199px)
 {

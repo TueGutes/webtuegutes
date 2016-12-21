@@ -34,7 +34,9 @@ class DBFunctions
 	*@return object Datenbankverbindungsobjekt auf dem gearbeitet werden kann
 	*/
 	public function db_connect() {
-		return mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+		$db = mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+		$db->set_charset('utf8');
+		return $db;
 	}
 
 	/**
@@ -1844,10 +1846,10 @@ class DBFunctions
 	public function db_update_deeds_starttime($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.starttime = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.starttime = ?
+			WHERE Seeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1867,10 +1869,10 @@ class DBFunctions
 	public function db_update_deeds_endtime($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.endtime = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.endtime = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1890,10 +1892,10 @@ class DBFunctions
 	public function db_update_deeds_picture($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE deedtexts
+		$sql ="UPDATE DeedTexts
 			SET
-			deedtexts.pictures = ?
-			WHERE deedtexts.idDeedTexts = ?";
+			DeedTexts.pictures = ?
+			WHERE DeedTexts.idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1913,10 +1915,10 @@ class DBFunctions
 	public function db_update_deeds_description($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE deedtexts
+		$sql ="UPDATE DeedTexts
 			SET
-			deedtexts.description = ?
-			WHERE deedtexts.idDeedTexts = ?";
+			DeedTexts.description = ?
+			WHERE DeedTexts.idDeedTexts = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1936,10 +1938,10 @@ class DBFunctions
 	public function db_update_deeds_name($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.name = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.name = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -1960,10 +1962,10 @@ class DBFunctions
 		if(self::db_doesCategoryNameExist($data)){
 			$catid = self::db_getCategoryidbyCategoryText($data);
 			$db = self::db_connect();
-			$sql ="UPDATE deeds
+			$sql ="UPDATE Deeds
 				SET
-				deeds.category = ?
-				WHERE deeds.idGuteTat = ?";
+				Deeds.category = ?
+				WHERE Deeds.idGuteTat = ?";
 			$stmt = $db->prepare($sql);
 			$stmt->bind_param('ii',$catid,$idGuteTat);
 			if (!$stmt->execute()) {
@@ -1985,10 +1987,10 @@ class DBFunctions
 	public function db_update_deeds_street($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.street = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.street = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -2008,10 +2010,10 @@ class DBFunctions
 	public function db_update_deeds_housenumber($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.housenumber = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.housenumber = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -2030,10 +2032,10 @@ class DBFunctions
 	*/
 	public function db_update_deeds_postalcode($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.idPostal = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.idPostal = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('ii',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -2053,10 +2055,10 @@ class DBFunctions
 	public function db_update_deeds_organization($data,$idGuteTat){
 		$db = self::db_connect();
 		$data = htmlstr($data);
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.organization = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.organization = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -2075,10 +2077,10 @@ class DBFunctions
 	*/
 	public function db_update_deeds_countHelper($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.countHelper = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.countHelper = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('ii',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -2097,10 +2099,10 @@ class DBFunctions
 	*/
 	public function db_update_deeds_idTrust($data,$idGuteTat){
 		$db = self::db_connect();
-		$sql ="UPDATE deeds
+		$sql ="UPDATE Deeds
 			SET
-			deeds.idTrust = ?
-			WHERE deeds.idGuteTat = ?";
+			Deeds.idTrust = ?
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('ii',$data,$idGuteTat);
 		if (!$stmt->execute()) {
@@ -2711,8 +2713,8 @@ class DBFunctions
 		$result = $stmt->get_result();
 		$dbentry = $result->fetch_assoc();
 		self::db_close($db);
-		if(isset($dbentry['categorytext'])){
-			return $dbentry['categorytext'];
+		if(isset($dbentry['categoryname'])){
+			return $dbentry['categoryname'];
 		}
 		else {
 			return false;
@@ -2899,13 +2901,13 @@ class DBFunctions
 	*
 	*@return boolean
 	*/
-	public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentid = 'null'){
+	public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentid = null){
 		$db = self::db_connect();
 		$commenttext = htmlstr($commenttext);
-		$sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentcomment) VALUES (?,?,?,?,?)";
-		$date = new datetime();
+		$sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentid) VALUES (?,?,?,?,?)";
+		$date = (new datetime())->format('Y-m-d H:i:s');
 		$stmt = $db->prepare($sql);
-		$stmt->bind_param('iissi',$idofdeeds,$creatorid,$date->format('Y-m-d H:i:s'),$commenttext,$parentcomment);
+		$stmt->bind_param('iissi',$idofdeeds,$creatorid,$date,$commenttext,$parentid);
 		if($stmt->execute()){
 			self::db_close($db);
 			return true;

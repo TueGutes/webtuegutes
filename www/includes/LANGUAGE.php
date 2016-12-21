@@ -22,7 +22,7 @@ $wlang['nav_contact'] = 'Kontakt';
 //====names====
 $wlang['imprint'] = 'Impressum';
 $wlang['privacy'] = 'Datenschutzerklärung';
-$wlang['terms'] = 'AGB';
+$wlang['terms'] = 'Leitbild';
 
 //====imprint====
 //$wlang['imprint'] = '';

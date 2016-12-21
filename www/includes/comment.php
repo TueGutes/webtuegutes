@@ -7,7 +7,7 @@
  * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
  */
 
-require './includes/UTILS.php';
+require_once './includes/UTILS.php';
 
 $deedID = $_GET['id'];
 $message = isset($_POST['comment']) ? $_POST['comment'] : '';
@@ -51,24 +51,26 @@ if(isset($_POST['set']) && $_POST['set'] == '1')
 				sendEmail(DBFunctions::db_getEmailOfContactPersonByGuteTatID($deedID), $subject, $mailMessage);
 			}
 			
-			$output .= "<green>" . $wlang['comment_suc_sent'] . "</green><br>";
-			
-			// Felder resetten
-			unset($_POST['comment']);
-			$message = '';
-			
-			$scrollToElemID = "#commentWrap";
+			$_USER->redirect($HOST . '/deeds_details?id=' . $deedID . '&success=1');
 		}
 	}
-	
-	echo "<script type='text/javascript'>
+}
+
+if(isset($_GET['success']) && $_GET['success'] == '1')
+{
+	$output = "<green>" . $wlang['comment_suc_sent'] . "</green><br>";
+	$scrollToElemID = "#commentWrap";
+}
+
+$js = '';
+if(isset($scrollToElemID))
+	$js = "<script type='text/javascript'>
 	$(function() {
 		$('html, body').animate({
 			scrollTop: $('" . $scrollToElemID . "').offset().top - 60
 		}, 800);
 	});
 	</script>"; // - 60 nav bar height
-}
 
 
 //====get comments====
@@ -94,24 +96,30 @@ for($i = 0; $i < sizeof($commentsArray); $i++)
 	$userid = $entry->user_id_creator;
 	$username = $entry->username;
 	$dh = (new DateHandler())->set($entry->date_created);
-	$comments .= '<div class="comment"><div class="createDate">' . $dh->get('d.m.Y H:i:s') . '</div><div class="author"><a href="' . $HOST . '/profile?user=' . $username . '"><img src="' . $_USER->getProfileImagePathOf($userid, 32) . '" />' . $username . '</a></div><div class="text">' . $entry->commenttext . '</div></div><br>';
+	if($entry->status != 'deleted')
+		$author = '<div class="author"><a href="' . $HOST . '/profile?user=' . $username . '"><img src="' . $_USER->getProfileImagePathOf($userid, 32) . '" /> ' . $username . '</a>';
+	else
+		$author = '<div class="author deleted">gelöschter Nutzer';
+	$comments .= '<div class="comment"><div class="createDate">' . $dh->get('d.m.Y H:i:s') . '</div>' . $author . '</div><div class="text">' . $entry->commenttext . '</div></div><br>';
 }
-?>
 
+
+$_COMMENTS = "
 <div id='commentWrap'>
-	<h3><?php echo $wlang['comment_head']; ?></h3>
-	<div id='comments'><?php echo $pageSelect . '<br>' . $comments . '<br>' . $pageSelect . '<br>'; ?></div>
+	<h3>" . $wlang['comment_head'] . "</h3>
+	<div id='comments'>" . $pageSelect . '<br>' . $comments . '<br>' . $pageSelect . "<br></div>
 	
-	<h3 id='commentCreate'><?php echo $wlang['comment_form_head']; ?><br></h3>
-	<div><?php echo $output; ?><br></div>
+	<h3 id='commentCreate'>" . $wlang['comment_form_head'] . "<br></h3>
+	<div>" . $output . "<br></div>
 	<form method='post' class='block'>
-		<textarea cols='42' rows='4' name='comment' size='20' placeholder='<?php echo $wlang['comment_form_message']; ?>' required><?php echo $message; ?></textarea>
+		<textarea cols='42' rows='4' name='comment' size='20' placeholder='" . $wlang['comment_form_message'] . "' required>" . $message . "</textarea>
 		<br>
 		<div class='center'>
 			<input type='hidden' name='set' value='1' />
-			<input type='submit' value='<?php echo $wlang['comment_form_submit']; ?>'>
+			<input type='submit' value='" . $wlang['comment_form_submit'] . "'>
 		</div>
 	</form>
 </div>
-
+" . $js;
+?>
 

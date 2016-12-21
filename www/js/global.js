@@ -85,12 +85,12 @@ $(document).ready(function()
 	
 	
 	
-	if(!Modernizr.inputtypes.date) // fallback to jQueryUI dateSelector if there is no input[type=date]
-	{
+	//if(!Modernizr.inputtypes.date) // fallback to jQueryUI dateSelector if there is no input[type=date]
+	//{
 		$('input[type=date]').datepicker({
 			dateFormat: 'dd.mm.yy'
 		});
-	}
+	//}
 }); 
 
 function checkForMobileSize()

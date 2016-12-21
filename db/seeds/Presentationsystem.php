@@ -854,7 +854,7 @@ class Presentationsystem extends AbstractSeed
              ->save();  
 
         //---------------------------------------------------------------------------- d.m.Y H:i
-        $id =1;
+        $id =100;
         $name = 'Freiwillige für den Hannover-Winterlauf gesucht: Auf- und Abbau';
         $contactPerson = 111;
         $category = 2;
@@ -893,7 +893,7 @@ class Presentationsystem extends AbstractSeed
              ->save();
 
         //---------------------------------------------------------------------------- d.m.Y H:i
-        $id =2;
+        $id =101;
         $name = 'Freiwillige für den Hannover-Winterlauf gesucht: Streckensicherung';
         $contactPerson = 111;
         $category = 2;
@@ -932,14 +932,14 @@ class Presentationsystem extends AbstractSeed
              ->save();
 
         //---------------------------------------------------------------------------- d.m.Y H:i
-        $id =3;
+        $id =102;
         $name = 'Freiwillige für den Hannover-Winterlauf gesucht: Anmeldung der Spieler';
         $contactPerson = 111;
         $category = 2;
         $time = '2016-12-30 11:30';
         $organization = 'Stadt Hannover';
         $countHelper = 15;
-        $description =' Am 30.12. findet dieses Jahr wieder der Hannover-Winterlauf statt. Im Zuge der Organisation dieses Events brauchen wir tatkräftige Unterstützung bei Auf- und Abbau, Streckensicherung, Anmeldung der Spieler, Betreuung der Versorgungsstationen und im Preiskomitee.
+        $description ='Am 30.12. findet dieses Jahr wieder der Hannover-Winterlauf statt. Im Zuge der Organisation dieses Events brauchen wir tatkräftige Unterstützung bei Auf- und Abbau, Streckensicherung, Anmeldung der Spieler, Betreuung der Versorgungsstationen und im Preiskomitee.
 Für die Anmeldestation suchen wir mit dieser guten Tat freiwillige Helfer, die die Spieler begrüßen, registrieren, die Startgebühr einsammeln und Nummern austeilen. Als Mitarbeiter an der Anmeldestation seid ihr häufig die ersten Ansprechpartner für die Teilnehmer. Ihr sollten also generell interesse an dem Winterlauf haben und euch nach Möglichkeit schon im Vorfeld mit der gesamten Planung auseinander setzen. Bei Bedarf stellen wir hierfür gerne auch Material zur Verfügung.';
         $data1 = array(
             array(
@@ -972,14 +972,14 @@ Für die Anmeldestation suchen wir mit dieser guten Tat freiwillige Helfer, die 
 
 
         //---------------------------------------------------------------------------- d.m.Y H:i
-        $id =4;
+        $id =103;
         $name = 'Freiwillige für den Hannover-Winterlauf gesucht: Betreuung der Versorgungsstationen';
         $contactPerson = 111;
         $category = 2;
         $time = '2016-12-30 11:30';
         $organization = 'Stadt Hannover';
         $countHelper = 20;
-        $description =' Am 30.12. findet dieses Jahr wieder der Hannover-Winterlauf statt. Im Zuge der Organisation dieses Events brauchen wir tatkräftige Unterstützung bei Auf- und Abbau, Streckensicherung, Anmeldung der Spieler, Betreuung der Versorgungsstationen und im Preiskomitee.
+        $description ='Am 30.12. findet dieses Jahr wieder der Hannover-Winterlauf statt. Im Zuge der Organisation dieses Events brauchen wir tatkräftige Unterstützung bei Auf- und Abbau, Streckensicherung, Anmeldung der Spieler, Betreuung der Versorgungsstationen und im Preiskomitee.
 Mit dieser guten Tat suchen wir Freiwillige, die an den zahlreichen Versorgungsstationen an der Strecke besetzen. Hierzu gehört nicht nur, die bereitgestellten Getränke zu bewachen, sondern auch, die vorbeikommenden Läufer zu motivieren und anzufeuern.';
         $data1 = array(
             array(
@@ -1011,14 +1011,14 @@ Mit dieser guten Tat suchen wir Freiwillige, die an den zahlreichen Versorgungss
              ->save();
 
         //---------------------------------------------------------------------------- d.m.Y H:i
-        $id =5;
+        $id =104;
         $name = 'Freiwillige für den Hannover-Winterlauf gesucht: Preiskomitee';
         $contactPerson = 111;
         $category = 2;
         $time = '2016-12-30 11:30';
         $organization = 'Stadt Hannover';
         $countHelper = 20;
-        $description =' Am 30.12. findet dieses Jahr wieder der Hannover-Winterlauf statt. Im Zuge der Organisation dieses Events brauchen wir tatkräftige Unterstützung bei Auf- und Abbau, Streckensicherung, Anmeldung der Spieler, Betreuung der Versorgungsstationen und im Preiskomitee.
+        $description ='Am 30.12. findet dieses Jahr wieder der Hannover-Winterlauf statt. Im Zuge der Organisation dieses Events brauchen wir tatkräftige Unterstützung bei Auf- und Abbau, Streckensicherung, Anmeldung der Spieler, Betreuung der Versorgungsstationen und im Preiskomitee.
 Mit dieser guten Tat suchen wir kreative Köpfe, die Lust haben sich in die Planung des Winterlaufes einzubringen. Für die ersten Plätze soll es wieder Preise zu gewinnen geben. Dafür wird dem Komitee ein Budget zur Verfügung gestellt, welches es verplanen und einen Vorschlag ausarbeiten soll, welche Preise für welche Platzierungen sinnvoll sind.';
         $data1 = array(
             array(
@@ -1050,14 +1050,14 @@ Mit dieser guten Tat suchen wir kreative Köpfe, die Lust haben sich in die Plan
              ->save();
 
         //---------------------------------------------------------------------------- d.m.Y H:i
-        $id =6;
+        $id =195;
         $name = 'Spazieren gehen mit Bewohnern unseres Seniorenstifts';
         $contactPerson = 112;
         $category = 3;
         $time = '2016-12-23 15:30';
         $organization = 'Pflegeheim Grossmueller';
         $countHelper = 8;
-        $description =' Unsere Bewohner gehen gerne an die frische Luft. Das belebt die Lebensgeister und stellt eine schöne Abwechslung dar. Leider haben viele von ihnen keine Angehörigen in der Nähe die täglich die Möglichkeit haben, sie zu besuchen. Wir suchen regelmäßig Freiwillige, die Lust haben ab und zu mit unseren Bewohnern zusammen spazieren zu gehen und sich über Gott und die Welt zu unterhalten. Viele von ihnen haben spannende Geschichten erlebt und freuen sich immer, diese interessierten Zuhörern erzählen zu können.';
+        $description ='Unsere Bewohner gehen gerne an die frische Luft. Das belebt die Lebensgeister und stellt eine schöne Abwechslung dar. Leider haben viele von ihnen keine Angehörigen in der Nähe die täglich die Möglichkeit haben, sie zu besuchen. Wir suchen regelmäßig Freiwillige, die Lust haben ab und zu mit unseren Bewohnern zusammen spazieren zu gehen und sich über Gott und die Welt zu unterhalten. Viele von ihnen haben spannende Geschichten erlebt und freuen sich immer, diese interessierten Zuhörern erzählen zu können.';
         $data1 = array(
             array(
                 'idGuteTat' => $id,
@@ -1088,14 +1088,14 @@ Mit dieser guten Tat suchen wir kreative Köpfe, die Lust haben sich in die Plan
              ->save();
 
         //---------------------------------------------------------------------------- d.m.Y H:i
-        $id =7;
+        $id =106;
         $name = 'Nachhilfe in theoretische Informatik';
         $contactPerson = 105;
         $category = 4;
         $time = '2016-12-28 10:00';
         $organization = '';
         $countHelper = 1;
-        $description ='  Ich habe Schwierigkeiten mit dem Kurs Theoretische Informatik (vor allem Pumping Lemma). Es wäre cool, wenn mir das jemand nochmal erklären könnte. Der angegebene Zeitraum ist nur ein Vorschlag, wenn du zu einer anderen Zeit kannst, schreib mich gerne an.';
+        $description ='Ich habe Schwierigkeiten mit dem Kurs Theoretische Informatik (vor allem Pumping Lemma). Es wäre cool, wenn mir das jemand nochmal erklären könnte. Der angegebene Zeitraum ist nur ein Vorschlag, wenn du zu einer anderen Zeit kannst, schreib mich gerne an.';
         $data1 = array(
             array(
                 'idGuteTat' => $id,
@@ -1126,14 +1126,14 @@ Mit dieser guten Tat suchen wir kreative Köpfe, die Lust haben sich in die Plan
              ->save();
 
         //---------------------------------------------------------------------------- d.m.Y H:i
-        $id =8;
+        $id =107;
         $name = 'Mathe-Nachhilfe gesucht';
         $contactPerson = 110;
         $category = 4;
         $time = '2016-12-29 08:00';
         $organization = '';
         $countHelper = 1;
-        $description ='   Ich bin jetzt im 1. Semester und verstehe Mathe einfach nicht. Ich hab schon richtig Angst vor den Prüfungen… Kann mir jemand helfen?';
+        $description ='Ich bin jetzt im 1. Semester und verstehe Mathe einfach nicht. Ich hab schon richtig Angst vor den Prüfungen… Kann mir jemand helfen?';
         $data1 = array(
             array(
                 'idGuteTat' => $id,
@@ -1164,14 +1164,14 @@ Mit dieser guten Tat suchen wir kreative Köpfe, die Lust haben sich in die Plan
              ->save();
 
         //---------------------------------------------------------------------------- d.m.Y H:i
-        $id =9;
+        $id =108;
         $name = 'Tee-Karawane in Hannover';
         $contactPerson = 100;
         $category = 6;
         $time = '2017-01-05 14:00';
         $organization = '';
         $countHelper = 4;
-        $description ='   Du hast Lust dich mit anderen zu engagieren und mit Menschen in Berührung zu kommen? Schließ dich unserer Tee-Karawane an. Zwischen den Jahren wollen wir mit einer lustigen Truppe durch Hannover ziehen und mit Thermoskannen bewaffnet Tee an Obdachlose verteilen. Wäre schön, wenn ein paar Leute zusammen kommen.';
+        $description ='Du hast Lust dich mit anderen zu engagieren und mit Menschen in Berührung zu kommen? Schließ dich unserer Tee-Karawane an. Zwischen den Jahren wollen wir mit einer lustigen Truppe durch Hannover ziehen und mit Thermoskannen bewaffnet Tee an Obdachlose verteilen. Wäre schön, wenn ein paar Leute zusammen kommen.';
         $data1 = array(
             array(
                 'idGuteTat' => $id,
@@ -1202,14 +1202,14 @@ Mit dieser guten Tat suchen wir kreative Köpfe, die Lust haben sich in die Plan
              ->save();
 
         //---------------------------------------------------------------------------- d.m.Y H:i
-        $id =10;
+        $id =109;
         $name = 'Gassi mit Fiffi';
         $contactPerson = 101;
         $category = 6;
         $time = '2017-01-09 9:00';
         $organization = '';
         $countHelper = 1;
-        $description ='   Halli Hallo. Ich bin Manuel und bräuchte jemanden, der sich über die Weihnachtstage um meinen Hund Fiffy kümmern kann. Fiffy ist ein süßer kleiner Dackel, den ich wegen der Allergie meines Vaters leider nicht mit zu meinen Eltern nehmen kann. Du müsstest zweimal am Tag mit Fifa rausgehen (eine kleinere Runde von ca. 5 Minuten und eine größere von ca. 15 min), ihm zu Fressen geben, etc. Erfahrung mit Hunden wäre super, aber nicht unbedingt erforderlich (Fiffy ist auch ganz lieb). Weiteres lässt sich ja auch dann noch persönlich klären. Wäre schön, wenn sich jemand meldet.';
+        $description ='Halli Hallo. Ich bin Manuel und bräuchte jemanden, der sich über die Weihnachtstage um meinen Hund Fiffy kümmern kann. Fiffy ist ein süßer kleiner Dackel, den ich wegen der Allergie meines Vaters leider nicht mit zu meinen Eltern nehmen kann. Du müsstest zweimal am Tag mit Fifa rausgehen (eine kleinere Runde von ca. 5 Minuten und eine größere von ca. 15 min), ihm zu Fressen geben, etc. Erfahrung mit Hunden wäre super, aber nicht unbedingt erforderlich (Fiffy ist auch ganz lieb). Weiteres lässt sich ja auch dann noch persönlich klären. Wäre schön, wenn sich jemand meldet.';
         $data1 = array(
             array(
                 'idGuteTat' => $id,

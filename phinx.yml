@@ -13,8 +13,9 @@ environments:
         pass: ''
         port: 3306
         charset: utf8
+        collation: utf8_general_ci
 
-    development:
+    stable:
         adapter: mysql
         host: localhost
         name: tueGutes
@@ -22,6 +23,7 @@ environments:
         pass: Sadi23n2os
         port: 3306
         charset: utf8
+        collation: utf8_general_ci
 
     testing:
         adapter: mysql
@@ -31,6 +33,7 @@ environments:
         pass: Sadi23n2os
         port: 3306
         charset: utf8
+        collation: utf8_general_ci
 
     presentation:
         adapter: mysql
@@ -40,3 +43,4 @@ environments:
         pass: Sadi23n2os
         port: 3306
         charset: utf8
+        collation: utf8_general_ci
