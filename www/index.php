@@ -25,8 +25,7 @@ require './includes/fb/fbConfig.php';
 		'TueGutes: Wir verbinden Menschen.',
 		'Deine Stadt, deine Taten!',
 		'Mit jeder Tat ein Schritt zum Glück.',
-		'You are Hannover!',
-		'Make Hannover great again!'
+		'You are Hannover!'
 	);
 	$moveCount = mt_rand(0, sizeof($messages)-1);
 	for($i = 0; $i < $moveCount; $i++)
@@ -89,17 +88,6 @@ if(!$_USER->loggedIn())
 }
 else
 {
-	echo '<div class="fb-like" 
-		data-href="https://www.facebook.com/tueGutesinHannover" 
-		data-width="350" 
-		data-layout="standard" 
-		data-action="like" 
-		data-size="small" 
-		data-show-faces="false" 
-		data-share="false">
-	</div>';
-	
-	echo "<br><br>";
 	echo "<a href='./deeds_create'><input type='button' value='Gute Tat erstellen' /></a><br>";
 
 	echo "
