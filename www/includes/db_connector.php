@@ -1849,7 +1849,7 @@ class DBFunctions
 		$sql ="UPDATE Deeds
 			SET
 			Deeds.starttime = ?
-			WHERE Seeds.idGuteTat = ?";
+			WHERE Deeds.idGuteTat = ?";
 		$stmt = $db->prepare($sql);
 		$stmt->bind_param('si',$data,$idGuteTat);
 		if (!$stmt->execute()) {
