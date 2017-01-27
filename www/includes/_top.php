@@ -2,7 +2,7 @@
 /**
  * Oberer Teil der Website
  *
- * Enth‰lt den oberen Teil der Website (z.B. das Men¸)
+ * Enth√§lt den oberen Teil der Website (z.B. das Men√º)
  *
  * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
  */
@@ -15,7 +15,7 @@ $activeTab = 'class="active"';
 <html>
 
 <head>
-	<meta charset="utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>TueGutes</title>
 	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico" />
 	<?php /*<meta name="author" content="Henrik Huckauf" />*/ ?>
@@ -35,6 +35,10 @@ $activeTab = 'class="active"';
 	<script type="text/javascript" src="js/global.js"></script>
 	
 	<script type="text/javascript" src="js/facebook.js"></script>
+	
+	<script type="text/javascript">window.cookieconsent_options = { "message": "Wir verwenden Cookies, um Inhalte und Anzeigen zu personalisieren, Funktionen f√ºr soziale Medien anzubieten und die Zugriffe auf unsere Website zu analysieren.", "dismiss": "OK", "learnMore": "Mehr Info", "link": "/imprint", "theme": "light-bottom" };</script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/1.0.9/cookieconsent.min.js"></script>
+	<style>.cc_btn { background-color: #cccccc !important; } .cc_container { padding: 5px !important; } .cc_more_info { color: #ff6000 !important; }</style>
 </head>
 
 <body>
