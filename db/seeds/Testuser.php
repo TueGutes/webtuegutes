@@ -16,7 +16,7 @@ class Testuser extends AbstractSeed
     {
         $datauser=array(
             array(
-                'idUser' => 1,
+                'idUser' => 3,
                 'username' => 'testuser',
                 'password' => '9d53fbca481ed20edc0c10d6e45fcedf',
                 'email' => 'testmailgutetaten@gmail.com',
@@ -29,20 +29,20 @@ class Testuser extends AbstractSeed
             );
         $dataprivacy=array(
             array(
-                'idPrivacy' => 1,
+                'idPrivacy' => 3,
                 'privacykey' => '111111111111111',
                 'cryptkey' => '345485c1dfc5ebc4dd3fb90e3d591518'
                 )
             );
         $datausertexts=array(
             array(
-                'idUserTexts' =>1,
+                'idUserTexts' =>3,
                 'avatar' => './img/profiles/standard_other.png'
                 )
             );
         $datapersdata=array(
             array(
-                'idPersData' => 1,
+                'idPersData' => 3,
                 'firstname' => 'testmax',
                 'lastname' => 'testmuster',
                 'idPostal' => -1
