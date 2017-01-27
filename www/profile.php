@@ -1,9 +1,3 @@
-<!--Formular zum Vorschlagen einer neuen Adresse-->
-<form id="suggestAddress" action="./contact" method="post">
-	<input type='hidden' name='suggestCategory' value='1' />
-	<input type='hidden' name='message' value='Ich vermisse folgende Adresse: ' />
-</form>
-
 <?php
 	//Zum Ausblenden von Features, die Safari nicht kann (oder eben ggf. andere Browser)
 	//Clever wäre, das hier in die DEF auszulagern!
@@ -800,3 +794,10 @@ span
 </div>
 
 <?php require "./includes/_bottom.php"; ?>
+
+
+<!--Formular zum Vorschlagen einer neuen Adresse-->
+<form id="suggestAddress" action="./contact" method="post">
+	<input type='hidden' name='suggestCategory' value='1' />
+	<input type='hidden' name='message' value='Ich vermisse folgende Adresse: ' />
+</form>
