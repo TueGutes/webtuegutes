@@ -52,7 +52,7 @@ $(document).ready(function()
 	});
 	//====/DO NOT TOUCH====
 	
-	//mobiel profile
+	//mobile profile
 	$('.mobile .profile').click(function()
 	{
 		toggleMenu(true);
@@ -87,10 +87,16 @@ $(document).ready(function()
 	
 	//if(!Modernizr.inputtypes.date) // fallback to jQueryUI dateSelector if there is no input[type=date]
 	//{
-		$('input[type=date]').datepicker({
+	//	$('input[type=date]').datepicker({
+	//		dateFormat: 'dd.mm.yy'
+	//	});
+	//}
+	$('input[type=date]').each(function()
+	{
+		$('<input type="text" />').attr({ name: this.name, placeholder: this.placeholder, class: this.class, requires: this.required }).insertBefore(this).datepicker({
 			dateFormat: 'dd.mm.yy'
 		});
-	//}
+	}).remove();
 }); 
 
 function checkForMobileSize()
