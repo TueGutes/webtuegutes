@@ -441,6 +441,10 @@ header.smaller #profileSection input[type=submit]
 	min-width: 160px;
 	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, .2);
 }
+.profileContent .adminOption
+{
+	background-color: #a0a0a0;
+}
 .profileContent a
 {
     color: #000000;
