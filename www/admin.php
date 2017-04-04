@@ -7,6 +7,14 @@
  * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
  */
 
+require './includes/DEF.php';
+ 
+if(!$_USER->hasGroup($_GROUP_ADMIN))
+{
+	$_USER->redirect('./error?e=404');
+	exit;
+}
+ 
 $page = @$_GET['page'];
 if($page == 'user')
 {
@@ -19,8 +27,6 @@ else if($page == 'deeds')
 	exit;
 }
  
-require './includes/DEF.php';
-
 require './includes/_top.php';
 ?>
 

@@ -55,6 +55,10 @@ class User
 	{
 		return $this->loggedIn() ? $_SESSION['lastname'] : false;
 	}
+	function hasGroup($groupID)
+	{
+		return $this->loggedIn() ? $this->get('group') >= $groupID : false;
+	}
 	function get($key)
 	{
 		return $this->loggedIn() ? $_SESSION[$key] : false;

@@ -60,9 +60,9 @@ $activeTab = 'class="active"';
 						echo '<div class="profile"><img src="' . $_USER->getProfileImagePath(64) . '" class="block" /><br>' . $_USER->getUsername() . '</div>
 						<div class="profileContent">
 							' . $profileMenuLinks . 
-							(true ? '
-							<a href="./admin?page=user" class="adminOption">Tatenverwaltung</a>
-							<a href="./admin?page=deeds" class="adminOption">Nutzerverwaltung</a>' : '') . 
+							($_USER->hasGroup($_GROUP_ADMIN) ? '
+							<a href="./admin?page=deeds" class="adminOption">Tatenverwaltung</a>
+							<a href="./admin?page=user" class="adminOption">Nutzerverwaltung</a>' : '') . 
 							'
 						</div>';
 					else

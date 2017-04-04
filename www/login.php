@@ -48,6 +48,7 @@ if(isset($_POST['username']) && isset($_POST['password']))
 					$_USER->login($userID, $username, $dbentry['email'], $dbentry['firstname'], $dbentry['lastname']);
 					$_USER->set('privacykey', $dbentry['privacykey']);
 					$_USER->set('gender', $dbentry['gender']);
+					$_USER->set('group', $dbentry['idUserGroup']);
 					$_USER->redirect($continue); //Weiterleiten auf URL in $continue
 					exit;
 				}
