@@ -3352,6 +3352,37 @@ class DBFunctions
 	}
 
 
+	/**
+	*Erstellt einen Eintrag in die HistoryTabelle unter Angabe von Parameter
+	*
+	*Die Funktion kriegt fünf Paramter übergeben und erstellt mit den übergebenen Parametern einen Eintrag in die HistoryTabelle. Als Return Wert gibt es einen boolean. True gibt an, dass der Eintrag erfolgreich war und bei false ebenhalt nicht.
+	*
+	*@param int $actor Eine Nutzer ID
+	*@param string $action Aktion die Gemacht wurde
+	*@param string $info Beschreibung der durchgeführten Aktion
+	*@param int $involvedDeed ggf. eine Gute Tat ID
+	*@param int $involvedUser ggf. eine Nutzer ID
+	*
+	*@return boolean
+	*/
+	public function db_historyEntry($actor,$action,$info,$involvedDeed = null, $involvedUser = null){
+		$db = self::db_connect();
+		$sql = "INSERT INTO History(actor,action,info,involvedDeed,involvedUser) VALUES (?,?,?,?,?)";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('issii',$actor,$action,$info,$involvedDeed,$involvedUser);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+
+	}
+
+
 }
 
 
