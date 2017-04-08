@@ -586,7 +586,7 @@ class DBFunctions
 
 		//Check wenn kein user gefunden wurde
 		if($thisuser == null){
-			return false;
+			return null;
 		}
 		if (!isset($thisuser['idPostal'])) {
 			$thisuser['postalcode'] = '';
