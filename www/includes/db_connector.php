@@ -553,16 +553,17 @@ class DBFunctions
 	* * idPostal,
 	* * telefonnumber,
 	* * messengernumber,
-	* * birthday
+	* * birthday,
+	* * status
 	*
 	*@param string $user Benutzername des Benutzers
 	*
-	*@return mixed[] Array aus verschiedenen Daten mit den Datentypen von Strings und Ints
+	*@return mixed[]|false Array aus verschiedenen Daten mit den Datentypen von Strings und Ints oder false, wenn kein User gefunden wurde
 	*/
 	public function db_get_user($user) {
 		$db = self::db_connect();
 		$sql = "
-			SELECT idUser, password, username, email, regDate, points, Trust.idTrust, trustleveldescription, UserGroup.idUserGroup, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, PersData.idPostal, telefonnumber, messengernumber, birthday, place, postalcode
+			SELECT idUser, password, username, email, regDate, points, Trust.idTrust, trustleveldescription, UserGroup.idUserGroup, groupDescription, privacykey, avatar, hobbys, description, firstname, lastname, gender, street, housenumber, PersData.idPostal, telefonnumber, messengernumber, birthday, place, postalcode, status
 			FROM User
 				JOIN Trust
 			    	ON User.idTrust = Trust.idTrust
@@ -582,14 +583,16 @@ class DBFunctions
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$thisuser = $result->fetch_assoc();
+
+		//Check wenn kein user gefunden wurde
+		if($thisuser == null){
+			return false;
+		}
 		if (!isset($thisuser['idPostal'])) {
 			$thisuser['postalcode'] = '';
 			$thisuser['place'] = '';
 			$thisuser['idPostal'] = '';
 		}
-		//Schließen der Datenbankverbindung
-		self::db_close($db);
-
 		//Setzen von Eigenschaften, die nicht aus der Datenbank geladen werden konnten
 		if (!isset($thisuser['avatar'])) $thisuser['avatar'] = "";
 		if (!isset($thisuser['hobbys'])) $thisuser['hobbys'] = "";
@@ -600,6 +603,9 @@ class DBFunctions
 		if (!isset($thisuser['telefonnumber'])) $thisuser['telefonnumber'] = "";
 		if (!isset($thisuser['messengernumber'])) $thisuser['messengernumber'] = "";
 		if (!isset($thisuser['birthday'])) $thisuser['birthday'] = "";
+
+		//Schließen der Datenbankverbindung
+		self::db_close($db);
 
 		return $thisuser;
 
