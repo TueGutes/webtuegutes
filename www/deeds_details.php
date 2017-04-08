@@ -48,7 +48,7 @@ else
 	echo '
 	<div class="center">
 		<img src="' . $deed['pictures'] . '" class="block" /><br>
-		<div class="deed_details">
+		<div class="details">
 			<div class="author"><a href="' . $HOST . '/profile?user=' . $username . '"><img src="' . $_USER->getProfileImagePathOf($userid, 32) . '" />' . $username . '</a></div>
 			<div class="period">'.'vom: <span>' . $dh_start->get('d.m.Y ') . '</span> um <span>' . $dh_start->get('H:i') . '</span> Uhr' . '<br>bis: <span>' . $dh_end->get('d.m.Y ') . '</span> um <span>' . $dh_end->get('H:i') . '</span> Uhr</div>
 			<div class="description"><span>' . $deed['name'] . '</span><br><br>' . $deed['description'] . '</div>';
