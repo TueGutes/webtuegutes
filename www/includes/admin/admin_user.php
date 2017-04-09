@@ -129,16 +129,83 @@ require './includes/_top.php';
 	<?php	
 	if(!empty($search))
 	{
-		// zeige Suchergebnisse an ODER "Es wurden keine Benutzer gefunden"
-		// gefundene Nutzer zeigen auf:
-		/*
-		<a href="' . $CURRENT_PAGE . '&user=' . $username1 . '">' . $username1 . '</a><br>
-		<a href="' . $CURRENT_PAGE . '&user=' . $username2 . '">' . $username2 . '</a>
-		<a href="' . $CURRENT_PAGE . '&user=' . $username3 . '">' . $username3 . '</a>
-		<a href="' . $CURRENT_PAGE . '&user=' . $username4 . '">' . $username4 . '</a>
-		<a href="' . $CURRENT_PAGE . '&user=' . $username5 . '">' . $username5 . '</a>
-		*/
-		echo 'coming soon: Suche';
+        $keyword = explode(' ', $search);
+        @$bedingung = "%" . $keyword[0] . "%" . $keyword[1] . "%";
+        $db = DBFunctions::db_connect();
+        $sql = "SELECT `User`.`username` FROM `User` WHERE `User`.`username` LIKE ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('s', $bedingung);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        DBFunctions::db_close($db);
+        $num = mysqli_num_rows($result);
+
+        $pagesize = 5;
+        $maxpage = ceil($num / $pagesize);
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        if ($page < 1) {
+            $page = 1;
+        }
+        if ($page > $maxpage) {
+            $page = $maxpage;
+        }
+    echo "<br><br><br><br><span class='resultSpan' style='float:left'>Suchergebnis:</span>";
+    if ($num == 0) {
+        echo "<br><br><hr><br><br><br><br>No Result<br>";
+    } else {
+        $result_str = "<br><br><hr><br><br>";
+        for ($i = 1; $i <= $num; $i++) {
+            $row = mysqli_fetch_array($result);
+            if (!$row) {
+                break;
+            }
+
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Format von Links liegt hier!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if ($i > ($page - 1) * $pagesize && $i <= $page * $pagesize) {
+                $result_str .= "<a href='{$CURRENT_PAGE}&user={$row['username']}'>";
+                $result_str .= $row['username'] . "</a><br>";
+            }
+        }
+        echo $result_str;
+        echo setPageUrl(1, 'first');
+        echo setPageUrl($page - 1, 'previous'); ?>
+
+        <select id="page_selector" class="pageSelect" onchange="goto()">
+            <option></option>
+        </select>
+        <script type="text/javascript">
+            var page_selector = document.getElementById('page_selector');
+            for (var i = 1; i <=<?=$maxpage?>; i++) {
+                var obj = document.createElement("option");
+                obj.innerHTML = i;
+                obj.value = i;
+                if (i == <?=$page?>)
+                    obj.selected = "true";
+                page_selector.appendChild(obj);
+            }
+
+            function goto() {
+                var url = "admin?page=" + page_selector.value + "&search=<?=$_REQUEST['search']?>&page=user";
+                window.open(url, '_self');
+            }
+        </script>
+
+
+    <?php echo setPageUrl($page + 1, 'next');
+    echo setPageUrl($maxpage, 'last');
+    echo '<br>';
+    echo '<span class="pageInfo">current:' . $page . ' of ' . $maxpage . '</span>';
+    }
+    echo "<br><br><br><br><br><hr>";
+    // zeige Suchergebnisse an ODER "Es wurden keine Benutzer gefunden"
+    // gefundene Nutzer zeigen auf:
+    /*
+    <a href="' . $CURRENT_PAGE . '&user=' . $username1 . '">' . $username1 . '</a><br>
+    <a href="' . $CURRENT_PAGE . '&user=' . $username2 . '">' . $username2 . '</a>
+    <a href="' . $CURRENT_PAGE . '&user=' . $username3 . '">' . $username3 . '</a>
+    <a href="' . $CURRENT_PAGE . '&user=' . $username4 . '">' . $username4 . '</a>
+    <a href="' . $CURRENT_PAGE . '&user=' . $username5 . '">' . $username5 . '</a>
+    */
 	}
 	else if(!empty($user) && $userFound)
 	{
@@ -364,4 +431,10 @@ require './includes/_top.php';
 
 <?php
 require './includes/_bottom.php';
+function setPageUrl($page, $name)
+{
+    $str = "<a href='admin?page=".$page.'&search='.$_REQUEST['search'].'&page=user'.
+        "' class='setPageAnchor'>".$name.'</a>';
+    return $str;
+}
 ?>
