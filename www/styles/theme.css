@@ -106,6 +106,12 @@ input[type=button]:active, input[type=submit]:not(.anchor):active
 	
 	color: #ffffff;
 }
+input[type=button].small,
+input[type=submit].small
+{
+	font-size: 12px;
+	padding: 4px 21px 4px 21px;
+}
 
 input[type=text], input[type=password], input[type=email], input[type=number], input[type=date], input[type=time], input[type=search], select, textarea
 {
@@ -872,7 +878,7 @@ red
 /*====/search====*/
 
 /*====deeds_details====*/
-.deed_details
+.details
 {
 	display: inline-block;
 	position: relative;
@@ -885,14 +891,14 @@ red
 	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, .4);
 }
 
-.deed_details .author
+.details .author
 {
 	position: absolute;
 	cursor: pointer;
 	
 	line-height: 32px;
 }
-.deed_details .author a img
+.details .author a img
 {
 	display: inline-block;
 	height: 32px;
@@ -902,23 +908,23 @@ red
 	-webkit-transition: .2s ease-in-out;
 	transition: .2s ease-in-out;
 }
-.deed_details .author:hover a img
+.details .author:hover a img
 {
 	border-radius: 0%;
 }
 
-.deed_details .period
+.details .period
 {
 	/*background: #ff0000;position: absolute;width:100%;*/
 	text-align: right;
 	float: right;
 }
-.deed_details .period span
+.details .period span
 {
 	font-weight: bold;
 }
 
-.deed_details .description
+.details .description
 {
 	margin-top: 50px;
 	text-align: left;
@@ -931,11 +937,11 @@ red
 	border: 1px solid #424242;
 	box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, .2);
 }
-.deed_details .description span
+.details .description span
 {
 	font-weight: bold;
 }
-.deed_details .infos
+.details .infos
 {
 	width: 82%;
 	padding: 10px 10px 0 10px;
@@ -944,24 +950,24 @@ red
 	border: 1px solid #424242;
 	box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, .2);
 }
-.deed_details .infoLabel
+.details .infoLabel
 {
 	padding-right: 30px;
 }
-.deed_details .infoValue
+.details .infoValue
 {
 	padding-right: 50px;
 }
-.deed_details .addressValue
+.details .addressValue
 {
 	padding-right: 70px;
 }
-.deed_details tr td:first-child,
-.deed_details tr td:nth-child(3)
+.details tr td:first-child,
+.details tr td:nth-child(3)
 {
 	text-decoration: underline;
 }
-.deed_details td
+.details td
 {
 	padding-bottom: 6px;
 }

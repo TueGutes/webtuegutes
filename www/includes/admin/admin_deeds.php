@@ -7,8 +7,6 @@
  * @author ... ... <xxxx.xxxx@stud.hs-hannover.de>
  */
 
-require './includes/DEF.php';
-
 require './includes/_top.php';
 ?>
 

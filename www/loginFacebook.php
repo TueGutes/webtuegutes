@@ -3,7 +3,6 @@
 require './includes/DEF.php';
 require './includes/fb/fbConfig.php';
 require './includes/_top.php';
-require './includes/db_connector.php';
 
 //------------------------------ INITIALISIERUNGEN -----------------------------------------------------
     //----------------- Facebook --------------------------

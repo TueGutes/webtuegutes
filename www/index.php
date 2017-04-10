@@ -11,7 +11,6 @@ require './includes/DEF.php';
 
 require './includes/_top.php';
 
-include './includes/db_connector.php';
 require './includes/fb/fbConfig.php';
 ?>
 

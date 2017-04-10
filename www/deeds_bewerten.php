@@ -5,7 +5,6 @@
 
 require './includes/DEF.php';
 include './includes/ACCESS.php';
-include './includes/db_connector.php';
 require './includes/_top.php';
 
 $idTat  = $_GET['id'];

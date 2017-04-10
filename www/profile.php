@@ -144,7 +144,6 @@
 	
 	$browser = $BROWSER_NAME;
 
-	include "./includes/db_connector.php";
 	include "./includes/Map.php";
 	require "./includes/_top.php";
 
@@ -760,6 +759,7 @@ span
 <!--Überschrift-->
 <h2 id="profileheader"><?php echo $headline; ?></h2>
 
+<?php if($_USER->hasGroup($_GROUP_MODERATOR)) echo '<a href="./admin?page=user&user=' . $thisuser['username'] . '">Diesen Nutzer bearbeiten</a>'; ?>
 <!--Ggf. ausgeben des Links zur öffentlichen Ansicht-->
 
 <div class="profile">

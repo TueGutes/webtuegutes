@@ -11,7 +11,6 @@
 require './includes/UTILS.php';
 require './includes/DEF.php';
 require './includes/ACCESS.php';
-require './includes/db_connector.php';
 require './includes/_top.php';
 
 //Fehlerüberprüfung auf den Getparameter und prüfung ob die Seite ein zweites mal aufgerufen wurde

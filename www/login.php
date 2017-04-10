@@ -16,8 +16,6 @@ require './includes/DEF.php';
 if($_USER->loggedIn())
 	$_USER->redirect($HOST);
 
-include './includes/db_connector.php';
-
 //DB Funktionen, die später ausgelagert werden sollten
 // TIMM:
 // ausgelagert in db_connector, code ist gesaved in einer .txt bei mir

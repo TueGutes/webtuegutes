@@ -9,7 +9,7 @@
 
 require './includes/DEF.php';
  
-if(!$_USER->hasGroup($_GROUP_ADMIN))
+if(!$_USER->hasGroup($_GROUP_MODERATOR))
 {
 	$_USER->redirect('./error?e=404');
 	exit;

@@ -9,7 +9,6 @@ enthält Teile von deeds_create und deeds_bearbeiten
 */
 require './includes/DEF.php';
 require './includes/UTILS.php';
-require './includes/db_connector.php';
 require './includes/_top.php';
 
 // ALEX
