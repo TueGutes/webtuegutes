@@ -2925,6 +2925,50 @@ class DBFunctions
 
 	}
 
+
+	/**
+	*Funktion gibt Informationen zu einem Kommentar zurück.
+	*
+	*DIe FUnktion kriegt eine ID eines Kommentars zu einer beliebigen Guten Tat übergeben und gibt alle gespeicherten Informationen zu dem Kommentar in einem Array zurück.
+	*
+	*@param int $deedCommentID ID eines Kommentars
+	*
+	*@return mixed[] Array von den Attributen in Form der Datentypen String und Int
+	**/
+	public function db_getDeedComment($deedCommentID){
+		$db = self::db_connect();
+		$sql = "SELECT * FROM DeedComments WHERE id = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$deedCommentID);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		self::db_close($db);
+		$dbentry = $result->fetch_assoc();
+		return $dbentry;
+	}
+
+
+	/**
+	*Löscht unter Angabe einer ID den zugehörigen Kommentar
+	*
+	*Die Fúnktion kriegt eine ID eines Kommentars übergeben und löscht sie aus der Datenbank
+	*
+	*@param int $deedcommentID ID eines Kommentars
+	**/
+	public function db_deleteDeedComment($deedCommentID){
+		$db = self::db_connect();
+
+		$sql ="DELETE From DeedComments
+			WHERE id = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$deedCommentID);
+		$stmt->execute();
+
+		self::db_close($db);
+
+	}
+
+
 	/**
 	*Erstellt eine Liste von Kommentaren.
 	*
