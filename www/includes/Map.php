@@ -33,7 +33,7 @@ class Map {
     /**
      * Generiert eine Karte, die auf die übergebene Adresse zentriert ist.
      * Die Adresse wir mit einem Marker markiert.
-     * @param string $address Die Adresse, auf der die Karte zentriert werden soll. Format: "Postleitzahl,Straße,Hausnummer". Es kann auch nur die Postleitzahl oder Postleitzahl und Straße, ohne Hausnummer angegeben werden. 
+     * @param string $address Die Adresse, auf der die Karte zentriert werden soll. Format: "Postleitzahl, Straße, Hausnummer". Es kann auch nur die Postleitzahl oder Postleitzahl und Straße, ohne Hausnummer angegeben werden. 
      */
     public function createMap($address) {
         $latLon = $this->getLatLonFromAddress($address);
@@ -85,7 +85,7 @@ class Map {
 		var markers = L.markerClusterGroup();
         <?php
 		if($userID == -1){
-			 $arr = DBFunctions::db_getGuteTatenForList($tatenProSeite * ($_GET['page'] - 1), $tatenProSeite, $placeholder);
+			$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite * ($_GET['page'] - 1), $tatenProSeite, $placeholder);
 		}else{
 			$arr = DBFunctions::db_getGuteTatenForUser($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder, $userID);
 		}
@@ -109,9 +109,9 @@ class Map {
      * Erstellt eine Karte auf der, die guten Taten markiert werden, nach denen gesucht wurde.
      * Jede Markierung hat ein Popup, in dem der Name der guten Tat angezeigt wird. Der Name kann angeklickt werden und leitet auf die entsprechende deeds_details Seite.
      * @param string $keyword eingenommene Stichworte (category oder TatName)
-	 * @param string $sort die Etikett aus search.php, kann 'starttime','endtime' und 'status' sein
+	 * @param string $sort die Etikett aus search.php, kann 'starttime', 'endtime' und 'status' sein
      */
-    public function createSearchMap($keyword,$sort) {
+    public function createSearchMap($keyword, $sort) {
         ?>
         <div id="mapid"></div>
         <script type="text/javascript">
@@ -141,23 +141,31 @@ class Map {
     }
 	
 	/**
-	 *
+	 * Berechnet die Distanz zwischen zwei Punkten.
+	 * @param string $firstAddress Erste Adresse. Format: "Postleitzahl, Straße, Hausnummer". Es kann auch nur die Postleitzahl oder Postleitzahl und Straße, ohne Hausnummer angegeben werden. 
+ 	 * @param string $secondAddress Zweite Adresse. Format: "Postleitzahl, Straße, Hausnummer". Es kann auch nur die Postleitzahl oder Postleitzahl und Straße, ohne Hausnummer angegeben werden. 
+	 * @return int Entfernung der beiden Punktel in Metern.
 	 */
-	 public function getDistance($addressStart, $addressDestination){
-		 $latLonStart = $this->getLatLonFromAddress($addressStart);
-		 $latLonDestination = $this->getLatLonFromAddress($addressDestination);
-		?>
-		<script type="text/javascript">
-			// latlng repräsentiert einen geographischen Punkt mit den atitude und longitude Werten.
-			var latlngStart = L.latLng(<?php echo $latLonStart["lat"] ?>, <?php echo $latLonStart["lon"] ?>);
-			var latlngDestination = L.latLng(<?php echo $latLonDestination["lat"] ?>, <?php echo $latLonDestination["lon"] ?>);
-			document.write(latlngStart.distanceTo(latlngDestination));
-		</script>
-		<?php
-	 }
+	public function getDistance($firstAddress, $secondAddress) {
+		$firstLatLon = $this->getLatLonFromAddress($firstAddress);
+		$secondLatLon = $this->getLatLonFromAddress($secondAddress);
+		$latFirstAddress = $firstLatLon["lat"];
+		$lonFirstAddress = $firstLatLon["lon"];
+		$latSecondAddress = $secondLatLon["lat"];
+		$lonSecondAddress = $secondLatLon["lon"];
+		$radLat1 = $latFirstAddress*3.1415926535898/180.0;
+        $radLat2 = $latSecondAddress*3.1415926535898/180.0;
+        $a = $radLat1 - $radLat2;
+        $b = ($lonFirstAddress*3.1415926535898/180.0) - ($lonSecondAddress*3.1415926535898/180.0);
+        $s = 2 * asin(sqrt(pow(sin($a / 2), 2) + cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2)));
+        $s = $s * 6378.137; // EARTH_RADIUS;
+        $s = round($s * 1000,0); 
+        return $s;
+	}
+	  
     /**
      * Wandelt den Adressstring in die geographischen Koordinaten "lat" und "lon" um.
-     * @param string $address Format: "Postleitzahl,Straße,Hausnummer"
+     * @param string $address Format: "Postleitzahl, Straße, Hausnummer"
      * @return string[] Array mit den "lat" und "lon" Werten.
      */
     private function getLatLonFromAddress($address) {
