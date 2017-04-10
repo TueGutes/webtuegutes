@@ -14,6 +14,7 @@ $search = @$_REQUEST['search'];
 
 require './includes/UTILS.php';
 
+$action = @$_POST['action'];
 if(!empty($user))
 {
 	$profile = DBFunctions::db_get_user($user);
@@ -23,15 +24,14 @@ if(!empty($user))
 	if($userFound)
 	{
 		$emailHead = 'Nachricht vom TueGutes Team';
-		$action = @$_POST['action'];
-		if($action == 'mail')
+		if($_USER->hasGroup($_GROUP_MODERATOR) && $action == 'mail')
 		{	
 			$message = $_POST['message'];
 			sendEmail($profile['email'], $emailHead, $message);
 			DBFunctions::db_historyEntry($_USER->getID(), 'SENT email TO  ' . $profile['username'] . ' (' . $profile['email'] . ')', $message, null, $profile['idUser']);
 			$_USER->redirect($CURRENT_PAGE . '&user=' . $user);
 		}
-		else if($action == 'disable')
+		else if($_USER->hasGroup($_GROUP_MODERATOR) && $action == 'disable')
 		{	
 			$disabled = $profile['status'] == 'blocked';
 			sendEmail($profile['email'], $emailHead, 'Ihr Account wurde ' . ($disabled ? 'wieder freigegeben' : 'gesperrt') . '.');
@@ -40,7 +40,7 @@ if(!empty($user))
 			DBFunctions::db_update_user($profile);
 			$_USER->redirect($CURRENT_PAGE . '&user=' . $user);
 		}
-		else if($action == 'avatar')
+		else if($_USER->hasGroup($_GROUP_MODERATOR) && $action == 'avatar')
 		{	
 			$avatarDir = './img/profiles/' . $profile['idUser'];
 			if(is_dir($avatarDir))
@@ -54,7 +54,8 @@ if(!empty($user))
 			echo $_USER->getProfileImagePathOf($profile['idUser'], 128);
 			exit;
 		}
-		else if($action == 'username' || 
+		else if($_USER->hasGroup($_GROUP_MODERATOR) && (
+				$action == 'username' || 
 				$action == 'email' || 
 				$action == 'firstname' || 
 				$action == 'lastname' || 
@@ -63,6 +64,7 @@ if(!empty($user))
 				$action == 'hobbies' || 
 				$action == 'gender' || 
 				$action == 'description')
+		)
 		{	
 			$value = $_POST['value'];
 		
@@ -113,6 +115,22 @@ if(!empty($user))
 		}
 	}
 	//====/ACTIONS====	
+}
+else
+{
+	//====REMOTE ACTIONS====
+	if($_USER->hasGroup($_GROUP_MODERATOR) && $action == 'deleteComment')
+	{
+		$value = $_POST['value'];
+		$comment = DBFunctions::db_getDeedComment($value);
+		if($comment != null)
+		{
+			DBFunctions::db_historyEntry($_USER->getID(), 'COMMENT_DELETED ' . $value, '(CREATED: ' . $comment['date_created'] . ') ' . $comment['commenttext'], null, $comment['user_id_creator']);
+			echo DBFunctions::db_deleteDeedComment($value);
+		}
+		exit;
+	}
+	//====/REMOTE ACTIONS====
 }
 
 

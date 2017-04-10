@@ -71,6 +71,30 @@ if(isset($scrollToElemID))
 		}, 800);
 	});
 	</script>"; // - 60 nav bar height
+	
+if($_USER->hasGroup($_GROUP_MODERATOR))
+	$js .= "<script type='text/javascript'>
+	$('.delete_comment').click(function(e)
+	{
+		e.preventDefault();
+		
+		var confirmed = confirm('Bist du wirklich sicher?');
+		if(confirmed)
+		{
+			$.ajax(
+			{
+				url: '" . $HOST . "/admin?page=user" . "',
+				type: 'post',
+				data: { action: 'deleteComment', value: $(this).data('id') },
+				success: function(data)
+				{}
+			});
+			var comment = $(this).closest('.comment');
+			comment.next('br').remove();
+			comment.remove();
+		}
+	});
+	</script>";
 
 
 //====get comments====
@@ -100,7 +124,7 @@ for($i = 0; $i < sizeof($commentsArray); $i++)
 		$author = '<div class="author"><a href="' . $HOST . '/profile?user=' . $username . '"><img src="' . $_USER->getProfileImagePathOf($userid, 32) . '" /> ' . $username . '</a>';
 	else
 		$author = '<div class="author deleted">gelöschter Nutzer';
-	$comments .= '<div class="comment"><div class="createDate">' . $dh->get('d.m.Y H:i:s') . '</div>' . $author . '</div><div class="text">' . $entry->commenttext . '</div></div><br>';
+	$comments .= '<div class="comment"><div class="createDate">' . $dh->get('d.m.Y H:i:s') . ($_USER->hasGroup($_GROUP_MODERATOR) ? '&nbsp;<a href="#" class="delete_comment" data-id="' . $entry->id . '"><i class="fa fa-times" aria-hidden="true"></i></a>' : '') . '</div>' . $author . '</div><div class="text">' . $entry->commenttext . '</div></div><br>';
 }
 
 
