@@ -144,7 +144,6 @@
 	
 	$browser = $BROWSER_NAME;
 
-	include "./includes/db_connector.php";
 	include "./includes/Map.php";
 	require "./includes/_top.php";
 

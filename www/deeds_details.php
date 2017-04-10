@@ -14,8 +14,6 @@ include './includes/ACCESS.php';
 
 require './includes/UTILS.php';
 
-include './includes/db_connector.php';
-
 include './includes/comment.php';
 require './includes/_top.php';
 

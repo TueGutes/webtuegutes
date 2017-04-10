@@ -49,6 +49,8 @@ session_start();
 
 include './includes/mail.php';
 
+require_once './includes/db_connector.php';
+
 require './includes/user.php';
 $_USER = new User();
 
