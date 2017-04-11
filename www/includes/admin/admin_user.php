@@ -269,24 +269,26 @@ require './includes/_top.php';
 				<tbody>
 					<tr>
 						<td class="infoLabel">Name:</td>
-						<td class="infoValue"><span id="edit_firstname"><?php echo $profile['firstname'];?></span>&nbsp;<a href="#" class="edit" data-field="firstname"><?php echo $editSymbol; ?></a>&nbsp;<span id="edit_lastname"><?php echo $profile['lastname']; ?></span>&nbsp;<a href="#" class="edit" data-field="lastname"><?php echo $editSymbol; ?></a></td>
+						<td class="infoValue"><span id="edit_firstname"><?php echo $profile['firstname']; ?></span>&nbsp;<a href="#" class="edit" data-field="firstname"><?php echo $editSymbol; ?></a>&nbsp;<span id="edit_lastname"><?php echo $profile['lastname']; ?></span>&nbsp;<a href="#" class="edit" data-field="lastname"><?php echo $editSymbol; ?></a></td>
 					</tr>
 					<tr>
 						<td class="infoLabel">Geschlecht:</td>
 						<td class="infoValue">
 						<span id="edit_gender"><?php 
-							if($profile['gender'] == 'm')
+							if($profile['gender'] == null)
+								echo '';
+							else if($profile['gender'] == 'm')
 								echo 'männlich'; 
-							if($profile['gender'] == 'w')
+							else if($profile['gender'] == 'w')
 								echo 'weiblich'; 
-							if($profile['gender'] == 'a')
+							else if($profile['gender'] == 'a')
 								echo 'anderes'; 
 						?></span>&nbsp;<a href="#" class="edit" data-field="gender"><?php echo $editSymbol; ?></a>
 						</td>
 					</tr>
 					<tr>
 						<td class="infoLabel">Geboren:</td>
-						<td class="infoValue"><span id="edit_birthday"><?php echo (new DateHandler())->set($profile['birthday'])->get('d.m.Y'); ?></span><!--&nbsp;<a href="#" class="edit" data-field="birthday"><?php echo $editSymbol; ?></a>--></td>
+						<td class="infoValue"><span id="edit_birthday"><?php if($profile['birthday'] != null) echo (new DateHandler())->set($profile['birthday'])->get('d.m.Y'); ?></span><!--&nbsp;<a href="#" class="edit" data-field="birthday"><?php echo $editSymbol; ?></a>--></td>
 					</tr>
 					<tr>
 						<td class="infoLabel">Telefon:</td>
