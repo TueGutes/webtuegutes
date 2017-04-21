@@ -6,6 +6,13 @@
 	Kalenderfunktion: Henrik Huckauf
 	Ergänzungen: Alexander Gauggel
 enthält Teile von deeds_create und deeds_bearbeiten
+---------------------------------------------------------------
+TIMM:
+FLAG "flagtype" zur Unterscheidung ob Gesuch/Angebot
+
+Gesuch:  flagtype: "0"
+Angebot: flagtype: "1"
+----------------------------------------------------------------
 */
 require './includes/DEF.php';
 require './includes/UTILS.php';

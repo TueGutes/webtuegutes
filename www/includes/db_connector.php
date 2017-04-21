@@ -3433,8 +3433,69 @@ class DBFunctions
 	}
 
 
+	/**
+	*Die Funktion setzt eine Gute Tat auf ein Angebot oder ein Gesuch, je nach dem welcher Flag angegeben war
+	*
+	*Die Funktion kriegt 2 Parameter übergeben, eine Gute Tat ID und  einen Flagwert für den Typ der Guten Tat ob es ein Gesuch oder ein Angebot ist. Die Funktion ändert den Typen der Gute Tat je nachdem was für ein Flag angegeben wurde.
+	*
+	*@param int $deed Eine Gute Tat ID
+	*@param int $flag Die Flag nummer, kann 0 für ein Gesuch oder 1 für ein Angebot sein
+	*
+	*@return boolean
+	*/
+	public function db_setFlagDeeds($deed,$flag){
+		if(($flag != 0 || $flag != 1)){ 
+			// es gibt nur die werte o oder 1, alles andere ist falsch
+			return false;
+		}
+		$db = self::db_connect();
+		$sql = "UPDATE Deeds SET flagtype = ? WHERE idGutetat = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('ii',$flagtype,$deed);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+
+	}
+
+
+	/**
+	*Die Funktion setzt alle Guten Taten auf ein Angebot oder ein Gesuch, je nach dem welcher Flag angegeben war
+	*
+	*Die Funktion kriegt 1 Parameter übergeben, einen Flagwert für den Typ der Guten Taten ob es ein Gesuch oder ein Angebot ist. Die Funktion ändert den Typen der Guten Taten je nachdem was für ein Flag angegeben wurde.
+	*
+	*@param int $flag Die Flag nummer, kann 0 für ein Gesuch oder 1 für ein Angebot sein
+	*
+	*@return boolean
+	*/
+	public function db_setFlagAllDeeds($flag){
+		if(($flag != 0 || $flag != 1){ 
+			// es gibt nur die werte o oder 1, alles andere ist falsch
+			return false;
+		}
+		$db = self::db_connect();
+		$sql = "UPDATE Deeds SET flagtype = ?";
+		$stmt =$db->prepare($sql);
+		$stmt->bind_param('i',$flagtype);
+		if (!$stmt->execute()) {
+			die('Fehler: ' . mysqli_error($db));
+			self::db_close($db);
+			return false;
+		}
+		else{
+			self::db_close($db);
+			return true;
+		}
+
+	}
+
 }
 
 
-
-?>
+<?php
