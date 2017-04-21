@@ -3475,7 +3475,7 @@ class DBFunctions
 	*@return boolean
 	*/
 	public function db_setFlagAllDeeds($flag){
-		if(($flag != 0 || $flag != 1){ 
+		if(($flag != 0 || $flag != 1)){ 
 			// es gibt nur die werte o oder 1, alles andere ist falsch
 			return false;
 		}
