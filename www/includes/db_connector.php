@@ -3498,4 +3498,4 @@ class DBFunctions
 }
 
 
-<?php
+?>
