@@ -937,6 +937,7 @@ class DBFunctions
 	* * idTrust,
 	* * description,
 	* * pictures
+	* * flag
 	*
 	*@param string $name Name der guten Tat
 	*@param int $user_id Id des Erstellers(Benutzer)
@@ -951,8 +952,9 @@ class DBFunctions
 	*@param int $idTrust Vertrauenslevel
 	*@param string $description Beschreibung der guten Tat
 	*@param string $pictures Bilder zu einer guten Tat
+	*@param in $flag Int ob Gute Tat Gesuch oder Angebot ist
 	*/
-	public function db_createGuteTat($name,$user_id,$category,$street,$housenumber,$pid,$starttime,$endtime,$organization,$countHelper,$idTrust,$description,$pictures){
+	public function db_createGuteTat($name,$user_id,$category,$street,$housenumber,$pid,$starttime,$endtime,$organization,$countHelper,$idTrust,$description,$pictures,$flag){
 		$name = htmlstr($name);
 		$street = htmlstr($street);
 		$housenumber = htmlstr($housenumber);
@@ -964,11 +966,11 @@ class DBFunctions
 			$db = self::db_connect();
 			//Datensatz in Deeds einfügen
 			//$plz = db_getIdPostalbyPostalcodePlace($postalcode,$place);
-			$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,idPostal,starttime,endtime,organization,countHelper,idTrust) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
+			$sql='INSERT INTO Deeds (name, contactPerson, category,street,housenumber,idPostal,starttime,endtime,organization,countHelper,idTrust, flagtype) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
 			$stmt = $db->prepare($sql);
-			$stmt->bind_param('siississsii', $name, $user_id, $catid, $street,
+			$stmt->bind_param('siississsiii', $name, $user_id, $catid, $street,
 				$housenumber, $pid, $starttime,$endtime, $organization, $countHelper,
-				$idTrust);
+				$idTrust,$flag);
 			$stmt->execute();
 
 			//Herausfinden der größten ID von Guten taten
@@ -3492,6 +3494,36 @@ class DBFunctions
 			self::db_close($db);
 			return true;
 		}
+
+	}
+
+
+	/**
+	*Funktion gibt Informationen dem Type zu einer Guten Tat zurück.
+	*
+	*Die Funktion kriegt eine ID einer Guten Tat  übergeben und gibt den Flagtype, also die Art der Guten Tat zurück.
+	*
+	*@param int $deedsid ID einer Guten Tat
+	*
+	*@return int|false 
+	**/
+	public function db_getflagtypeofDeed($deedsid){
+		$db = self::db_connect();
+		$sql = "SELECT flagtype FROM Deeds WHERE idGutetat = ?";
+		$stmt = $db->prepare($sql);
+		$stmt->bind_param('i',$deedsid);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		self::db_close($db);
+		$dbentry = $result->fetch_assoc();
+		self::db_close($db);
+		if(isset($dbentry['flagtype'])){
+			return $dbentry['flagtype'];
+		}
+		else {
+			return false;
+		}
+
 
 	}
 
