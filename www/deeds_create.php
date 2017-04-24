@@ -125,6 +125,7 @@ if($_SESSION['Seite']==0){
 	$_SESSION['tat_organization'] ='';
 	$_SESSION['tat_countHelper'] ='1';
 	$_SESSION['tat_idTrust'] ='1';
+	unset($_SESSION['tat_type']);
 	date_default_timezone_set("Europe/Berlin");
 	$_SESSION['Seite'] +=1;
 }
@@ -142,6 +143,14 @@ if($_SESSION['Seite'] ==1 || $_SESSION['Seite'] ==2){
             $stop=2;
             $_SESSION['Seite'] =1;
         }
+		
+		if(isset($_POST['type']))
+			$_SESSION['tat_type'] = $_POST['type'];
+		else
+		{
+			$stop = 2;
+            $_SESSION['Seite'] = 1;
+		}
 	}
 	if($_SESSION['Seite'] ==1 ||$_SESSION['Seite'] ==3){
 		echo'
@@ -151,6 +160,7 @@ if($_SESSION['Seite'] ==1 || $_SESSION['Seite'] ==2){
 		//Fehlermeldung für nicht erfolgreichen Aufruf.
 		if($stop=='1')echo '<h3><red>Eine andere Tat ist bereits unter diesem Namen veröffentlicht.</red></h3>';
 		if($stop=='2')echo '<h3><red>Bitte einen neuen Namen eingeben.</red></h3><br>';
+		if($stop=='3')echo '<h3><red>Wähle den Typ deiner Tat aus.</red></h3><br>';
 		//le buttons
 		echo'
 		<br><br>
@@ -159,6 +169,14 @@ if($_SESSION['Seite'] ==1 || $_SESSION['Seite'] ==2){
 		                <br>
 		                <input type="text" name="name" value="';echo $_SESSION['tat_name'] ;echo'" placeholder="Name der guten Tat" />
 		                <br>
+		                <br>
+						<div class="block">
+							<div class="left">
+								<input id="type_0" type="radio" name="type" value="0"' . (!isset($_SESSION['tat_type']) || @$_SESSION['tat_type'] == 0 ? ' checked' : '') . ' /><label for="type_0">Ich suche</label><br>
+								<input id="type_1" type="radio" name="type" value="1"' . (@$_SESSION['tat_type'] == 1 ? ' checked' : '') . ' /><label for="type_1">Ich biete an</label>
+							</div>
+						</div>
+						<br>
 		                <br>
 		                <input type="submit" name="button" value="weiter" />
 		</form>        ';
@@ -518,7 +536,8 @@ if($_SESSION['Seite'] ==5){
     	$end_dh->get(), 
     	$_SESSION['tat_organization'], 
     	$_SESSION['tat_countHelper'],
-        $_SESSION['tat_idTrust'], $_SESSION['tat_description'], $_SESSION['tat_pictures']);
+        $_SESSION['tat_idTrust'], $_SESSION['tat_description'], $_SESSION['tat_pictures'],
+		$_SESSION['tat_type']);
 															  
     //Versenden der Info-Mails        
     //Bestimmen der Empfänger
