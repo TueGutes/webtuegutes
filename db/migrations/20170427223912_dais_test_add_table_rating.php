@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class LengthNameDeeds extends AbstractMigration
+class DaisTestAddTableRating extends AbstractMigration
 {
     /**
      * Change Method.
@@ -25,22 +25,15 @@ class LengthNameDeeds extends AbstractMigration
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function up(){
-        $table = $this->table('Deeds');
-        $table->changeColumn('name','string',array('length' => 256))
-              ->update();
-        $table = $this->table('Rating');
-        $table->changeColumn('deedsName','string',array('length' => 256))
-            ->update();
+    public function change()
+    {
+        $table = $this->table('Rating', array('id' => false, 'primary_key' => array('username', 'deedsName')));
+        $table->addColumn('username','string',array('limit' => 32))
+            ->addColumn('deedsName','string',array('length' => 64))
+            ->addColumn('time','datetime')
+            ->addColumn('rating','integer')
+            ->addForeignKey('username','User','username',array('delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'))
+            ->addForeignKey('deedsName','Deeds','name',array('delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'))
+            ->create();
     }
-
-    public function down(){
-        $table = $this->table('Deeds');
-        $table->changeColumn('name','string',array('length' => 64))
-              ->update();
-        $table = $this->table('Rating');
-        $table->changeColumn('deedsName','string',array('length' => 64))
-            ->update();
-    }
-
 }

@@ -28,7 +28,7 @@ class AddUserTable extends AbstractMigration
     public function change()
     {
         $user = $this->table('User', array('id'=> 'idUser'));
-        $user->addColumn('username','string',array('limit' => 32))
+        $user->addColumn('userId','string',array('limit' => 32))
              ->addColumn('password','string',array('limit' => 32))
              ->addColumn('email','string',array('limit' => 128))
              ->addColumn('regDate','datetime')
