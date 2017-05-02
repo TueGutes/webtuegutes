@@ -3,7 +3,8 @@
 require './db_connector.php';
 
 wrap_db_connector($_POST);
-public function wrap_db_connector($parameters) {
+
+function wrap_db_connector($parameters) {
 $user_id = $parameters['user_id'];
 $function_name = $parameters['function_name'];
 	if (!isset($user_id) || !isset($function_name) || /*db_isUserBanned($user_id)*/) {
