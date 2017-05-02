@@ -24,8 +24,8 @@ $function_name = @$parameters['function_name'];
 		case  db_idOfEmailAdresse:
 			echo json_encode( db_idOfEmailAdresse($parameters));
 			break;
-		case  db_getBenutzerAnzahl:
-			echo json_encode( db_getBenutzerAnzahl($parameters));
+		case  "db_getBenutzerAnzahl":
+			echo json_encode( DBFunctions::db_getBenutzerAnzahl($parameters));
 			break;
 		case  db_getGuteTaten:
 			echo json_encode( db_getGuteTaten($parameters));
