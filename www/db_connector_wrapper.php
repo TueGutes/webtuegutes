@@ -5,8 +5,8 @@ require './includes/db_connector.php';
 wrap_db_connector($_POST);
 
 function wrap_db_connector($parameters) {
-$user_id = $parameters['user_id'];
-$function_name = $parameters['function_name'];
+$user_id = @$parameters['user_id'];
+$function_name = @$parameters['function_name'];
 	if (!isset($user_id) || !isset($function_name) /*|| db_isUserBanned($user_id)*/) {
 		echo json_encode(array('success'=>false));exit;
 	}
