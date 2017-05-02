@@ -1,6 +1,6 @@
 <?php
 
-require './db_connector.php';
+require './includes/db_connector.php';
 
 wrap_db_connector($_POST);
 
