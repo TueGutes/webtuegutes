@@ -12,7 +12,7 @@ $function_name = @$parameters['function_name'];
 	}
 
 	switch ($function_name) {
-		case  db_connect:
+		case  "db_connect":
 			echo json_encode( db_connect($parameters));
 			break;
 		case  db_close:
