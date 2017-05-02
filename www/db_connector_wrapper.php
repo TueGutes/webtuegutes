@@ -15,13 +15,13 @@ $function_name = @$parameters['function_name'];
 		case  "db_connect":
 			echo json_encode( DBFunctions::db_connect($parameters));
 			break;
-		case  db_close:
+		case  "db_close":
 			echo json_encode( db_close($parameters));
 			break;
-		case  db_idOfBenutzername:
+		case  "db_idOfBenutzername":
 			echo json_encode( db_idOfBenutzername($parameters));
 			break;
-		case  db_idOfEmailAdresse:
+		case  "db_idOfEmailAdresse":
 			echo json_encode( db_idOfEmailAdresse($parameters));
 			break;
 		case  "db_getBenutzerAnzahl":
