@@ -2,8 +2,9 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class ChangeRatingDeedsnameLength extends AbstractMigration
+class AddFlagToDeeds extends AbstractMigration
 {
+ 
     /**
      * Change Method.
      *
@@ -25,15 +26,10 @@ class ChangeRatingDeedsnameLength extends AbstractMigration
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function up(){
-        $table = $this->table('Rating');
-        $table->changeColumn('deedsName','string',array('length' => 256))
-            ->update();
-    }
-
-    public function down(){
-        $table = $this->table('Rating');
-        $table->changeColumn('deedsName','string',array('length' => 64))
-            ->update();
+    public function change()
+    {
+        $table=$this->table('Deeds');
+        $table->addColumn('flagtype','integer')
+              ->update();
     }
 }

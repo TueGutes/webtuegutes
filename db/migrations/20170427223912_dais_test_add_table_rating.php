@@ -27,13 +27,13 @@ class DaisTestAddTableRating extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Rating', array('id' => false, 'primary_key' => array('username', 'deedsName')));
-        $table->addColumn('username','string',array('limit' => 32))
-            ->addColumn('deedsName','string',array('length' => 64))
+        $table = $this->table('Rating', array('id' => false, 'primary_key' => array('userid', 'deedid')));
+        $table->addColumn('userid','integer')
+            ->addColumn('deedid','integer')
             ->addColumn('time','datetime')
             ->addColumn('rating','integer')
-            ->addForeignKey('username','User','username',array('delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'))
-            ->addForeignKey('deedsName','Deeds','name',array('delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'))
+            ->addForeignKey('userid','User','idUser',array('delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'))
+            ->addForeignKey('deedid','Deeds','idGuteTat',array('delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'))
             ->create();
     }
 }
