@@ -29,18 +29,12 @@ class LengthNameDeeds extends AbstractMigration
         $table = $this->table('Deeds');
         $table->changeColumn('name','string',array('length' => 256))
               ->update();
-        $table = $this->table('Rating');
-        $table->changeColumn('deedsName','string',array('length' => 256))
-            ->update();
     }
 
     public function down(){
         $table = $this->table('Deeds');
         $table->changeColumn('name','string',array('length' => 64))
               ->update();
-        $table = $this->table('Rating');
-        $table->changeColumn('deedsName','string',array('length' => 64))
-            ->update();
     }
 
 }

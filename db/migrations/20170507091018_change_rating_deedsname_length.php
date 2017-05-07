@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class AddUserTable extends AbstractMigration
+class ChangeRatingDeedsnameLength extends AbstractMigration
 {
     /**
      * Change Method.
@@ -25,17 +25,15 @@ class AddUserTable extends AbstractMigration
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change()
-    {
-        $user = $this->table('User', array('id'=> 'idUser'));
-        $user->addColumn('username','string',array('limit' => 32))
-             ->addColumn('password','string',array('limit' => 32))
-             ->addColumn('email','string',array('limit' => 128))
-             ->addColumn('regDate','datetime')
-             ->addColumn('points','integer')
-             ->addColumn('idTrust','integer')
-             ->addColumn('idUserGroup','integer')
-             ->addColumn('status','enum',array('values' => array('nichtVerifiziert','Verifiziert')))
-             ->create();
+    public function up(){
+        $table = $this->table('Rating');
+        $table->changeColumn('deedsName','string',array('length' => 256))
+            ->update();
+    }
+
+    public function down(){
+        $table = $this->table('Rating');
+        $table->changeColumn('deedsName','string',array('length' => 64))
+            ->update();
     }
 }
