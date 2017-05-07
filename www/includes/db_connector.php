@@ -3526,7 +3526,7 @@ class DBFunctions
 
 
     }
-
+    /*
     public function db_getAvgRatingByGuteTatName($nameGuteTat)
     {
         $db = self::db_connect();
@@ -3574,7 +3574,7 @@ class DBFunctions
         $stmt->bind_param('sssi',$username,$nameGuteTate,$date,$rating);
         $stmt->execute();
     }
-
+    */
 }
 
 
