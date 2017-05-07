@@ -1,6 +1,6 @@
 <?php
 /**
- * Klasse für $_USER Objekt
+ * Klasse f?r $_USER Objekt
  *
  * Bietet Funktionen, um die SESSION des Users zu handlen
  *
