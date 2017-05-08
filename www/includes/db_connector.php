@@ -3526,11 +3526,12 @@ class DBFunctions
 
 
     }
-    /*
+
     public function db_getAvgRatingByGuteTatName($nameGuteTat)
     {
         $db = self::db_connect();
-        $sql = "SELECT AVG(rating) rating,COUNT(*) people FROM Rating GROUP BY deedsName HAVING deedsName = ? ";
+        $sql = "SELECT AVG(rating) rating,COUNT(*) people FROM Rating JOIN Deeds on Rating.deedid = Deeds.idGuteTat
+        GROUP BY name HAVING name = ? ";
         $stmt = $db->prepare($sql);
         $stmt->bind_param('s', $nameGuteTat);
         $stmt->execute();
@@ -3543,7 +3544,8 @@ class DBFunctions
     public function db_getAllRatingByGuteTatName($nameGuteTat)
     {
         $db = self::db_connect();
-        $sql = "SELECT rating,user_name,time FROM Rating where deedsName = ? ";
+        $sql = "SELECT rating,username,time FROM Rating JOIN Deeds ON Rating.deedid = Deeds.idGuteTat 
+        JOIN User ON idUser = userid where name = ? ";
         $stmt = $db->prepare($sql);
         $stmt->bind_param('s', $nameGuteTat);
         $stmt->execute();
@@ -3555,7 +3557,8 @@ class DBFunctions
     public function isUserEvaluated($username, $nameGuteTate)
     {
         $db = self::db_connect();
-        $sql = "SELECT * FROM Rating WHERE deedsName = ? AND user_name = ?";
+        $sql = "SELECT * FROM Rating JOIN Deeds ON Rating.deedid = Deeds.idGuteTat 
+        JOIN User ON idUser = userid WHERE name = ? AND username = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param('ss', $nameGuteTate,$username);
         $stmt->execute();
@@ -3566,15 +3569,15 @@ class DBFunctions
             return false;
         }
     }
-    public function db_userEvaluateGuteTat($username, $nameGuteTate,$rating){
+    public function db_userEvaluateGuteTat($userid, $idGuteTate,$rating){
         $date = date('Y-m-d H:i:s');
         $db = self::db_connect();
         $sql = "INSERT INTO Rating VALUES(?,?,?,?)";
         $stmt = $db->prepare($sql);
-        $stmt->bind_param('sssi',$username,$nameGuteTate,$date,$rating);
+        $stmt->bind_param('sssi',$userid,$idGuteTate,$date,$rating);
         $stmt->execute();
     }
-    */
+
 }
 
 

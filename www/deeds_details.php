@@ -46,7 +46,7 @@ else
 	$star = $rating['rating'] / 5*100;
 	if(isset($_POST['test'])){
 		$rat = $_POST['rating'];
-		DBFunctions::db_userEvaluateGuteTat($_USER->getUsername(),$deed['name'],$rat);
+		DBFunctions::db_userEvaluateGuteTat($_USER->getID(),$id,$rat);
 	}
 
 	//Organisationsfeld wird nicht angezeigt, wenn es keine Organisation gibt
