@@ -14,7 +14,7 @@ $function_name = @$parameters['function_name'];
 
 	switch ($function_name) {
 		case "login_user":
-			echo json_encode(DBFunctions::db_validateCredentials($parameters['user_id'], $parameters['username'], $parameters['password']));
+			echo json_encode(DBFunctions::db_validateCredentials($parameters['username'], $parameters['password']));
 			break;
 		case "db_getGuteTaten":
 			echo json_encode( DBFunctions::db_getGuteTaten());

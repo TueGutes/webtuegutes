@@ -3578,7 +3578,7 @@ class DBFunctions
         $stmt->execute();
     }
 
-    public function db_validateCredentials($user_id, $username, $pass) {
+    public function db_validateCredentials($username, $password) {
         $db = self::db_connect();
         $sql = "SELECT * FROM Users WHERE username = ?";
         $stmt = $db->prepare($sql);
@@ -3586,7 +3586,7 @@ class DBFunctions
         $stmt->execute();
         $result = $stmt->get_result();
         $dbentry= $result->fetch_assoc();
-        return (md5(db_regDateOfUserID($user_id)) == $dbentry['password']);
+        return (md5($password . db_regDateOfUserID(db_idOfBenutzername($username))) == $dbentry['password']);
     }
 
 }
