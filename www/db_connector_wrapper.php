@@ -19,7 +19,7 @@ $function_name = @$parameters['function_name'];
 			echo json_encode( DBFunctions::db_close($parameters));
 			break;
 		case  "db_idOfBenutzername":
-			echo json_encode( DBFunctions::db_idOfBenutzername($parameters));
+			echo json_encode( DBFunctions::db_idOfBenutzername($parameters['benutzername']));
 			break;
 		case  "db_idOfEmailAdresse":
 			echo json_encode( DBFunctions::db_idOfEmailAdresse($parameters));
