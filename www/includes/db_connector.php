@@ -3580,7 +3580,7 @@ class DBFunctions
 
     public function db_validateCredentials($username, $password) {
         $db = self::db_connect();
-        $sql = "SELECT * FROM Users WHERE username = ?";
+        $sql = "SELECT * FROM User WHERE username = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param('s', $username);
         $stmt->execute();
