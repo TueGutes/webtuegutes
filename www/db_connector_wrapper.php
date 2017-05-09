@@ -12,7 +12,7 @@ $function_name = @$parameters['function_name'];
 	}
 
 	switch ($function_name) {
-		case "db_getGuteTaten"
+		case "db_getGuteTaten":
 			echo json_encode( DBFunctions::db_getGuteTaten());
 			break;
 		case  "db_regDateOfUserID":
