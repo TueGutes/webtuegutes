@@ -3588,7 +3588,6 @@ class DBFunctions
         $dbentry= $result->fetch_assoc();
         return (md5($password . self::db_regDateOfUserID(self::db_idOfBenutzername($username))) == $dbentry['password']);
     }
-
 }
 
 
