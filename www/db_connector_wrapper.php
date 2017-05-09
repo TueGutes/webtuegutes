@@ -87,14 +87,14 @@ $function_name = @$parameters['function_name'];
 		case  db_getGuteTatenAnzahl:
 			echo json_encode( db_getGuteTatenAnzahl($parameters));
 			break;
-		case  db_regDateOfUserID:
-			echo json_encode( db_regDateOfUserID($parameters));
+		case  "db_regDateOfUserID":
+			echo json_encode( DBFunctions::db_regDateOfUserID($parameters));
 			break;
-		case  db_passwordHashOfUserID:
-			echo json_encode( db_passwordHashOfUserID($parameters));
+		case  "db_passwordHashOfUserID":
+			echo json_encode( DBFunctions::db_passwordHashOfUserID($parameters));
 			break;
-		case  db_statusByUserID:
-			echo json_encode( db_statusByUserID($parameters));
+		case  "db_statusByUserID":
+			echo json_encode( DBFunctions::db_statusByUserID($parameters));
 			break;
 		case  db_doesGuteTatExists:
 			echo json_encode( db_doesGuteTatExists($parameters));
