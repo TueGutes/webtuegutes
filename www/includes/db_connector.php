@@ -308,7 +308,7 @@ class DBFunctions
             return false;
         }
 
-        
+
 
         $sql = "INSERT INTO FacebookUser(user_id,facebook_id) VALUES ((SELECT MAX(idUser) FROM User),?)";
         $stmt = $db->prepare($sql);
@@ -352,7 +352,7 @@ class DBFunctions
             self::db_close($db);
             return false;
         }
-        
+
         //echo 'DIese FUnktion solle jetzt funktionieren';
         $result = $stmt->get_result();
         $dbentry = $result->fetch_assoc();
@@ -365,7 +365,7 @@ class DBFunctions
             //echo ' Ich habe false zurückgeben';
             return false;
         }
-        
+
     }
 
     public function db_doesFacebookUserExists($userid){
@@ -388,7 +388,7 @@ class DBFunctions
             return false;
         }
     }
-    
+
 
     /**
     *Aktiviert einen Benutzeraccount.
@@ -620,7 +620,7 @@ class DBFunctions
     * * regDate,
     * * firstname,
     * * lastname,
-    * * gender, 
+    * * gender,
     * * birthday,
     * * street,
     * * housenumber,
@@ -778,7 +778,7 @@ class DBFunctions
             $stmt->execute();
         }
 
-        $sql = "UPDATE PersData SET 
+        $sql = "UPDATE PersData SET
             firstname='deleted',
             lastname='deleted',
             gender='z',
@@ -810,7 +810,7 @@ class DBFunctions
             points=0,
             idTrust=1,
             idUserGroup=1,
-            status='deleted' 
+            status='deleted'
             WHERE idUser = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param('i',$me['idUser']);
@@ -1981,7 +1981,7 @@ class DBFunctions
             }
             self::db_close($db);
         }
-        
+
     }
 
     /**
@@ -2787,7 +2787,7 @@ class DBFunctions
     *
     *@param string $newcategory Der Name einer Kategorie
     *
-    *@return boolean 
+    *@return boolean
     */
     public function db_insertNewCategory($newcategory){
         $db = self::db_connect();
@@ -2809,7 +2809,7 @@ class DBFunctions
     *
     *@param string $newcategory Der Name einer möglichen Kategorie
     *
-    *@return boolean 
+    *@return boolean
     */
     public function db_doesCategoryNameExist($newcategory){
         $db = self::db_connect();
@@ -2835,7 +2835,7 @@ class DBFunctions
     *
     *@param int $categoryid ID einer möglichen Kategori
     *
-    *@return boolean 
+    *@return boolean
     */
     public function db_doesCategoryIDExist($categoryid){
         $db = self::db_connect();
@@ -2861,7 +2861,7 @@ class DBFunctions
     *
     *@param int $commentid ID einer möglichen Kategori
     *
-    *@return boolean 
+    *@return boolean
     */
     public function db_doesCommentwithIDExist($commentid){
         $db = self::db_connect();
@@ -2981,7 +2981,7 @@ class DBFunctions
     * * DeedComments.date_created,
     * * DeedComments.commenttext,
     * * DeedComments.parentcomment,
-    * * User.username 
+    * * User.username
     *
     *@param int $iddeed ID einer Guten Tat
     *@param int $startrow Ab der ID werden die Kommentare aufgelistet
@@ -2991,7 +2991,7 @@ class DBFunctions
     */
     public function db_createDeedCommentsToList($iddeed,$startrow,$numberofrows){
         $db = self::db_connect();
-        $sql = "SELECT 
+        $sql = "SELECT
             DeedComments.id,
             DeedComments.deeds_id,
             DeedComments.user_id_creator,
@@ -2999,12 +2999,12 @@ class DBFunctions
             DeedComments.commenttext,
             DeedComments.parentcomment,
             User.username,
-            User.status 
-            FROM DeedComments 
-            JOIN User 
-                ON (DeedComments.user_id_creator=User.idUser) 
-            WHERE deeds_id = ? 
-            ORDER BY date_created DESC 
+            User.status
+            FROM DeedComments
+            JOIN User
+                ON (DeedComments.user_id_creator=User.idUser)
+            WHERE deeds_id = ?
+            ORDER BY date_created DESC
             LIMIT  ?,?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param('iii',$iddeed,$startrow,$numberofrows);
@@ -3187,7 +3187,7 @@ class DBFunctions
     *
     *@param int $userid Nutzer ID
     *
-    *@return boolean    
+    *@return boolean
     */
     public function db_insertUserIntoLoginCheck($user_id){
         $db = self::db_connect();
@@ -3283,7 +3283,7 @@ class DBFunctions
     *
     *Die Funktion überprüft, ob Keys, die für die Registrierung eines Nutzers generiert wurden, von ihrer Lebenszeit abgelaufen ist. Immoment ist sie auf 300 Sekunden festgelegt. Ist die Lebenszeit bei der Abfrage überschritten, so wird der Key gelöscht und der Nutzer muss sich einen neuen anfordern. Die Funktion gibt true aus, wenn die Funktion erfolgreich ausgeführt wurde, was nicht heißt das ein Key gelöscht wurde. Die Funktion gibt false zurück, wenn das SQL Statement nicht erfolgreich durchgeführt werden konnte.
     *
-    *@return boolean 
+    *@return boolean
     */
     public function db_deleteKey(){
         $timer = time();
@@ -3383,7 +3383,7 @@ class DBFunctions
     *
     *Die Funktion überprüft, ob ein Key, die für die Löschun eines Nutzers generiert wurden, von ihrer Lebenszeit abgelaufen ist. Immoment ist sie auf 600 Sekunden festgelegt. Ist die Lebenszeit bei der Abfrage überschritten, so wird der Key gelöscht und der Nutzer muss sich einen neuen anfordern. Die Funktion gibt true aus, wenn die Funktion erfolgreich ausgeführt wurde, was nicht heißt das ein Key gelöscht wurde. Die Funktion gibt false zurück, wenn das SQL Statement nicht erfolgreich durchgeführt werden konnte.
     *
-    *@return boolean 
+    *@return boolean
     */
     public function db_deletepwKey(){
         $timer = time();
@@ -3446,7 +3446,7 @@ class DBFunctions
     *@return boolean
     */
     public function db_setFlagDeeds($deed,$flag){
-        if(($flag != 0 || $flag != 1)){ 
+        if(($flag != 0 || $flag != 1)){
             // es gibt nur die werte o oder 1, alles andere ist falsch
             return false;
         }
@@ -3477,7 +3477,7 @@ class DBFunctions
     *@return boolean
     */
     public function db_setFlagAllDeeds($flag){
-        if(($flag != 0 || $flag != 1)){ 
+        if(($flag != 0 || $flag != 1)){
             // es gibt nur die werte o oder 1, alles andere ist falsch
             return false;
         }
@@ -3505,7 +3505,7 @@ class DBFunctions
     *
     *@param int $deedsid ID einer Guten Tat
     *
-    *@return int|false 
+    *@return int|false
     **/
     public function db_getflagtypeofDeed($deedsid){
         $db = self::db_connect();
@@ -3544,7 +3544,7 @@ class DBFunctions
     public function db_getAllRatingByGuteTatName($nameGuteTat)
     {
         $db = self::db_connect();
-        $sql = "SELECT rating,username,time FROM Rating JOIN Deeds ON Rating.deedid = Deeds.idGuteTat 
+        $sql = "SELECT rating,username,time FROM Rating JOIN Deeds ON Rating.deedid = Deeds.idGuteTat
         JOIN User ON idUser = userid where name = ? ";
         $stmt = $db->prepare($sql);
         $stmt->bind_param('s', $nameGuteTat);
@@ -3557,7 +3557,7 @@ class DBFunctions
     public function isUserEvaluated($username, $nameGuteTate)
     {
         $db = self::db_connect();
-        $sql = "SELECT * FROM Rating JOIN Deeds ON Rating.deedid = Deeds.idGuteTat 
+        $sql = "SELECT * FROM Rating JOIN Deeds ON Rating.deedid = Deeds.idGuteTat
         JOIN User ON idUser = userid WHERE name = ? AND username = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param('ss', $nameGuteTate,$username);
@@ -3586,7 +3586,7 @@ class DBFunctions
         $stmt->execute();
         $result = $stmt->get_result();
         $dbentry= $result->fetch_assoc();
-        return (md5($password . db_regDateOfUserID(self::db_idOfBenutzername($username))) == $dbentry['password']);
+        return (md5($password . self::db_regDateOfUserID(self::db_idOfBenutzername($username))) == $dbentry['password']);
     }
 
 }
