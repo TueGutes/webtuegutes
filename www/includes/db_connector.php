@@ -3586,7 +3586,7 @@ class DBFunctions
         $stmt->execute();
         $result = $stmt->get_result();
         $dbentry= $result->fetch_assoc();
-        return (md5($password . db_regDateOfUserID(db_idOfBenutzername($username))) == $dbentry['password']);
+        return (md5($password . db_regDateOfUserID(self::db_idOfBenutzername($username))) == $dbentry['password']);
     }
 
 }
