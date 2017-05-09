@@ -8,7 +8,8 @@ function wrap_db_connector($parameters) {
 $user_id = @$parameters['user_id'];
 $function_name = @$parameters['function_name'];
 	if (!isset($user_id) || !isset($function_name) /*|| db_isUserBanned($user_id)*/) {
-		echo json_encode(array('success'=>false));exit;
+		echo json_encode(array('success'=>false));
+		exit;
 	}
 
 	switch ($function_name) {
@@ -16,16 +17,32 @@ $function_name = @$parameters['function_name'];
 			echo json_encode( DBFunctions::db_getGuteTaten());
 			break;
 		case  "db_regDateOfUserID":
-			echo json_encode( DBFunctions::db_regDateOfUserID($parameters['user_id']));
+			$retVal = DBFunctions::db_regDateOfUserID($parameters['user_id']);
+			if ($retVal == false) 
+				echo json_encode( null );
+			else 
+				echo json_encode($retVal);
 			break;
 		case  "db_passwordHashOfUserID":
-			echo json_encode( DBFunctions::db_passwordHashOfUserID($parameters['user_id']));
+			$retVal = DBFunctions::db_passwordHashOfUserID($parameters['user_id']);
+			if ($retVal == false) 
+				echo json_encode( null );
+			else 
+				echo json_encode($retVal);
 			break;
 		case  "db_statusByUserID":
-			echo json_encode( DBFunctions::db_statusByUserID($parameters['user_id']));
+			$retVal = DBFunctions::db_statusByUserID($parameters['user_id']);
+			if ($retVal == false) 
+				echo json_encode( null );
+			else 
+				echo json_encode( $retVal );
 			break;
 		case "db_idOfBenutzername":
-			echo json_encode( DBFunctions::db_idOfBenutzername($parameters['benutzername']));
+			$retVal = DBFunctions::db_idOfBenutzername($parameters['benutzername']);
+			if ($retVal == false)
+				echo json_encode( -1 );
+			else
+				echo json_encode( $retVal );
 			break;
 		default:
 			return -315;
