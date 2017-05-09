@@ -235,7 +235,7 @@ require './includes/_top.php';
 	{
 		 $editSymbol = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>';
 	?>
-	<div class="left">
+	<div class="center">
 		<div class="details">
 			<noscript><red>Bitte JavaScript aktivieren!</red></noscript>
 			<form class="adminOption" method="post">
