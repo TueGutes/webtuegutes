@@ -3586,7 +3586,7 @@ class DBFunctions
         $stmt->execute();
         $result = $stmt->get_result();
         $dbentry= $result->fetch_assoc();
-        //TODO: testen, ob Benutzername existiert
+        if (!isset($dbentry['password'])) return false;
         return (md5($password . self::db_regDateOfUserID(self::db_idOfBenutzername($username))) == $dbentry['password']);
     }
 }
