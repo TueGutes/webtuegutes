@@ -47,6 +47,13 @@ $function_name = @$parameters['function_name'];
 			else
 				echo json_encode( $retVal );
 			break;
+		case "db_get_user":
+			$retVal = DBFunctions::db_get_user($parameters['benutzername']);
+			if ($retVal == false) 
+				echo json_encode( null );
+			else 
+				echo json_encode($retVal);
+			break;
 		default:
 			return -315;
 			break;
