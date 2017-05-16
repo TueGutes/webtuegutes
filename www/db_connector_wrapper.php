@@ -17,7 +17,8 @@ $function_name = @$parameters['function_name'];
 			echo json_encode(DBFunctions::db_validateCredentials($parameters['username'], $parameters['password']));
 			break;
 		case "db_getGuteTaten":
-			echo json_encode( DBFunctions::db_getGuteTaten());
+			echo json_encode(DBFunctions::db_getGuteTatenForList($parameters['start'], $parameters['entries'], 'alle'));
+			//echo json_encode(DBFunctions::db_getGuteTaten());
 			break;
 		case  "db_regDateOfUserID":
 			$retVal = DBFunctions::db_regDateOfUserID($parameters['user_id']);
