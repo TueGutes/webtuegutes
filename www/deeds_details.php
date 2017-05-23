@@ -51,6 +51,14 @@ else
 
 	//Organisationsfeld wird nicht angezeigt, wenn es keine Organisation gibt
 	$hasOrganization = $deed['organization'] != '';
+	
+	$map = new Map();
+	if (!isset($_GET['user'])) $_GET['user'] = $_USER->getUsername();
+	$thisuser = DBFunctions::db_get_user($_GET['user']);
+	$userHouseNumber = isset($_POST['txtHausnummer']) ? $_POST['txtHausnummer'] : $thisuser['housenumber'];
+	$userStreet = isset($_POST['txtStrasse']) ? $_POST['txtStrasse'] : $thisuser['street'];
+	$userPostalcode = isset($_POST['txtPostalcode']) ? $_POST['txtPostalcode'] : $thisuser['postalcode'];
+	
 	echo '
 	<div class="center">
 		<img src="' . $deed['pictures'] . '" class="block" /><br>
@@ -102,12 +110,14 @@ else
 						<tr>
 							<td class="infoLabel">Adresse:</td>
 							<td rowspan="3" class="addressValue">' . $deed['street'] . '&nbsp;' . $deed['housenumber'] . ', ' . $deed['postalcode'] . '&nbsp;' . $deed['place'] . '</td>
+							<td class="infoLabel">Entfernung:</td>
+							<td class="infoValue">' . $map->getDistance($userPostalcode . ',' . $userStreet . ',' . $userHouseNumber, $deed['postalcode'] . ',' . $deed['street'] . ',' . $deed['housenumber']) . ' m' .'</td>
 						</tr>
 					<tbody>
 				</table>
 			</div>';
 			
-			$map = new Map();
+			
 			$map->createSpace('9%', '350px', '82%');
 			$map->createMap($deed['postalcode'] . ',' . $deed['street'] . ',' . $deed['housenumber']);
 			
