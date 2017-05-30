@@ -132,9 +132,12 @@ class Map {
 	 * Berechnet die Distanz zwischen zwei Punkten in Meter.
 	 * @param string $firstAddress Erste Adresse. Format: "Postleitzahl, Straße, Hausnummer". Es kann auch nur die Postleitzahl oder Postleitzahl und Straße, ohne Hausnummer angegeben werden. 
  	 * @param string $secondAddress Zweite Adresse. Format: "Postleitzahl, Straße, Hausnummer". Es kann auch nur die Postleitzahl oder Postleitzahl und Straße, ohne Hausnummer angegeben werden. 
-	 * @return int Entfernung der beiden Punktel in Meter.
+	 * @return int Entfernung der beiden Punktel in Meter. Wenn eine der Adressen leer ist wird -1 zurückgegeben.
 	 */
 	public function getDistance($firstAddress, $secondAddress) {
+		if($firstAddress == ',,' || $firstAddress == '0,,' || $secondAddress == ',,' || $secondAddress == '0,,'){
+			return -1;
+		}
 		$firstLatLon = $this->getLatLonFromAddress($firstAddress);
 		$secondLatLon = $this->getLatLonFromAddress($secondAddress);
 		$latFirstAddress = $firstLatLon["lat"];
@@ -154,9 +157,12 @@ class Map {
     /**
      * Wandelt den Adressstring in die geographischen Koordinaten "lat" und "lon" um.
      * @param string $address Format: "Postleitzahl, Straße, Hausnummer"
-     * @return string[] Array mit den "lat" und "lon" Werten.
+     * @return string[] Array mit den "lat" und "lon" Werten. Wenn eine leere Adresse übergeben wird, werden "lat" und "lon" auf 0 gesetzt.
      */
     private function getLatLonFromAddress($address) {
+		if($address == ',,' || $address == '0,,'){
+			return Array("lat" => 0, "lon" => 0);
+		}
         $preparedAddress = str_replace(' ', '+', $address);
         // Umwandel der Adresse in geographischen Koordinaten.
         $contents = file('http://nominatim.openstreetmap.org/search?format=json&limit=2&q=' . $preparedAddress);

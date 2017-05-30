@@ -103,6 +103,11 @@ if (!isset($_POST['status'])) {
 				// Das wird benötigt, um das Array nach der Distanz zu sortieren.
 				for($i = 0; $i<sizeof($arr); $i++){
 					$arr[$i]->dis = $map->getDistance($userPostalcode . ',' . $userStreet . ',' . $userHouseNumber, $arr[$i]->postalcode . ',' . $arr[$i]->street . ',' . $arr[$i]->housenumber);
+					if($arr[$i]->dis == -1){
+						$arr[$i]->dis = "N/A";
+					}else{
+						$arr[$i]->dis = $arr[$i]->dis . " m";
+					}
 				}
 				
 				// Sortiert das Array nach Name oder Distanz.
@@ -121,7 +126,7 @@ if (!isset($_POST['status'])) {
 						echo "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
 						echo "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
 						echo "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";
-						echo "<div>" . "Entfernung: " . $arr[$i]->dis . ' m' . "</div>";
+						echo "<div>" . "Entfernung: " . $arr[$i]->dis . "</div>";
 						echo "<div>" . (is_numeric($arr[$i]->countHelper) ? "Anzahl der Helfer: " . $arr[$i]->countHelper : '') ."</div><div class='trustLevel'>Minimaler Vertrauenslevel: " . $arr[$i]->idTrust . " (" . $arr[$i]->trustleveldescription . ")</div>";
 						echo "<div>" . $arr[$i]->organization . "</div>";
 					echo "</div></a>";

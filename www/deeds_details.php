@@ -58,7 +58,12 @@ else
 	$userHouseNumber = isset($_POST['txtHausnummer']) ? $_POST['txtHausnummer'] : $thisuser['housenumber'];
 	$userStreet = isset($_POST['txtStrasse']) ? $_POST['txtStrasse'] : $thisuser['street'];
 	$userPostalcode = isset($_POST['txtPostalcode']) ? $_POST['txtPostalcode'] : $thisuser['postalcode'];
-	
+	$map->dis = $map->getDistance($userPostalcode . ',' . $userStreet . ',' . $userHouseNumber, $deed['postalcode'] . ',' . $deed['street'] . ',' . $deed['housenumber']);
+					if($map->dis == -1){
+						$map->dis = "N/A";
+					}else{
+						$map->dis = $map->dis . " m";
+					}
 	echo '
 	<div class="center">
 		<img src="' . $deed['pictures'] . '" class="block" /><br>
@@ -111,7 +116,7 @@ else
 							<td class="infoLabel">Adresse:</td>
 							<td rowspan="3" class="addressValue">' . $deed['street'] . '&nbsp;' . $deed['housenumber'] . ', ' . $deed['postalcode'] . '&nbsp;' . $deed['place'] . '</td>
 							<td class="infoLabel">Entfernung:</td>
-							<td class="infoValue">' . $map->getDistance($userPostalcode . ',' . $userStreet . ',' . $userHouseNumber, $deed['postalcode'] . ',' . $deed['street'] . ',' . $deed['housenumber']) . ' m' .'</td>
+							<td class="infoValue">' . $map->dis .'</td>
 						</tr>
 					<tbody>
 				</table>
