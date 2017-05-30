@@ -1,6 +1,7 @@
 <?php
 /*
 *@author Klaus Sobotta, Lukas Buttke
+ Adminfunktionen: Christian Hock
 */
 
 require './includes/DEF.php';
@@ -11,11 +12,19 @@ require './includes/_top.php';
 
 include './includes/Map.php';
 
+if(isset($_GET['admin'])&& $_GET['admin']=='true' && $_USER->hasGroup($_GROUP_MODERATOR)){
+	$admin = true ;
+}else{
+	$admin = false;
+}
 if(!isset($_GET['page'])) $_GET['page'] = 1  && $placeholder="Alle";
 if (!isset($_POST['status'])) {
+	if($admin){
+		$_POST['status'] = 'nichtFreigegeben';
+	}else{
 		$_POST['status'] = 'alle';
+	}
 		$_POST['adt'] = 10;
-		$_POST['sort'] = 'name';
 		$first=TRUE;
 	} else {
 		$first=FALSE;
@@ -41,13 +50,23 @@ if (!isset($_POST['status'])) {
 	<br> 
 	</form>
 	
-		<form method="post" action="deeds">
+		<?php 
+if($admin){
+	echo '<form action="deeds?admin=true" method="post">';
+}else{
+	echo '<form action="deeds" method="post">';
+}
+ ?>
 			<h5>
 				Anzeigen:
 				<select name="status" size="1" onchange="this.form.submit()">
 					<option value="alle" <?php ($first || @$_POST['status']=="alle")?'selected':'' ?> >alle</option>                                   <?/*hier wird der status abgefragt */?>
 					<option value="freigegeben" <?php echo (@$_POST['status']=="freigegeben")?'selected':'' ?> >Nicht abgeschlossen</option>     <?/*hier wird der status abgefragt */?>
 					<option value="geschlossen" <?php echo (@$_POST['status']=="geschlossen")?'selected':'' ?> >abgeschlossen</option>				 <?/*hier wird der status abgefragt */?>
+					<?php if($admin){
+						?>
+						<option value="nichtFreigegeben" <?php echo (@$_POST['status']=="nichtFreigegeben")?'selected':'' ?> >noch nicht freigegeben</option>		
+					<?php } ?>
 				</select>
 				<noscript><input type="submit" name="button" value="Aktualisieren"/></noscript>
 				&nbsp;
@@ -61,72 +80,34 @@ if (!isset($_POST['status'])) {
 					<option value="100" <?php echo (@$_POST['adt']==100)?'selected':'' ?> >100</option>	 <?/*hier wird der status abgefragt */?>
 				</select>
 				<noscript><input type="submit" name="button" value="Aktualisieren"/></noscript>
-				&nbsp;
-				Sortiert nach:
-				<select name="sort" size="1" onchange="this.form.submit()">
-					<option value="name" <?php echo (@$_POST['sort']=="name")?'selected':'' ?> >Name</option>        <?/*hier wird der status abgefragt */?>
-					<option value="distance" <?php echo (@$_POST['sort']=="distance")?'selected':'' ?> >Entfernung</option>     <?/*hier wird der status abgefragt */?>
-				</select>
-				<noscript><input type="submit" name="button" value="Aktualisieren"/></noscript>
 			</h5>
 		</form>
 			<?php
+				
 				$placeholder = $_POST['status'];
 				$tatenProSeite=$_POST['adt'];
-				$sorting = $_POST['sort'];
-				
-				$map = new Map();
-				if (!isset($_GET['user'])) $usernam = $_USER->getUsername();
-				$thisuser = DBFunctions::db_get_user($usernam);
-				$userHouseNumber = isset($_POST['txtHausnummer']) ? $_POST['txtHausnummer'] : $thisuser['housenumber'];
-				$userStreet = isset($_POST['txtStrasse']) ? $_POST['txtStrasse'] : $thisuser['street'];
-				$userPostalcode = isset($_POST['txtPostalcode']) ? $_POST['txtPostalcode'] : $thisuser['postalcode'];
-				
-				// Sortierfunktion für die Distanz.
-				function cmpDis($a, $b){
-					return $a->dis > $b->dis;
-				}
-				// Sortierfunktion für die Namen.
-				function cmpName($a, $b){
-					return strtolower($a->name) > strtolower($b->name);
-				}
-				
 				$all = !(isset($_GET['user']) && DBFunctions::db_getIdUserByUsername($_GET['user']!=-1));
-				
-				// Lade die Liste der Guten Taten aus der DB.
-				if ($all)
-					$arr = DBFunctions::db_getGuteTatenForList(0, PHP_INT_MAX , $placeholder);
-				else
-					$arr = DBFunctions::db_getGuteTatenForUser(0, PHP_INT_MAX , $placeholder, DBFunctions::db_getIdUserByUsername($_GET['user']));
-				
-				// Fügt jedem Objekt des Arrays (jeder guten Tat) eine weitere Variable zu, in der, die Distanz zwischen dem angemeldeten Nutzer und der Tat gespeichert wird.
-				// Das wird benötigt, um das Array nach der Distanz zu sortieren.
-				for($i = 0; $i<sizeof($arr); $i++){
-					$arr[$i]->dis = $map->getDistance($userPostalcode . ',' . $userStreet . ',' . $userHouseNumber, $arr[$i]->postalcode . ',' . $arr[$i]->street . ',' . $arr[$i]->housenumber);
-					if($arr[$i]->dis == -1){
-						$arr[$i]->dis = "N/A";
-					}else{
-						$arr[$i]->dis = $arr[$i]->dis . " m";
-					}
-				}
-				
-				// Sortiert das Array nach Name oder Distanz.
-				if($sorting == "name")
-					usort($arr, "cmpName");
-				else
-					usort($arr, "cmpDis");
-				
-				// Gib den Teil des Arrays, der angefragt wird.
-				$arr = array_slice($arr, $tatenProSeite*($_GET['page']-1), $tatenProSeite);			
-				
+
+				if ($all){
+					$merge = $admin && $placeholder=='alle';
+					if($merge)$arr2 = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']-1), $tatenProSeite, 'nichtFreigegeben');
+					$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder);
+					if($merge)$arr =array_merge($arr2, $arr);
+				}else
+					$arr = DBFunctions::db_getGuteTatenForUser($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder, DBFunctions::db_getIdUserByUsername($_GET['user']));
+
 				$maxZeichenFürDieKurzbeschreibung = 150;
-				
+
 				for($i = 0; $i < sizeof($arr); $i++){
-					echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+					if($admin){
+						echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "&admin=true' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+					}else{
+						echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+					}
+					
 						echo "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
 						echo "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
 						echo "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";
-						echo "<div>" . "Entfernung: " . $arr[$i]->dis . "</div>";
 						echo "<div>" . (is_numeric($arr[$i]->countHelper) ? "Anzahl der Helfer: " . $arr[$i]->countHelper : '') ."</div><div class='trustLevel'>Minimaler Vertrauenslevel: " . $arr[$i]->idTrust . " (" . $arr[$i]->trustleveldescription . ")</div>";
 						echo "<div>" . $arr[$i]->organization . "</div>";
 					echo "</div></a>";
@@ -182,6 +163,7 @@ if (!isset($_POST['status'])) {
 			<!--Einbinden der Map-->
 			<br><br>
 			<?php
+			$map = new Map();
 			$map->createSpace('10%','500px','80%');
 			$map->createDeedsMap($tatenProSeite, $placeholder, (isset($_GET['user'])?DBFunctions::db_getIdUserByUsername($_GET['user']):-1));
 			?>
