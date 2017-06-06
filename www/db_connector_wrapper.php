@@ -20,6 +20,9 @@ $function_name = @$parameters['function_name'];
 			echo json_encode(DBFunctions::db_getGuteTatenForList($parameters['start'], $parameters['entries'], 'alle'));
 			//echo json_encode(DBFunctions::db_getGuteTaten());
 			break;
+		case "db_countGuteTaten":
+			echo json_encode(DBFunctions::db_getGuteTatenAnzahl('alle'));
+			break;
 		case  "db_regDateOfUserID":
 			$retVal = DBFunctions::db_regDateOfUserID($parameters['user_id']);
 			if ($retVal == false) 
