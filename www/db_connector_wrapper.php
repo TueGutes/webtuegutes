@@ -17,7 +17,14 @@ $function_name = @$parameters['function_name'];
 			echo json_encode(DBFunctions::db_validateCredentials($parameters['username'], $parameters['password']));
 			break;
 		case "db_createGuteTat":
-			echo json_encode(DBFunctions::db_createGuteTat($parameters['$name'],$parameters['$user_id'],$parameters['$category'],$parameters['$street'],$parameters['$housenumber'],$parameters['$pid'],$parameters['$starttime'],$parameters['$endtime'],$parameters['$organization'],$parameters['$countHelper'],$parameters['$idTrust'],$parameters['$description'],$parameters['$pictures'],$parameters['$flag']));
+			$pid = DBFunctions::db_getIdPostalbyPostalcodePlace($parameters['postalcode'], $parameters['place']);
+			//Wenn die PLZ/Ort Kombination nicht existiert, füge sie hinzu!
+			if($pid == "")
+			{
+				DBFunctions::db_insertPostalCode($parameters['postalcode'], $parameters['place']);
+				$pod = DBFunctions::db_getIdPostalbyPostalcodePlace($parameters['postalcode'], $parameters['place']);
+			}
+			echo json_encode(DBFunctions::db_createGuteTat($parameters['$name'],$parameters['$user_id'],$parameters['$category'],$parameters['$street'],$parameters['$housenumber'],$pid,$parameters['$starttime'],$parameters['$endtime'],$parameters['$organization'],$parameters['$countHelper'],$parameters['$idTrust'],$parameters['$description'],$parameters['$pictures'],$parameters['$flag']));
 			break;
 		case "db_getGuteTaten":
 			echo json_encode(DBFunctions::db_getGuteTatenForList($parameters['start'], $parameters['entries'], 'alle'));
