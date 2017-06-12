@@ -1,6 +1,6 @@
 <?php
 
-require 'DEF.php';
+require './includes/db_connector.php';
 
 wrap_db_connector($_POST);
 
@@ -35,23 +35,23 @@ $function_name = @$parameters['function_name'];
 			break;
 		case  "db_regDateOfUserID":
 			$retVal = DBFunctions::db_regDateOfUserID($parameters['user_id']);
-			if ($retVal == false) 
+			if ($retVal == false)
 				echo json_encode( null );
-			else 
+			else
 				echo json_encode($retVal);
 			break;
 		case  "db_passwordHashOfUserID":
 			$retVal = DBFunctions::db_passwordHashOfUserID($parameters['user_id']);
-			if ($retVal == false) 
+			if ($retVal == false)
 				echo json_encode( null );
-			else 
+			else
 				echo json_encode($retVal);
 			break;
 		case  "db_statusByUserID":
 			$retVal = DBFunctions::db_statusByUserID($parameters['user_id']);
-			if ($retVal == false) 
+			if ($retVal == false)
 				echo json_encode( null );
-			else 
+			else
 				echo json_encode( $retVal );
 			break;
 		case "db_idOfBenutzername":
@@ -63,9 +63,9 @@ $function_name = @$parameters['function_name'];
 			break;
 		case "db_get_user":
 			$retVal = DBFunctions::db_get_user($parameters['benutzername']);
-			if ($retVal == false) 
+			if ($retVal == false)
 				echo json_encode( null );
-			else 
+			else
 				echo json_encode($retVal);
 			break;
 		case "deed_addBewerbungAndSendEmail":
@@ -74,7 +74,7 @@ $function_name = @$parameters['function_name'];
 			//Send Email
 			$receiver = DBFunctions::db_getEmailOfContactPersonByGuteTatID($parameters['idGuteTat']);
 			$subject = "Neue Bewerbung für " . DBFunctions::db_getNameOfGuteTatByID($parameters['idGuteTat']);
-			$mailtext = applicationForDeed(DBFunction::db_getUsernameOfBenutzerID($parameters['user_id']), 
+			$mailtext = applicationForDeed(DBFunction::db_getUsernameOfBenutzerID($parameters['user_id']),
 											DBFunction::db_getUsernameOfContactPersonByGuteTatID($parameters['idGuteTat']), $parameters['bewerbungstext']);
 			sendEmail($receiver, $MailSubject, $mailtext);
 			break;
