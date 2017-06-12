@@ -1,6 +1,6 @@
 <?php
 
-require 'DEF.php';
+require './includes/DEF.php';
 
 wrap_db_connector($_POST);
 
