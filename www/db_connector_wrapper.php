@@ -81,8 +81,8 @@ $function_name = @$parameters['function_name'];
 			//Send Email
 			$receiver = DBFunctions::db_getEmailOfContactPersonByGuteTatID($parameters['idGuteTat']);
 			$subject = "Neue Bewerbung für " . DBFunctions::db_getNameOfGuteTatByID($parameters['idGuteTat']);
-			$mailtext = applicationForDeed(DBFunction::db_getUsernameOfBenutzerID($parameters['user_id']),
-											DBFunction::db_getUsernameOfContactPersonByGuteTatID($parameters['idGuteTat']), $parameters['bewerbungstext']);
+			$mailtext = applicationForDeed(DBFunctions::db_getUsernameOfBenutzerID($parameters['user_id']),
+											DBFunctions::db_getUsernameOfContactPersonByGuteTatID($parameters['idGuteTat']), $parameters['bewerbungstext']);
 			sendEmail($receiver, $MailSubject, $mailtext);
 			break;
 		default:
