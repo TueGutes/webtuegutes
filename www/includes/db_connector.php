@@ -1037,6 +1037,7 @@ class DBFunctions
                 Deeds.countHelper,
                 Deeds.status,
                 Deeds.contactPerson,
+                User.username,
                 Trust.idTrust,
                 Trust.trustleveldescription,
                 DeedTexts.description,
@@ -1045,6 +1046,8 @@ class DBFunctions
                 Categories.id,
                 Categories.categoryname
             FROM Deeds
+                Join User
+                    On (Deeds.contactPerson = User.idUser)
                 Join DeedTexts
                     On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
                 Join Postalcode
@@ -1078,6 +1081,8 @@ class DBFunctions
                 Deeds.organization,
                 Deeds.countHelper,
                 Deeds.status,
+                Deeds.contactPerson,
+                User.username,
                 Trust.idTrust,
                 Trust.trustleveldescription,
                 DeedTexts.description,
@@ -1086,6 +1091,8 @@ class DBFunctions
                 Categories.id,
                 Categories.categoryname
             FROM Deeds
+                Join User
+                    On (Deeds.contactPerson = User.idUser)            
                 Join DeedTexts
                     On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
                 Join Postalcode
