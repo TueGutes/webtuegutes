@@ -1,6 +1,13 @@
 <?php
 
-require './includes/DEF.php';
+//Server Definitions
+$ABSOLUE_PATH = "/";
+$HOSTNAME = $_SERVER['HTTP_HOST'];
+$HOST_FULL = "http" . (isset($_SERVER['HTTPS']) ? "s" : "") . "://" . $HOSTNAME . $_SERVER['REQUEST_URI'];
+$HOST = substr($HOST_FULL, 0, strrpos($HOST_FULL, "/"));
+
+//Includes
+require './includes/db_connector.php';
 
 wrap_db_connector($_POST);
 
