@@ -16,6 +16,9 @@ $function_name = @$parameters['function_name'];
 		case "login_user":
 			echo json_encode(DBFunctions::db_validateCredentials($parameters['username'], $parameters['password']));
 			break;
+		case "db_createGuteTat":
+			echo json_encode(DBFunctions::db_createGuteTat($parameters['$name'],$parameters['$user_id'],$parameters['$category'],$parameters['$street'],$parameters['$housenumber'],$parameters['$pid'],$parameters['$starttime'],$parameters['$endtime'],$parameters['$organization'],$parameters['$countHelper'],$parameters['$idTrust'],$parameters['$description'],$parameters['$pictures'],$parameters['$flag']));
+			break;
 		case "db_getGuteTaten":
 			echo json_encode(DBFunctions::db_getGuteTatenForList($parameters['start'], $parameters['entries'], 'alle'));
 			//echo json_encode(DBFunctions::db_getGuteTaten());
