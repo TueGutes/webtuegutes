@@ -1,6 +1,6 @@
 <?php
 
-require './includes/db_connector.php';
+require 'DEF.php';
 
 wrap_db_connector($_POST);
 
@@ -68,10 +68,32 @@ $function_name = @$parameters['function_name'];
 			else 
 				echo json_encode($retVal);
 			break;
+		case "deed_addBewerbungAndSendEmail":
+			//Add Bewerbung
+			DBFunctions::db_addBewerbung($parameters['user_id'], $parameters['idGuteTat'], $parameters['bewerbungstext']);
+			//Send Email
+			$receiver = DBFunctions::db_getEmailOfContactPersonByGuteTatID($parameters['idGuteTat']);
+			$subject = "Neue Bewerbung für " . DBFunctions::db_getNameOfGuteTatByID($parameters['idGuteTat']);
+			$mailtext = applicationForDeed(DBFunction::db_getUsernameOfBenutzerID($parameters['user_id']), 
+											DBFunction::db_getUsernameOfContactPersonByGuteTatID($parameters['idGuteTat']), $parameters['bewerbungstext']);
+			sendEmail($receiver, $MailSubject, $mailtext);
+			break;
 		default:
 			return -315;
 			break;
 	}
+}
+
+function applicationForDeed($UsernameOfErsteller, $UsernameOfBewerber, $NameOfGuteTat, $Bewerbungstext) {
+	$actual_link = $HOST."/deeds_bewerbung"."?idGuteTat=$idGuteTat&candidateID=$idUser";
+
+	return "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
+			<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
+		</div>
+		<h2>Hallo $UsernameOfErsteller!</h2><br>
+		<h3>$UsernameOfBewerber hat sich für deine gute Tat '$NameOfGuteTat' beworben. <br>
+		<h3>Er schreibt dazu: \"$Bewerbungstext\"</h3><br>
+		<h3>Besuche die <a href=\"$actual_link\">URL, um Details zur Bewerbung einzusehen</a></h3>";
 }
 
 ?>
