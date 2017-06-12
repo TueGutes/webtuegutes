@@ -1036,6 +1036,7 @@ class DBFunctions
                 Deeds.organization,
                 Deeds.countHelper,
                 Deeds.status,
+                Deeds.contactPerson,
                 Trust.idTrust,
                 Trust.trustleveldescription,
                 DeedTexts.description,
