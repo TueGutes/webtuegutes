@@ -30,7 +30,7 @@ $function_name = @$parameters['function_name'];
 			if($pid == "")
 			{
 				DBFunctions::db_insertPostalCode($parameters['postalcode'], $parameters['place']);
-				$pod = DBFunctions::db_getIdPostalbyPostalcodePlace($parameters['postalcode'], $parameters['place']);
+				$pid = DBFunctions::db_getIdPostalbyPostalcodePlace($parameters['postalcode'], $parameters['place']);
 			}
 			echo json_encode(DBFunctions::db_createGuteTat($parameters['$name'],$parameters['$user_id'],$parameters['$category'],$parameters['$street'],$parameters['$housenumber'],$pid,$parameters['$starttime'],$parameters['$endtime'],$parameters['$organization'],$parameters['$countHelper'],$parameters['$idTrust'],$parameters['$description'],$parameters['$pictures'],$parameters['$flag']));
 			break;
