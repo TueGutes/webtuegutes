@@ -20,11 +20,11 @@ if( $_USER->hasGroup($_GROUP_MODERATOR)){
 
 if(!isset($_GET['page'])) $_GET['page'] = 1  && $placeholder="Alle";
 if (!isset($_POST['status'])) {
-	if($admin){
+	/*if($admin){
 		$_POST['status'] = 'nichtFreigegeben';
-	}else{
+	}else{*/
 		$_POST['status'] = 'alle';
-	}
+	//}
 	if(!isset($_REQUEST['adt'])){
 			$_REQUEST['adt'] = 10;
 		}

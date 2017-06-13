@@ -29,56 +29,57 @@ if($deed == null)
 	echo '<red>Es konnte keine Tat zu der ID gefunden werden.</red><br><br><a href="./deeds"><input type="button" value="zur Übersicht" /></a>';
 else
 {
-	if(isset($_GET['admin'])&& $_GET['admin']=='true' && $_USER->hasGroup($_GROUP_MODERATOR)){
-	$admin = true ;
-}else{
-	$admin = false;
-}
-if($admin){
-	echo'<h3> administrative Optionen </h3><br>';
-	if(isset($_POST['adminAction'])){
-		$action = $_POST['adminAction'];
-		if($action == 'delete' && $_USER->hasGroup($_GROUP_ADMIN)){
-			//echo'<red>Diese Tat wurde nun gelöscht.</red>';
-			DBFunctions::db_deleteDeed($id);
-		}else if($action =='close'){
-			//echo'<red>Diese Tat wurde nun geschlossen.</red>';
-			DBFunctions::db_guteTatAblehnen($id);
-		}else if($action =='free'){
-			//echo'<green> Diese Tat wurde nun freigegeben.</green>';
-			DBFunctions::db_guteTatFreigeben($id);
-		}else if($action =='deletePicture'){
-			//echo'<red>Das Bild wurde nun entfernt.</red>';
-			DBFunctions::db_update_deeds_picture("",$id);
-		}else if($action =='editText'){
-			//echo'<green>Die Beschreibung wurde nun geändert.</green>';
-			DBFunctions::db_update_deeds_description($_POST['description'],$id);}
-		$deed = DBFunctions::db_getGuteTat($id);
-		}
-	if($_USER->hasGroup($_GROUP_ADMIN)){
-			echo'<span style="float:left;">
-				<form method="post" action=""> 
-					<input type="hidden" name="adminAction" value="delete">
-					<a href="./deeds_details?id=' . $id . '&admin=true"><input type="submit" value="löschen"></a>
-				</form>
-			</span>';
+	//isset($_GET['admin'])&& $_GET['admin']=='true' &&
+	if( $_USER->hasGroup($_GROUP_MODERATOR)){
+		$admin = true ;
+	}else{
+		$admin = false;
 	}
-			echo' 
-			<input type="hidden" name="adminAction" value="close">
-			<a href="./deeds_details?id=' . $id . '&admin=true"><input type="submit" value="schließen"></a>
-			</form>
-			';
-			echo'
-			<span style="float:right;">
-				<form method="post" action=""><form method="post" action=""> 
-					<input type="hidden" name="adminAction" value="free">
-					<a href="./deeds_details?id=' . $id . '&admin=true"><input type="submit" value="freigeben"></a>
+	if($admin){
+		echo'<h3> administrative Optionen </h3><br>';
+		if(isset($_POST['adminAction'])){
+			$action = $_POST['adminAction'];
+			if($action == 'delete' && $_USER->hasGroup($_GROUP_ADMIN)){
+				//echo'<red>Diese Tat wurde nun gelöscht.</red>';
+				DBFunctions::db_deleteDeed($id);
+			}else if($action =='close'){
+				//echo'<red>Diese Tat wurde nun geschlossen.</red>';
+				DBFunctions::db_guteTatAblehnen($id);
+			}else if($action =='free'){
+				//echo'<green> Diese Tat wurde nun freigegeben.</green>';
+				DBFunctions::db_guteTatFreigeben($id);
+			}else if($action =='deletePicture'){
+				//echo'<red>Das Bild wurde nun entfernt.</red>';
+				DBFunctions::db_update_deeds_picture("",$id);
+			}else if($action =='editText'){
+				//echo'<green>Die Beschreibung wurde nun geändert.</green>';
+				DBFunctions::db_update_deeds_description($_POST['description'],$id);}
+			$deed = DBFunctions::db_getGuteTat($id);
+			}
+		if($_USER->hasGroup($_GROUP_ADMIN)){
+				echo'<span style="float:left;">
+					<form method="post" action=""> 
+						<input type="hidden" name="adminAction" value="delete">
+						<a href="./deeds_details?id=' . $id . '&admin=true"><input type="submit" value="löschen"></a>
+					</form>
+				</span>';
+		}
+				echo' 
+				<input type="hidden" name="adminAction" value="close">
+				<a href="./deeds_details?id=' . $id . '&admin=true"><input type="submit" value="schließen"></a>
 				</form>
-			</span>
-			<br>
-			<br>
-			<br>';
-}
+				';
+				echo'
+				<span style="float:right;">
+					<form method="post" action=""><form method="post" action=""> 
+						<input type="hidden" name="adminAction" value="free">
+						<a href="./deeds_details?id=' . $id . '&admin=true"><input type="submit" value="freigeben"></a>
+					</form>
+				</span>
+				<br>
+				<br>
+				<br>';
+	}
 	//Setzen eines Standartbildes bei fehledndem Bild
 	if($deed['pictures'] == "")
 		$deed['pictures'] = './img/profiles/standard_other.png';
