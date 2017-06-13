@@ -11,8 +11,8 @@ include './includes/ACCESS.php';
 require './includes/_top.php';
 
 include './includes/Map.php';
-
-if(isset($_GET['admin'])&& $_GET['admin']=='true' && $_USER->hasGroup($_GROUP_MODERATOR)){
+//isset($_GET['admin'])&& $_GET['admin']=='true' &&
+if( $_USER->hasGroup($_GROUP_MODERATOR)){
 	$admin = true ;
 }else{
 	$admin = false;
