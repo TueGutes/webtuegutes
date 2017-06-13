@@ -10,9 +10,9 @@ $HOST = substr($HOST_FULL, 0, strrpos($HOST_FULL, "/"));
 require './includes/db_connector.php';
 require './includes/mail.php';
 
-wrap_db_connector($_POST, $HOST);
+wrap_db_connector($_POST);
 
-function wrap_db_connector($parameters, $HOST) {
+function wrap_db_connector($parameters) {
 $user_id = @$parameters['user_id'];
 $function_name = @$parameters['function_name'];
 	if (!isset($user_id) || !isset($function_name) /*|| db_isUserBanned($user_id)*/) {
