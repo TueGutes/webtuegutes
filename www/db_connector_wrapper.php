@@ -85,6 +85,9 @@ $function_name = @$parameters['function_name'];
 		case "db_getApplicationsByDeedsID":
 			echo json_encode(DBFunctions::db_getApplicationsByDeedsID($parameters['$idGuteTat']));
 			break;
+		case "db_getCategories":
+			echo json_encode(DBFunctions::db_getAllCategories());
+			break;
 		case "db_deleteDeed":
 			DBFunctions::db_deleteDeed($parameters['idGuteTat']);
 			echo json_encode("Tat geloescht");
