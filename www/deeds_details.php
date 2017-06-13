@@ -18,7 +18,6 @@ require './includes/UTILS.php';
 include './includes/comment.php';
 require './includes/_top.php';
 
-include "./includes/Map.php";
 //Weiterleitung bei Fehlender ID
 if(!isset($_GET['id']) || $_GET['id'] == "")
 	$_USER->redirect("./deeds");
@@ -42,6 +41,7 @@ else
 			if($action == 'delete' && $_USER->hasGroup($_GROUP_ADMIN)){
 				//echo'<red>Diese Tat wurde nun gelöscht.</red>';
 				DBFunctions::db_deleteDeed($id);
+				$_USER->redirect("deeds?admin=true");
 			}else if($action =='close'){
 				//echo'<red>Diese Tat wurde nun geschlossen.</red>';
 				DBFunctions::db_guteTatAblehnen($id);
@@ -58,9 +58,9 @@ else
 			}
 		if($_USER->hasGroup($_GROUP_ADMIN)){
 				echo'<span style="float:left;">
-					<form method="post" action=""> 
+					<form  method="post" action=""> 
 						<input type="hidden" name="adminAction" value="delete">
-						<a href="./deeds_details?id=' . $id . '&admin=true"><input type="submit" value="löschen"></a>
+						<input type="submit" value="löschen">
 					</form>
 				</span>';
 		}
@@ -103,6 +103,7 @@ else
 	//Organisationsfeld wird nicht angezeigt, wenn es keine Organisation gibt
 	$hasOrganization = $deed['organization'] != '';
 	
+	include "./includes/Map.php";
 	$map = new Map();
 	if (!isset($_GET['user'])) $_GET['user'] = $_USER->getUsername();
 	$thisuser = DBFunctions::db_get_user($_GET['user']);
