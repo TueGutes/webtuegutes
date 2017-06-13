@@ -134,7 +134,7 @@ else
 				<center id = "noSend">
 					<input type="submit" value="Bearbeiten" id = "button" OnClick="edit()">
 					<br><br>
-				</center>}';
+				</center>';
 			}else{
 				echo'<div class="description" id="descriptionNoEdit"><span>' . $deed['name'] . '</span><br><br>' . $deed['description'] . '</div>';
 			}
