@@ -106,6 +106,7 @@ $function_name = @$parameters['function_name'];
 }
 
 function applicationForDeed($idGuteTat, $idUser, $UsernameOfErsteller, $UsernameOfBewerber, $NameOfGuteTat, $Bewerbungstext) {
+	global $HOST;
 	$actual_link = $HOST . "/deeds_bewerbung"."?idGuteTat=$idGuteTat&candidateID=$idUser";
 
 	return "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
