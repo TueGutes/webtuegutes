@@ -139,7 +139,7 @@ if($_SESSION['Seite'] ==1 || $_SESSION['Seite'] ==2){
         if(DBFunctions::db_doesGuteTatNameExists($_SESSION['tat_name'])){
             $_SESSION['Seite'] =1;
             $stop=1;
-        }else if ($_SESSION['tat_name'] === ''){
+        }else if ($_SESSION['tat_name'] === '' && !isset($_POST['pictures'])){
             $stop=2;
             $_SESSION['Seite'] =1;
         }
