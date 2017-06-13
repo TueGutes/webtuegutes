@@ -36,7 +36,7 @@ else
 		$admin = false;
 	}
 	if($admin){
-		echo'<h3> administrative Optionen </h3><br>';
+		echo'<h3> Administrative Optionen </h3><br>';
 		if(isset($_POST['adminAction'])){
 			$action = $_POST['adminAction'];
 			if($action == 'delete' && $_USER->hasGroup($_GROUP_ADMIN)){
