@@ -146,7 +146,7 @@ if($_SESSION['Seite'] ==1 || $_SESSION['Seite'] ==2){
 		
 		if(isset($_POST['type']))
 			$_SESSION['tat_type'] = $_POST['type'];
-		else
+		else if (!isset($_POST['pictures']))
 		{
 			$stop = 2;
             $_SESSION['Seite'] = 1;
