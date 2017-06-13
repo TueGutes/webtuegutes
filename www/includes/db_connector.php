@@ -3073,10 +3073,10 @@ class DBFunctions
     *
     *@return boolean
     */
-    public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentid = null){
+    public function db_createDeedComment($idofdeeds,$creatorid,$commenttext,$parentcomment = null){
         $db = self::db_connect();
         $commenttext = htmlstr($commenttext);
-        $sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentid) VALUES (?,?,?,?,?)";
+        $sql = "INSERT INTO DeedComments (deeds_id,user_id_creator,date_created,commenttext,parentcomment) VALUES (?,?,?,?,?)";
         $date = (new datetime())->format('Y-m-d H:i:s');
         $stmt = $db->prepare($sql);
         $stmt->bind_param('iissi',$idofdeeds,$creatorid,$date,$commenttext,$parentid);
