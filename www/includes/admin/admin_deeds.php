@@ -120,11 +120,11 @@ if (!isset($_POST['status'])) {
 			if ($all){
 				if($placeholder='alle'){
 					$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder)+DBFunctions::db_getGuteTatenAnzahl('nichtFreigegeben');
-					echo 'Test:  '.$anzahlAllerTaten;
+					
 				}
 				else{
 					$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder);
-					echo 'Test:  '.$anzahlAllerTaten;
+					
 				}
 			}
 				
