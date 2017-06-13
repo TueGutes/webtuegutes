@@ -1092,7 +1092,7 @@ class DBFunctions
                 Categories.categoryname
             FROM Deeds
                 Join User
-                    On (Deeds.contactPerson = User.idUser)            
+                    On (Deeds.contactPerson = User.idUser)
                 Join DeedTexts
                     On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
                 Join Postalcode
@@ -1105,6 +1105,122 @@ class DBFunctions
             LIMIT ? , ?";
             $stmt = $db->prepare($sql);
             $stmt->bind_param('sii',$stat,$startrow,$numberofrows);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            self::db_close($db);
+            $arr = array();
+            while($dbentry =$result->fetch_object()){
+                $arr[]= $dbentry;
+            }
+            return $arr;
+        }
+    }
+
+
+    /**
+    *Listet Gute Taten eines Benutzers auf.
+    *
+    * * Deeds.idGuteTat,
+    * * Deeds.name,
+    * * Deeds.category( ID einer Kategorie),
+    * * Deeds.street,
+    * * Deeds.housenumber,
+    * * Deeds.idPostal,
+    * * Deeds.organization,
+    * * Deeds.countHelper,
+    * * Deeds.status,
+    * * Trust.idTrust,
+    * * Trust.trustleveldescription,
+    * * DeedTexts.description,
+    * * Postalcode.postalcode,
+    * * Postalcode.place
+    * * Categories.categoryname(alte "category")
+    *
+    *@param int $user_id des Erstellers der guten Tat
+    *@param string $stat Filter: 'freigegeben','geschlossen','alle'
+    *
+    *@return (int|string)[] Array aus den ausgewählten Attributen mit den Datentypen String ung Int
+    */
+    public function db_getGuteTatenByUserId($user_id, $stat){
+        if ($stat == 'alle'){
+            $db = self::db_connect();
+            $sql = "SELECT
+                Deeds.idGuteTat,
+                Deeds.name,
+                Deeds.category,
+                Deeds.street,
+                Deeds.housenumber,
+                Deeds.idPostal,
+                Deeds.organization,
+                Deeds.countHelper,
+                Deeds.status,
+                Deeds.contactPerson,
+                User.username,
+                Trust.idTrust,
+                Trust.trustleveldescription,
+                DeedTexts.description,
+                Postalcode.postalcode,
+                Postalcode.place,
+                Categories.id,
+                Categories.categoryname
+            FROM Deeds
+                Join User
+                    On (Deeds.contactPerson = User.idUser)
+                Join DeedTexts
+                    On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
+                Join Postalcode
+                    On (Deeds.idPostal = Postalcode.idPostal)
+                Join Trust
+                    On (Deeds.idTrust = Trust.idTrust)
+                Join Categories
+                    On (Deeds.category = Categories.id)
+            WHERE NOT Deeds.status = 'nichtFreigegeben' AND User.idUser=?";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param('i',$user_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            self::db_close($db);
+            $arr = array();
+            while($dbentry =$result->fetch_object()){
+                $arr[]= $dbentry;
+            }
+            return $arr;
+        }
+        else{
+            $db = self::db_connect();
+            $sql = "SELECT
+                Deeds.idGuteTat,
+                Deeds.name,
+                Deeds.category,
+                Deeds.street,
+                Deeds.housenumber,
+                Deeds.idPostal,
+                Deeds.organization,
+                Deeds.countHelper,
+                Deeds.status,
+                Deeds.contactPerson,
+                User.username,
+                Trust.idTrust,
+                Trust.trustleveldescription,
+                DeedTexts.description,
+                Postalcode.postalcode,
+                Postalcode.place,
+                Categories.id,
+                Categories.categoryname
+            FROM Deeds
+                Join User
+                    On (Deeds.contactPerson = User.idUser)
+                Join DeedTexts
+                    On (Deeds.idGuteTat = DeedTexts.idDeedTexts)
+                Join Postalcode
+                    On (Deeds.idPostal = Postalcode.idPostal)
+                Join Trust
+                    On (Deeds.idTrust = Trust.idTrust)
+                Join Categories
+                    On (Deeds.category = Categories.id)
+            WHERE Deeds.status = ?  AND User.idUser=?";
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param('si',$stat,$user_id);
             $stmt->execute();
             $result = $stmt->get_result();
             self::db_close($db);

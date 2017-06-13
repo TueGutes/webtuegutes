@@ -38,6 +38,9 @@ $function_name = @$parameters['function_name'];
 			echo json_encode(DBFunctions::db_getGuteTatenForList($parameters['start'], $parameters['entries'], 'alle'));
 			//echo json_encode(DBFunctions::db_getGuteTaten());
 			break;
+		case "db_getGuteTatenByUserId":
+			echo json_encode(DBFunctions::db_getGuteTatenByUserId($parameters['user_id'],'alle'));
+			break;
 		case "db_countGuteTaten":
 			echo json_encode(DBFunctions::db_getGuteTatenAnzahl('alle'));
 			break;
@@ -75,6 +78,10 @@ $function_name = @$parameters['function_name'];
 				echo json_encode( null );
 			else
 				echo json_encode($retVal);
+			break;
+		case "db_deleteDeed":
+			DBFunctions::db_deleteDeed($parameters['idGuteTat']);
+			echo json_encode("Tat geloescht");
 			break;
 		case "deed_addBewerbungAndSendEmail":
 			//Add Bewerbung
