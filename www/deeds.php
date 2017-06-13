@@ -17,6 +17,7 @@ if(isset($_GET['admin'])&& $_GET['admin']=='true' && $_USER->hasGroup($_GROUP_MO
 }else{
 	$admin = false;
 }
+
 if(!isset($_GET['page'])) $_GET['page'] = 1  && $placeholder="Alle";
 if (!isset($_POST['status'])) {
 	if($admin){
