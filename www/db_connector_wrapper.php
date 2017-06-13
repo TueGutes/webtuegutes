@@ -38,6 +38,8 @@ $function_name = @$parameters['function_name'];
 			echo json_encode(DBFunctions::db_getGuteTatenForList($parameters['start'], $parameters['entries'], 'alle'));
 			//echo json_encode(DBFunctions::db_getGuteTaten());
 			break;
+		case "db_getGuteTatenByUserId":
+			echo json_encode(DBFunctions::db_getGuteTatenByUserId($parameters['user_id'],'alle'));
 		case "db_countGuteTaten":
 			echo json_encode(DBFunctions::db_getGuteTatenAnzahl('alle'));
 			break;
