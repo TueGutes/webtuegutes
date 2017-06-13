@@ -97,7 +97,7 @@ $function_name = @$parameters['function_name'];
 			$subject = "Neue Bewerbung für " . DBFunctions::db_getNameOfGuteTatByID($parameters['idGuteTat']);
 			$mailtext = applicationForDeed($parameters['idGuteTat'], $parameters['user_id'], DBFunctions::db_getUsernameOfBenutzerByID($parameters['user_id']),
 											DBFunctions::db_getUsernameOfContactPersonByGuteTatID($parameters['idGuteTat']), DBFunctions::db_getNameOfGuteTatByID($parameters['idGuteTat']), $parameters['bewerbungstext']);
-			sendEmail($receiver, $MailSubject, $mailtext);
+			sendEmail($receiver, $subject, $mailtext);
 			break;
 		default:
 			return -315;
@@ -106,6 +106,7 @@ $function_name = @$parameters['function_name'];
 }
 
 function applicationForDeed($idGuteTat, $idUser, $UsernameOfErsteller, $UsernameOfBewerber, $NameOfGuteTat, $Bewerbungstext) {
+	global $HOST;
 	$actual_link = $HOST . "/deeds_bewerbung"."?idGuteTat=$idGuteTat&candidateID=$idUser";
 
 	return "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
