@@ -79,6 +79,10 @@ $function_name = @$parameters['function_name'];
 			else
 				echo json_encode($retVal);
 			break;
+		case "db_deleteDeed":
+			DBFunctions::db_deleteDeed($parameters['idGuteTat']);
+			echo json_encode("Tat geloescht");
+			break;
 		case "deed_addBewerbungAndSendEmail":
 			//Add Bewerbung
 			DBFunctions::db_addBewerbung($parameters['user_id'], $parameters['idGuteTat'], $parameters['bewerbungstext']);
