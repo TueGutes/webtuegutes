@@ -23,7 +23,10 @@ if(!$_USER->hasGroup($_GROUP_MODERATOR))
 if(!isset($_GET['p'])) $_GET['p'] = 1  && $placeholder="Alle";
 if (!isset($_POST['status'])) {
 		$_POST['status'] = 'alle';
-		$_POST['adt'] = 10;
+		if(!isset($_REQUEST['adt'])){
+			$_REQUEST['adt'] = 10;
+		}
+		
 		$first=TRUE;
 	} else {
 		$first=FALSE;
@@ -41,7 +44,7 @@ if (!isset($_POST['status'])) {
 		data-share="false">
 	</div>
 <div>
-<form action="admin?page=deeds" method="post">
+<form action="deeds_create" method="post">
 	<input type="hidden" name="opened">
 	<input type="submit" value="Gute Tat erstellen" target="_self">
 	<br><hr>
@@ -65,12 +68,12 @@ if (!isset($_POST['status'])) {
 				&nbsp;
 				Taten pro Seite:
 				<select name="adt" size="1" onchange="this.form.submit()">
-					<option value="5" <?php echo (@$_POST['adt']==5)?'selected':'' ?> >5</option>        <?/*hier wird der status abgefragt */?>
-					<option value="10" <?php echo (@$_POST['adt']==10)?'selected':'' ?> >10</option>     <?/*hier wird der status abgefragt */?>
-					<option value="15" <?php echo (@$_POST['adt']==15)?'selected':'' ?> >15</option>	 <?/*hier wird der status abgefragt */?>
-					<option value="20" <?php echo (@$_POST['adt']==20)?'selected':'' ?> >20</option>      <?/*hier wird der status abgefragt */?>
-					<option value="50" <?php echo (@$_POST['adt']==50)?'selected':'' ?> >50</option>     <?/*hier wird der status abgefragt */?>
-					<option value="100" <?php echo (@$_POST['adt']==100)?'selected':'' ?> >100</option>	 <?/*hier wird der status abgefragt */?>
+					<option value="5" <?php echo (@$_REQUEST['adt']==5)?'selected':'' ?> >5</option>        <?/*hier wird der status abgefragt */?>
+					<option value="10" <?php echo (@$_REQUEST['adt']==10)?'selected':'' ?> >10</option>     <?/*hier wird der status abgefragt */?>
+					<option value="15" <?php echo (@$_REQUEST['adt']==15)?'selected':'' ?> >15</option>	 <?/*hier wird der status abgefragt */?>
+					<option value="20" <?php echo (@$_REQUEST['adt']==20)?'selected':'' ?> >20</option>      <?/*hier wird der status abgefragt */?>
+					<option value="50" <?php echo (@$_REQUEST['adt']==50)?'selected':'' ?> >50</option>     <?/*hier wird der status abgefragt */?>
+					<option value="100" <?php echo (@$_REQUEST['adt']==100)?'selected':'' ?> >100</option>	 <?/*hier wird der status abgefragt */?>
 				</select>
 				<noscript><input type="submit" name="button" value="Aktualisieren"/></noscript>
 			</h5>
@@ -78,13 +81,25 @@ if (!isset($_POST['status'])) {
 			<?php
 				
 				$placeholder = $_POST['status'];
-				$tatenProSeite=$_POST['adt'];
+				$tatenProSeite=$_REQUEST['adt'];
 				$all = !(isset($_GET['user']) && DBFunctions::db_getIdUserByUsername($_GET['user']!=-1));
 				
 				if ($all) {
-					$arr2 = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, 'nichtFreigegeben');
+					if($placeholder=='alle'){
+						$arr2 = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, 'nichtFreigegeben');
+						$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, $placeholder);
+						$arr =array_merge($arr2, $arr);
+					}
+					else{
+						$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, $placeholder);
+					}
+					/*$arr2 = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, 'nichtFreigegeben');
+					echo 'Test2 nichtfreigegebene:  '.sizeof($arr2).'<br>';
 					$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, $placeholder);
-					$arr =array_merge($arr2, $arr);
+					echo 'Test2 alle anderen :  '.sizeof($arr).'<br>';
+					//$arr =array_merge($arr2, $arr);
+					echo 'Ich echo das hier!';
+					echo 'Test2:  '.sizeof($arr).'<br>';*/
 				}
 				else{
 					$arr = DBFunctions::db_getGuteTatenForUser($tatenProSeite*($_GET['p']-1), $tatenProSeite, $placeholder, DBFunctions::db_getIdUserByUsername($_GET['user']));
@@ -102,10 +117,20 @@ if (!isset($_POST['status'])) {
 					echo "<br><br><hr><br>";
 				}
 
-			if ($all)
-				$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder);
-			else
+			if ($all){
+				if($placeholder='alle'){
+					$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder)+DBFunctions::db_getGuteTatenAnzahl('nichtFreigegeben');
+					echo 'Test:  '.$anzahlAllerTaten;
+				}
+				else{
+					$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder);
+					echo 'Test:  '.$anzahlAllerTaten;
+				}
+			}
+				
+			else{
 				$anzahlAllerTaten=DBFunctions::db_countGuteTatenForUser($placeholder, DBFunctions::db_getIdUserByUsername($_GET['user']));
+			}
 
 			$aktuelleSeite=$_GET['p'];
 			$letzteseite=intval($anzahlAllerTaten / $tatenProSeite);
@@ -121,7 +146,7 @@ if (!isset($_POST['status'])) {
 						function zahlenausgabe($von,$bis, $letzteseite, $all){//schreibt die seiten zahlen
 							for($i=$von;$i<=$bis;$i++){
 								//der link get auf eine falsche seite er muss diese seite nochmal aufgerufen werden nur mit der pasenden seiten nummer
-								if ($i>0 && $i<=$letzteseite) echo '<a href="./admin?page=deeds?p=' . $i . (!$all?'&user='.$_GET['user']:'') . '">&nbsp'. $i .'&nbsp</a>';
+								if ($i>0 && $i<=$letzteseite) echo '<a href="./admin?page=deeds&p=' . $i . (!$all?'&user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). '">&nbsp'. $i .'&nbsp</a>';
 							}
 						}
 						
@@ -130,18 +155,18 @@ if (!isset($_POST['status'])) {
 								zahlenausgabe(1,$aktuelleSeite-1, $letzteseite, $all);
 								echo '&nbsp' . $aktuelleSeite . '&nbsp';
 								zahlenausgabe($aktuelleSeite+1,$maxSeitenLinks, $letzteseite, $all);
-								if ($letzteseite > $maxSeitenLinks) printf ('<a href="./admin?page=deeds?p=' . $letzteseite . (!$all?'&user='.$_GET['user']:'') . '"> ... ' . $letzteseite . '</a>');
+								if ($letzteseite > $maxSeitenLinks) printf ('<a href="./admin?page=deeds&p=' . $letzteseite . (!$all?'&user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). '"> ... ' . $letzteseite . '</a>');
 							} else if ($aktuelleSeite > $letzteseite- ($maxSeitenLinks/2)-1) {
-								if ($letzteseite > $maxSeitenLinks) printf ("<a href='./admin?page=deeds" . (!$all?'?user='.$_GET['user']:'') . "'>". '1 ... ' ."</a>");// der link geht jetzt
+								if ($letzteseite > $maxSeitenLinks) printf ("<a href='./admin?page=deeds" . (!$all?'?user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). "'>". '1 ... ' ."</a>");// der link geht jetzt
 								zahlenausgabe($letzteseite-$maxSeitenLinks,$aktuelleSeite-1, $letzteseite, $all);
 								echo '&nbsp' . $aktuelleSeite . '&nbsp';
 								zahlenausgabe($aktuelleSeite+1,$letzteseite, $letzteseite, $all);
 							}else{
-								printf ("<a href='./admin?page=deeds" . (!$all?'?user='.$_GET['user']:'') . "'>". '1 ... ' ."</a>");// der link geht jetzt
+								printf ("<a href='./admin?page=deeds" . (!$all?'?user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). "'>". '1 ... ' ."</a>");// der link geht jetzt
 								zahlenausgabe($aktuelleSeite-intval($maxSeitenLinks/2),$aktuelleSeite-1,$letzteseite, $all);
 								echo '&nbsp' . $aktuelleSeite . '&nbsp';
 								zahlenausgabe($aktuelleSeite+1,$aktuelleSeite+intval($maxSeitenLinks/2),$letzteseite, $all);
-								printf ('<a href="./admin?page=deeds?p=' . $letzteseite . (!$all?'&user='.$_GET['user']:'') . '"> ... ' . $letzteseite . '</a>');
+								printf ('<a href="./admin?page=deeds&p=' . $letzteseite . (!$all?'&user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). '"> ... ' . $letzteseite . '</a>');
 							}
 						}else{
 							zahlenausgabe(1,$seitenanzahl, $letzteseite, $all);
@@ -160,12 +185,12 @@ if (!isset($_POST['status'])) {
 
 <!--Zurück / Weiter Buttons-->
 <?php
-	$placeholder = 'alle';
+	//$placeholder = 'alle';
 	$vor = $_GET['p'] > 1;
 	$nach = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']), $tatenProSeite, $placeholder); //Sobald Deeds nicht mehr doppelt ausgegeben werden -> Mit Anzahl prüfen!
-	if ($vor) echo '<a href="./admin?page=deeds?p=' . ($_GET['p']-1) . '"><input type="button" value="Zurück"></a>';
+	if ($vor) echo '<a href="./admin?page=deeds&p=' . ($_GET['p']-1) .'&adt='.($_REQUEST['adt']). '"><input type="button" value="Zurück"></a>';
 	if ($vor && $nach) echo '&nbsp';
-	if ($nach) echo '<a href="./admin?page=deeds?p=' . ($_GET['p']+1) . '"><input type="button" value="Weiter"></a>';
+	if ($nach) echo '<a href="./admin?page=deeds&p=' . ($_GET['p']+1) .'&adt='.($_REQUEST['adt']). '"><input type="button" value="Weiter"></a>';
 
 	?>
 
