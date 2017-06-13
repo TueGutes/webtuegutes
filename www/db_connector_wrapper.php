@@ -85,6 +85,9 @@ $function_name = @$parameters['function_name'];
 		case "db_getApplicationsByDeedsID":
 			echo json_encode(DBFunctions::db_getApplicationsByDeedsID($parameters['$idGuteTat']));
 			break;
+		case "db_getCategories":
+			echo json_encode(DBFunctions::db_getAllCategories());
+			break;
 		case "db_deleteDeed":
 			DBFunctions::db_deleteDeed($parameters['idGuteTat']);
 			echo json_encode("Tat geloescht");
@@ -95,8 +98,14 @@ $function_name = @$parameters['function_name'];
 			//Send Email
 			$receiver = DBFunctions::db_getEmailOfContactPersonByGuteTatID($parameters['idGuteTat']);
 			$subject = "Neue Bewerbung für " . DBFunctions::db_getNameOfGuteTatByID($parameters['idGuteTat']);
-			$mailtext = applicationForDeed($parameters['idGuteTat'], $parameters['user_id'], DBFunctions::db_getUsernameOfBenutzerByID($parameters['user_id']),
-											DBFunctions::db_getUsernameOfContactPersonByGuteTatID($parameters['idGuteTat']), DBFunctions::db_getNameOfGuteTatByID($parameters['idGuteTat']), $parameters['bewerbungstext']);
+			$mailtext = applicationForDeed(
+						$parameters['idGuteTat'], 
+						$parameters['user_id'], 
+						DBFunctions::db_getUsernameOfContactPersonByGuteTatID($parameters['idGuteTat']),
+						DBFunctions::db_getUsernameOfBenutzerByID($parameters['user_id']), 
+						DBFunctions::db_getNameOfGuteTatByID($parameters['idGuteTat']), 
+						$parameters['bewerbungstext']
+			);
 			sendEmail($receiver, $subject, $mailtext);
 			break;
 		default:
