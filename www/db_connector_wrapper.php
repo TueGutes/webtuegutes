@@ -8,6 +8,7 @@ $HOST = substr($HOST_FULL, 0, strrpos($HOST_FULL, "/"));
 
 //Includes
 require './includes/db_connector.php';
+require './includes/mail.php';
 
 wrap_db_connector($_POST);
 
@@ -81,8 +82,8 @@ $function_name = @$parameters['function_name'];
 			//Send Email
 			$receiver = DBFunctions::db_getEmailOfContactPersonByGuteTatID($parameters['idGuteTat']);
 			$subject = "Neue Bewerbung für " . DBFunctions::db_getNameOfGuteTatByID($parameters['idGuteTat']);
-			$mailtext = applicationForDeed(DBFunctions::db_getUsernameOfBenutzerByID($parameters['user_id']),
-											DBFunctions::db_getUsernameOfContactPersonByGuteTatID($parameters['idGuteTat']), $parameters['bewerbungstext']);
+			$mailtext = applicationForDeed($parameters['idGuteTat'], $parameters['user_id'], DBFunctions::db_getUsernameOfBenutzerByID($parameters['user_id']),
+											DBFunctions::db_getUsernameOfContactPersonByGuteTatID($parameters['idGuteTat']), DBFunctions::db_getNameOfGuteTatByID($parameters['idGuteTat']), $parameters['bewerbungstext']);
 			sendEmail($receiver, $MailSubject, $mailtext);
 			break;
 		default:
@@ -91,15 +92,15 @@ $function_name = @$parameters['function_name'];
 	}
 }
 
-function applicationForDeed($UsernameOfErsteller, $UsernameOfBewerber, $NameOfGuteTat, $Bewerbungstext) {
-	$actual_link = $HOST."/deeds_bewerbung"."?idGuteTat=$idGuteTat&candidateID=$idUser";
+function applicationForDeed($idGuteTat, $idUser, $UsernameOfErsteller, $UsernameOfBewerber, $NameOfGuteTat, $Bewerbungstext) {
+	$actual_link = $HOST . "/deeds_bewerbung"."?idGuteTat=$idGuteTat&candidateID=$idUser";
 
 	return "<div style=\"margin-left:10%;margin-right:10%;background-color:#757575\">
 			<img src=\"img/wLogo.png\" alt=\"TueGutes\" title=\"TueGutes\" style=\"width:25%\"/>
 		</div>
 		<h2>Hallo $UsernameOfErsteller!</h2><br>
 		<h3>$UsernameOfBewerber hat sich für deine gute Tat '$NameOfGuteTat' beworben. <br>
-		<h3>Er schreibt dazu: \"$Bewerbungstext\"</h3><br>
+		<h3>Er schreibt dazu: \"" . $Bewerbungstext . "\"</h3><br>
 		<h3>Besuche die <a href=\"$actual_link\">URL, um Details zur Bewerbung einzusehen</a></h3>";
 }
 
