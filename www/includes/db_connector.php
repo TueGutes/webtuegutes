@@ -2450,6 +2450,46 @@ class DBFunctions
         }
     }
 
+    /*
+      Liefert alle Bewerbungen zu der übergebenen user_id
+    */
+    public function db_getApplicationsByUserID($user_id) {
+      $db = self::db_connect();
+
+      $sql = "SELECT * From Application
+              WHERE idUser = ?";
+      $stmt = $db->prepare($sql);
+      $stmt->bind_param('i',$user_id);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      self::db_close($db);
+      $arr = array();
+      while($dbentry =$result->fetch_object()){
+          $arr[]= $dbentry;
+      }
+      return $arr;
+    }
+
+    /*
+      Liefert alle Bewerbungen zu der übergebenen idGuteTat
+    */
+    public function db_getApplicationsByDeedsID($idGuteTat) {
+      $db = self::db_connect();
+
+      $sql = "SELECT * From Application
+              WHERE idGuteTat = ?";
+      $stmt = $db->prepare($sql);
+      $stmt->bind_param('i',$idGuteTat);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      self::db_close($db);
+      $arr = array();
+      while($dbentry =$result->fetch_object()){
+          $arr[]= $dbentry;
+      }
+      return $arr;
+    }
+
     /**
     *Gibt die Anzahl der Gute Taten eines Users mit einer Auswahlmöglichkeit auf.
     *
