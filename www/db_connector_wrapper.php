@@ -40,6 +40,7 @@ $function_name = @$parameters['function_name'];
 			break;
 		case "db_getGuteTatenByUserId":
 			echo json_encode(DBFunctions::db_getGuteTatenByUserId($parameters['user_id'],'alle'));
+			break;
 		case "db_countGuteTaten":
 			echo json_encode(DBFunctions::db_getGuteTatenAnzahl('alle'));
 			break;
