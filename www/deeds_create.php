@@ -139,14 +139,14 @@ if($_SESSION['Seite'] ==1 || $_SESSION['Seite'] ==2){
         if(DBFunctions::db_doesGuteTatNameExists($_SESSION['tat_name'])){
             $_SESSION['Seite'] =1;
             $stop=1;
-        }else if ($_SESSION['tat_name'] === '' && !isset($_POST['pictures'])){
+        }else if ($_SESSION['tat_name'] === '' && !isset($_FILES['pictures'])){
             $stop=2;
             $_SESSION['Seite'] =1;
         }
 		
 		if(isset($_POST['type']))
 			$_SESSION['tat_type'] = $_POST['type'];
-		else if (!isset($_POST['pictures']))
+		else if (!$_FILES['pictures']))
 		{
 			$stop = 2;
             $_SESSION['Seite'] = 1;
