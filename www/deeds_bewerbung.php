@@ -13,7 +13,6 @@ require "./includes/DEF.php";
 include './includes/ACCESS.php';
 require "./includes/_top.php";
 //Inkludieren von script-Dateien
-include './includes/db_connector.php';
 
 /*
 Es gibt 6 Fälle:

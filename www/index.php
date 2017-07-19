@@ -11,7 +11,6 @@ require './includes/DEF.php';
 
 require './includes/_top.php';
 
-include './includes/db_connector.php';
 require './includes/fb/fbConfig.php';
 ?>
 
@@ -50,6 +49,7 @@ require './includes/fb/fbConfig.php';
 <?php
 if(!$_USER->loggedIn())
 {
+
 	$fb_loginURL = $facebook->getLoginUrl(array('redirect_uri' => $redirectURL, 'scope' => $fbPermissions));
 	echo "
 		<div class='module transparent'>
@@ -88,6 +88,12 @@ if(!$_USER->loggedIn())
 }
 else
 {
+	//isset($_GET['admin'])&& $_GET['admin']=='true' &&
+	if( $_USER->hasGroup($_GROUP_MODERATOR)){
+		$admin = true ;
+	}else{
+		$admin = false;
+	}
 	echo "<a href='./deeds_create'><input type='button' value='Gute Tat erstellen' /></a><br>";
 
 	echo "
@@ -98,7 +104,13 @@ else
 			$arr = DBFunctions::db_getGuteTatenForUser(0, 5, 'alle', $id);
 			$maxZeichenFürDieKurzbeschreibung = 150;
 			for($i = 0; $i < sizeof($arr); $i++){
-				echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+				if($admin){
+					echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "&admin=true' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+				}
+				else{
+					echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+				}
+				
 					echo "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
 					echo "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
 					echo "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";
@@ -119,7 +131,13 @@ else
 			$arr = DBFunctions::db_getGuteTatenForList(0, 5, 'freigegeben');
 			$maxZeichenFürDieKurzbeschreibung = 150;
 			for($i = 0; $i < sizeof($arr); $i++){
-				echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+				if($admin){
+					echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "&admin=true' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+				}
+				else{
+					echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
+				}
+					
 					echo "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
 					echo "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
 					echo "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";

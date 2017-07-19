@@ -59,7 +59,11 @@ $activeTab = 'class="active"';
 					if($_USER->loggedIn())
 						echo '<div class="profile"><img src="' . $_USER->getProfileImagePath(64) . '" class="block" /><br>' . $_USER->getUsername() . '</div>
 						<div class="profileContent">
-							' . $profileMenuLinks . '
+							' . $profileMenuLinks . 
+							($_USER->hasGroup($_GROUP_ADMIN) ? '
+							<a href="./admin?page=deeds" class="adminOption">Tatenverwaltung</a>
+							<a href="./admin?page=user" class="adminOption">Nutzerverwaltung</a>' : '') . 
+							'
 						</div>';
 					else
 						echo '<div class="profile guest"><a href="./login">' . $wlang['login_head'] . '</a><br><a href="./registration">' . $wlang['register_head'] . '</a></div>';

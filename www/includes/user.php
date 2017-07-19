@@ -1,6 +1,6 @@
 <?php
 /**
- * Klasse für $_USER Objekt
+ * Klasse f?r $_USER Objekt
  *
  * Bietet Funktionen, um die SESSION des Users zu handlen
  *
@@ -55,6 +55,10 @@ class User
 	{
 		return $this->loggedIn() ? $_SESSION['lastname'] : false;
 	}
+	function hasGroup($groupID)
+	{
+		return $this->loggedIn() ? $this->get('group') >= $groupID : false;
+	}
 	function get($key)
 	{
 		return $this->loggedIn() ? $_SESSION[$key] : false;
@@ -77,13 +81,16 @@ class User
 	
 	function getProfileImagePathOf($id, $size = 512)
 	{
-		$path = "img/profiles/" . $id . "/" . $size . "x" . $size . ".png";
+		$path = 'img/profiles/' . $id . '/' . $size . 'x' . $size . '.png';
 		if($this->loggedIn() && file_exists($path))
 			return $path;
 		
 		$addition = 'other';
-		$gender = $this->get('gender');
-		if($gender !== false && substr($this->get('privacykey'), 7, 1) === "1")
+		//$gender = $this->get('gender');
+		//if($gender !== false && substr($this->get('privacykey'), 7, 1) === '1')
+		$profile = DBFunctions::db_get_user(DBFunctions::db_getUsernameOfBenutzerByID($id));
+		$gender = $profile['gender'];
+		if($gender !== false && substr($profile['privacykey'], 7, 1) === '1')
 			switch($gender)
 			{
 				case 'm':
@@ -93,7 +100,7 @@ class User
 					$addition = 'female';
 					break;
 			}
-		return "img/profiles/standard_" . $addition . ".png";
+		return 'img/profiles/standard_' . $addition . '.png';
 	}
 	function getProfileImagePath($size = 512)
 	{

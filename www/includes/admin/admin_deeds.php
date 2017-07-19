@@ -1,38 +1,36 @@
 <?php
-/*
-*@author Klaus Sobotta, Lukas Buttke
- Adminfunktionen: Christian Hock
-*/
+/**
+ * Adminseite für Taten
 
-require './includes/DEF.php';
+ * @author Christian Hock
+   @ Angelehnt an Deeds.php
+ */
+
+//require './includes/DEF.php';
 
 include './includes/ACCESS.php';
 
 require './includes/_top.php';
 
 include './includes/Map.php';
-//isset($_GET['admin'])&& $_GET['admin']=='true' &&
-if( $_USER->hasGroup($_GROUP_MODERATOR)){
-	$admin = true ;
-}else{
-	$admin = false;
+
+if(!$_USER->hasGroup($_GROUP_MODERATOR))
+{
+	$_USER->redirect('./error?e=404');
+	exit;
 }
 
-if(!isset($_GET['page'])) $_GET['page'] = 1  && $placeholder="Alle";
+if(!isset($_GET['p'])) $_GET['p'] = 1  && $placeholder="Alle";
 if (!isset($_POST['status'])) {
-	/*if($admin){
-		$_POST['status'] = 'nichtFreigegeben';
-	}else{*/
 		$_POST['status'] = 'alle';
-	//}
-	if(!isset($_REQUEST['adt'])){
+		if(!isset($_REQUEST['adt'])){
 			$_REQUEST['adt'] = 10;
 		}
-	$first=TRUE;
-} 
-else {
-	$first=FALSE;
-}
+		
+		$first=TRUE;
+	} else {
+		$first=FALSE;
+	}
 ?>
 
 <h2><?php echo $wlang['deeds_head']; ?> </h2>
@@ -54,20 +52,14 @@ else {
 	<br> 
 	</form>
 	
-		<?php 
-if($admin){
-	echo '<form action="deeds?admin=true" method="post">';
-}else{
-	echo '<form action="deeds" method="post">';
-}
- ?>
+		<form method="post" action="">
 			<h5>
 				Anzeigen:
 				<select name="status" size="1" onchange="this.form.submit()">
 					<option value="alle" <?php ($first || @$_POST['status']=="alle")?'selected':'' ?> >alle</option>                                   <?/*hier wird der status abgefragt */?>
 					<option value="freigegeben" <?php echo (@$_POST['status']=="freigegeben")?'selected':'' ?> >Nicht abgeschlossen</option>     <?/*hier wird der status abgefragt */?>
 					<option value="geschlossen" <?php echo (@$_POST['status']=="geschlossen")?'selected':'' ?> >abgeschlossen</option>				 <?/*hier wird der status abgefragt */?>
-					<?php if($admin){
+					<?php if($_USER->hasGroup($_GROUP_MODERATOR)){
 						?>
 						<option value="nichtFreigegeben" <?php echo (@$_POST['status']=="nichtFreigegeben")?'selected':'' ?> >noch nicht freigegeben</option>		
 					<?php } ?>
@@ -91,24 +83,31 @@ if($admin){
 				$placeholder = $_POST['status'];
 				$tatenProSeite=$_REQUEST['adt'];
 				$all = !(isset($_GET['user']) && DBFunctions::db_getIdUserByUsername($_GET['user']!=-1));
-
-				if ($all){
-					$merge = $admin && $placeholder=='alle';
-					if($merge)$arr2 = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']-1), $tatenProSeite, 'nichtFreigegeben');
-					$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder);
-					if($merge)$arr =array_merge($arr2, $arr);
-				}else
-					$arr = DBFunctions::db_getGuteTatenForUser($tatenProSeite*($_GET['page']-1), $tatenProSeite, $placeholder, DBFunctions::db_getIdUserByUsername($_GET['user']));
+				
+				if ($all) {
+					if($placeholder=='alle'){
+						$arr2 = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, 'nichtFreigegeben');
+						$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, $placeholder);
+						$arr =array_merge($arr2, $arr);
+					}
+					else{
+						$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, $placeholder);
+					}
+					/*$arr2 = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, 'nichtFreigegeben');
+					echo 'Test2 nichtfreigegebene:  '.sizeof($arr2).'<br>';
+					$arr = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']-1), $tatenProSeite, $placeholder);
+					echo 'Test2 alle anderen :  '.sizeof($arr).'<br>';
+					//$arr =array_merge($arr2, $arr);
+					echo 'Ich echo das hier!';
+					echo 'Test2:  '.sizeof($arr).'<br>';*/
+				}
+				else{
+					$arr = DBFunctions::db_getGuteTatenForUser($tatenProSeite*($_GET['p']-1), $tatenProSeite, $placeholder, DBFunctions::db_getIdUserByUsername($_GET['user']));
+				}
 
 				$maxZeichenFürDieKurzbeschreibung = 150;
-
 				for($i = 0; $i < sizeof($arr); $i++){
-					if($admin){
-						echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "&admin=true' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
-					}else{
-						echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
-					}
-					
+					echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "&admin=true' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
 						echo "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
 						echo "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
 						echo "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";
@@ -118,12 +117,22 @@ if($admin){
 					echo "<br><br><hr><br>";
 				}
 
-			if ($all)
-				$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder);
-			else
+			if ($all){
+				if($placeholder='alle'){
+					$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder)+DBFunctions::db_getGuteTatenAnzahl('nichtFreigegeben');
+					
+				}
+				else{
+					$anzahlAllerTaten=DBFunctions::db_getGuteTatenAnzahl($placeholder);
+					
+				}
+			}
+				
+			else{
 				$anzahlAllerTaten=DBFunctions::db_countGuteTatenForUser($placeholder, DBFunctions::db_getIdUserByUsername($_GET['user']));
+			}
 
-			$aktuelleSeite=$_GET['page'];
+			$aktuelleSeite=$_GET['p'];
 			$letzteseite=intval($anzahlAllerTaten / $tatenProSeite);
 			if ($letzteseite * $tatenProSeite < $anzahlAllerTaten) $letzteseite++;
 
@@ -137,7 +146,7 @@ if($admin){
 						function zahlenausgabe($von,$bis, $letzteseite, $all){//schreibt die seiten zahlen
 							for($i=$von;$i<=$bis;$i++){
 								//der link get auf eine falsche seite er muss diese seite nochmal aufgerufen werden nur mit der pasenden seiten nummer
-								if ($i>0 && $i<=$letzteseite) echo '<a href="./deeds?page=' . $i . (!$all?'&user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). '">&nbsp'. $i .'&nbsp</a>';
+								if ($i>0 && $i<=$letzteseite) echo '<a href="./admin?page=deeds&p=' . $i . (!$all?'&user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). '">&nbsp'. $i .'&nbsp</a>';
 							}
 						}
 						
@@ -146,18 +155,18 @@ if($admin){
 								zahlenausgabe(1,$aktuelleSeite-1, $letzteseite, $all);
 								echo '&nbsp' . $aktuelleSeite . '&nbsp';
 								zahlenausgabe($aktuelleSeite+1,$maxSeitenLinks, $letzteseite, $all);
-								if ($letzteseite > $maxSeitenLinks) printf ('<a href="./deeds?page=' . $letzteseite . (!$all?'&user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). '"> ... ' . $letzteseite . '</a>');
+								if ($letzteseite > $maxSeitenLinks) printf ('<a href="./admin?page=deeds&p=' . $letzteseite . (!$all?'&user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). '"> ... ' . $letzteseite . '</a>');
 							} else if ($aktuelleSeite > $letzteseite- ($maxSeitenLinks/2)-1) {
-								if ($letzteseite > $maxSeitenLinks) printf ("<a href='./deeds" . (!$all?'?user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). "'>". '1 ... ' ."</a>");// der link geht jetzt
+								if ($letzteseite > $maxSeitenLinks) printf ("<a href='./admin?page=deeds" . (!$all?'?user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). "'>". '1 ... ' ."</a>");// der link geht jetzt
 								zahlenausgabe($letzteseite-$maxSeitenLinks,$aktuelleSeite-1, $letzteseite, $all);
 								echo '&nbsp' . $aktuelleSeite . '&nbsp';
 								zahlenausgabe($aktuelleSeite+1,$letzteseite, $letzteseite, $all);
 							}else{
-								printf ("<a href='./deeds" . (!$all?'?user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). "'>". '1 ... ' ."</a>");// der link geht jetzt
+								printf ("<a href='./admin?page=deeds" . (!$all?'?user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). "'>". '1 ... ' ."</a>");// der link geht jetzt
 								zahlenausgabe($aktuelleSeite-intval($maxSeitenLinks/2),$aktuelleSeite-1,$letzteseite, $all);
 								echo '&nbsp' . $aktuelleSeite . '&nbsp';
 								zahlenausgabe($aktuelleSeite+1,$aktuelleSeite+intval($maxSeitenLinks/2),$letzteseite, $all);
-								printf ('<a href="./deeds?page=' . $letzteseite . (!$all?'&user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). '"> ... ' . $letzteseite . '</a>');
+								printf ('<a href="./admin?page=deeds&p=' . $letzteseite . (!$all?'&user='.$_GET['user']:'') .'&adt='.($_REQUEST['adt']). '"> ... ' . $letzteseite . '</a>');
 							}
 						}else{
 							zahlenausgabe(1,$seitenanzahl, $letzteseite, $all);
@@ -177,16 +186,15 @@ if($admin){
 <!--Zurück / Weiter Buttons-->
 <?php
 	//$placeholder = 'alle';
-	$vor = $_GET['page'] > 1;
-	$nach = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['page']), $tatenProSeite, $placeholder); //Sobald Deeds nicht mehr doppelt ausgegeben werden -> Mit Anzahl prüfen!
-	if ($vor) echo '<a href="./deeds?page=' . ($_GET['page']-1) .'&adt='.($_REQUEST['adt']). '"><input type="button" value="Zurück"></a>';
+	$vor = $_GET['p'] > 1;
+	$nach = DBFunctions::db_getGuteTatenForList($tatenProSeite*($_GET['p']), $tatenProSeite, $placeholder); //Sobald Deeds nicht mehr doppelt ausgegeben werden -> Mit Anzahl prüfen!
+	if ($vor) echo '<a href="./admin?page=deeds&p=' . ($_GET['p']-1) .'&adt='.($_REQUEST['adt']). '"><input type="button" value="Zurück"></a>';
 	if ($vor && $nach) echo '&nbsp';
-	if ($nach) echo '<a href="./deeds?page=' . ($_GET['page']+1) .'&adt='.($_REQUEST['adt']). '"><input type="button" value="Weiter"></a>';
-?>
+	if ($nach) echo '<a href="./admin?page=deeds&p=' . ($_GET['p']+1) .'&adt='.($_REQUEST['adt']). '"><input type="button" value="Weiter"></a>';
+
+	?>
 
 <br> 
-
-
 <?php
 require './includes/_bottom.php';
 ?>
