@@ -35,14 +35,21 @@ $BROWSER_NAME = get_browser_name($_SERVER['HTTP_USER_AGENT']);
 $USE_GMAIL = false; // Bei true wird der gmail Account tuegutesinhannover@gmail.com von der PHPMailer Klasse verwendet um Mails zu senden. Bei false wird die PHP Funktion mail verwendet
 
 //====Datenbank====
-$DB_HOST = "localhost";
-$DB_DATABASE = "tuegutes";
-$DB_USER = "tuegutes";
-$DB_PASSWORD = "password";
+//$DB_HOST = "localhost";
+//$DB_DATABASE = "tuegutes";
+//$DB_USER = "tuegutes";
+//$DB_PASSWORD = "password";
+
+//====Config====
+$_GROUP_ADMIN = 3;
+$_GROUP_MODERATOR = 2;
+$_GROUP_USER = 1;
 
 session_start();
 
 include './includes/mail.php';
+
+require_once './includes/db_connector.php';
 
 require './includes/user.php';
 $_USER = new User();

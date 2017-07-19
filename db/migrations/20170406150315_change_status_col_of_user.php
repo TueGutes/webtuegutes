@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class LengthNameDeeds extends AbstractMigration
+class ChangeStatusColOfUser extends AbstractMigration
 {
     /**
      * Change Method.
@@ -26,15 +26,14 @@ class LengthNameDeeds extends AbstractMigration
      * with the Table class.
      */
     public function up(){
-        $table = $this->table('Deeds');
-        $table->changeColumn('name','string',array('length' => 256))
+        $table = $this->table('User');
+        $table->changeColumn('status','enum',array('values' => array('nichtVerifiziert','Verifiziert','deleted','blocked')))
               ->update();
     }
 
     public function down(){
-        $table = $this->table('Deeds');
-        $table->changeColumn('name','string',array('length' => 64))
+        $table = $this->table('User');
+        $table->changeColumn('status','enum',array('values' => array('nichtVerifiziert','Verifiziert','deleted')))
               ->update();
     }
-
 }

@@ -237,22 +237,22 @@
 	}
 	
 	/*====deeds_details====*/
-	.deed_details .infoLabel,
-	.deed_details .infoValue,
-	.deed_details .addressValue
+	.details .infoLabel,
+	.details .infoValue,
+	.details .addressValue
 	{
 		padding-right: 0px;
 	}
-	.deed_details .infos table
+	.details .infos table
 	{
 		width: 100%;
 	}
-	.deed_details td
+	.details td
 	{
 		width: 100%;
 		word-wrap: break-word;
 	}
-	.deed_details td
+	.details td
 	{
 		display: inline-block;
 		margin-top: 2px;
@@ -388,36 +388,36 @@
 	}
 	
 	/*====deeds_details====*/
-	.deed_details
+	.details
 	{
 		width: 96%;
 		/*t r b l*/
 		padding: 2% 2% 2% 4%;
 	}
-	.deed_details .author
+	.details .author
 	{
 		top: 32px;
 	}
-	.deed_details .description
+	.details .description
 	{
 		margin-top: 66px;
 	}
-	.deed_details .infoLabel,
-	.deed_details .infoValue,
-	.deed_details .addressValue
+	.details .infoLabel,
+	.details .infoValue,
+	.details .addressValue
 	{
 		padding-right: 0px;
 	}
-	.deed_details .infos table
+	.details .infos table
 	{
 		width: 100%;
 	}
-	.deed_details td
+	.details td
 	{
 		width: 100%;
 		word-wrap: break-word;
 	}
-	.deed_details td
+	.details td
 	{
 		display: inline-block;
 		margin-top: 2px;

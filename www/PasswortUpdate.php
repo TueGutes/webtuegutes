@@ -11,7 +11,6 @@
 require "./includes/DEF.php";
 
 //Inkludieren von script-Dateien
-include './includes/db_connector.php';
 
 //Top Bereich inkludieren
 require "./includes/_top.php";

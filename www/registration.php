@@ -13,7 +13,6 @@
 require "./includes/DEF.php";
 
 //Inkludieren von script-Dateien
-include './includes/db_connector.php';
 
 //DB Funktionen, die später ausgelagert werden sollten
 // TIMM:

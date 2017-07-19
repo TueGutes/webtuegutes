@@ -5,12 +5,11 @@
 
 require './includes/DEF.php';
 include './includes/ACCESS.php';
-include './includes/db_connector.php';
 require './includes/_top.php';
 
 $idTat  = $_GET['id'];
 DBFunctions::db_guteTatClose($idTat); 
-	if (!(DBFunctions::db_istGeschlossen($idTat))){
+	if ((DBFunctions::db_istGeschlossen($idTat))){
 		echo '<h3> Ihre Tat wurde nun geschlossen ! Bitte bewerten Sie ihre Helfer. </h>';
 	}
 $db = DBFunctions::db_getBewerb($idTat);
@@ -22,7 +21,7 @@ for ($i = 0; $i < $durchlauf; $i++) {
 	foreach($db as $key){
 		$username = DBFunctions::db_getUsernameOfBenutzerByID($key);
 		$arrUser[$i] = $username;
-		$form .= '<center> <table> <tr> <td> <b>'.$username.'<b> </td>'; 
+		$form .= '<center> <table> <tr> <td> <b>'.$username.'<b> </td>';
 		$form .= '<td>  <select name="'.$username.'" size="1">';
 		$form .= '<option value="1">1</option> <option value="2">2</option> <option value="3">3</option>';
 		$form .= '<option value="4">4</option> <option value="5">5</option> <option value="0">Keine Bewertung</option>';
@@ -30,7 +29,7 @@ for ($i = 0; $i < $durchlauf; $i++) {
 	}
 }
 $form .='<input type="hidden" value="set" name="test">';
-$form .='<input type="submit" value"absenden"> </form> <br> <hr>';
+$form .='<input type="submit" value="absenden"> </form> <br> <hr>';
 
 if(!isset($_POST['test'])){
 	echo $form;

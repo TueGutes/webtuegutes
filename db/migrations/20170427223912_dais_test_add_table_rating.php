@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class LengthNameDeeds extends AbstractMigration
+class DaisTestAddTableRating extends AbstractMigration
 {
     /**
      * Change Method.
@@ -25,16 +25,15 @@ class LengthNameDeeds extends AbstractMigration
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function up(){
-        $table = $this->table('Deeds');
-        $table->changeColumn('name','string',array('length' => 256))
-              ->update();
+    public function change()
+    {
+        $table = $this->table('Rating', array('id' => false, 'primary_key' => array('userid', 'deedid')));
+        $table->addColumn('userid','integer')
+            ->addColumn('deedid','integer')
+            ->addColumn('time','datetime')
+            ->addColumn('rating','integer')
+            ->addForeignKey('userid','User','idUser',array('delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'))
+            ->addForeignKey('deedid','Deeds','idGuteTat',array('delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'))
+            ->create();
     }
-
-    public function down(){
-        $table = $this->table('Deeds');
-        $table->changeColumn('name','string',array('length' => 64))
-              ->update();
-    }
-
 }

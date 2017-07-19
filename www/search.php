@@ -6,8 +6,9 @@
  * @author     Shanghui Dai <shanghui.dai@stud.hs-hannover.de>
  */
 require_once './includes/DEF.php';
-include_once './includes/db_connector.php';
 require_once './includes/_top.php';
+include './includes/ACCESS.php';
+require './includes/UTILS.php';
 error_reporting(0);
 date_default_timezone_set("Europe/Berlin");
 ?>
