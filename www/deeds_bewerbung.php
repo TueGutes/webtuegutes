@@ -110,27 +110,19 @@ else if(isset($_GET['idGuteTat']) && isset($_GET['candidateID'])) {
 	}
 	else {
 		//Fall 1.6: Bewerbung ist okay und kann angenommen oder abgelehnt werden inkl. einer Begründung.
-
 		//Link zum Profil des Bewerbers
-
 		$_SESSION['idGuteTat'] = $idGuteTat; //Zwischenspeichern, um nach dem Absenden darauf zugreifen zu können
 		$_SESSION['$candidateID'] = $candidateID;
-
 		echo "<h3>$candidateUsername schreibt: <i>\"$explanation\"</i></h3>";
-
-
 		echo '<a href="./profile?user='.DBFunctions::db_getUsernameOfBenutzerByID($candidateID).'">Zum Benutzer-Profil des Bewerbers</a><br><br>';
-
 		echo '<a href="./deeds_details?id='.$idGuteTat.'">Zur Detailseite deiner Guten Tag</a><br><br>';
-
-
 		echo '<div class="center">
-		<form action="deeds_bewerbung" method="post">
-				<textarea id="begruendungstext" name="Begruendungstext" cols="80" rows="3" placeholder="Begründung - schreibe dem Bewerber eine Begründung deiner Absage bzw. Annahme seiner Bewerbung"></textarea><br><br>
-				<input type="submit" value="Annehmen" name="AnnehmenButton">
-				<input type="submit" value="Ablehnen" name="AblehnenButton">
-		</form>
-		</div>';
+				<form action="deeds_bewerbung" method="post">
+						<textarea id="begruendungstext" name="Begruendungstext" cols="80" rows="3" placeholder="Begründung - schreibe dem Bewerber eine Begründung deiner Absage bzw. Annahme seiner Bewerbung"></textarea><br><br>
+						<input type="submit" value="Annehmen" name="AnnehmenButton">
+						<input type="submit" value="Ablehnen" name="AblehnenButton">
+				</form>
+			</div>';
 
 
 	}
