@@ -65,6 +65,9 @@ Soll zu saubereren, effektiveren Tests führen.
 Das Ausführen von einzelnen Test zur direkten Überprüfung von einzelnen Problemen muss manuell von Hand gemacht werden. Allerdings sind alle implementierten Tests im Build-Prozess von Jenkins gehookt. Bei einem Build von den drei Umgebungen(siehe Abschnitt unten) werden die Tests automatisch ausgeführt. Die Ergebnisse sind Online unter folgenden Links abrufbar:
 
 [Selenium GUI Tests](http://tue-gutes-in-hannover.de/tueGutes/docs/gui-test-results.html)
+
+
+
 [PHP Unit Tests](http://tue-gutes-in-hannover.de/tueGutes/docs/unit-test-results.html)
 
 ## Deployment - Jenkins
