@@ -13,21 +13,18 @@
 
 require './includes/DEF.php';
 
-if($_USER->loggedIn())
+if ($_USER->loggedIn()) {
 	$_USER->redirect($HOST);
-
-//DB Funktionen, die später ausgelagert werden sollten
-// TIMM:
-// ausgelagert in db_connector, code ist gesaved in einer .txt bei mir
-
+}
 
 
 $output = isset($_GET['code']) ? (isset($wlang['login_code_' . $_GET['code']]) ? $wlang['login_code_' . $_GET['code']] : "") : "";
 if(isset($_POST['username']) && isset($_POST['password']))
 {
 	$continue = $HOST . "/profile";
-	if(isset($_POST['continue']) && $_POST['continue'] != '' && parse_url($_POST['continue'])['host'] == parse_url($HOST)['host'])
+	if (isset($_POST['continue']) && $_POST['continue'] != '' && parse_url($_POST['continue'])['host'] == parse_url($HOST)['host']) {
 		$continue = urldecode($_POST['continue']);
+	}
 
 	$userID = DBFunctions::db_idOfBenutzername($_POST['username']);
 	if($userID != false)

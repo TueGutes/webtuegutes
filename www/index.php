@@ -7,10 +7,9 @@
  * @author Henrik Huckauf <henrik.huckauf@stud.hs-hannover.de>
  */
 
+//Nötige Header
 require './includes/DEF.php';
-
 require './includes/_top.php';
-
 require './includes/fb/fbConfig.php';
 ?>
 
@@ -49,7 +48,6 @@ require './includes/fb/fbConfig.php';
 <?php
 if(!$_USER->loggedIn())
 {
-
 	$fb_loginURL = $facebook->getLoginUrl(array('redirect_uri' => $redirectURL, 'scope' => $fbPermissions));
 	echo "
 		<div class='module transparent'>
@@ -137,12 +135,11 @@ else
 				else{
 					echo "<a href='./deeds_details?id=" . $arr[$i]->idGuteTat . "' class='deedAnchor'><div class='deed" . ($arr[$i]->status == "geschlossen" ? " closed" : "") . "'>";
 				}
-					
-					echo "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
-					echo "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
-					echo "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";
-					echo "<div>" . (is_numeric($arr[$i]->countHelper) ? "Anzahl der Helfer: " . $arr[$i]->countHelper : '') ."</div><div class='trustLevel'>Minimaler Vertrauenslevel: " . $arr[$i]->idTrust . " (" . $arr[$i]->trustleveldescription . ")</div>";
-					echo "<div>" . $arr[$i]->organization . "</div>";
+				echo "<div class='name'><h4>" . $arr[$i]->name . "</h4></div><div class='category'>" . $arr[$i]->category . "</div>";
+				echo "<br><br><br><br><div class='description'>" . (strlen($arr[$i]->description) > $maxZeichenFürDieKurzbeschreibung ? substr($arr[$i]->description, 0, $maxZeichenFürDieKurzbeschreibung) . "...<br>mehr" : $arr[$i]->description) . "</div>";
+				echo "<div class='address'>" . $arr[$i]->street .  "  " . $arr[$i]->housenumber . "<br>" . $arr[$i]->postalcode . ' / ' . $arr[$i]->place . "</div>";
+				echo "<div>" . (is_numeric($arr[$i]->countHelper) ? "Anzahl der Helfer: " . $arr[$i]->countHelper : '') ."</div><div class='trustLevel'>Minimaler Vertrauenslevel: " . $arr[$i]->idTrust . " (" . $arr[$i]->trustleveldescription . ")</div>";
+				echo "<div>" . $arr[$i]->organization . "</div>";
 				echo "</div></a>";
 				echo "<br><br><hr><br>";
 			}
